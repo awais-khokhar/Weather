@@ -7,6 +7,9 @@
         <item
             android:id="@+id/locate_position"
             android:title="Locate Position" />
+        <item
+            android:id="@+id/setting"
+            android:title="Setting" />
     </group>
 
 </menu>
