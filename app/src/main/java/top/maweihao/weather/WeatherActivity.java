@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -21,22 +22,32 @@ import top.maweihao.weather.util.Utility;
 public class WeatherActivity extends AppCompatActivity {
 
     public static final String TAG = "WeatherActivity";
-    TextView tv;
+    private TextView tv;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather);
 
+        tv = (TextView) findViewById(R.id.main_text);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
+
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                requestWeather();
+            }
+        });
 
 //        ActionBar actionBar = getSupportActionBar();
 //        if (actionBar != null) {
 //            actionBar.setDisplayHomeAsUpEnabled(true);
 //        }
-        tv = (TextView) findViewById(R.id.main_text);
 
         requestWeather();
 
@@ -47,6 +58,10 @@ public class WeatherActivity extends AppCompatActivity {
     }
 
     private void requestWeather() {
+
+        if (!swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(true);
+        }
 
         String mUrl = initUrl();
 
@@ -70,7 +85,7 @@ public class WeatherActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (weatherData != null ) {
+                        if (weatherData != null) {
                             SharedPreferences.Editor editor = PreferenceManager
                                     .getDefaultSharedPreferences(WeatherActivity.this).edit();
                             editor.putString("weather_now", responseText);
@@ -96,6 +111,11 @@ public class WeatherActivity extends AppCompatActivity {
 
         tv.setText(temperature + '\n' + skycon + '\n' + "PM2.5: " + PM25 + '\n'
                 + "cloudrate: " + cloudrate + '\n' + "humidity: " + humidity + '\n' + "aqi: " + aqi);
+
+        if (swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
+
 
 }
