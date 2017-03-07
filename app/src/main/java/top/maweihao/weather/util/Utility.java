@@ -27,8 +27,9 @@ public class Utility {
             wd = gson.fromJson(result, WeatherData.class);
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.e(TAG, "run: parse json error");
+            Log.e(TAG, "handleWeatherResponse: parse weather json error");
         }
         return wd;
     }
 }
+

@@ -7,9 +7,13 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -24,6 +28,9 @@ public class WeatherActivity extends AppCompatActivity {
     public static final String TAG = "WeatherActivity";
     private TextView tv;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private String locationCoordinates;
+    private String mUrl;
+    private String location;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,30 +47,45 @@ public class WeatherActivity extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                requestWeather();
+                beforeRequestWeather();
             }
         });
 
-//        ActionBar actionBar = getSupportActionBar();
-//        if (actionBar != null) {
-//            actionBar.setDisplayHomeAsUpEnabled(true);
-//        }
-
-        requestWeather();
+        beforeRequestWeather();
 
     }
 
-    private String initUrl() {
-        return "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/118.933290,32.111416/realtime.json";
+    private void beforeRequestWeather() {
+        if (!swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(true);
+        }
+        locateIP();
     }
 
-    private void requestWeather() {
+    private void initUrl() {
+//        return "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/118.933290,32.111416/realtime.json";
+        //locateIP();
+        if (!TextUtils.isEmpty(locationCoordinates)) {
+            mUrl = "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/" + locationCoordinates + "/realtime.json";
+            requestWeather(mUrl);
+        } else {
+            Toast.makeText(WeatherActivity.this, "locationCoordinates = null", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void requestWeather(String mUrl) {
 
         if (!swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(true);
         }
 
-        String mUrl = initUrl();
+        if (TextUtils.isEmpty(mUrl)) {
+            Toast.makeText(WeatherActivity.this, "murl = null", Toast.LENGTH_LONG).show();
+            if (swipeRefreshLayout.isRefreshing()) {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+            return ;
+        }
 
         HttpUtil.sendOkHttpRequest(mUrl, new Callback() {
             @Override
@@ -80,7 +102,7 @@ public class WeatherActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String responseText = response.body().string();
-                Log.d(TAG, "responseText: " + responseText);
+//                Log.d(TAG, "responseText: " + responseText);
                 final WeatherData weatherData = Utility.handleWeatherResponse(responseText);
                 runOnUiThread(new Runnable() {
                     @Override
@@ -109,12 +131,48 @@ public class WeatherActivity extends AppCompatActivity {
         String humidity = weatherData.getHumidity();
         String aqi = weatherData.getAqi();
 
-        tv.setText(temperature + '\n' + skycon + '\n' + "PM2.5: " + PM25 + '\n'
+        tv.setText(temperature + "℃\n" + skycon + '\n' + "PM2.5: " + PM25 + '\n'
                 + "cloudrate: " + cloudrate + '\n' + "humidity: " + humidity + '\n' + "aqi: " + aqi);
 
         if (swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }
+    }
+
+    public void locateIP() {
+        String url = "http://api.map.baidu.com/location/ip?ak=eTTiuvV4YisaBbLwvj4p8drl7BGfl1eo&coor=bd09ll";
+        HttpUtil.sendOkHttpRequest(url, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "onFailure: fetch locationCoordinates through IP failed");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String responseText = response.body().string();
+                try {
+                    JSONObject allAttributes = new JSONObject(responseText);
+
+                    JSONObject content = allAttributes.getJSONObject("content");
+                    JSONObject point = content.getJSONObject("point");
+                    String x = point.getString("x");
+                    String y = point.getString("y");
+                    locationCoordinates = x + ',' + y;
+                    Log.d(TAG, "locateIP: locationCoordinates = " + locationCoordinates);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.d(TAG, "responseText: " + responseText);
+                    Log.e(TAG, "locateIP: parse IP address json error");
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        initUrl();
+                    }
+                });
+            }
+        });
+
     }
 
 
