@@ -3,13 +3,15 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/change_position"
-            android:title="Change Position" />
+            android:title="Change Position"
+            android:icon="@mipmap/ic_my_location_black_24dp"/>
         <item
             android:id="@+id/locate_position"
             android:title="Locate Position" />
         <item
             android:id="@+id/setting"
-            android:title="Setting" />
+            android:title="Setting"
+            android:icon="@mipmap/ic_settings_black_24dp"/>
     </group>
 
 </menu>

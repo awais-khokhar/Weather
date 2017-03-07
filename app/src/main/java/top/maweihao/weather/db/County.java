@@ -12,9 +12,7 @@ public class County extends DataSupport {
 
     private int cityId;
 
-    private String latitude;
-
-    private String longitude;
+    private String location;
 
     public void setCountyName(String countyName) {
         this.countyName = countyName;
@@ -32,19 +30,11 @@ public class County extends DataSupport {
         return cityId;
     }
 
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
+    public String getLocation() {
+        return location;
     }
 
-    public String getLatitude() {
-        return latitude;
-    }
-
-    public void setLongitude(String longitude) {
-        this.longitude = longitude;
-    }
-
-    public String getLongitude() {
-        return longitude;
+    public void setLocation(String location) {
+        this.location = location;
     }
 }

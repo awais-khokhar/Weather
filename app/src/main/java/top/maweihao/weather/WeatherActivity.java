@@ -1,14 +1,18 @@
 package top.maweihao.weather;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +32,7 @@ public class WeatherActivity extends AppCompatActivity {
     public static final String TAG = "WeatherActivity";
     private TextView tv;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private DrawerLayout drawerLayout;
     private String locationCoordinates;
     private String mUrl;
     private String location;
@@ -40,6 +45,7 @@ public class WeatherActivity extends AppCompatActivity {
         tv = (TextView) findViewById(R.id.main_text);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
@@ -53,6 +59,19 @@ public class WeatherActivity extends AppCompatActivity {
 
         beforeRequestWeather();
 
+        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                if (item.getItemId() == R.id.change_position) {
+                    Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
+                    startActivity(intent);
+                    drawerLayout.closeDrawers();
+                    return true;
+                }
+                return false;
+            }
+        });
+
     }
 
     private void beforeRequestWeather() {
@@ -64,7 +83,6 @@ public class WeatherActivity extends AppCompatActivity {
 
     private void initUrl() {
 //        return "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/118.933290,32.111416/realtime.json";
-        //locateIP();
         if (!TextUtils.isEmpty(locationCoordinates)) {
             mUrl = "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/" + locationCoordinates + "/realtime.json";
             requestWeather(mUrl);
