@@ -218,35 +218,44 @@ public class WeatherActivity extends AppCompatActivity {
         String aqi = weatherData.getAqi();
 
         position_text.setText(countyName);
-        skycon_text.setText(skycon);
+//        skycon_text.setText(skycon);
         temperature_text.setText(temperature);
         switch (skycon) {
             case "CLEAR_DAY":
                 skycon_image.setImageResource(R.mipmap.weather_clear);
+                skycon_text.setText("晴");
                 break;
             case "CLEAR_NIGHT":
                 skycon_image.setImageResource(R.mipmap.weather_clear_night);
+                skycon_text.setText("晴");
                 break;
             case "PARTLY_CLOUDY_DAY":
                 skycon_image.setImageResource(R.mipmap.weather_few_clouds);
+                skycon_text.setText("多云");
                 break;
             case "PARTLY_CLOUDY_NIGHT":
                 skycon_image.setImageResource(R.mipmap.weather_few_clouds_night);
+                skycon_text.setText("多云");
                 break;
             case "CLOUDY":
                 skycon_image.setImageResource(R.mipmap.weather_clouds);
+                skycon_text.setText("阴");
                 break;
             case "RAIN":
                 skycon_image.setImageResource(R.mipmap.weather_drizzle_day);
+                skycon_text.setText("雨");
                 break;
             case "SNOW":
                 skycon_image.setImageResource(R.mipmap.weather_snow);
+                skycon_text.setText("雪");
                 break;
             case "WIND":
                 skycon_image.setImageResource(R.mipmap.weather_wind);
+                skycon_text.setText("多风");
                 break;
             case "FOG":
                 skycon_image.setImageResource(R.mipmap.weather_fog);
+                skycon_text.setText("雾");
                 break;
         }
 
