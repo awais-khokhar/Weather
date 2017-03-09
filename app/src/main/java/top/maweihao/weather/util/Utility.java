@@ -99,7 +99,6 @@ public class Utility {
                 Log.e(TAG, "handleCountyResponse: JSONObject error");
             }
         }
-        Log.d(TAG, "handleCountyResponse: done");
         return false;
     }
 }

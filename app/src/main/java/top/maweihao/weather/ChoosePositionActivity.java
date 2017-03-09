@@ -1,6 +1,7 @@
 package top.maweihao.weather;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -83,6 +84,14 @@ public class ChoosePositionActivity extends AppCompatActivity {
                 } else if (currentLevel == LEVEL_CITY) {
                     selectedCity = cityList.get(position);
                     queryCounties();
+                } else if (currentLevel == LEVEL_COUNTY) {
+                    String countyName = countyList.get(position).getCountyName();
+                    Log.d(TAG, "county name = " + countyName);
+
+                    Intent intent = new Intent();
+                    intent.putExtra("countyName", countyName);
+                    setResult(RESULT_OK, intent);
+                    finish();
                 }
             }
         });
