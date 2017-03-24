@@ -2,4 +2,5 @@
     <string name="app_name">Weather</string>
     <string name="weather">Weather</string>
     <string name="title_activity_choose_position">ChoosePosition</string>
+    <string name="temperature_sign">℃</string>
 </resources>

@@ -1,11 +1,17 @@
 package top.maweihao.weather;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +31,7 @@ import java.io.IOException;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import top.maweihao.weather.util.BaiduApiUtility;
 import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.Utility;
 
@@ -33,6 +40,7 @@ public class WeatherActivity extends AppCompatActivity {
     public static final String TAG = "WeatherActivity";
     public static final int THROUGH_IP = 0;
     public static final int THROUGH_CHOOSE_POSITION = 1;
+    public static final int THROUGH_LOCATE = 2;
     String countyName = null;
     private SwipeRefreshLayout swipeRefreshLayout;
     private DrawerLayout drawerLayout;
@@ -63,11 +71,11 @@ public class WeatherActivity extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                beforeRequestWeather(THROUGH_IP);
+                beforeRequestWeather(THROUGH_LOCATE);
             }
         });
 
-        beforeRequestWeather(THROUGH_IP);
+        beforeRequestWeather(THROUGH_LOCATE);
 
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -90,9 +98,7 @@ public class WeatherActivity extends AppCompatActivity {
             case 1:
                 if (resultCode == RESULT_OK) {
                     countyName = data.getStringExtra("countyName");
-//                    choosedCityName = data.getStringExtra("city_return");
                     Log.d(TAG, "onActivityResult: county_return == " + countyName);
-//                    Log.d(TAG, "onActivityResult: city_return == " + choosedCityName);
                     beforeRequestWeather(THROUGH_CHOOSE_POSITION);
                 }
         }
@@ -107,6 +113,41 @@ public class WeatherActivity extends AppCompatActivity {
             case THROUGH_CHOOSE_POSITION:
                 GetCoordinateByChoosePosition();
                 break;
+            case THROUGH_LOCATE:
+                GetCoordinateByLocate();
+                break;
+        }
+    }
+
+    private void GetCoordinateByLocate() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+        }
+        LocationManager mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        Location location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        if (location != null) {
+            locationCoordinates = String.valueOf(location.getLongitude()) + ',' + String.valueOf(location.getLatitude());
+            Log.d(TAG, "GetCoordinateByLocate: locationCoordinates = " + locationCoordinates);
+            BaiduApiUtility.setCountyByCoordinate(locationCoordinates);
+            AfterGetCoordinate();
+        } else {
+            Log.d(TAG, "requestLocation: location == null, switch to IP method");
+            GetCoordinateByIp();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    GetCoordinateByLocate();
+                } else {
+                    Toast.makeText(this, "you have denied the location permission", Toast.LENGTH_SHORT);
+                }
+                break;
+            default:
         }
     }
 
@@ -162,17 +203,16 @@ public class WeatherActivity extends AppCompatActivity {
             stopSwipe();
         } else {
             Toast.makeText(WeatherActivity.this, "locationCoordinates = null", Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "initRequireUrl: locationCoordinates = null");
         }
     }
 
     private void requestCurrentWeather(String mUrl) {
         startSwipe();
         if (TextUtils.isEmpty(mUrl)) {
-            Toast.makeText(WeatherActivity.this, "murl = null", Toast.LENGTH_LONG).show();
-            stopSwipe();
+            Log.d(TAG, "requestCurrentWeather: murl = null");
             return;
         }
-
         HttpUtil.sendOkHttpRequest(mUrl, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -212,13 +252,14 @@ public class WeatherActivity extends AppCompatActivity {
     private void showWeatherInfo(WeatherData weatherData) {
         String temperature = weatherData.getTemperature();
         String skycon = weatherData.getSkycon();
-        String PM25 = weatherData.getPm25();
-        String cloudrate = weatherData.getCloudrate();
-        String humidity = weatherData.getHumidity();
-        String aqi = weatherData.getAqi();
-
-        position_text.setText(countyName);
-//        skycon_text.setText(skycon);
+//        String PM25 = weatherData.getPm25();
+//        String cloudrate = weatherData.getCloudrate();
+//        String humidity = weatherData.getHumidity();
+//        String aqi = weatherData.getAqi();
+        if (position_text.getText().length() == 0) {
+            position_text.setText(countyName);
+        }
+        skycon_text.setText(skycon);
         temperature_text.setText(temperature);
         switch (skycon) {
             case "CLEAR_DAY":
@@ -281,7 +322,6 @@ public class WeatherActivity extends AppCompatActivity {
                 final String responseText = response.body().string();
                 try {
                     JSONObject allAttributes = new JSONObject(responseText);
-
                     JSONObject content = allAttributes.getJSONObject("content");
                     JSONObject address_detail = content.getJSONObject("address_detail");
                     countyName = address_detail.getString("city") + " " + address_detail.getString("district");
