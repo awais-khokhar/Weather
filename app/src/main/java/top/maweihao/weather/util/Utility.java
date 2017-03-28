@@ -28,7 +28,7 @@ public class Utility {
 
     public static final String TAG = "Utility";
 
-    public static WeatherData handleWeatherResponse(String url) {
+    public static WeatherData handleCurrentWeatherResponse(String url) {
         WeatherData wd = null;
         try {
             JSONObject allAttributes = new JSONObject(url);
@@ -37,9 +37,28 @@ public class Utility {
             wd = gson.fromJson(result, WeatherData.class);
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.e(TAG, "handleWeatherResponse: parse weather json error");
+            Log.e(TAG, "handleCurrentWeatherResponse: parse weather json error");
         }
         return wd;
+    }
+
+    public static JSONArray[] handleDailyWeatherResponse(String url) {
+        JSONArray[] jsonArrays = new JSONArray[3];
+        try {
+            JSONObject all = new JSONObject(url);
+            JSONObject result = all.getJSONObject("result");
+            JSONObject daily = result.getJSONObject("daily");
+            JSONArray skycon = daily.getJSONArray("skycon");
+            JSONArray humidity = daily.getJSONArray("humidity");
+            JSONArray temperature = daily.getJSONArray("temperature");
+            jsonArrays[0] = skycon;
+            jsonArrays[1] = humidity;
+            jsonArrays[2] = temperature;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(TAG, "handleFewDaysWeatherResponse: parse weather json error");
+        }
+        return jsonArrays;
     }
 
     public static boolean handleProvinceResponse(String response) {

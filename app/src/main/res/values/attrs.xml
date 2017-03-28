@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="perDayWeatherView">
+
+        <attr name="date_text_size" format="dimension" />
+
+        <attr name="temperature_text_size" format="dimension" />
+
+    </declare-styleable>
+</resources>

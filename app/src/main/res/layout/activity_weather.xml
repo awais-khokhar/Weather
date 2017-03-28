@@ -43,7 +43,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
                         android:gravity="center"
-                        android:hint="Location"
+                        android:hint="@string/location"
                         android:textSize="40sp" />
 
                     <ImageView
@@ -53,7 +53,8 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_marginBottom="20dp"
                         android:layout_marginTop="20dp"
-                        android:src="@mipmap/weather_clouds" />
+                        android:src="@mipmap/weather_none_available"
+                        android:contentDescription="@string/weather_icon" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -85,46 +86,48 @@
                         android:layout_height="wrap_content"
                         android:hint="*****"
                         android:paddingStart="30dp"
+                        android:paddingBottom="10dp"
                         android:textSize="30sp" />
+
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="150dp"
                         android:orientation="horizontal">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
+                        <top.maweihao.weather.perDayWeatherView
+                            android:id="@+id/daily_weather_0"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_weight="1" />
-
-                        <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_weight="1" />
+                            android:layout_weight="1"/>
 
-                        <LinearLayout
-                            android:layout_width="0dp"
+                        <top.maweihao.weather.perDayWeatherView
+                            android:id="@+id/daily_weather_1"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_weight="1" />
+                            android:layout_width="0dp"
+                            android:layout_weight="1"/>
 
-                        <LinearLayout
-                            android:layout_width="0dp"
+                        <top.maweihao.weather.perDayWeatherView
+                            android:id="@+id/daily_weather_2"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_weight="1" />
+                            android:layout_width="0dp"
+                            android:layout_weight="1"/>
 
-                        <LinearLayout
-                            android:layout_width="0dp"
+                        <top.maweihao.weather.perDayWeatherView
+                            android:id="@+id/daily_weather_3"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:layout_weight="1" />
+                            android:layout_width="0dp"
+                            android:layout_weight="1"/>
+
+                        <top.maweihao.weather.perDayWeatherView
+                            android:id="@+id/daily_weather_4"
+                            android:layout_height="wrap_content"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"/>
 
                     </LinearLayout>
 
                 </LinearLayout>
+
             </ScrollView>
 
         </android.support.v4.widget.SwipeRefreshLayout>

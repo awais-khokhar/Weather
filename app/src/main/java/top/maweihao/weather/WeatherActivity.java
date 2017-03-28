@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,10 +38,14 @@ import top.maweihao.weather.util.Utility;
 
 public class WeatherActivity extends AppCompatActivity {
 
-    public static final String TAG = "WeatherActivity";
-    public static final int THROUGH_IP = 0;
-    public static final int THROUGH_CHOOSE_POSITION = 1;
-    public static final int THROUGH_LOCATE = 2;
+    static final String TAG = "WeatherActivity";
+    static final int THROUGH_IP = 0;
+    static final int THROUGH_CHOOSE_POSITION = 1;
+    static final int THROUGH_LOCATE = 2;
+
+    static final int MINUTELY_MODE = 3;
+    static final int HOURLY_MODE = 4;
+
     String countyName = null;
     private SwipeRefreshLayout swipeRefreshLayout;
     private DrawerLayout drawerLayout;
@@ -52,6 +57,9 @@ public class WeatherActivity extends AppCompatActivity {
     private TextView temperature_text;
     private TextView skycon_text;
 
+    private perDayWeatherView[] day = new perDayWeatherView[5];
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +69,13 @@ public class WeatherActivity extends AppCompatActivity {
         skycon_image = (ImageView) findViewById(R.id.skycon_image);
         temperature_text = (TextView) findViewById(R.id.temperature_text);
         skycon_text = (TextView) findViewById(R.id.skycon_text);
+
+        day[0] = (perDayWeatherView) findViewById(R.id.daily_weather_0);
+        day[1] = (perDayWeatherView) findViewById(R.id.daily_weather_1);
+        day[2] = (perDayWeatherView) findViewById(R.id.daily_weather_2);
+        day[3] = (perDayWeatherView) findViewById(R.id.daily_weather_3);
+        day[4] = (perDayWeatherView) findViewById(R.id.daily_weather_4);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -144,7 +159,7 @@ public class WeatherActivity extends AppCompatActivity {
                 if (grantResults.length > 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     GetCoordinateByLocate();
                 } else {
-                    Toast.makeText(this, "you have denied the location permission", Toast.LENGTH_SHORT);
+                    Toast.makeText(this, "you have denied the location permission", Toast.LENGTH_SHORT).show();
                 }
                 break;
             default:
@@ -196,10 +211,11 @@ public class WeatherActivity extends AppCompatActivity {
     }
 
     private void initRequireUrl() {
-//        return "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/118.933290,32.111416/realtime.json";
         if (!TextUtils.isEmpty(locationCoordinates)) {
-            String mUrl = "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/" + locationCoordinates + "/realtime.json";
-            requestCurrentWeather(mUrl);
+            String cUrl = "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/" + locationCoordinates + "/realtime.json";
+            String fUrl = "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/" + locationCoordinates + "/forecast.json";
+            requestCurrentWeather(cUrl);
+            requestFullWeather(fUrl);
             stopSwipe();
         } else {
             Toast.makeText(WeatherActivity.this, "locationCoordinates = null", Toast.LENGTH_SHORT).show();
@@ -207,20 +223,20 @@ public class WeatherActivity extends AppCompatActivity {
         }
     }
 
-    private void requestCurrentWeather(String mUrl) {
+    private void requestFullWeather(String url) {
         startSwipe();
-        if (TextUtils.isEmpty(mUrl)) {
-            Log.d(TAG, "requestCurrentWeather: murl = null");
+        if (TextUtils.isEmpty(url)) {
+            Log.d(TAG, "requestFullWeather: url = null");
             return;
         }
-        HttpUtil.sendOkHttpRequest(mUrl, new Callback() {
+        HttpUtil.sendOkHttpRequest(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(WeatherActivity.this, "load failed", Toast.LENGTH_LONG).show();
+                        Toast.makeText(WeatherActivity.this, "load full weather failed", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -228,8 +244,71 @@ public class WeatherActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String responseText = response.body().string();
-//                Log.d(TAG, "responseText: " + responseText);
-                final WeatherData weatherData = Utility.handleWeatherResponse(responseText);
+                JSONArray[] jsonArrays = Utility.handleDailyWeatherResponse(responseText);
+                if (jsonArrays.length == 3) {
+                    WeatherData[] weatherDatas = new WeatherData[5];
+                    for (int i=0; i<5; i++) {
+                        try {
+                            weatherDatas[i] = new WeatherData();
+                            JSONObject skycon = jsonArrays[0].getJSONObject(i);
+                            JSONObject temperatures = jsonArrays[2].getJSONObject(i);
+                            JSONObject humidity = jsonArrays[1].getJSONObject(i);
+                            weatherDatas[i].setDate(temperatures.getString("date"));
+                            weatherDatas[i].setMaxTemperature(temperatures.getString("max"));
+                            weatherDatas[i].setMinTemperature(temperatures.getString("min"));
+                            weatherDatas[i].setSkycon(skycon.getString("value"));
+                            weatherDatas[i].setHumidity(humidity.getString("max"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.e(TAG, "onResponse: consolve jsonArrays error");
+                        }
+                    }
+                    showDailyWeatherInfo(weatherDatas);
+                }
+            }
+        });
+    }
+
+    private void showDailyWeatherInfo(final WeatherData[] weatherDatas) {
+        if (weatherDatas.length == 5) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i=0; i<5; i++) {
+                        String[] simpleDate = weatherDatas[i].getDate().split("-");
+                        day[i].setDate(simpleDate[1] + '/' + simpleDate[2]);
+                        day[i].setTemperature(String.valueOf((int)Float.parseFloat(weatherDatas[i].getMinTemperature())) + '~' + (int)Float.parseFloat(weatherDatas[i].getMaxTemperature()));
+                        day[i].setIcon(chooseWeatherOnlyIcon(weatherDatas[i].getSkycon(), Float.parseFloat(weatherDatas[i].getHumidity()), HOURLY_MODE));
+                    }
+                    day[0].setDate(getResources().getString(R.string.today));
+                    day[1].setDate(getResources().getString(R.string.tomorrow));
+                }
+            });
+        }
+    }
+
+    private void requestCurrentWeather(String url) {
+        startSwipe();
+        if (TextUtils.isEmpty(url)) {
+            Log.d(TAG, "requestCurrentWeather: url = null");
+            return;
+        }
+        HttpUtil.sendOkHttpRequest(url, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(WeatherActivity.this, "load current weather failed", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String responseText = response.body().string();
+                final WeatherData weatherData = Utility.handleCurrentWeatherResponse(responseText);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -239,7 +318,7 @@ public class WeatherActivity extends AppCompatActivity {
                             editor.putString("weather_now", responseText);
                             editor.putLong("last_update_time", System.currentTimeMillis());
                             editor.apply();
-                            showWeatherInfo(weatherData);
+                            showCurrentWeatherInfo(weatherData);
                         } else {
                             Toast.makeText(WeatherActivity.this, "weatherDate = null", Toast.LENGTH_LONG).show();
                         }
@@ -249,55 +328,23 @@ public class WeatherActivity extends AppCompatActivity {
         });
     }
 
-    private void showWeatherInfo(WeatherData weatherData) {
-        String temperature = weatherData.getTemperature();
+    private void showCurrentWeatherInfo(WeatherData weatherData) {
+        String temperature = String.valueOf((int)Float.parseFloat(weatherData.getTemperature()));
         String skycon = weatherData.getSkycon();
 //        String PM25 = weatherData.getPm25();
 //        String cloudrate = weatherData.getCloudrate();
-//        String humidity = weatherData.getHumidity();
+        float humidity = Float.parseFloat(weatherData.getHumidity());
 //        String aqi = weatherData.getAqi();
         if (position_text.getText().length() == 0) {
             position_text.setText(countyName);
         }
-        skycon_text.setText(skycon);
         temperature_text.setText(temperature);
-        switch (skycon) {
-            case "CLEAR_DAY":
-                skycon_image.setImageResource(R.mipmap.weather_clear);
-                skycon_text.setText("晴");
-                break;
-            case "CLEAR_NIGHT":
-                skycon_image.setImageResource(R.mipmap.weather_clear_night);
-                skycon_text.setText("晴");
-                break;
-            case "PARTLY_CLOUDY_DAY":
-                skycon_image.setImageResource(R.mipmap.weather_few_clouds);
-                skycon_text.setText("多云");
-                break;
-            case "PARTLY_CLOUDY_NIGHT":
-                skycon_image.setImageResource(R.mipmap.weather_few_clouds_night);
-                skycon_text.setText("多云");
-                break;
-            case "CLOUDY":
-                skycon_image.setImageResource(R.mipmap.weather_clouds);
-                skycon_text.setText("阴");
-                break;
-            case "RAIN":
-                skycon_image.setImageResource(R.mipmap.weather_drizzle_day);
-                skycon_text.setText("雨");
-                break;
-            case "SNOW":
-                skycon_image.setImageResource(R.mipmap.weather_snow);
-                skycon_text.setText("雪");
-                break;
-            case "WIND":
-                skycon_image.setImageResource(R.mipmap.weather_wind);
-                skycon_text.setText("多风");
-                break;
-            case "FOG":
-                skycon_image.setImageResource(R.mipmap.weather_fog);
-                skycon_text.setText("雾");
-                break;
+        String weatherString = chooseWeatherIcon(skycon, humidity, MINUTELY_MODE);
+        if (weatherString != null) {
+//            Log.d(TAG, "showCurrentWeatherInfo: weatherString: " + weatherString);
+            String[] ws = weatherString.split("and");
+            skycon_image.setImageResource(Integer.parseInt(ws[0]));
+            skycon_text.setText(ws[1]);
         }
 
         stopSwipe();
@@ -350,5 +397,50 @@ public class WeatherActivity extends AppCompatActivity {
         });
     }
 
+    private String chooseWeatherIcon(String skycon, float precipitation, int mode) {
+        switch (skycon) {
+            case "CLEAR_DAY":
+                return R.mipmap.weather_clear + "and" + "晴";
+            case "CLEAR_NIGHT":
+                return R.mipmap.weather_clear_night + "and" + "晴";
+            case "PARTLY_CLOUDY_DAY":
+                return R.mipmap.weather_few_clouds + "and" + "多云";
+            case "PARTLY_CLOUDY_NIGHT":
+                return R.mipmap.weather_few_clouds_night + "and" + "多云";
+            case "CLOUDY":
+                return R.mipmap.weather_clouds + "and" + "阴";
+            case "RAIN":
+                switch (mode) {
+                    case MINUTELY_MODE:
+                        if (precipitation <= 0.15)
+                            return R.mipmap.weather_drizzle_day + "and" + "小雨";
+                        else if (precipitation <= 0.35)
+                            return R.mipmap.weather_rain_day + "and" + "中雨";
+                        else
+                            return R.mipmap.weather_showers_day + "and" + "大雨";
+                    case HOURLY_MODE:
+                        if (precipitation <= 10)
+                            return R.mipmap.weather_drizzle_day + "and" + "小雨";
+                        else if (precipitation <= 25)
+                            return R.mipmap.weather_rain_day + "and" + "中雨";
+                        else
+                            return R.mipmap.weather_showers_day + "and" + "大雨";
+                }
+            case "SNOW":
+                return R.mipmap.weather_snow + "and" + "雪";
+            case "WIND":
+                return R.mipmap.weather_wind + "and" + "多风";
+            case "FOG":
+                return R.mipmap.weather_fog + "and" + "雾";
+            default:
+                return null;
+        }
+    }
+
+    private int chooseWeatherOnlyIcon(String skycon, float precipitation, int mode) {
+        String response = chooseWeatherIcon(skycon, precipitation, mode);
+        String[] responses = response.split("and");
+        return Integer.parseInt(responses[0]);
+    }
 
 }

@@ -17,15 +17,18 @@ import top.maweihao.weather.R;
 
 /**
  * Created by ma on 17-3-24.
+ * some methods about Baidu web api
  */
 
 public class BaiduApiUtility {
 
-    public static String TAG = "BaiduApiUtility";
+    private static String TAG = "BaiduApiUtility";
 
+
+//    通过坐标查询城市名称，并设置 WeatherActivity 中的 “location” 值
     public static void setCountyByCoordinate(String coordinate) {
         final String[] county = new String[1];
-        String url = null;
+        String url;
         if (!TextUtils.isEmpty(coordinate)) {
             String[] part = coordinate.split(",");
             String reverseCoordinate = part[1] + ',' + part[0];
@@ -51,13 +54,15 @@ public class BaiduApiUtility {
                     county[0] = addressComponent.getString("district");
                     Log.d(TAG, "onResponse: countyName: " + county[0]);
                     final Activity currentActivity = Utility.getCurrentActivity();
-                    currentActivity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            TextView position_text = (TextView) currentActivity.findViewById(R.id.position_text);
-                            position_text.setText(county[0]);
-                        }
-                    });
+                    if (currentActivity != null && currentActivity.getLocalClassName().equals("WeatherActivity")) {
+                        currentActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                TextView position_text = (TextView) currentActivity.findViewById(R.id.position_text);
+                                position_text.setText(county[0]);
+                            }
+                        });
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
