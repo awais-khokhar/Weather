@@ -3,17 +3,17 @@ package top.maweihao.weather;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -50,15 +50,18 @@ public class WeatherActivity extends AppCompatActivity {
     private SwipeRefreshLayout swipeRefreshLayout;
     private DrawerLayout drawerLayout;
     private String locationCoordinates;
-//    private String location;
 
     private TextView position_text;
     private ImageView skycon_image;
     private TextView temperature_text;
     private TextView skycon_text;
 
-    private perDayWeatherView[] day = new perDayWeatherView[5];
+    private TextView aqi_text;
+    private TextView hum_text;
+    private TextView sunrise_text;
+    private TextView sunset_text;
 
+    private perDayWeatherView[] day = new perDayWeatherView[5];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,10 +79,20 @@ public class WeatherActivity extends AppCompatActivity {
         day[3] = (perDayWeatherView) findViewById(R.id.daily_weather_3);
         day[4] = (perDayWeatherView) findViewById(R.id.daily_weather_4);
 
+        aqi_text = (TextView) findViewById(R.id.aqi);
+        hum_text = (TextView) findViewById(R.id.humidity);
+        sunrise_text = (TextView) findViewById(R.id.sunrise);
+        sunset_text = (TextView) findViewById(R.id.sunset);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
+        ActionBar actionbar = getSupportActionBar();
+        if (actionbar != null) {
+            actionbar.setDisplayHomeAsUpEnabled(true);
+            actionbar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
+        }
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
@@ -105,6 +118,17 @@ public class WeatherActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                drawerLayout.openDrawer(GravityCompat.START);
+                break;
+            default:
+        }
+        return true;
     }
 
     @Override
@@ -204,12 +228,6 @@ public class WeatherActivity extends AppCompatActivity {
         }
     }
 
-    private void startSwipe() {
-        if (!swipeRefreshLayout.isRefreshing()) {
-            swipeRefreshLayout.setRefreshing(true);
-        }
-    }
-
     private void initRequireUrl() {
         if (!TextUtils.isEmpty(locationCoordinates)) {
             String cUrl = "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/" + locationCoordinates + "/realtime.json";
@@ -245,19 +263,24 @@ public class WeatherActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 final String responseText = response.body().string();
                 JSONArray[] jsonArrays = Utility.handleDailyWeatherResponse(responseText);
-                if (jsonArrays.length == 3) {
-                    WeatherData[] weatherDatas = new WeatherData[5];
+                if (jsonArrays.length == 5) {
+                    extendWeatherData[] weatherDatas = new extendWeatherData[5];
                     for (int i=0; i<5; i++) {
                         try {
-                            weatherDatas[i] = new WeatherData();
+                            weatherDatas[i] = new extendWeatherData();
                             JSONObject skycon = jsonArrays[0].getJSONObject(i);
                             JSONObject temperatures = jsonArrays[2].getJSONObject(i);
                             JSONObject humidity = jsonArrays[1].getJSONObject(i);
+                            JSONObject precipitation = jsonArrays[3].getJSONObject(i);
+                            JSONObject astro = jsonArrays[4].getJSONObject(i);
                             weatherDatas[i].setDate(temperatures.getString("date"));
                             weatherDatas[i].setMaxTemperature(temperatures.getString("max"));
                             weatherDatas[i].setMinTemperature(temperatures.getString("min"));
                             weatherDatas[i].setSkycon(skycon.getString("value"));
                             weatherDatas[i].setHumidity(humidity.getString("max"));
+                            weatherDatas[i].setIntensity(precipitation.getString("max"));
+                            weatherDatas[i].setSunriseTime(astro.getJSONObject("sunrise").getString("time"));
+                            weatherDatas[i].setSunsetTime(astro.getJSONObject("sunset").getString("time"));
                         } catch (JSONException e) {
                             e.printStackTrace();
                             Log.e(TAG, "onResponse: consolve jsonArrays error");
@@ -269,7 +292,7 @@ public class WeatherActivity extends AppCompatActivity {
         });
     }
 
-    private void showDailyWeatherInfo(final WeatherData[] weatherDatas) {
+    private void showDailyWeatherInfo(final extendWeatherData[] weatherDatas) {
         if (weatherDatas.length == 5) {
             runOnUiThread(new Runnable() {
                 @Override
@@ -277,11 +300,14 @@ public class WeatherActivity extends AppCompatActivity {
                     for (int i=0; i<5; i++) {
                         String[] simpleDate = weatherDatas[i].getDate().split("-");
                         day[i].setDate(simpleDate[1] + '/' + simpleDate[2]);
-                        day[i].setTemperature(String.valueOf((int)Float.parseFloat(weatherDatas[i].getMinTemperature())) + '~' + (int)Float.parseFloat(weatherDatas[i].getMaxTemperature()));
-                        day[i].setIcon(chooseWeatherOnlyIcon(weatherDatas[i].getSkycon(), Float.parseFloat(weatherDatas[i].getHumidity()), HOURLY_MODE));
+                        day[i].setTemperature(Utility.roundString(weatherDatas[i].getMinTemperature()) + '~'
+                                + Utility.roundString(weatherDatas[i].getMaxTemperature()) + "ºC");
+                        day[i].setIcon(chooseWeatherIconOnly(weatherDatas[i].getSkycon(), Float.parseFloat(weatherDatas[i].getIntensity()), HOURLY_MODE));
                     }
                     day[0].setDate(getResources().getString(R.string.today));
                     day[1].setDate(getResources().getString(R.string.tomorrow));
+                    sunrise_text.setText(weatherDatas[0].getSunriseTime());
+                    sunset_text.setText(weatherDatas[0].getSunsetTime());
                 }
             });
         }
@@ -313,11 +339,11 @@ public class WeatherActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         if (weatherData != null) {
-                            SharedPreferences.Editor editor = PreferenceManager
-                                    .getDefaultSharedPreferences(WeatherActivity.this).edit();
-                            editor.putString("weather_now", responseText);
-                            editor.putLong("last_update_time", System.currentTimeMillis());
-                            editor.apply();
+//                            SharedPreferences.Editor editor = PreferenceManager
+//                                    .getDefaultSharedPreferences(WeatherActivity.this).edit();
+//                            editor.putString("weather_now", responseText);
+//                            editor.putLong("last_update_time", System.currentTimeMillis());
+//                            editor.apply();
                             showCurrentWeatherInfo(weatherData);
                         } else {
                             Toast.makeText(WeatherActivity.this, "weatherDate = null", Toast.LENGTH_LONG).show();
@@ -329,17 +355,20 @@ public class WeatherActivity extends AppCompatActivity {
     }
 
     private void showCurrentWeatherInfo(WeatherData weatherData) {
-        String temperature = String.valueOf((int)Float.parseFloat(weatherData.getTemperature()));
+        String temperature = Utility.roundString(weatherData.getTemperature());
         String skycon = weatherData.getSkycon();
+        String humidity = weatherData.getHumidity();
 //        String PM25 = weatherData.getPm25();
 //        String cloudrate = weatherData.getCloudrate();
-        float humidity = Float.parseFloat(weatherData.getHumidity());
-//        String aqi = weatherData.getAqi();
+        float intensity = Float.parseFloat(weatherData.getIntensity());
+        String aqi = weatherData.getAqi();
         if (position_text.getText().length() == 0) {
             position_text.setText(countyName);
         }
         temperature_text.setText(temperature);
-        String weatherString = chooseWeatherIcon(skycon, humidity, MINUTELY_MODE);
+        aqi_text.setText(aqi);
+        hum_text.setText(humidity.substring(2) + "%");
+        String weatherString = chooseWeatherIcon(skycon, intensity, MINUTELY_MODE);
         if (weatherString != null) {
 //            Log.d(TAG, "showCurrentWeatherInfo: weatherString: " + weatherString);
             String[] ws = weatherString.split("and");
@@ -348,12 +377,6 @@ public class WeatherActivity extends AppCompatActivity {
         }
 
         stopSwipe();
-    }
-
-    private void stopSwipe() {
-        if (swipeRefreshLayout.isRefreshing()) {
-            swipeRefreshLayout.setRefreshing(false);
-        }
     }
 
     public void GetCoordinateByIp() {
@@ -397,7 +420,7 @@ public class WeatherActivity extends AppCompatActivity {
         });
     }
 
-    private String chooseWeatherIcon(String skycon, float precipitation, int mode) {
+    private String chooseWeatherIcon(String skycon, float intensity, int mode) {
         switch (skycon) {
             case "CLEAR_DAY":
                 return R.mipmap.weather_clear + "and" + "晴";
@@ -412,16 +435,16 @@ public class WeatherActivity extends AppCompatActivity {
             case "RAIN":
                 switch (mode) {
                     case MINUTELY_MODE:
-                        if (precipitation <= 0.15)
+                        if (intensity <= 0.15)
                             return R.mipmap.weather_drizzle_day + "and" + "小雨";
-                        else if (precipitation <= 0.35)
+                        else if (intensity <= 0.35)
                             return R.mipmap.weather_rain_day + "and" + "中雨";
                         else
                             return R.mipmap.weather_showers_day + "and" + "大雨";
                     case HOURLY_MODE:
-                        if (precipitation <= 10)
+                        if (intensity <= 10)
                             return R.mipmap.weather_drizzle_day + "and" + "小雨";
-                        else if (precipitation <= 25)
+                        else if (intensity <= 25)
                             return R.mipmap.weather_rain_day + "and" + "中雨";
                         else
                             return R.mipmap.weather_showers_day + "and" + "大雨";
@@ -437,10 +460,22 @@ public class WeatherActivity extends AppCompatActivity {
         }
     }
 
-    private int chooseWeatherOnlyIcon(String skycon, float precipitation, int mode) {
-        String response = chooseWeatherIcon(skycon, precipitation, mode);
+    private int chooseWeatherIconOnly(String skycon, float intensity, int mode) {
+        String response = chooseWeatherIcon(skycon, intensity, mode);
         String[] responses = response.split("and");
         return Integer.parseInt(responses[0]);
+    }
+
+    private void startSwipe() {
+        if (!swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(true);
+        }
+    }
+
+    private void stopSwipe() {
+        if (swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 
 }

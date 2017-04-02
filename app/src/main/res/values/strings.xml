@@ -7,4 +7,9 @@
     <string name="weather_icon">weather icon</string>
     <string name="today">Today</string>
     <string name="tomorrow">Tomorrow</string>
+    <string name="aqi">AQI</string>
+    <string name="humidity">Humidity</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="sunset">Sunset</string>
+    <string name="na">N/A</string>
 </resources>

@@ -33,8 +33,13 @@ public class Utility {
         try {
             JSONObject allAttributes = new JSONObject(url);
             String result = allAttributes.getString("result");
+            JSONObject resultJSON = allAttributes.getJSONObject("result");
+            JSONObject precipitationJSON = resultJSON.getJSONObject("precipitation");
+            JSONObject localJSON = precipitationJSON.getJSONObject("local");
+            String intensity = localJSON.getString("intensity");
             Gson gson = new Gson();
             wd = gson.fromJson(result, WeatherData.class);
+            wd.setIntensity(intensity);
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e(TAG, "handleCurrentWeatherResponse: parse weather json error");
@@ -43,7 +48,7 @@ public class Utility {
     }
 
     public static JSONArray[] handleDailyWeatherResponse(String url) {
-        JSONArray[] jsonArrays = new JSONArray[3];
+        JSONArray[] jsonArrays = new JSONArray[5];
         try {
             JSONObject all = new JSONObject(url);
             JSONObject result = all.getJSONObject("result");
@@ -51,9 +56,13 @@ public class Utility {
             JSONArray skycon = daily.getJSONArray("skycon");
             JSONArray humidity = daily.getJSONArray("humidity");
             JSONArray temperature = daily.getJSONArray("temperature");
+            JSONArray precipitation = daily.getJSONArray("precipitation");
+            JSONArray astro = daily.getJSONArray("astro");
             jsonArrays[0] = skycon;
             jsonArrays[1] = humidity;
             jsonArrays[2] = temperature;
+            jsonArrays[3] = precipitation;
+            jsonArrays[4] = astro;
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e(TAG, "handleFewDaysWeatherResponse: parse weather json error");
@@ -126,7 +135,7 @@ public class Utility {
         return false;
     }
 
-    public static Activity getCurrentActivity () {
+    public static Activity getCurrentActivity() {
         try {
             Class activityThreadClass = Class.forName("android.app.ActivityThread");
             Object activityThread = activityThreadClass.getMethod("currentActivityThread").invoke(null);
@@ -156,6 +165,11 @@ public class Utility {
             e.printStackTrace();
         }
         return null;
+    }
+
+
+    public static String roundString(String s) {
+        return String.valueOf(Math.round(Float.parseFloat(s)));
     }
 }
 

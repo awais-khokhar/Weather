@@ -6,38 +6,20 @@ package top.maweihao.weather;
 
 public class WeatherData {
 
-    private String date;
-    private String minTemperature;
-    private String maxTemperature;
     private String temperature;
     private String skycon;
     private String pm25;
     private String cloudrate;
     private String humidity;
     private String aqi;
+    private String intensity;
 
-    public String getDate() {
-        return date;
+    public String getIntensity() {
+        return intensity;
     }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public String getMaxTemperature() {
-        return maxTemperature;
-    }
-
-    public String getMinTemperature() {
-        return minTemperature;
-    }
-
-    public void setMaxTemperature(String maxTemperature) {
-        this.maxTemperature = maxTemperature;
-    }
-
-    public void setMinTemperature(String minTemperature) {
-        this.minTemperature = minTemperature;
+    public void setIntensity(String intensity) {
+        this.intensity = intensity;
     }
 
     public String getTemperature() {

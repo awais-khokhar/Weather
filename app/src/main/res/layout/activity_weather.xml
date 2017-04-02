@@ -16,7 +16,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
-            android:background="#3F51B5"
+            android:background="#7effffff"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
@@ -34,8 +34,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:weightSum="1">
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/position_text"
@@ -65,10 +64,8 @@
                             android:id="@+id/temperature_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="end"
                             android:gravity="end"
-                            android:hint="**"
-                            android:paddingStart="20dp"
+                            android:hint="@string/na"
                             android:textSize="80sp" />
 
                         <TextView
@@ -84,47 +81,14 @@
                         android:id="@+id/skycon_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:hint="*****"
+                        android:hint="@string/na"
                         android:paddingStart="30dp"
                         android:paddingBottom="10dp"
                         android:textSize="30sp" />
 
+                    <include layout="@layout/few_days_content" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="150dp"
-                        android:orientation="horizontal">
-                        <top.maweihao.weather.perDayWeatherView
-                            android:id="@+id/daily_weather_0"
-                            android:layout_height="wrap_content"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"/>
-
-                        <top.maweihao.weather.perDayWeatherView
-                            android:id="@+id/daily_weather_1"
-                            android:layout_height="wrap_content"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"/>
-
-                        <top.maweihao.weather.perDayWeatherView
-                            android:id="@+id/daily_weather_2"
-                            android:layout_height="wrap_content"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"/>
-
-                        <top.maweihao.weather.perDayWeatherView
-                            android:id="@+id/daily_weather_3"
-                            android:layout_height="wrap_content"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"/>
-
-                        <top.maweihao.weather.perDayWeatherView
-                            android:id="@+id/daily_weather_4"
-                            android:layout_height="wrap_content"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"/>
-
-                    </LinearLayout>
+                    <include layout="@layout/more_weather_info" />
 
                 </LinearLayout>
 

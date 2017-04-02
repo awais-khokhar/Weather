@@ -3,5 +3,13 @@
     <string name="app_name">天气</string>
     <string name="location">获取位置...</string>
     <string name="weather_icon">当前天气的图标</string>
-    <string name="today">Today</string>
+    <string name="today">今天</string>
+    <string name="humidity">湿度</string>
+    <string name="tomorrow">明天</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="sunset">Sunset</string>
+    <string name="title_activity_choose_position">选择地区</string>
+    <string name="weather">天气</string>
+    <string name="aqi">天气质量指数</string>
+    <string name="na">N/A</string>
 </resources>
