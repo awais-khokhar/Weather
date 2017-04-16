@@ -19,7 +19,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,7 +51,7 @@ public class WeatherActivity extends AppCompatActivity {
     private String locationCoordinates;
 
     private TextView position_text;
-    private ImageView skycon_image;
+//    private ImageView skycon_image;
     private TextView temperature_text;
     private TextView skycon_text;
 
@@ -69,7 +68,7 @@ public class WeatherActivity extends AppCompatActivity {
         setContentView(R.layout.activity_weather);
 
         position_text = (TextView) findViewById(R.id.position_text);
-        skycon_image = (ImageView) findViewById(R.id.skycon_image);
+//        skycon_image = (ImageView) findViewById(R.id.skycon_image);
         temperature_text = (TextView) findViewById(R.id.temperature_text);
         skycon_text = (TextView) findViewById(R.id.skycon_text);
 
@@ -370,9 +369,8 @@ public class WeatherActivity extends AppCompatActivity {
         hum_text.setText(humidity.substring(2) + "%");
         String weatherString = chooseWeatherIcon(skycon, intensity, MINUTELY_MODE);
         if (weatherString != null) {
-//            Log.d(TAG, "showCurrentWeatherInfo: weatherString: " + weatherString);
             String[] ws = weatherString.split("and");
-            skycon_image.setImageResource(Integer.parseInt(ws[0]));
+//            skycon_image.setImageResource(Integer.parseInt(ws[0]));
             skycon_text.setText(ws[1]);
         }
 
