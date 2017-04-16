@@ -14,6 +14,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
+import top.maweihao.weather.R;
 import top.maweihao.weather.WeatherData;
 import top.maweihao.weather.db.City;
 import top.maweihao.weather.db.County;
@@ -170,6 +171,31 @@ public class Utility {
 
     public static String roundString(String s) {
         return String.valueOf(Math.round(Float.parseFloat(s)));
+    }
+
+    public static int chooseBgImage(String skycon) {
+        switch (skycon) {
+            case "CLEAR_DAY":
+                return R.mipmap.weatherbg_sunshine;
+            case "CLEAR_NIGHT":
+                return R.mipmap.weatherbg_sunshine_night;
+            case "PARTLY_CLOUDY_DAY":
+                return R.mipmap.weatherbg_pcloud;
+            case "PARTLY_CLOUDY_NIGHT":
+                return R.mipmap.weatherbg_pcloud_night;
+            case "CLOUDY":
+                return R.mipmap.weatherbg_cloud;
+            case "RAIN":
+                return R.mipmap.weatherbg_rain;
+            case "SNOW":
+                return R.mipmap.weatherbg_snow;
+            case "WIND":
+                return R.mipmap.weatherbg_wind;
+            case "FOG":
+                return R.mipmap.weatherbg_haze;
+            default:
+                return 0;
+        }
     }
 }
 

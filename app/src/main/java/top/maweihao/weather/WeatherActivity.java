@@ -19,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,9 +46,10 @@ public class WeatherActivity extends AppCompatActivity {
     static final int MINUTELY_MODE = 3;
     static final int HOURLY_MODE = 4;
 
-    String countyName = null;
+    private String countyName = null;
     private SwipeRefreshLayout swipeRefreshLayout;
     private DrawerLayout drawerLayout;
+    private View colorLayout;
     private String locationCoordinates;
 
     private TextView position_text;
@@ -71,6 +73,7 @@ public class WeatherActivity extends AppCompatActivity {
 //        skycon_image = (ImageView) findViewById(R.id.skycon_image);
         temperature_text = (TextView) findViewById(R.id.temperature_text);
         skycon_text = (TextView) findViewById(R.id.skycon_text);
+        colorLayout = findViewById(R.id.head_layout);
 
         day[0] = (perDayWeatherView) findViewById(R.id.daily_weather_0);
         day[1] = (perDayWeatherView) findViewById(R.id.daily_weather_1);
@@ -373,7 +376,7 @@ public class WeatherActivity extends AppCompatActivity {
 //            skycon_image.setImageResource(Integer.parseInt(ws[0]));
             skycon_text.setText(ws[1]);
         }
-
+        colorLayout.setBackgroundResource(Utility.chooseBgImage(skycon));
         stopSwipe();
     }
 
