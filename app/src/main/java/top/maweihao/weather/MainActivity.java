@@ -14,9 +14,9 @@ public class MainActivity extends AppCompatActivity {
 //        setContentView(R.layout.activity_main);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (prefs.getString("refresh_time_interval", null) != null) {
+        if (prefs.getLong("refresh_time_interval", 0) == 0) {
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-            editor.putInt("refresh_time_interval", 60);  //默认刷新间隔分钟数
+            editor.putLong("refresh_time_interval", 60*60*1000);  //默认刷新间隔分钟数
             editor.apply();
         }
 

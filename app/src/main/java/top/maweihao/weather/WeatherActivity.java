@@ -3,14 +3,15 @@ package top.maweihao.weather;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -34,6 +35,8 @@ import okhttp3.Response;
 import top.maweihao.weather.util.BaiduApiUtility;
 import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.Utility;
+
+import static top.maweihao.weather.util.Utility.handleCurrentWeatherResponse;
 
 public class WeatherActivity extends AppCompatActivity {
 
@@ -111,7 +114,9 @@ public class WeatherActivity extends AppCompatActivity {
             }
         });
 
-        beforeRequestWeather(THROUGH_LOCATE);
+//        beforeRequestWeather(THROUGH_LOCATE);
+
+        readCache();
 
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -129,17 +134,6 @@ public class WeatherActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                drawerLayout.openDrawer(GravityCompat.START);
-                break;
-            default:
-        }
-        return true;
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case 1:
@@ -149,6 +143,28 @@ public class WeatherActivity extends AppCompatActivity {
                     Log.d(TAG, "onActivityResult: county_return: " + countyName);
                     beforeRequestWeather(THROUGH_CHOOSE_POSITION);
                 }
+        }
+    }
+
+    private void readCache() {
+        int minInterval = 1;
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String weatherNow = prefs.getString("weather_now", null);
+        long weatherNowLastUpdateTime = prefs.getLong("weather_now_last_update_time", 0);
+        String weatherFull = prefs.getString("weather_full", null);
+        long weatherFullLastUpdateTime = prefs.getLong("weather_full_last_update_time", 0);
+        if (weatherNow != null && System.currentTimeMillis() - weatherNowLastUpdateTime < minInterval*60*1000
+                && weatherFull != null && System.currentTimeMillis() - weatherFullLastUpdateTime < minInterval*60*1000) {
+            Log.d(TAG, "readCache: last nowWeather synced: "
+                    + (System.currentTimeMillis() - weatherNowLastUpdateTime) / 1000 + "s ago");
+            Log.d(TAG, "readCache: last fullWeather synced: "
+                    + (System.currentTimeMillis() - weatherFullLastUpdateTime) / 1000 + "s ago");
+            WeatherData wd = Utility.handleCurrentWeatherResponse(weatherNow);
+            showCurrentWeatherInfo(wd);
+            extendWeatherData[] weatherDatas = handleFullWeatherData(weatherFull);
+            showDailyWeatherInfo(weatherDatas);
+        } else {
+            beforeRequestWeather(THROUGH_LOCATE);
         }
     }
 
@@ -233,7 +249,6 @@ public class WeatherActivity extends AppCompatActivity {
                     }
                 }
             });
-
         }
     }
 
@@ -271,34 +286,45 @@ public class WeatherActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String responseText = response.body().string();
-                JSONArray[] jsonArrays = Utility.handleDailyWeatherResponse(responseText);
-                if (jsonArrays.length == 5) {
-                    extendWeatherData[] weatherDatas = new extendWeatherData[5];
-                    for (int i=0; i<5; i++) {
-                        try {
-                            weatherDatas[i] = new extendWeatherData();
-                            JSONObject skycon = jsonArrays[0].getJSONObject(i);
-                            JSONObject temperatures = jsonArrays[2].getJSONObject(i);
-                            JSONObject humidity = jsonArrays[1].getJSONObject(i);
-                            JSONObject precipitation = jsonArrays[3].getJSONObject(i);
-                            JSONObject astro = jsonArrays[4].getJSONObject(i);
-                            weatherDatas[i].setDate(temperatures.getString("date"));
-                            weatherDatas[i].setMaxTemperature(temperatures.getString("max"));
-                            weatherDatas[i].setMinTemperature(temperatures.getString("min"));
-                            weatherDatas[i].setSkycon(skycon.getString("value"));
-                            weatherDatas[i].setHumidity(humidity.getString("max"));
-                            weatherDatas[i].setIntensity(precipitation.getString("max"));
-                            weatherDatas[i].setSunriseTime(astro.getJSONObject("sunrise").getString("time"));
-                            weatherDatas[i].setSunsetTime(astro.getJSONObject("sunset").getString("time"));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Log.e(TAG, "onResponse: consolve jsonArrays error");
-                        }
-                    }
-                    showDailyWeatherInfo(weatherDatas);
-                }
+                SharedPreferences.Editor editor = PreferenceManager
+                        .getDefaultSharedPreferences(WeatherActivity.this).edit();
+                editor.putString("weather_full", responseText);
+                editor.putLong("weather_full_last_update_time", System.currentTimeMillis());
+                editor.apply();
+
+                extendWeatherData[] weatherDatas = handleFullWeatherData(responseText);
+                showDailyWeatherInfo(weatherDatas);
             }
         });
+    }
+
+    private extendWeatherData[] handleFullWeatherData(String responseText) {
+        extendWeatherData[] weatherDatas = new extendWeatherData[5];
+        JSONArray[] jsonArrays = Utility.handleDailyWeatherResponse(responseText);
+        if (jsonArrays.length == 5) {
+            for (int i = 0; i < 5; i++) {
+                try {
+                    weatherDatas[i] = new extendWeatherData();
+                    JSONObject skycon = jsonArrays[0].getJSONObject(i);
+                    JSONObject temperatures = jsonArrays[2].getJSONObject(i);
+                    JSONObject humidity = jsonArrays[1].getJSONObject(i);
+                    JSONObject precipitation = jsonArrays[3].getJSONObject(i);
+                    JSONObject astro = jsonArrays[4].getJSONObject(i);
+                    weatherDatas[i].setDate(temperatures.getString("date"));
+                    weatherDatas[i].setMaxTemperature(temperatures.getString("max"));
+                    weatherDatas[i].setMinTemperature(temperatures.getString("min"));
+                    weatherDatas[i].setSkycon(skycon.getString("value"));
+                    weatherDatas[i].setHumidity(humidity.getString("max"));
+                    weatherDatas[i].setIntensity(precipitation.getString("max"));
+                    weatherDatas[i].setSunriseTime(astro.getJSONObject("sunrise").getString("time"));
+                    weatherDatas[i].setSunsetTime(astro.getJSONObject("sunset").getString("time"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "handleFullWeatherData: parse jsonArrays error");
+                }
+            }
+        }
+        return weatherDatas;
     }
 
     private void showDailyWeatherInfo(final extendWeatherData[] weatherDatas) {
@@ -343,16 +369,16 @@ public class WeatherActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String responseText = response.body().string();
-                final WeatherData weatherData = Utility.handleCurrentWeatherResponse(responseText);
+                final WeatherData weatherData = handleCurrentWeatherResponse(responseText);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (weatherData != null) {
-//                            SharedPreferences.Editor editor = PreferenceManager
-//                                    .getDefaultSharedPreferences(WeatherActivity.this).edit();
-//                            editor.putString("weather_now", responseText);
-//                            editor.putLong("last_update_time", System.currentTimeMillis());
-//                            editor.apply();
+                            SharedPreferences.Editor editor = PreferenceManager
+                                    .getDefaultSharedPreferences(WeatherActivity.this).edit();
+                            editor.putString("weather_now", responseText);
+                            editor.putLong("weather_now_last_update_time", System.currentTimeMillis());
+                            editor.apply();
                             showCurrentWeatherInfo(weatherData);
                         } else {
                             Toast.makeText(WeatherActivity.this, "weatherDate = null", Toast.LENGTH_LONG).show();
