@@ -17,3 +17,5 @@ First commit.
 优先使用 "LocationManager" 获取位置，增加今明未来五天天气显示    
 *2017/4/2 version 0.2.0*    
 增加天气详情。修复：雨量判断错误    
+*2017/4/18 version 0.2.1*    
+优化界面    

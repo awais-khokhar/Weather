@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
+    android:id="@+id/head_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="300dp">
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/temperature_text"
@@ -14,14 +15,14 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        android:text="27℃"
+        android:text="@string/na"
         android:textSize="64sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintVertical_bias="0.502" />
 
     <TextView
@@ -31,7 +32,7 @@
         android:layout_marginBottom="9dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:text="Cloudy"
+        android:text="@string/na"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/temperature_text"
         app:layout_constraintHorizontal_bias="0.509"
@@ -45,10 +46,10 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="11dp"
-        android:text="TextView"
+        android:text="@string/na"
         android:textSize="20sp"
+        app:layout_constraintHorizontal_bias="0.533"
         app:layout_constraintLeft_toLeftOf="@+id/temperature_text"
         app:layout_constraintRight_toRightOf="@+id/temperature_text"
-        app:layout_constraintTop_toBottomOf="@+id/temperature_text"
-        app:layout_constraintHorizontal_bias="0.533" />
+        app:layout_constraintTop_toBottomOf="@+id/temperature_text" />
 </android.support.constraint.ConstraintLayout>

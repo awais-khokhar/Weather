@@ -14,7 +14,7 @@
         android:layout_marginRight="0dp"
         android:layout_marginTop="8dp"
         android:text="TextView"
-        android:textSize="16sp"
+        android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/per_day_weather_icon"
         app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintLeft_toLeftOf="parent"

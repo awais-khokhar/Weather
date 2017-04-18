@@ -12,4 +12,8 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="WeatherActivityTheme" parent="AppTheme">
+
+    </style>
+
 </resources>

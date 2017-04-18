@@ -12,4 +12,15 @@
     <string name="weather">天气</string>
     <string name="aqi">天气质量指数</string>
     <string name="na">N/A</string>
+
+    <!--各种天气名称-->
+    <string name="CLEAR_DAY">晴</string>
+    <string name="CLEAR_NIGHT">晴</string>
+    <string name="PARTLY_CLOUDY_DAY">多云</string>
+    <string name="PARTLY_CLOUDY_NIGHT">多云</string>
+    <string name="CLOUDY">阴</string>
+    <string name="RAIN">雨</string>
+    <string name="SNOW">雪</string>
+    <string name="WIND">多风</string>
+    <string name="FOG">雾</string>
 </resources>

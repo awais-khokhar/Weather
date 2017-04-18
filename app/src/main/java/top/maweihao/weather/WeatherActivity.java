@@ -13,7 +13,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -49,7 +48,7 @@ public class WeatherActivity extends AppCompatActivity {
     private String countyName = null;
     private SwipeRefreshLayout swipeRefreshLayout;
     private DrawerLayout drawerLayout;
-    private View colorLayout;
+    private View appBar;
     private String locationCoordinates;
 
     private TextView position_text;
@@ -73,7 +72,7 @@ public class WeatherActivity extends AppCompatActivity {
 //        skycon_image = (ImageView) findViewById(R.id.skycon_image);
         temperature_text = (TextView) findViewById(R.id.temperature_text);
         skycon_text = (TextView) findViewById(R.id.skycon_text);
-        colorLayout = findViewById(R.id.head_layout);
+        appBar = findViewById(R.id.app_bar);
 
         day[0] = (perDayWeatherView) findViewById(R.id.daily_weather_0);
         day[1] = (perDayWeatherView) findViewById(R.id.daily_weather_1);
@@ -88,13 +87,20 @@ public class WeatherActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
-        ActionBar actionbar = getSupportActionBar();
-        if (actionbar != null) {
-            actionbar.setDisplayHomeAsUpEnabled(true);
-            actionbar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
-        }
+        final NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerLayout.openDrawer(navView);
+            }
+        });
+//        ActionBar actionbar = getSupportActionBar();
+//        if (actionbar != null) {
+//            actionbar.setDisplayHomeAsUpEnabled(true);
+//            actionbar.setHomeAsUpIndicator(R.drawable.ic_menu_black_24dp);
+//        }
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
@@ -139,7 +145,8 @@ public class WeatherActivity extends AppCompatActivity {
             case 1:
                 if (resultCode == RESULT_OK) {
                     countyName = data.getStringExtra("countyName");
-                    Log.d(TAG, "onActivityResult: county_return == " + countyName);
+                    position_text.setText(countyName);
+                    Log.d(TAG, "onActivityResult: county_return: " + countyName);
                     beforeRequestWeather(THROUGH_CHOOSE_POSITION);
                 }
         }
@@ -376,7 +383,7 @@ public class WeatherActivity extends AppCompatActivity {
 //            skycon_image.setImageResource(Integer.parseInt(ws[0]));
             skycon_text.setText(ws[1]);
         }
-        colorLayout.setBackgroundResource(Utility.chooseBgImage(skycon));
+        appBar.setBackgroundResource(Utility.chooseBgImage(skycon));
         stopSwipe();
     }
 
