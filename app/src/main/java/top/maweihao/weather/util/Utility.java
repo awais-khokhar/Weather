@@ -23,11 +23,12 @@ import top.maweihao.weather.db.Province;
 
 /**
  * Created by ma on 17-3-5.
+ * this is a unity class
  */
 
 public class Utility {
 
-    public static final String TAG = "Utility";
+    private static final String TAG = "Utility";
 
     public static WeatherData handleCurrentWeatherResponse(String url) {
         WeatherData wd = null;
@@ -136,7 +137,7 @@ public class Utility {
         return false;
     }
 
-    public static Activity getCurrentActivity() {
+    static Activity getCurrentActivity() {
         try {
             Class activityThreadClass = Class.forName("android.app.ActivityThread");
             Object activityThread = activityThreadClass.getMethod("currentActivityThread").invoke(null);
@@ -150,19 +151,10 @@ public class Utility {
                 if (!pausedField.getBoolean(activityRecord)) {
                     Field activityField = activityRecordClass.getDeclaredField("activity");
                     activityField.setAccessible(true);
-                    Activity activity = (Activity) activityField.get(activityRecord);
-                    return activity;
+                    return (Activity) activityField.get(activityRecord);
                 }
             }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
         }
         return null;

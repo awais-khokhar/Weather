@@ -18,7 +18,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -93,12 +92,7 @@ public class WeatherActivity extends AppCompatActivity {
         toolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         final NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                drawerLayout.openDrawer(navView);
-            }
-        });
+        toolbar.setNavigationOnClickListener(v -> drawerLayout.openDrawer(navView));
 //        ActionBar actionbar = getSupportActionBar();
 //        if (actionbar != null) {
 //            actionbar.setDisplayHomeAsUpEnabled(true);
@@ -107,28 +101,20 @@ public class WeatherActivity extends AppCompatActivity {
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                beforeRequestWeather(THROUGH_LOCATE);
-            }
-        });
+        swipeRefreshLayout.setOnRefreshListener(() -> beforeRequestWeather(THROUGH_LOCATE));
 
 //        beforeRequestWeather(THROUGH_LOCATE);
 
         readCache();
 
-        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                if (item.getItemId() == R.id.change_position) {
-                    Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
-                    startActivityForResult(intent, 1);
-                    drawerLayout.closeDrawers();
-                    return true;
-                }
-                return false;
+        navView.setNavigationItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.change_position) {
+                Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
+                startActivityForResult(intent, 1);
+                drawerLayout.closeDrawers();
+                return true;
             }
+            return false;
         });
 
     }
@@ -224,12 +210,9 @@ public class WeatherActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Call call, IOException e) {
                     e.printStackTrace();
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Log.e(TAG, "GetCoordinateByChoosePosition: failed");
-                            stopSwipe();
-                        }
+                    runOnUiThread(() -> {
+                        Log.e(TAG, "GetCoordinateByChoosePosition: failed");
+                        stopSwipe();
                     });
                 }
 
@@ -275,12 +258,7 @@ public class WeatherActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(WeatherActivity.this, "load full weather failed", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                runOnUiThread(() -> Toast.makeText(WeatherActivity.this, "load full weather failed", Toast.LENGTH_SHORT).show());
             }
 
             @Override
@@ -329,21 +307,18 @@ public class WeatherActivity extends AppCompatActivity {
 
     private void showDailyWeatherInfo(final extendWeatherData[] weatherDatas) {
         if (weatherDatas.length == 5) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    for (int i=0; i<5; i++) {
-                        String[] simpleDate = weatherDatas[i].getDate().split("-");
-                        day[i].setDate(simpleDate[1] + '/' + simpleDate[2]);
-                        day[i].setTemperature(Utility.roundString(weatherDatas[i].getMinTemperature()) + '~'
-                                + Utility.roundString(weatherDatas[i].getMaxTemperature()) + "ºC");
-                        day[i].setIcon(chooseWeatherIconOnly(weatherDatas[i].getSkycon(), Float.parseFloat(weatherDatas[i].getIntensity()), HOURLY_MODE));
-                    }
-                    day[0].setDate(getResources().getString(R.string.today));
-                    day[1].setDate(getResources().getString(R.string.tomorrow));
-                    sunrise_text.setText(weatherDatas[0].getSunriseTime());
-                    sunset_text.setText(weatherDatas[0].getSunsetTime());
+            runOnUiThread(() -> {
+                for (int i=0; i<5; i++) {
+                    String[] simpleDate = weatherDatas[i].getDate().split("-");
+                    day[i].setDate(simpleDate[1] + '/' + simpleDate[2]);
+                    day[i].setTemperature(Utility.roundString(weatherDatas[i].getMinTemperature()) + '~'
+                            + Utility.roundString(weatherDatas[i].getMaxTemperature()) + "ºC");
+                    day[i].setIcon(chooseWeatherIconOnly(weatherDatas[i].getSkycon(), Float.parseFloat(weatherDatas[i].getIntensity()), HOURLY_MODE));
                 }
+                day[0].setDate(getResources().getString(R.string.today));
+                day[1].setDate(getResources().getString(R.string.tomorrow));
+                sunrise_text.setText(weatherDatas[0].getSunriseTime());
+                sunset_text.setText(weatherDatas[0].getSunsetTime());
             });
         }
     }
@@ -358,31 +333,23 @@ public class WeatherActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(WeatherActivity.this, "load current weather failed", Toast.LENGTH_LONG).show();
-                    }
-                });
+                runOnUiThread(() -> Toast.makeText(WeatherActivity.this, "load current weather failed", Toast.LENGTH_LONG).show());
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String responseText = response.body().string();
                 final WeatherData weatherData = handleCurrentWeatherResponse(responseText);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (weatherData != null) {
-                            SharedPreferences.Editor editor = PreferenceManager
-                                    .getDefaultSharedPreferences(WeatherActivity.this).edit();
-                            editor.putString("weather_now", responseText);
-                            editor.putLong("weather_now_last_update_time", System.currentTimeMillis());
-                            editor.apply();
-                            showCurrentWeatherInfo(weatherData);
-                        } else {
-                            Toast.makeText(WeatherActivity.this, "weatherDate = null", Toast.LENGTH_LONG).show();
-                        }
+                runOnUiThread(() -> {
+                    if (weatherData != null) {
+                        SharedPreferences.Editor editor = PreferenceManager
+                                .getDefaultSharedPreferences(WeatherActivity.this).edit();
+                        editor.putString("weather_now", responseText);
+                        editor.putLong("weather_now_last_update_time", System.currentTimeMillis());
+                        editor.apply();
+                        showCurrentWeatherInfo(weatherData);
+                    } else {
+                        Toast.makeText(WeatherActivity.this, "weatherDate = null", Toast.LENGTH_LONG).show();
                     }
                 });
             }
@@ -446,12 +413,7 @@ public class WeatherActivity extends AppCompatActivity {
     }
 
     private void AfterGetCoordinate() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                initRequireUrl();
-            }
-        });
+        runOnUiThread(this::initRequireUrl);
     }
 
     private String chooseWeatherIcon(String skycon, float intensity, int mode) {
@@ -496,6 +458,7 @@ public class WeatherActivity extends AppCompatActivity {
 
     private int chooseWeatherIconOnly(String skycon, float intensity, int mode) {
         String response = chooseWeatherIcon(skycon, intensity, mode);
+        assert response != null;
         String[] responses = response.split("and");
         return Integer.parseInt(responses[0]);
     }

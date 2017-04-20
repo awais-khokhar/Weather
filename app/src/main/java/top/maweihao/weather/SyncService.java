@@ -21,6 +21,9 @@ public class SyncService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        new Thread(() -> {
+
+        }).start();
         return super.onStartCommand(intent, flags, startId);
     }
 
