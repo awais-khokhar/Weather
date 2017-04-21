@@ -44,27 +44,26 @@ public class WeatherActivity extends AppCompatActivity {
     static final int THROUGH_IP = 0;
     static final int THROUGH_CHOOSE_POSITION = 1;
     static final int THROUGH_LOCATE = 2;
+    static final int THROUGH_COORDINATE = 3;
+    static final int MINUTELY_MODE = 4;
+    static final int HOURLY_MODE = 5;
 
-    static final int MINUTELY_MODE = 3;
-    static final int HOURLY_MODE = 4;
-
+    private boolean isDone = false;
     private String countyName = null;
     private SwipeRefreshLayout swipeRefreshLayout;
     private DrawerLayout drawerLayout;
     private View appBar;
     private String locationCoordinates;
+    private perDayWeatherView[] day = new perDayWeatherView[5];
 
     private TextView position_text;
-//    private ImageView skycon_image;
+    //    private ImageView skycon_image;
     private TextView temperature_text;
     private TextView skycon_text;
-
     private TextView aqi_text;
     private TextView hum_text;
     private TextView sunrise_text;
     private TextView sunset_text;
-
-    private perDayWeatherView[] day = new perDayWeatherView[5];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +71,6 @@ public class WeatherActivity extends AppCompatActivity {
         setContentView(R.layout.activity_weather);
 
         position_text = (TextView) findViewById(R.id.position_text);
-//        skycon_image = (ImageView) findViewById(R.id.skycon_image);
         temperature_text = (TextView) findViewById(R.id.temperature_text);
         skycon_text = (TextView) findViewById(R.id.skycon_text);
         appBar = findViewById(R.id.app_bar);
@@ -109,8 +107,6 @@ public class WeatherActivity extends AppCompatActivity {
             }
         }));
 
-        readCache();
-
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -131,6 +127,7 @@ public class WeatherActivity extends AppCompatActivity {
             }
         });
 
+        readCache();
     }
 
     @Override
@@ -141,6 +138,11 @@ public class WeatherActivity extends AppCompatActivity {
                     countyName = data.getStringExtra("countyName");
                     position_text.setText(countyName);
                     Log.d(TAG, "onActivityResult: county_return: " + countyName);
+                    SharedPreferences.Editor editor = PreferenceManager
+                            .getDefaultSharedPreferences(WeatherActivity.this).edit();
+                    editor.putString("countyName", countyName);
+                    editor.putLong("countyName_last_update_time", System.currentTimeMillis());
+                    editor.apply();
                     beforeRequestWeather(THROUGH_CHOOSE_POSITION);
                 }
         }
@@ -153,8 +155,8 @@ public class WeatherActivity extends AppCompatActivity {
         long weatherNowLastUpdateTime = prefs.getLong("weather_now_last_update_time", 0);
         String weatherFull = prefs.getString("weather_full", null);
         long weatherFullLastUpdateTime = prefs.getLong("weather_full_last_update_time", 0);
-        if (weatherNow != null && System.currentTimeMillis() - weatherNowLastUpdateTime < minInterval*60*1000
-                && weatherFull != null && System.currentTimeMillis() - weatherFullLastUpdateTime < minInterval*60*1000) {
+        if (weatherNow != null && System.currentTimeMillis() - weatherNowLastUpdateTime < minInterval * 60 * 1000
+                && weatherFull != null && System.currentTimeMillis() - weatherFullLastUpdateTime < minInterval * 60 * 1000) {
             Log.d(TAG, "readCache: last nowWeather synced: "
                     + (System.currentTimeMillis() - weatherNowLastUpdateTime) / 1000 + "s ago");
             Log.d(TAG, "readCache: last fullWeather synced: "
@@ -180,6 +182,11 @@ public class WeatherActivity extends AppCompatActivity {
             case THROUGH_LOCATE:
                 GetCoordinateByLocate();
                 break;
+            case THROUGH_COORDINATE:
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+                locationCoordinates = prefs.getString("coordinate", null);
+                initRequireUrl();
+                break;
         }
     }
 
@@ -187,12 +194,25 @@ public class WeatherActivity extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+        } else {
+            locate();
         }
+    }
+
+    private void locate() {
         LocationManager mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+        }
         Location location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         if (location != null) {
             locationCoordinates = String.valueOf(location.getLongitude()) + ',' + String.valueOf(location.getLatitude());
             Log.d(TAG, "GetCoordinateByLocate: locationCoordinates = " + locationCoordinates);
+            SharedPreferences.Editor editor = PreferenceManager
+                    .getDefaultSharedPreferences(WeatherActivity.this).edit();
+            editor.putString("coordinate", locationCoordinates);
+            editor.putLong("coordinate_last_update", System.currentTimeMillis());
+            editor.apply();
             BaiduApiUtility.setCountyByCoordinate(locationCoordinates);
             AfterGetCoordinate();
         } else {
@@ -206,9 +226,10 @@ public class WeatherActivity extends AppCompatActivity {
         switch (requestCode) {
             case 1:
                 if (grantResults.length > 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    GetCoordinateByLocate();
+                    locate();
                 } else {
-                    Toast.makeText(this, "you have denied the location permission", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "onActivityResult: Locate permission denied, switch to ip mode");
+                    beforeRequestWeather(THROUGH_IP);
                 }
                 break;
             default:
@@ -241,6 +262,11 @@ public class WeatherActivity extends AppCompatActivity {
                         JSONObject JSONresult = res.getJSONObject("result");
                         JSONObject location = JSONresult.getJSONObject("location");
                         locationCoordinates = location.getString("lng") + ',' + location.getString("lat");
+                        SharedPreferences.Editor editor = PreferenceManager
+                                .getDefaultSharedPreferences(WeatherActivity.this).edit();
+                        editor.putString("coordinate", locationCoordinates);
+                        editor.putLong("coordinate_last_update", System.currentTimeMillis());
+                        editor.apply();
                         AfterGetCoordinate();
                     } catch (JSONException e) {
                         Log.e(TAG, "GetCoordinateByChoosePosition: parse json error");
@@ -263,7 +289,6 @@ public class WeatherActivity extends AppCompatActivity {
             editor.apply();
             requestCurrentWeather(cUrl);
             requestFullWeather(fUrl);
-            stopSwipe();
         } else {
             Toast.makeText(WeatherActivity.this, "locationCoordinates = null", Toast.LENGTH_SHORT).show();
             Log.e(TAG, "initRequireUrl: locationCoordinates = null");
@@ -296,7 +321,6 @@ public class WeatherActivity extends AppCompatActivity {
                 editor.putString("weather_full", responseText);
                 editor.putLong("weather_full_last_update_time", System.currentTimeMillis());
                 editor.apply();
-
                 extendWeatherData[] weatherDatas = handleFullWeatherData(responseText);
                 showDailyWeatherInfo(weatherDatas);
             }
@@ -332,26 +356,6 @@ public class WeatherActivity extends AppCompatActivity {
         return weatherDatas;
     }
 
-    private void showDailyWeatherInfo(final extendWeatherData[] weatherDatas) {
-        if (weatherDatas.length == 5) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    for (int i = 0; i < 5; i++) {
-                        String[] simpleDate = weatherDatas[i].getDate().split("-");
-                        day[i].setDate(simpleDate[1] + '/' + simpleDate[2]);
-                        day[i].setTemperature(Utility.roundString(weatherDatas[i].getMinTemperature()) + '~'
-                                + Utility.roundString(weatherDatas[i].getMaxTemperature()) + "ºC");
-                        day[i].setIcon(chooseWeatherIconOnly(weatherDatas[i].getSkycon(), Float.parseFloat(weatherDatas[i].getIntensity()), HOURLY_MODE));
-                    }
-                    day[0].setDate(getResources().getString(R.string.today));
-                    day[1].setDate(getResources().getString(R.string.tomorrow));
-                    sunrise_text.setText(weatherDatas[0].getSunriseTime());
-                    sunset_text.setText(weatherDatas[0].getSunsetTime());
-                }
-            });
-        }
-    }
 
     private void requestCurrentWeather(String url) {
         startSwipe();
@@ -394,6 +398,33 @@ public class WeatherActivity extends AppCompatActivity {
         });
     }
 
+    private void showDailyWeatherInfo(final extendWeatherData[] weatherDatas) {
+        if (weatherDatas.length == 5) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < 5; i++) {
+                        String[] simpleDate = weatherDatas[i].getDate().split("-");
+                        day[i].setDate(simpleDate[1] + '/' + simpleDate[2]);
+                        day[i].setTemperature(Utility.roundString(weatherDatas[i].getMinTemperature()) + '~'
+                                + Utility.roundString(weatherDatas[i].getMaxTemperature()) + "ºC");
+                        day[i].setIcon(chooseWeatherIconOnly(weatherDatas[i].getSkycon(), Float.parseFloat(weatherDatas[i].getIntensity()), HOURLY_MODE));
+                    }
+                    day[0].setDate(getResources().getString(R.string.today));
+                    day[1].setDate(getResources().getString(R.string.tomorrow));
+                    sunrise_text.setText(weatherDatas[0].getSunriseTime());
+                    sunset_text.setText(weatherDatas[0].getSunsetTime());
+                }
+            });
+        }
+        if (isDone) {
+            stopSwipe();
+            isDone = false;
+        } else {
+            isDone = true;
+        }
+    }
+
     private void showCurrentWeatherInfo(WeatherData weatherData) {
         String temperature = Utility.roundString(weatherData.getTemperature());
         String skycon = weatherData.getSkycon();
@@ -415,7 +446,12 @@ public class WeatherActivity extends AppCompatActivity {
             skycon_text.setText(ws[1]);
         }
         appBar.setBackgroundResource(Utility.chooseBgImage(skycon));
-        stopSwipe();
+        if (isDone) {
+            stopSwipe();
+            isDone = false;
+        } else {
+            isDone = true;
+        }
     }
 
     public void GetCoordinateByIp() {
@@ -438,6 +474,11 @@ public class WeatherActivity extends AppCompatActivity {
                     String x = point.getString("x");
                     String y = point.getString("y");
                     locationCoordinates = x + ',' + y;
+                    SharedPreferences.Editor editor = PreferenceManager
+                            .getDefaultSharedPreferences(WeatherActivity.this).edit();
+                    editor.putString("coordinate", locationCoordinates);
+                    editor.putLong("coordinate_last_update", System.currentTimeMillis());
+                    editor.apply();
                     Log.d(TAG, "GetCoordinateByIp: locationCoordinates = " + locationCoordinates);
                 } catch (JSONException e) {
                     e.printStackTrace();
