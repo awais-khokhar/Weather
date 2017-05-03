@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/appearance_setting">
+
+        <ListPreference
+            android:dialogTitle="@string/temperature"
+            android:entries="@array/temperature"
+            android:entryValues="@array/temperature_value"
+            android:key="isCelsius"
+            android:summary="which degree?"
+            android:defaultValue="@string/temperature_default"
+            android:title="@string/temperature" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/location_setting">
+
+        <SwitchPreference
+            android:id="@+id/auto_locate_sp"
+            android:defaultValue="true"
+            android:key="auto_locate"
+            android:title="@string/auto_locate" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/notification_setting">
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="notification"
+            android:summary="@string/notification_summary"
+            android:title="Weather Notifications" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/about_setting">
+        <Preference android:title="@string/about_setting"></Preference>
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

@@ -15,15 +15,37 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
+    <string-array name="temperature">
+        <item>Celsius degree</item>
+        <item>Fahrenheit degree</item>
+    </string-array>
+
+    <string-array name="temperature_value">
+        <item>celsius</item>
+        <item>fahrenheit</item>
+    </string-array>
+
+    <string name="temperature_default">Celsius degree</string>
+
+    <string name="auto_locate">Auto Locate</string>
 
     <!--各种天气名称-->
     <string name="CLEAR_DAY">Sunny</string>
     <string name="CLEAR_NIGHT">Sunny</string>
-    <string name="PARTLY_CLOUDY_DAY">Cloudy</string>
-    <string name="PARTLY_CLOUDY_NIGHT">Cloudy</string>
-    <string name="CLOUDY">阴</string>
+    <string name="PARTLY_CLOUDY_DAY">Partly Cloudy</string>
+    <string name="PARTLY_CLOUDY_NIGHT">Party Cloudy</string>
+    <string name="CLOUDY">Cloudy</string>
     <string name="RAIN">Rain</string>
     <string name="SNOW">Snow</string>
     <string name="WIND">Wind</string>
     <string name="FOG">Fog</string>
+    <string name="appearance_setting">Appearance</string>
+    <string name="temperature">Temperature</string>
+    <string name="notification_setting">Notification</string>
+    <string name="notification_summary">you will receive weather related notifications</string>
+    <string name="location_setting">Location</string>
+    <string name="about_setting">About</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

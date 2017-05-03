@@ -122,6 +122,11 @@ public class WeatherActivity extends AppCompatActivity {
                         Toast.makeText(WeatherActivity.this, "weather started", Toast.LENGTH_SHORT).show();
                         drawerLayout.closeDrawers();
                         return true;
+                    case R.id.setting:
+                        Intent in = new Intent(WeatherActivity.this, SettingActivity.class);
+                        startActivity(in);
+                        drawerLayout.closeDrawers();
+                        return true;
                 }
                 return false;
             }

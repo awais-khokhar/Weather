@@ -6,11 +6,11 @@
     <string name="today">今天</string>
     <string name="humidity">湿度</string>
     <string name="tomorrow">明天</string>
-    <string name="sunrise">Sunrise</string>
-    <string name="sunset">Sunset</string>
+    <string name="sunrise">日出</string>
+    <string name="sunset">日落</string>
     <string name="title_activity_choose_position">选择地区</string>
     <string name="weather">天气</string>
-    <string name="aqi">天气质量指数</string>
+    <string name="aqi">天气指数</string>
     <string name="na">N/A</string>
 
     <!--各种天气名称-->
@@ -23,4 +23,12 @@
     <string name="SNOW">雪</string>
     <string name="WIND">多风</string>
     <string name="FOG">雾</string>
+    <string name="appearance_setting">外观</string>
+    <string name="temperature">气温</string>
+    <string name="notification_setting">通知</string>
+    <string name="notification_summary">您将收到天气相关的通知</string>
+    <string name="location_setting">地区</string>
+    <string name="about_setting">关于</string>
+    <string name="auto_locate">自动定位</string>
+    <string name="temperature_default">摄氏度</string>
 </resources>
