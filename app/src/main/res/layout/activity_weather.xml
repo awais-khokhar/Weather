@@ -53,18 +53,17 @@
 
             <android.support.v4.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fitsSystemWindows="true"
+
                     android:orientation="vertical">
 
                     <include layout="@layout/few_days_content" />
 
                     <include layout="@layout/more_weather_info" />
-
                 </LinearLayout>
 
             </android.support.v4.widget.NestedScrollView>
