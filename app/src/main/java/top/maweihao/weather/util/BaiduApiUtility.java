@@ -26,6 +26,7 @@ public class BaiduApiUtility {
 
 
 //    通过坐标查询城市名称，并设置 WeatherActivity 中的 “location” 值
+//    停用！
     public static void setCountyByCoordinate(String coordinate) {
         final String[] county = new String[1];
         String url;

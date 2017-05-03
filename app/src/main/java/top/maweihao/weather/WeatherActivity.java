@@ -32,7 +32,6 @@ import java.io.IOException;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
-import top.maweihao.weather.util.BaiduApiUtility;
 import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.Utility;
 
@@ -64,6 +63,8 @@ public class WeatherActivity extends AppCompatActivity {
     private TextView hum_text;
     private TextView sunrise_text;
     private TextView sunset_text;
+
+    private Boolean autoLocate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,7 +133,15 @@ public class WeatherActivity extends AppCompatActivity {
             }
         });
 
+        loadPreferences();
+
         readCache();
+    }
+
+    private void loadPreferences() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        autoLocate = prefs.getBoolean("auto_locate", true);
+        countyName = prefs.getString("countyName", null);
     }
 
     @Override
@@ -171,7 +180,7 @@ public class WeatherActivity extends AppCompatActivity {
             extendWeatherData[] weatherDatas = handleFullWeatherData(weatherFull);
             showDailyWeatherInfo(weatherDatas);
         } else {
-            beforeRequestWeather(THROUGH_LOCATE);
+            beforeRequestWeather(autoLocate ? THROUGH_LOCATE : THROUGH_CHOOSE_POSITION);
         }
     }
 
@@ -218,12 +227,56 @@ public class WeatherActivity extends AppCompatActivity {
             editor.putString("coordinate", locationCoordinates);
             editor.putLong("coordinate_last_update", System.currentTimeMillis());
             editor.apply();
-            BaiduApiUtility.setCountyByCoordinate(locationCoordinates);
+            setCountyByCoordinate(locationCoordinates);
             AfterGetCoordinate();
         } else {
             Log.d(TAG, "requestLocation: location == null, switch to IP method");
             GetCoordinateByIp();
         }
+    }
+
+    private void setCountyByCoordinate(String coordinate) {
+        String url;
+        if (!TextUtils.isEmpty(coordinate)) {
+            String[] part = coordinate.split(",");
+            String reverseCoordinate = part[1] + ',' + part[0];
+            Log.d(TAG, "WeatherActivity: reverseCoordinate: " + reverseCoordinate);
+            url = "http://api.map.baidu.com/geocoder/v2/?location=" + reverseCoordinate + "&output=json&pois=1&ak=eTTiuvV4YisaBbLwvj4p8drl7BGfl1eo";
+        } else {
+            Log.e(TAG, "WeatherActivity::setCountyByCoordinate: coordinate == null");
+            return;
+        }
+        HttpUtil.sendOkHttpRequest(url, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String responseText = response.body().string();
+                try {
+                    JSONObject text = new JSONObject(responseText);
+                    JSONObject result = text.getJSONObject("result");
+                    JSONObject addressComponent = result.getJSONObject("addressComponent");
+                    countyName = addressComponent.getString("district");
+                    Log.d(TAG, "setCountyByCoordinate.onResponse: countyName: " + countyName);
+                    SharedPreferences.Editor editor = PreferenceManager
+                            .getDefaultSharedPreferences(WeatherActivity.this).edit();
+                    editor.putString("countyName", countyName);
+                    editor.putLong("countyName_last_update_time", System.currentTimeMillis());
+                    editor.apply();
+                    runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                position_text.setText(countyName);
+                            }
+                        });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
@@ -244,7 +297,12 @@ public class WeatherActivity extends AppCompatActivity {
     private void GetCoordinateByChoosePosition() {
         if (TextUtils.isEmpty(countyName)) {
             Log.e(TAG, "GetCoordinateByChoosePosition: choosed countyName == null");
+            Toast.makeText(WeatherActivity.this, getResources().getString(R.string.choose_your_position),
+                    Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
+            startActivityForResult(intent, 1);
         } else {
+            position_text.setText(countyName);
             String url = "http://api.map.baidu.com/geocoder/v2/?output=json&address=%" + countyName + "&ak=eTTiuvV4YisaBbLwvj4p8drl7BGfl1eo";
             HttpUtil.sendOkHttpRequest(url, new Callback() {
                 @Override
@@ -419,14 +477,14 @@ public class WeatherActivity extends AppCompatActivity {
                     day[1].setDate(getResources().getString(R.string.tomorrow));
                     sunrise_text.setText(weatherDatas[0].getSunriseTime());
                     sunset_text.setText(weatherDatas[0].getSunsetTime());
+                    if (isDone) {
+                        stopSwipe();
+                        isDone = false;
+                    } else {
+                        isDone = true;
+                    }
                 }
             });
-        }
-        if (isDone) {
-            stopSwipe();
-            isDone = false;
-        } else {
-            isDone = true;
         }
     }
 

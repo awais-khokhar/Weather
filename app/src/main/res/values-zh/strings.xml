@@ -31,4 +31,5 @@
     <string name="about_setting">关于</string>
     <string name="auto_locate">自动定位</string>
     <string name="temperature_default">摄氏度</string>
+    <string name="choose_your_position">选择您的地区</string>
 </resources>
