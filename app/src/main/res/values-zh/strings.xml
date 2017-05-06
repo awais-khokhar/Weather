@@ -30,8 +30,8 @@
     <string name="location_setting">地区</string>
     <string name="about_setting">关于</string>
     <string name="auto_locate">自动定位</string>
-    <string name="temperature_default">摄氏度</string>
     <string name="choose_your_position">选择您的地区</string>
     <string name="current_version">当前版本</string>
-    <string name="data_resources" >分钟降雨预报由中国气象局和彩云数据联合出品</string>
+    <string name="data_resources">天气数据由中国气象局和彩云数据联合出品</string>
+    <string name="title_activity_settings">设置</string>
 </resources>

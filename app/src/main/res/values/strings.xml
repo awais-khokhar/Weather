@@ -2,7 +2,7 @@
     <string name="app_name">Weather</string>
     <string name="weather">Weather</string>
     <string name="title_activity_choose_position">ChoosePosition</string>
-    <string name="temperature_sign">℃</string>
+    <string name="temperature_sign" translatable="false">℃</string>
     <string name="location">Location</string>
     <string name="weather_icon">weather icon</string>
     <string name="today">Today</string>
@@ -26,7 +26,7 @@
         <item>fahrenheit</item>
     </string-array>
 
-    <string name="temperature_default">Celsius degree</string>
+    <string name="temperature_default" translatable="false">celsius</string>
 
     <string name="auto_locate">Auto Locate</string>
 

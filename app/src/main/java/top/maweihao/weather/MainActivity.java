@@ -12,7 +12,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_main);
-
+        PreferenceManager.setDefaultValues(this, R.xml.settingpreference, false);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (prefs.getLong("refresh_time_interval", 0) == 0) {
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();

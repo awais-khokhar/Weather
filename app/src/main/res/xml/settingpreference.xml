@@ -34,11 +34,10 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/about_setting">
-        <Preference android:title="@string/about_setting">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:targetPackage="top.maweihao.weather"
-                android:targetClass="top.maweihao.weather.AboutActivity"/>
+        <Preference
+            android:title="@string/about_setting"
+            android:key="about">
+
         </Preference>
     </PreferenceCategory>
 
