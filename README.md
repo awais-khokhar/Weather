@@ -1,30 +1,30 @@
-# MyFirstWeatherApp
+# Weather
 my first android weather app, just for learn.    
-*** ##更新日志## ***    
-*2017/3/4 verison 0.0.0*  
+**更新日志**    
+*2017/3/4verison 0.0.0:1*  
 First commit.  
-*2017/3/5 version 0.0.1*    
+*2017/3/5 version 0.0.1:2*    
 使用 DrawerLayout，创建地区数据库和表的各项配置。  
-*2017/3/5 version 0.0.2*    
+*2017/3/5 version 0.0.2:3*    
 将天气显示活动转到 'WeatherActivity' 中，一些方法分离至工具类中；增加主界面显示的天气信息。    
-*2017/3/7 version 0.0.3*    
+*2017/3/7 version 0.0.3:4*    
 增加下拉刷新，通过 ip 判别大致位置坐标（使用百度 webapi ）    
-*2017/3/8 version 0.0.4*    
+*2017/3/8 version 0.0.4:5*    
 完成遍历省市县三省的功能    
-*2017/3/9 version 0.1.0*    
+*2017/3/9 version 0.1.0:6*    
 完成基础的界面，增加中文天气状况    
-*2017/3/28 version 0.1.1*    
+*2017/3/28 version 0.1.1:7*    
 优先使用 "LocationManager" 获取位置，增加今明未来五天天气显示    
-*2017/4/2 version 0.2.0*    
+*2017/4/2 version 0.2.0:8*    
 增加天气详情。修复：雨量判断错误    
-*2017/4/18 version 0.2.1*    
+*2017/4/18 version 0.2.1:9*    
 优化界面    
-*2017/4/18 version 0.2.2*    
+*2017/4/18 version 0.2.2:10*    
 增加最小刷新间隔    
-*2017/4/20 version 0.2.3*    
+*2017/4/20 version 0.2.3:11*    
 后台获取天气后发送通知    
-*2017/5/3 version 0.3.0*    
+*2017/5/3 version 0.3.0:12*    
 修复：refresh 环指示错误；权限请求逻辑错误；几率闪退 bug, 增加“设置”    
-*2017/5/6 version 0.3.1*
+*2017/5/6 version 0.3.1:13*    
 修复若干问题，完成设置     
 

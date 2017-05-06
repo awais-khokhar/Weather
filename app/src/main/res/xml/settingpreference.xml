@@ -43,6 +43,10 @@
             android:key="about">
 
         </Preference>
+
+        <Preference
+            android:title="@string/feedback"
+            android:key="feedback"></Preference>
     </PreferenceCategory>
 
 

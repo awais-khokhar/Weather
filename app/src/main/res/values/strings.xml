@@ -33,6 +33,10 @@
 
     <string name="auto_locate">Auto Locate</string>
 
+    <string name="feedback">Feedback</string>
+
+    <string name="selected_county">"selected county: "</string>
+
     <!--各种天气名称-->
     <string name="CLEAR_DAY">Sunny</string>
     <string name="CLEAR_NIGHT">Sunny</string>

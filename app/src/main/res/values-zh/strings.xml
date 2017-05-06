@@ -44,5 +44,7 @@
         <item>摄氏度</item>
         <item>华氏度</item>
     </string-array>
+    <string name="feedback">反馈</string>
+    <string name="selected_county">"当前选择： "</string>
 
 </resources>
