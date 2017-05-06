@@ -34,4 +34,6 @@
     <string name="current_version">当前版本</string>
     <string name="data_resources">天气数据由中国气象局和彩云数据联合出品</string>
     <string name="title_activity_settings">设置</string>
+    <string name="choose_position">Choose Position</string>
+    <string name="setting">Setting</string>
 </resources>

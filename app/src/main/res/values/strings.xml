@@ -14,6 +14,8 @@
     <string name="na">N/A</string>
     <string name="title_activity_settings">Settings</string>
     <string name="choose_your_position">Choose your position</string>
+    <string name="permission_denied">You denied the permission</string>
+    <string name="access_network_failed">Network problem, please connect to internet and refresh</string>
 
     <!-- Strings related to Settings -->
     <string-array name="temperature">
@@ -51,4 +53,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="current_version">Current Version</string>
     <string name="data_resources">The weather data from \nChina meteorological administration \nand Colorful Clouds</string>
+    <string name="choose_position">Choose Position</string>
+    <string name="setting">Setting</string>
 </resources>

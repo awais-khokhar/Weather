@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:checkableBehavior="single">
-        <item
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
             android:id="@+id/change_position"
-            android:title="Change Position"
-            android:icon="@mipmap/ic_my_location_black_24dp"/>
+        android:title="@string/choose_position"
+        android:icon="@mipmap/ic_my_location_black_24dp"
+        app:showAsAction="never" />
         <item
             android:id="@+id/start_service"
-            android:title="Start Service" />
+            android:title="Start Service"
+            app:showAsAction="never" />
         <item
             android:id="@+id/setting"
-            android:title="Setting"
-            android:icon="@drawable/ic_settings_black_24dp"/>
-    </group>
+            android:title="@string/setting"
+            android:icon="@drawable/ic_settings_black_24dp"
+            app:showAsAction="never" />
 
 </menu>

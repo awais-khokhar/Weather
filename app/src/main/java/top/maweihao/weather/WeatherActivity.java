@@ -10,7 +10,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -18,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -89,15 +89,15 @@ public class WeatherActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        final NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                drawerLayout.openDrawer(navView);
-            }
-        });
+//        toolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
+//        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+//        final NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
+//        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                drawerLayout.openDrawer(navView);
+//            }
+//        });
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
@@ -108,40 +108,61 @@ public class WeatherActivity extends AppCompatActivity {
             }
         }));
 
-        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.change_position:
-                        Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
-                        startActivityForResult(intent, 1);
-                        drawerLayout.closeDrawers();
-                        return true;
-                    case R.id.start_service:
-                        Intent startIntent = new Intent(WeatherActivity.this, SyncService.class);
-                        startService(startIntent);
-                        Toast.makeText(WeatherActivity.this, "weather started", Toast.LENGTH_SHORT).show();
-                        drawerLayout.closeDrawers();
-                        return true;
-                    case R.id.setting:
-                        Intent in = new Intent(WeatherActivity.this, SettingActivity.class);
-                        startActivity(in);
-                        drawerLayout.closeDrawers();
-                        return true;
-                }
-                return false;
-            }
-        });
+//        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+//            @Override
+//            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//                switch (item.getItemId()) {
+//                    case R.id.change_position:
+//                        Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
+//                        startActivityForResult(intent, 1);
+//                        drawerLayout.closeDrawers();
+//                        return true;
+//                    case R.id.start_service:
+//                        Intent startIntent = new Intent(WeatherActivity.this, SyncService.class);
+//                        startService(startIntent);
+//                        Toast.makeText(WeatherActivity.this, "weather started", Toast.LENGTH_SHORT).show();
+//                        drawerLayout.closeDrawers();
+//                        return true;
+//                    case R.id.setting:
+//                        Intent in = new Intent(WeatherActivity.this, SettingActivity.class);
+//                        startActivity(in);
+//                        drawerLayout.closeDrawers();
+//                        return true;
+//                }
+//                return false;
+//            }
+//        });
 
         loadPreferences();
 
         readCache();
     }
 
-    private void loadPreferences() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        autoLocate = prefs.getBoolean("auto_locate", true);
-        countyName = prefs.getString("countyName", null);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.nav_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.change_position:
+                Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
+                startActivityForResult(intent, 1);
+                break;
+            case R.id.start_service:
+                Intent startIntent = new Intent(WeatherActivity.this, SyncService.class);
+                startService(startIntent);
+                Toast.makeText(WeatherActivity.this, "weather started", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.setting:
+                Intent intent1 = new Intent(WeatherActivity.this, SettingActivity.class);
+                startActivity(intent1);
+                break;
+            default:
+        }
+        return true;
     }
 
     @Override
@@ -160,6 +181,12 @@ public class WeatherActivity extends AppCompatActivity {
                     beforeRequestWeather(THROUGH_CHOOSE_POSITION);
                 }
         }
+    }
+
+    private void loadPreferences() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        autoLocate = prefs.getBoolean("auto_locate", true);
+        countyName = prefs.getString("countyName", null);
     }
 
     private void readCache() {
@@ -286,6 +313,7 @@ public class WeatherActivity extends AppCompatActivity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     locate();
                 } else {
+                    Toast.makeText(this, getResources().getString(R.string.permission_denied), Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "onActivityResult: Locate permission denied, switch to ip mode");
                     beforeRequestWeather(THROUGH_IP);
                 }
@@ -522,7 +550,8 @@ public class WeatherActivity extends AppCompatActivity {
         HttpUtil.sendOkHttpRequest(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                Log.e(TAG, "onFailure: fetch locationCoordinates through IP failed");
+                Log.e(TAG, "onFailure: fetch locationCoordinates by IP failed");
+                Toast.makeText(WeatherActivity.this, getResources().getString(R.string.access_network_failed), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -541,6 +570,8 @@ public class WeatherActivity extends AppCompatActivity {
                             .getDefaultSharedPreferences(WeatherActivity.this).edit();
                     editor.putString("coordinate", locationCoordinates);
                     editor.putLong("coordinate_last_update", System.currentTimeMillis());
+                    editor.putString("countyName", countyName);
+                    editor.putLong("countyName_last_update_time", System.currentTimeMillis());
                     editor.apply();
                     Log.d(TAG, "GetCoordinateByIp: locationCoordinates = " + locationCoordinates);
                 } catch (JSONException e) {
