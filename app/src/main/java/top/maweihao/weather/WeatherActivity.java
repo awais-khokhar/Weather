@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -50,7 +49,6 @@ public class WeatherActivity extends AppCompatActivity {
     private boolean isDone = false;
     private String countyName = null;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private DrawerLayout drawerLayout;
     private View appBar;
     private String locationCoordinates;
     private perDayWeatherView[] day = new perDayWeatherView[5];
@@ -89,15 +87,6 @@ public class WeatherActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-//        toolbar.setNavigationIcon(R.drawable.ic_menu_black_24dp);
-//        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        final NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
-//        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                drawerLayout.openDrawer(navView);
-//            }
-//        });
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
@@ -107,31 +96,6 @@ public class WeatherActivity extends AppCompatActivity {
                 beforeRequestWeather(THROUGH_LOCATE);
             }
         }));
-
-//        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-//            @Override
-//            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//                switch (item.getItemId()) {
-//                    case R.id.change_position:
-//                        Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
-//                        startActivityForResult(intent, 1);
-//                        drawerLayout.closeDrawers();
-//                        return true;
-//                    case R.id.start_service:
-//                        Intent startIntent = new Intent(WeatherActivity.this, SyncService.class);
-//                        startService(startIntent);
-//                        Toast.makeText(WeatherActivity.this, "weather started", Toast.LENGTH_SHORT).show();
-//                        drawerLayout.closeDrawers();
-//                        return true;
-//                    case R.id.setting:
-//                        Intent in = new Intent(WeatherActivity.this, SettingActivity.class);
-//                        startActivity(in);
-//                        drawerLayout.closeDrawers();
-//                        return true;
-//                }
-//                return false;
-//            }
-//        });
 
         loadPreferences();
 
@@ -158,7 +122,7 @@ public class WeatherActivity extends AppCompatActivity {
                 break;
             case R.id.setting:
                 Intent intent1 = new Intent(WeatherActivity.this, SettingActivity.class);
-                startActivity(intent1);
+                startActivityForResult(intent1, 2);
                 break;
             default:
         }
@@ -169,6 +133,7 @@ public class WeatherActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case 1:
+            case 2:
                 if (resultCode == RESULT_OK) {
                     countyName = data.getStringExtra("countyName");
                     position_text.setText(countyName);
@@ -177,9 +142,28 @@ public class WeatherActivity extends AppCompatActivity {
                             .getDefaultSharedPreferences(WeatherActivity.this).edit();
                     editor.putString("countyName", countyName);
                     editor.putLong("countyName_last_update_time", System.currentTimeMillis());
+                    editor.putBoolean("auto_locate_sp", false);
                     editor.apply();
                     beforeRequestWeather(THROUGH_CHOOSE_POSITION);
                 }
+                break;
+            default:
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    locate();
+                } else {
+                    Toast.makeText(this, getResources().getString(R.string.permission_denied), Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "onActivityResult: Locate permission denied, switch to ip mode");
+                    beforeRequestWeather(THROUGH_IP);
+                }
+                break;
+            default:
         }
     }
 
@@ -304,22 +288,6 @@ public class WeatherActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 1:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    locate();
-                } else {
-                    Toast.makeText(this, getResources().getString(R.string.permission_denied), Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "onActivityResult: Locate permission denied, switch to ip mode");
-                    beforeRequestWeather(THROUGH_IP);
-                }
-                break;
-            default:
-        }
     }
 
     private void GetCoordinateByChoosePosition() {

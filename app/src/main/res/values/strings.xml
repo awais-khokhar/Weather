@@ -16,6 +16,7 @@
     <string name="choose_your_position">Choose your position</string>
     <string name="permission_denied">You denied the permission</string>
     <string name="access_network_failed">Network problem, please connect to internet and refresh</string>
+    <string name="auto_locate_disabled">Auto locate has been disabled</string>
 
     <!-- Strings related to Settings -->
     <string-array name="temperature">

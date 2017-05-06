@@ -22,6 +22,10 @@
             android:key="auto_locate"
             android:title="@string/auto_locate" />
 
+        <Preference
+            android:title="@string/choose_position"
+            android:key="choose_position" />
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/notification_setting">

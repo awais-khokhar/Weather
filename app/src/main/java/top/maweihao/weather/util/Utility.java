@@ -165,6 +165,16 @@ public class Utility {
         return String.valueOf(Math.round(Float.parseFloat(s)));
     }
 
+    public static int Cel2Fah(int cel) {
+        double fah = cel * 1.8 + 32;
+        return (int) Math.round(fah);
+    }
+
+    public static int Cel2Fah(float cel) {
+        double fah = cel * 1.8 + 32;
+        return (int) Math.round(fah);
+    }
+
     public static int chooseBgImage(String skycon) {
         switch (skycon) {
             case "CLEAR_DAY":

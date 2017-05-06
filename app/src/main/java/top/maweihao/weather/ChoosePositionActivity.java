@@ -46,8 +46,6 @@ public class ChoosePositionActivity extends AppCompatActivity {
 
     private ListView listView;
 
-//    private FloatingActionButton fab;
-
     private ArrayAdapter<String> adapter;
 
     private List<String> dataList = new ArrayList<>();
@@ -74,7 +72,6 @@ public class ChoosePositionActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.posion_list_view);
         adapter = new ArrayAdapter<>(ChoosePositionActivity.this, android.R.layout.simple_list_item_1, dataList);
         listView.setAdapter(adapter);
-//        fab = (FloatingActionButton) findViewById(R.id.fab);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -87,10 +84,10 @@ public class ChoosePositionActivity extends AppCompatActivity {
                 } else if (currentLevel == LEVEL_COUNTY) {
                     String countyName = countyList.get(position).getCountyName();
                     Log.d(TAG, "county name = " + countyName);
-
                     Intent intent = new Intent();
                     intent.putExtra("countyName", countyName);
                     setResult(RESULT_OK, intent);
+                    Toast.makeText(ChoosePositionActivity.this, getResources().getString(R.string.auto_locate_disabled), Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }
