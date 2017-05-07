@@ -12,6 +12,7 @@
     <string name="sunrise">Sunrise</string>
     <string name="sunset">Sunset</string>
     <string name="na">N/A</string>
+    <string name="pm25">"PM2.5: "</string>
     <string name="title_activity_settings">Settings</string>
     <string name="choose_your_position">Choose your position</string>
     <string name="permission_denied">You denied the permission</string>

@@ -23,6 +23,7 @@
         <activity
             android:name=".WeatherActivity"
             android:label="@string/weather"
+            android:launchMode="singleTask"
             android:theme="@style/WeatherActivityTheme" />
         <activity android:name=".ChoosePositionActivity" />
         <activity android:name=".MainActivity">
@@ -48,7 +49,9 @@
         </receiver>
 
         <activity android:name=".SettingActivity" />
-        <activity android:name=".AboutActivity" />
+        <activity
+            android:name=".AboutActivity"
+            android:launchMode="singleTop" />
     </application>
 
 </manifest>

@@ -165,6 +165,10 @@ public class Utility {
         return String.valueOf(Math.round(Float.parseFloat(s)));
     }
 
+    public static int intRoundString(String s) {
+        return Math.round(Float.parseFloat(s));
+    }
+
     public static int Cel2Fah(int cel) {
         double fah = cel * 1.8 + 32;
         return (int) Math.round(fah);

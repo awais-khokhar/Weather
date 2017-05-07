@@ -99,6 +99,15 @@ public class SettingActivity extends PreferenceActivity {
                         }
                     }
                     return true;
+                } else if (preference.getKey().equals("notification")) {
+                    Intent startIntent = new Intent(getActivity(), SyncService.class);
+                    if (stringValue.equals("true")) {
+                        getActivity().startService(startIntent);
+                        Log.d(TAG, "onPreferenceChange: start SyncService");
+                    } else {
+                        getActivity().stopService(startIntent);
+                        Log.d(TAG, "onPreferenceChange: stop SyncService");
+                    }
                 }
                 return false;
             }

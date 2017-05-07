@@ -53,7 +53,8 @@ public class WeatherActivity extends AppCompatActivity {
     private String locationCoordinates;
     private perDayWeatherView[] day = new perDayWeatherView[5];
 
-    private TextView position_text;
+    private Toolbar toolbar;
+    private TextView PM25_tv;
     //    private ImageView skycon_image;
     private TextView temperature_text;
     private TextView skycon_text;
@@ -69,7 +70,7 @@ public class WeatherActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather);
 
-        position_text = (TextView) findViewById(R.id.position_text);
+        PM25_tv = (TextView) findViewById(R.id.pm25_Tv);
         temperature_text = (TextView) findViewById(R.id.temperature_text);
         skycon_text = (TextView) findViewById(R.id.skycon_text);
         appBar = findViewById(R.id.app_bar);
@@ -85,7 +86,7 @@ public class WeatherActivity extends AppCompatActivity {
         sunrise_text = (TextView) findViewById(R.id.sunrise);
         sunset_text = (TextView) findViewById(R.id.sunset);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
@@ -118,7 +119,6 @@ public class WeatherActivity extends AppCompatActivity {
             case R.id.start_service:
                 Intent startIntent = new Intent(WeatherActivity.this, SyncService.class);
                 startService(startIntent);
-                Toast.makeText(WeatherActivity.this, "weather started", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.setting:
                 Intent intent1 = new Intent(WeatherActivity.this, SettingActivity.class);
@@ -136,7 +136,7 @@ public class WeatherActivity extends AppCompatActivity {
             case 2:
                 if (resultCode == RESULT_OK) {
                     countyName = data.getStringExtra("countyName");
-                    position_text.setText(countyName);
+                    toolbar.setTitle(countyName);
                     Log.d(TAG, "onActivityResult: county_return: " + countyName);
                     SharedPreferences.Editor editor = PreferenceManager
                             .getDefaultSharedPreferences(WeatherActivity.this).edit();
@@ -280,7 +280,7 @@ public class WeatherActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                position_text.setText(countyName);
+                                toolbar.setTitle(countyName);
                             }
                         });
                 } catch (JSONException e) {
@@ -298,7 +298,7 @@ public class WeatherActivity extends AppCompatActivity {
             Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
             startActivityForResult(intent, 1);
         } else {
-            position_text.setText(countyName);
+            toolbar.setTitle(countyName);
             String url = "http://api.map.baidu.com/geocoder/v2/?output=json&address=%" + countyName + "&ak=eTTiuvV4YisaBbLwvj4p8drl7BGfl1eo";
             HttpUtil.sendOkHttpRequest(url, new Callback() {
                 @Override
@@ -488,13 +488,16 @@ public class WeatherActivity extends AppCompatActivity {
         String temperature = Utility.roundString(weatherData.getTemperature());
         String skycon = weatherData.getSkycon();
         String humidity = weatherData.getHumidity();
-//        String PM25 = weatherData.getPm25();
+        String PM25 = weatherData.getPm25();
 //        String cloudrate = weatherData.getCloudrate();
         float intensity = Float.parseFloat(weatherData.getIntensity());
         String aqi = weatherData.getAqi();
-        if (position_text.getText().length() == 0) {
-            position_text.setText(countyName);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String countyName = prefs.getString("countyName", null);
+        if (!TextUtils.isEmpty(countyName)) {
+            toolbar.setTitle(countyName);
         }
+        PM25_tv.setText(getResources().getString(R.string.pm25) + PM25);
         temperature_text.setText(temperature);
         aqi_text.setText(aqi);
         hum_text.setText(humidity.substring(2) + "%");

@@ -59,7 +59,7 @@ public class BaiduApiUtility {
                         currentActivity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                TextView position_text = (TextView) currentActivity.findViewById(R.id.position_text);
+                                TextView position_text = (TextView) currentActivity.findViewById(R.id.pm25_Tv);
                                 position_text.setText(county[0]);
                             }
                         });
