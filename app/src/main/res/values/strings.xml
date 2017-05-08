@@ -18,6 +18,18 @@
     <string name="permission_denied">You denied the permission</string>
     <string name="access_network_failed">Network problem, please connect to internet and refresh</string>
     <string name="auto_locate_disabled">Auto locate has been disabled</string>
+    <string name="warmer">warmer</string>
+    <string name="colder">colder</string>
+
+    <string-array name="weekend">
+        <item>Sunday</item>
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+    </string-array>
 
     <!-- Strings related to Settings -->
     <string-array name="temperature">

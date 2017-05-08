@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v7.app.NotificationCompat;
@@ -37,6 +38,7 @@ public class SyncService extends Service {
 
     static final String TAG = "SyncService";
     List<temperature> temList;
+    Boolean isChinese = false;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -48,6 +50,11 @@ public class SyncService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate: SyncService created");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            isChinese = getResources().getConfiguration().getLocales().get(0).getDisplayLanguage().equals("中文");
+        } else {
+            isChinese = getResources().getConfiguration().locale.getDisplayLanguage().equals("zh-CN");
+        }
         //DEBUG ONLY
         Toast.makeText(getApplicationContext(), "weather started", Toast.LENGTH_SHORT).show();
     }
@@ -71,7 +78,6 @@ public class SyncService extends Service {
                     e.printStackTrace();
                 }
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-//                String cUrl = prefs.getString("cUrl", null);
                 String fUrl = prefs.getString("furl", null);
                 if (fUrl != null) {
                     try {
@@ -150,12 +156,20 @@ public class SyncService extends Service {
             int a = Math.abs(maxDiff);
             int b = Math.abs(minDiff);
             if (Math.max(a, b) >= 3) {
-                String tem = (maxDiff > 0 || minDiff > 0) ? "warmer" : "colder";
-                sendNotification(Math.max(a, b) + "° " + tem + " than today",
-                        "Tomorrow: " + tomMin + "° - " + tomMax + "° ");
+                Calendar calendar = new GregorianCalendar();
+                String dayOfWeek = getResources().getStringArray(R.array.weekend)[calendar.get(Calendar.DAY_OF_WEEK)];
+                String tem = (maxDiff > 0 || minDiff > 0) ? getResources().getString(R.string.warmer) : getResources().getString(R.string.colder);
+                if (isChinese) {
+                    sendNotification(dayOfWeek + "将" + tem + ' ' + Math.max(a, b) + "° ",
+                            dayOfWeek + ": " + tomMin + "° - " + tomMax + "° ");
+                } else {
+
+                    sendNotification(Math.max(a, b) + "° " + tem + " than " + dayOfWeek,
+                            dayOfWeek + ": " + tomMin + "° - " + tomMax + "° ");
+                }
             }
         } else {
-            sendNotification("Tomorrow temperature", tomMin + " - " + tomMax);
+            sendNotification("Temperature", todayMin + "-" + todayMax + " -> " + tomMin + "-" + tomMax);
         }
     }
 
