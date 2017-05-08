@@ -537,7 +537,8 @@ public class WeatherActivity extends AppCompatActivity {
         PM25_tv.setText(getResources().getString(R.string.pm25) + PM25);
         temperature_text.setText(temperature);
         aqi_text.setText(aqi);
-        hum_text.setText(humidity.substring(2) + "%");
+        Float hum = Float.parseFloat(humidity) * 100;
+        hum_text.setText(hum.toString().substring(0, 2) + "%");
         String weatherString = chooseWeatherIcon(skycon, intensity, MINUTELY_MODE);
         if (weatherString != null) {
             String[] ws = weatherString.split("and");
