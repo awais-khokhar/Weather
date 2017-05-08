@@ -66,6 +66,9 @@ public class WeatherActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        PreferenceManager.setDefaultValues(this, R.xml.settingpreference, false);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather);
 
@@ -135,7 +138,7 @@ public class WeatherActivity extends AppCompatActivity {
             case 2:
                 if (resultCode == RESULT_OK) {
                     countyName = data.getStringExtra("countyName");
-                    toolbar.setTitle(countyName);
+                    getSupportActionBar().setTitle(countyName);
                     Log.d(TAG, "onActivityResult: county_return: " + countyName);
                     SharedPreferences.Editor editor = PreferenceManager
                             .getDefaultSharedPreferences(WeatherActivity.this).edit();
@@ -173,7 +176,7 @@ public class WeatherActivity extends AppCompatActivity {
     }
 
     private void readCache() {
-        int minInterval = 1;
+        int minInterval = 5;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String weatherNow = prefs.getString("weather_now", null);
         long weatherNowLastUpdateTime = prefs.getLong("weather_now_last_update_time", 0);
@@ -279,7 +282,7 @@ public class WeatherActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                toolbar.setTitle(countyName);
+                                getSupportActionBar().setTitle(countyName);
                             }
                         });
                 } catch (JSONException e) {
@@ -297,7 +300,7 @@ public class WeatherActivity extends AppCompatActivity {
             Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
             startActivityForResult(intent, 1);
         } else {
-            toolbar.setTitle(countyName);
+            getSupportActionBar().setTitle(countyName);
             String url = "http://api.map.baidu.com/geocoder/v2/?output=json&address=%" + countyName + "&ak=eTTiuvV4YisaBbLwvj4p8drl7BGfl1eo";
             HttpUtil.sendOkHttpRequest(url, new Callback() {
                 @Override
@@ -532,7 +535,9 @@ public class WeatherActivity extends AppCompatActivity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String countyName = prefs.getString("countyName", null);
         if (!TextUtils.isEmpty(countyName)) {
-            toolbar.setTitle(countyName);
+            getSupportActionBar().setTitle(countyName);
+        } else {
+            Log.d(TAG, "showCurrentWeatherInfo: countyName == null");
         }
         PM25_tv.setText(getResources().getString(R.string.pm25) + PM25);
         temperature_text.setText(temperature);

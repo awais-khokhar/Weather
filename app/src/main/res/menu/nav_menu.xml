@@ -10,6 +10,7 @@
         <item
             android:id="@+id/start_service"
             android:title="Start Service"
+            android:visible="false"
             app:showAsAction="never" />
         <item
             android:id="@+id/setting"

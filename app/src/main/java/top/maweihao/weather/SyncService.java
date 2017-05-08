@@ -56,7 +56,7 @@ public class SyncService extends Service {
             isChinese = getResources().getConfiguration().locale.getDisplayLanguage().equals("zh-CN");
         }
         //DEBUG ONLY
-        Toast.makeText(getApplicationContext(), "weather started", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), "weather started", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -163,14 +163,14 @@ public class SyncService extends Service {
                     sendNotification(dayOfWeek + "将" + tem + ' ' + Math.max(a, b) + "° ",
                             dayOfWeek + ": " + tomMin + "° - " + tomMax + "° ");
                 } else {
-
                     sendNotification(Math.max(a, b) + "° " + tem + " than " + dayOfWeek,
                             dayOfWeek + ": " + tomMin + "° - " + tomMax + "° ");
                 }
             }
-        } else {
-            sendNotification("Temperature", todayMin + "-" + todayMax + " -> " + tomMin + "-" + tomMax);
         }
+// else {
+////            sendNotification("Temperature", todayMin + "-" + todayMax + " -> " + tomMin + "-" + tomMax);
+//        }
     }
 
     @Override
