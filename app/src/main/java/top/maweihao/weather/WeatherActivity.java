@@ -55,7 +55,6 @@ public class WeatherActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private TextView PM25_tv;
-    //    private ImageView skycon_image;
     private TextView temperature_text;
     private TextView skycon_text;
     private TextView aqi_text;
@@ -251,7 +250,7 @@ public class WeatherActivity extends AppCompatActivity {
         if (!TextUtils.isEmpty(coordinate)) {
             String[] part = coordinate.split(",");
             String reverseCoordinate = part[1] + ',' + part[0];
-            Log.d(TAG, "WeatherActivity: reverseCoordinate: " + reverseCoordinate);
+//            Log.d(TAG, "WeatherActivity: reverseCoordinate: " + reverseCoordinate);
             url = "http://api.map.baidu.com/geocoder/v2/?location=" + reverseCoordinate + "&output=json&pois=1&ak=eTTiuvV4YisaBbLwvj4p8drl7BGfl1eo";
         } else {
             Log.e(TAG, "WeatherActivity::setCountyByCoordinate: coordinate == null");
@@ -335,6 +334,45 @@ public class WeatherActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    public void GetCoordinateByIp() {
+        String url = "http://api.map.baidu.com/location/ip?ak=eTTiuvV4YisaBbLwvj4p8drl7BGfl1eo&coor=bd09ll";
+        HttpUtil.sendOkHttpRequest(url, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e(TAG, "onFailure: fetch locationCoordinates by IP failed");
+//                Toast.makeText(WeatherActivity.this, getResources().getString(R.string.access_network_failed), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String responseText = response.body().string();
+                try {
+                    JSONObject allAttributes = new JSONObject(responseText);
+                    JSONObject content = allAttributes.getJSONObject("content");
+                    JSONObject address_detail = content.getJSONObject("address_detail");
+                    countyName = address_detail.getString("city") + " " + address_detail.getString("district");
+                    JSONObject point = content.getJSONObject("point");
+                    String x = point.getString("x");
+                    String y = point.getString("y");
+                    locationCoordinates = x + ',' + y;
+                    SharedPreferences.Editor editor = PreferenceManager
+                            .getDefaultSharedPreferences(WeatherActivity.this).edit();
+                    editor.putString("coordinate", locationCoordinates);
+                    editor.putLong("coordinate_last_update", System.currentTimeMillis());
+                    editor.putString("countyName", countyName);
+                    editor.putLong("countyName_last_update_time", System.currentTimeMillis());
+                    editor.apply();
+                    Log.d(TAG, "GetCoordinateByIp: locationCoordinates = " + locationCoordinates);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "GetCoordinateByIp: parse IP address json error");
+                    Log.d(TAG, "response: " + responseText);
+                }
+                AfterGetCoordinate();
+            }
+        });
     }
 
     private void initRequireUrl() {
@@ -489,7 +527,6 @@ public class WeatherActivity extends AppCompatActivity {
         String skycon = weatherData.getSkycon();
         String humidity = weatherData.getHumidity();
         String PM25 = weatherData.getPm25();
-//        String cloudrate = weatherData.getCloudrate();
         float intensity = Float.parseFloat(weatherData.getIntensity());
         String aqi = weatherData.getAqi();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -504,7 +541,6 @@ public class WeatherActivity extends AppCompatActivity {
         String weatherString = chooseWeatherIcon(skycon, intensity, MINUTELY_MODE);
         if (weatherString != null) {
             String[] ws = weatherString.split("and");
-//            skycon_image.setImageResource(Integer.parseInt(ws[0]));
             skycon_text.setText(ws[1]);
         }
         appBar.setBackgroundResource(Utility.chooseBgImage(skycon));
@@ -514,46 +550,6 @@ public class WeatherActivity extends AppCompatActivity {
         } else {
             isDone = true;
         }
-    }
-
-    public void GetCoordinateByIp() {
-        String url = "http://api.map.baidu.com/location/ip?ak=eTTiuvV4YisaBbLwvj4p8drl7BGfl1eo&coor=bd09ll";
-        HttpUtil.sendOkHttpRequest(url, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.e(TAG, "onFailure: fetch locationCoordinates by IP failed");
-                Toast.makeText(WeatherActivity.this, getResources().getString(R.string.access_network_failed), Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                final String responseText = response.body().string();
-                try {
-                    JSONObject allAttributes = new JSONObject(responseText);
-                    JSONObject content = allAttributes.getJSONObject("content");
-                    JSONObject address_detail = content.getJSONObject("address_detail");
-                    countyName = address_detail.getString("city") + " " + address_detail.getString("district");
-                    JSONObject point = content.getJSONObject("point");
-                    String x = point.getString("x");
-                    String y = point.getString("y");
-                    locationCoordinates = x + ',' + y;
-                    SharedPreferences.Editor editor = PreferenceManager
-                            .getDefaultSharedPreferences(WeatherActivity.this).edit();
-                    editor.putString("coordinate", locationCoordinates);
-                    editor.putLong("coordinate_last_update", System.currentTimeMillis());
-                    editor.putString("countyName", countyName);
-                    editor.putLong("countyName_last_update_time", System.currentTimeMillis());
-                    editor.apply();
-                    Log.d(TAG, "GetCoordinateByIp: locationCoordinates = " + locationCoordinates);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Log.e(TAG, "GetCoordinateByIp: parse IP address json error");
-                    Log.d(TAG, "response: " + responseText);
-                }
-                AfterGetCoordinate();
-            }
-        });
-
     }
 
     private void AfterGetCoordinate() {

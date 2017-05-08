@@ -50,7 +50,11 @@ public class SettingActivity extends PreferenceActivity {
         }
 
         private void initViews() {
+
             temLp = (ListPreference) findPreference("isCelsius");
+            temLp.setEnabled(false);
+            temLp.setSummary("当前地区不可用");
+
             aboutPreference = findPreference("about");
             choosePositionPreference = findPreference("choose_position");
             feedBack = findPreference("feedback");
@@ -59,8 +63,9 @@ public class SettingActivity extends PreferenceActivity {
             autoUpdateSP = (SwitchPreference) findPreference("auto_locate");
             autoUpdateSP.setOnPreferenceChangeListener(changeListener);
             aboutPreference.setOnPreferenceClickListener(enterActivityListener);
-            temLp.setSummary(temLp.getEntry());
-            temLp.setOnPreferenceChangeListener(changeListener);
+
+//            temLp.setSummary(temLp.getEntry());
+//            temLp.setOnPreferenceChangeListener(changeListener);
 
             if (autoUpdateSP.isChecked()) {
                 Log.d(TAG, "SettingActivity::initViews: autoUpdate is checked");
