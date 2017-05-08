@@ -96,6 +96,7 @@ public class SettingActivity extends PreferenceActivity {
                     if (stringValue.equals("true")) {
                         choosePositionPreference.setEnabled(false);
                         choosePositionPreference.setSummary(null);
+                        choosePositionPreference.setSummary(getResources().getString(R.string.select_disabled));
                     } else {
                         choosePositionPreference.setEnabled(true);
                         if (!TextUtils.isEmpty(countyName)) {

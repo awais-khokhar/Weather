@@ -26,13 +26,13 @@
     <string name="appearance_setting">外观</string>
     <string name="temperature">气温</string>
     <string name="notification_setting">通知</string>
-    <string name="notification_summary">您将收到天气相关的通知</string>
+    <string name="notification_summary">您将收到天气相关信息</string>
     <string name="location_setting">地区</string>
     <string name="about_setting">关于</string>
     <string name="auto_locate">自动定位</string>
     <string name="choose_your_position">选择您的地区</string>
     <string name="current_version">当前版本</string>
-    <string name="data_resources">天气数据由中国气象局和彩云数据提供</string>
+    <string name="data_resources">天气数据由中国气象局与彩云数据提供</string>
     <string name="title_activity_settings">设置</string>
     <string name="choose_position">更改地区</string>
     <string name="setting">设置</string>
@@ -58,5 +58,7 @@
     </string-array>
     <string name="warmer">升温</string>
     <string name="colder">降温</string>
+    <string name="weather_notifications">通知</string>
+    <string name="select_disabled">当前为自动定位</string>
 
 </resources>

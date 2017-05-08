@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="150dp"
     android:layout_marginTop="10dp">
@@ -98,49 +99,47 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
         android:layout_marginTop="8dp"
         android:text="@string/na"
         android:textColor="#212121"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="@+id/aqi_name"
+        app:layout_constraintTop_toBottomOf="@+id/aqi_name"
+        android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="@+id/aqi_name"
-        app:layout_constraintTop_toBottomOf="@+id/aqi_name" />
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="@+id/aqi_name" />
 
     <TextView
         android:id="@+id/sunrise_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="24dp"
         android:layout_marginTop="0dp"
         android:text="@string/sunrise"
         android:textColor="#424242"
         android:textSize="14sp"
-        app:layout_constraintLeft_toRightOf="@+id/sunrise_image"
-        app:layout_constraintRight_toLeftOf="@+id/guideline"
-        app:layout_constraintTop_toTopOf="@+id/sunrise_image" />
+        app:layout_constraintTop_toTopOf="@+id/sunrise_image"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="@+id/aqi_name"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/aqi_name" />
 
     <TextView
         android:id="@+id/sunrise"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
         android:layout_marginTop="8dp"
         android:text="@string/na"
         android:textColor="#212121"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.833"
-        app:layout_constraintLeft_toLeftOf="@+id/sunrise_name"
-        app:layout_constraintRight_toRightOf="@+id/sunrise_name"
         app:layout_constraintTop_toBottomOf="@+id/sunrise_name"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="@+id/sunrise_name"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/sunrise_name" />
 
     <TextView
         android:id="@+id/humidity_name"
@@ -161,46 +160,46 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/na"
         android:textColor="#212121"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
-        app:layout_constraintLeft_toLeftOf="@+id/humidity_name"
+        app:layout_constraintTop_toBottomOf="@+id/humidity_name"
+        app:layout_constraintVertical_bias="0.0"
+        android:layout_marginRight="0dp"
         app:layout_constraintRight_toRightOf="@+id/humidity_name"
-        app:layout_constraintTop_toBottomOf="@+id/humidity_name" />
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/humidity_name" />
 
     <TextView
         android:id="@+id/textView7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="24dp"
-        android:layout_marginTop="1dp"
         android:text="@string/sunset"
         android:textColor="#424242"
         android:textSize="14sp"
-        app:layout_constraintLeft_toRightOf="@+id/sunset_image"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/sunset_image" />
+        app:layout_constraintTop_toTopOf="@+id/sunset_image"
+        android:layout_marginTop="0dp"
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="@+id/humidity_name"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/humidity_name" />
 
     <TextView
         android:id="@+id/sunset"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
         android:layout_marginTop="8dp"
         android:text="@string/na"
         android:textColor="#212121"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@+id/textView7"
+        android:layout_marginLeft="0dp"
         app:layout_constraintLeft_toLeftOf="@+id/textView7"
-        app:layout_constraintRight_toRightOf="@+id/textView7"
-        app:layout_constraintTop_toBottomOf="@+id/textView7" />
+        android:layout_marginRight="0dp"
+        app:layout_constraintRight_toRightOf="@+id/textView7" />
 
 </android.support.constraint.ConstraintLayout>
