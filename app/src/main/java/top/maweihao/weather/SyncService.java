@@ -115,6 +115,7 @@ public class SyncService extends Service {
         calendar.set(Calendar.HOUR_OF_DAY, 18);
         calendar.set(Calendar.MINUTE, 0);
         Intent intent = new Intent(this, SyncService.class);
+        Log.d(TAG, "startAgain: calendar == " + calendar.getTime());
         PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, 0);
         alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
     }
@@ -157,20 +158,21 @@ public class SyncService extends Service {
             int b = Math.abs(minDiff);
             if (Math.max(a, b) >= 3) {
                 Calendar calendar = new GregorianCalendar();
-                String dayOfWeek = getResources().getStringArray(R.array.weekend)[calendar.get(Calendar.DAY_OF_WEEK)];
+                int nextDay = calendar.get(Calendar.DAY_OF_WEEK) + 1;
+                String dayOfWeek = getResources().getStringArray(R.array.weekend)[nextDay == 7 ? 0 : nextDay];
                 String tem = (maxDiff > 0 || minDiff > 0) ? getResources().getString(R.string.warmer) : getResources().getString(R.string.colder);
                 if (isChinese) {
                     sendNotification(dayOfWeek + "将" + tem + ' ' + Math.max(a, b) + "° ",
-                            dayOfWeek + ": " + tomMin + "° - " + tomMax + "° ");
+                            todayMin + "° - " + todayMax + "° -> " + tomMin + "° - " + tomMax + "° ");
                 } else {
                     sendNotification(Math.max(a, b) + "° " + tem + " than " + dayOfWeek,
-                            dayOfWeek + ": " + tomMin + "° - " + tomMax + "° ");
+                            todayMin + "° - " + todayMax + "° -> " + tomMin + "° - " + tomMax + "° ");
                 }
             }
+        } else {
+            Log.d(TAG, "calTemDiff: diff: " + maxDiff * minDiff);
+            sendNotification("Temperature", todayMin + "° - " + todayMax + "° -> " + tomMin + "° - " + tomMax + "° ");
         }
-// else {
-////            sendNotification("Temperature", todayMin + "-" + todayMax + " -> " + tomMin + "-" + tomMax);
-//        }
     }
 
     @Override
