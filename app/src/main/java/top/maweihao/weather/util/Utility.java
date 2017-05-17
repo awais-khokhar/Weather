@@ -1,6 +1,5 @@
 package top.maweihao.weather.util;
 
-import android.app.Activity;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -9,10 +8,6 @@ import com.google.gson.Gson;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
 
 import top.maweihao.weather.R;
 import top.maweihao.weather.WeatherData;
@@ -136,30 +131,6 @@ public class Utility {
         }
         return false;
     }
-
-    static Activity getCurrentActivity() {
-        try {
-            Class activityThreadClass = Class.forName("android.app.ActivityThread");
-            Object activityThread = activityThreadClass.getMethod("currentActivityThread").invoke(null);
-            Field activitiesField = activityThreadClass.getDeclaredField("mActivities");
-            activitiesField.setAccessible(true);
-            Map activities = (Map) activitiesField.get(activityThread);
-            for (Object activityRecord : activities.values()) {
-                Class activityRecordClass = activityRecord.getClass();
-                Field pausedField = activityRecordClass.getDeclaredField("paused");
-                pausedField.setAccessible(true);
-                if (!pausedField.getBoolean(activityRecord)) {
-                    Field activityField = activityRecordClass.getDeclaredField("activity");
-                    activityField.setAccessible(true);
-                    return (Activity) activityField.get(activityRecord);
-                }
-            }
-        } catch (ClassNotFoundException | IllegalAccessException | NoSuchFieldException | NoSuchMethodException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
 
     public static String roundString(String s) {
         return String.valueOf(Math.round(Float.parseFloat(s)));

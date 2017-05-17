@@ -8,4 +8,21 @@
         <attr name="temperature_text_size" format="dimension" />
 
     </declare-styleable>
+
+    <declare-styleable name="SunTimeView">
+
+        <attr name="riseHour" format="integer" />
+        <attr name="riseMinute" format="integer" />
+        <attr name="setHour" format="integer" />
+        <attr name="setMinute" format="integer" />
+        <attr name="darkColor" format="color" />
+        <attr name="dayColor" format="color" />
+        <attr name="nowColor" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="SemiCircleView" >
+        <attr name="negativeColor" format="color" />
+        <attr name="name" format="string" />
+        <attr name="aqi" format="boolean" />
+    </declare-styleable>
 </resources>

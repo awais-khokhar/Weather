@@ -99,16 +99,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/na"
         android:textColor="#212121"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
-        app:layout_constraintTop_toBottomOf="@+id/aqi_name"
-        android:layout_marginRight="8dp"
+        app:layout_constraintLeft_toLeftOf="@+id/aqi_name"
         app:layout_constraintRight_toRightOf="@+id/aqi_name"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="@+id/aqi_name" />
+        app:layout_constraintTop_toBottomOf="@+id/aqi_name" />
 
     <TextView
         android:id="@+id/sunrise_name"
@@ -125,21 +125,20 @@
         app:layout_constraintLeft_toLeftOf="@+id/aqi_name" />
 
     <TextView
-        android:id="@+id/sunrise"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
         android:layout_marginTop="8dp"
         android:text="@string/na"
         android:textColor="#212121"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sunrise_name"
-        app:layout_constraintVertical_bias="1.0"
-        android:layout_marginRight="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/sunrise_name"
         app:layout_constraintRight_toRightOf="@+id/sunrise_name"
-        android:layout_marginLeft="0dp"
-        app:layout_constraintLeft_toLeftOf="@+id/sunrise_name" />
+        app:layout_constraintTop_toBottomOf="@+id/sunrise_name"
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/humidity_name"
@@ -187,19 +186,18 @@
         app:layout_constraintLeft_toLeftOf="@+id/humidity_name" />
 
     <TextView
-        android:id="@+id/sunset"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
         android:layout_marginTop="8dp"
         android:text="@string/na"
         android:textColor="#212121"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView7"
-        android:layout_marginLeft="0dp"
         app:layout_constraintLeft_toLeftOf="@+id/textView7"
-        android:layout_marginRight="0dp"
-        app:layout_constraintRight_toRightOf="@+id/textView7" />
+        app:layout_constraintRight_toRightOf="@+id/textView7"
+        app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
 </android.support.constraint.ConstraintLayout>

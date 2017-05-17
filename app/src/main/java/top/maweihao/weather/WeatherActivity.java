@@ -33,6 +33,8 @@ import okhttp3.Callback;
 import okhttp3.Response;
 import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.Utility;
+import top.maweihao.weather.view.SemiCircleView;
+import top.maweihao.weather.view.SunTimeView;
 
 import static top.maweihao.weather.util.Utility.handleCurrentWeatherResponse;
 
@@ -61,6 +63,9 @@ public class WeatherActivity extends AppCompatActivity {
     private TextView hum_text;
     private TextView sunrise_text;
     private TextView sunset_text;
+    private SunTimeView sunTimeView;
+    private SemiCircleView AQICircle;
+    private SemiCircleView PMCircle;
 
     private Boolean autoLocate;
 
@@ -87,6 +92,9 @@ public class WeatherActivity extends AppCompatActivity {
         hum_text = (TextView) findViewById(R.id.humidity);
         sunrise_text = (TextView) findViewById(R.id.sunrise);
         sunset_text = (TextView) findViewById(R.id.sunset);
+        sunTimeView = (SunTimeView) findViewById(R.id.stv);
+        AQICircle = (SemiCircleView) findViewById(R.id.AQI_Circle);
+        PMCircle = (SemiCircleView) findViewById(R.id.PM_Circle);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -138,7 +146,11 @@ public class WeatherActivity extends AppCompatActivity {
             case 2:
                 if (resultCode == RESULT_OK) {
                     countyName = data.getStringExtra("countyName");
-                    getSupportActionBar().setTitle(countyName);
+                    try {
+                        getSupportActionBar().setTitle(countyName);
+                    } catch (NullPointerException e) {
+                        Log.e(TAG, "onActivityResult: NullPointerException");
+                    }
                     Log.d(TAG, "onActivityResult: county_return: " + countyName);
                     SharedPreferences.Editor editor = PreferenceManager
                             .getDefaultSharedPreferences(WeatherActivity.this).edit();
@@ -287,6 +299,9 @@ public class WeatherActivity extends AppCompatActivity {
                         });
                 } catch (JSONException e) {
                     e.printStackTrace();
+                } catch (NullPointerException ee) {
+                    Log.e(TAG, "onResponse: toolBar not found");
+                    ee.printStackTrace();
                 }
             }
         });
@@ -514,6 +529,7 @@ public class WeatherActivity extends AppCompatActivity {
                     day[1].setDate(getResources().getString(R.string.tomorrow));
                     sunrise_text.setText(weatherDatas[0].getSunriseTime());
                     sunset_text.setText(weatherDatas[0].getSunsetTime());
+                    sunTimeView.setTime(weatherDatas[0].getSunriseTime(), weatherDatas[0].getSunsetTime());
                     if (isDone) {
                         stopSwipe();
                         isDone = false;
@@ -539,9 +555,11 @@ public class WeatherActivity extends AppCompatActivity {
         } else {
             Log.d(TAG, "showCurrentWeatherInfo: countyName == null");
         }
-        PM25_tv.setText(getResources().getString(R.string.pm25) + PM25);
+//        PM25_tv.setText(getResources().getString(R.string.pm25) + PM25);
+        PMCircle.setValue(Integer.valueOf(PM25));
         temperature_text.setText(temperature);
-        aqi_text.setText(aqi);
+//        aqi_text.setText(aqi);
+        AQICircle.setValue(Integer.valueOf(aqi));
         Float hum = Float.parseFloat(humidity) * 100;
         hum_text.setText(hum.toString().substring(0, 2) + "%");
         String weatherString = chooseWeatherIcon(skycon, intensity, MINUTELY_MODE);

@@ -61,10 +61,11 @@ public class SyncService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "onStartCommand: ");
         fetchData();
 //        stopSelf();
         startAgain();
-        return super.onStartCommand(intent, flags, startId);
+        return START_NOT_STICKY;
     }
 
     private void fetchData() {

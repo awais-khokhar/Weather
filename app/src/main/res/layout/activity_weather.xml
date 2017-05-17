@@ -49,6 +49,10 @@
 
                 <include layout="@layout/more_weather_info" />
 
+                <include layout="@layout/sun_time_layout" />
+
+                <include layout="@layout/air_condition_layout" />
+
             </LinearLayout>
 
         </android.support.v4.widget.NestedScrollView>

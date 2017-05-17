@@ -10,7 +10,7 @@
     <string name="sunset">日落</string>
     <string name="title_activity_choose_position">选择地区</string>
     <string name="weather">天气</string>
-    <string name="aqi">天气指数</string>
+    <string name="aqi">天气质量指数</string>
     <string name="na">N/A</string>
 
     <!--各种天气名称-->
@@ -66,5 +66,6 @@
     <string name="colder">降温</string>
     <string name="weather_notifications">通知</string>
     <string name="select_disabled">当前为自动定位</string>
+    <string name="pm25">首要污染物</string>
 
 </resources>

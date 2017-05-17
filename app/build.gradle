@@ -5,10 +5,10 @@ android {
     buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "top.maweihao.weather"
-        minSdkVersion 19
+        minSdkVersion 15
         targetSdkVersion 25
-        versionCode 13
-        versionName "1.0.0"
+        versionCode 15
+        versionName "1.0.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -32,6 +32,5 @@ dependencies {
     compile 'org.litepal.android:core:1.4.1'
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.android.support:support-vector-drawable:25.3.1'
-//    compile 'com.github.bumptech.glide:glide:3.7.0'
     testCompile 'junit:junit:4.12'
 }
