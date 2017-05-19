@@ -13,12 +13,12 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,7 +51,7 @@ public class WeatherActivity extends AppCompatActivity {
     private boolean isDone = false;
     private String countyName = null;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private View appBar;
+    private CardView appBar;
     private String locationCoordinates;
     private perDayWeatherView[] day = new perDayWeatherView[5];
 
@@ -80,7 +80,7 @@ public class WeatherActivity extends AppCompatActivity {
         PM25_tv = (TextView) findViewById(R.id.pm25_Tv);
         temperature_text = (TextView) findViewById(R.id.temperature_text);
         skycon_text = (TextView) findViewById(R.id.skycon_text);
-        appBar = findViewById(R.id.app_bar);
+        appBar = (CardView) findViewById(R.id.app_bar);
 
         day[0] = (perDayWeatherView) findViewById(R.id.daily_weather_0);
         day[1] = (perDayWeatherView) findViewById(R.id.daily_weather_1);

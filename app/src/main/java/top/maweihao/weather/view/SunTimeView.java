@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import java.util.Calendar;
@@ -89,15 +88,14 @@ public class SunTimeView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-//        canvas.drawRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), mPaint1);
         int width = getMeasuredWidth();
         int height = getMeasuredHeight() - 20;
-        Log.d(TAG, "onDraw: MeasuredWidth&MeasuredHeight:" + width + ' ' + height);
         int rad = width / 2 - 20;
         int edge = height - rad;
         rectF.set((width / 2 - rad), edge, (width / 2 + rad), height + rad);
+//        canvas.drawLine(width / 2, height + rad,
+//                (int) (width / 2 + (rad / 2) * Math.cos((double) timeRad)), (int) (height + rad + (rad / 2) * Math.sin((double) timeRad)), mPaint1);
         canvas.drawArc(rectF, timeRad - 180, -1, true, mPaint1);
-//        Log.d(TAG, "onDraw: " + (width / 2 - rad) + ' ' + edge + ' ' + (width / 2 + rad) + ' ' + (height + rad));
         canvas.drawArc(rectF, sunSetRad - 180, sunRiseRad - sunSetRad, false, mPaint2);
         canvas.drawArc(rectF, sunRiseRad - 180, -sunRiseRad, false, mPaint3);
         canvas.drawArc(rectF, 0, sunSetRad - 180, false, mPaint3);

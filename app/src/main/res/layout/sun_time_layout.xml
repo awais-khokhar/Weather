@@ -16,6 +16,8 @@
 
     <top.maweihao.weather.view.SunTimeView
         android:id="@+id/stv"
+        app:darkColor="#FFB300"
+        app:dayColor="#1A237E"
         android:layout_width="150dp"
         android:layout_height="100dp"
         android:layout_marginBottom="8dp"
