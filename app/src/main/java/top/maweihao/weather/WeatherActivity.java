@@ -8,6 +8,8 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -27,16 +29,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import top.maweihao.weather.gson.HourlyWeather;
 import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.Utility;
+import top.maweihao.weather.view.HScrollView;
+import top.maweihao.weather.view.LineChartView;
 import top.maweihao.weather.view.SemiCircleView;
 import top.maweihao.weather.view.SunTimeView;
 
 import static top.maweihao.weather.util.Utility.handleCurrentWeatherResponse;
+import static top.maweihao.weather.util.Utility.intRoundString;
 
 public class WeatherActivity extends AppCompatActivity {
 
@@ -45,8 +52,10 @@ public class WeatherActivity extends AppCompatActivity {
     static final int THROUGH_CHOOSE_POSITION = 1;
     static final int THROUGH_LOCATE = 2;
     static final int THROUGH_COORDINATE = 3;
-    static final int MINUTELY_MODE = 4;
-    static final int HOURLY_MODE = 5;
+    public static final int MINUTELY_MODE = 4;
+    public static final int HOURLY_MODE = 5;
+
+    static final int HANDLE_POSITION = 0;
 
     private boolean isDone = false;
     private String countyName = null;
@@ -66,6 +75,8 @@ public class WeatherActivity extends AppCompatActivity {
     private SunTimeView sunTimeView;
     private SemiCircleView AQICircle;
     private SemiCircleView PMCircle;
+
+    private static Handler handler;
 
     private Boolean autoLocate;
 
@@ -101,12 +112,30 @@ public class WeatherActivity extends AppCompatActivity {
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        swipeRefreshLayout.setDistanceToTriggerSync(200);
         swipeRefreshLayout.setOnRefreshListener((new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 beforeRequestWeather(THROUGH_LOCATE);
             }
         }));
+
+        handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case HANDLE_POSITION:
+                        if (msg.obj instanceof String) {
+                            if (getSupportActionBar() != null) {
+                                getSupportActionBar().setTitle(countyName);
+                            } else {
+                                Log.e(TAG, "handleMessage: toolBar == null");
+                            }
+                        }
+                        break;
+                }
+            }
+        };
 
         loadPreferences();
 
@@ -146,11 +175,11 @@ public class WeatherActivity extends AppCompatActivity {
             case 2:
                 if (resultCode == RESULT_OK) {
                     countyName = data.getStringExtra("countyName");
-                    try {
-                        getSupportActionBar().setTitle(countyName);
-                    } catch (NullPointerException e) {
-                        Log.e(TAG, "onActivityResult: NullPointerException");
-                    }
+                    Message message = handler.obtainMessage();
+                    message.what = HANDLE_POSITION;
+                    message.obj = countyName;
+                    handler.sendMessage(message);
+//                        getSupportActionBar().setTitle(countyName);
                     Log.d(TAG, "onActivityResult: county_return: " + countyName);
                     SharedPreferences.Editor editor = PreferenceManager
                             .getDefaultSharedPreferences(WeatherActivity.this).edit();
@@ -202,8 +231,7 @@ public class WeatherActivity extends AppCompatActivity {
                     + (System.currentTimeMillis() - weatherFullLastUpdateTime) / 1000 + "s ago");
             WeatherData wd = Utility.handleCurrentWeatherResponse(weatherNow);
             showCurrentWeatherInfo(wd);
-            extendWeatherData[] weatherDatas = handleFullWeatherData(weatherFull);
-            showDailyWeatherInfo(weatherDatas);
+            handleFullWeatherData(weatherFull);
         } else {
             beforeRequestWeather(autoLocate ? THROUGH_LOCATE : THROUGH_CHOOSE_POSITION);
         }
@@ -291,12 +319,10 @@ public class WeatherActivity extends AppCompatActivity {
                     editor.putString("countyName", countyName);
                     editor.putLong("countyName_last_update_time", System.currentTimeMillis());
                     editor.apply();
-                    runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                getSupportActionBar().setTitle(countyName);
-                            }
-                        });
+                    Message message = handler.obtainMessage();
+                    message.what = HANDLE_POSITION;
+                    message.obj = countyName;
+                    handler.sendMessage(message);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } catch (NullPointerException ee) {
@@ -315,7 +341,10 @@ public class WeatherActivity extends AppCompatActivity {
             Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
             startActivityForResult(intent, 1);
         } else {
-            getSupportActionBar().setTitle(countyName);
+            Message message = handler.obtainMessage();
+            message.what = HANDLE_POSITION;
+            message.obj = countyName;
+            handler.sendMessage(message);
             String url = "http://api.map.baidu.com/geocoder/v2/?output=json&address=%" + countyName + "&ak=eTTiuvV4YisaBbLwvj4p8drl7BGfl1eo";
             HttpUtil.sendOkHttpRequest(url, new Callback() {
                 @Override
@@ -436,16 +465,16 @@ public class WeatherActivity extends AppCompatActivity {
                 editor.putString("weather_full", responseText);
                 editor.putLong("weather_full_last_update_time", System.currentTimeMillis());
                 editor.apply();
-                extendWeatherData[] weatherDatas = handleFullWeatherData(responseText);
-                showDailyWeatherInfo(weatherDatas);
+                handleFullWeatherData(responseText);
             }
         });
     }
 
-    private extendWeatherData[] handleFullWeatherData(String responseText) {
+    private void handleFullWeatherData(String responseText) {
         extendWeatherData[] weatherDatas = new extendWeatherData[5];
+        HourlyWeather[] hourlyWeathers = new HourlyWeather[24];
         JSONArray[] jsonArrays = Utility.handleDailyWeatherResponse(responseText);
-        if (jsonArrays.length == 5) {
+        if (jsonArrays.length == 8) {
             for (int i = 0; i < 5; i++) {
                 try {
                     weatherDatas[i] = new extendWeatherData();
@@ -467,10 +496,25 @@ public class WeatherActivity extends AppCompatActivity {
                     Log.e(TAG, "handleFullWeatherData: parse jsonArrays error");
                 }
             }
+            for (int i = 0; i < 24; i++) {
+                try {
+                    hourlyWeathers[i] = new HourlyWeather();
+                    JSONObject skyon = jsonArrays[5].getJSONObject(i);
+                    JSONObject temperatures = jsonArrays[6].getJSONObject(i);
+                    JSONObject precipitation = jsonArrays[7].getJSONObject(i);
+                    hourlyWeathers[i].setDatetime(skyon.getString("datetime"));
+                    hourlyWeathers[i].setSkyon(skyon.getString("value"));
+                    hourlyWeathers[i].setPrecipitation(precipitation.getString("value"));
+                    hourlyWeathers[i].setTemperature(temperatures.getString("value"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "handleFullWeatherData: parse jsonArrays error(hourly)");
+                }
+            }
+            showDailyWeatherInfo(weatherDatas);
+            showHourlyWeatherInfo(hourlyWeathers);
         }
-        return weatherDatas;
     }
-
 
     private void requestCurrentWeather(String url) {
         startSwipe();
@@ -513,6 +557,44 @@ public class WeatherActivity extends AppCompatActivity {
         });
     }
 
+    private void showHourlyWeatherInfo(final HourlyWeather[] hourlyWeathers) {
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                HScrollView hScrollView = (HScrollView) findViewById(R.id.HScrollView);
+                LineChartView mLineChartView = (LineChartView) findViewById(R.id.simpleLineChart);
+                ArrayList xItemArray = new ArrayList<String>();
+                for (HourlyWeather hourlyWeather : hourlyWeathers) {
+                    xItemArray.add(hourlyWeather.getDatetime().substring(11, 16));
+                }
+                //天气
+                ArrayList<String> weatherArray = new ArrayList<>();
+                for (int i = 0; i < hourlyWeathers.length; i++) {
+                    weatherArray.add(hourlyWeathers[i].getSkyon());
+                }
+                //温度
+                ArrayList<Integer> yItemArray = new ArrayList<>();
+                for (int i = 0; i < hourlyWeathers.length; i++) {
+                    yItemArray.add(intRoundString(hourlyWeathers[i].getTemperature()));
+                }
+
+                ArrayList<Float> precipitation = new ArrayList<>();
+                for (int i = 0; i < hourlyWeathers.length; i++) {
+                    precipitation.add(Float.parseFloat(hourlyWeathers[i].getPrecipitation()));
+                }
+
+                mLineChartView.setXItem(xItemArray);
+                mLineChartView.setYItem(yItemArray);
+                mLineChartView.setWeather(weatherArray);
+                mLineChartView.setPrecipitation(precipitation);
+                mLineChartView.setmHScrollView(hScrollView);
+                mLineChartView.applyChanges();
+            }
+        });
+
+    }
+
     private void showDailyWeatherInfo(final extendWeatherData[] weatherDatas) {
         if (weatherDatas.length == 5) {
             runOnUiThread(new Runnable() {
@@ -551,7 +633,10 @@ public class WeatherActivity extends AppCompatActivity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String countyName = prefs.getString("countyName", null);
         if (!TextUtils.isEmpty(countyName)) {
-            getSupportActionBar().setTitle(countyName);
+            Message message = handler.obtainMessage();
+            message.what = HANDLE_POSITION;
+            message.obj = countyName;
+            handler.sendMessage(message);
         } else {
             Log.d(TAG, "showCurrentWeatherInfo: countyName == null");
         }
@@ -585,7 +670,7 @@ public class WeatherActivity extends AppCompatActivity {
         });
     }
 
-    private String chooseWeatherIcon(String skycon, float intensity, int mode) {
+    public static String chooseWeatherIcon(String skycon, float precipitation, int mode) {
         switch (skycon) {
             case "CLEAR_DAY":
                 return R.mipmap.weather_clear + "and" + "晴";
@@ -600,16 +685,16 @@ public class WeatherActivity extends AppCompatActivity {
             case "RAIN":
                 switch (mode) {
                     case MINUTELY_MODE:
-                        if (intensity <= 0.15)
+                        if (precipitation <= 0.15)
                             return R.mipmap.weather_drizzle_day + "and" + "小雨";
-                        else if (intensity <= 0.35)
+                        else if (precipitation <= 0.35)
                             return R.mipmap.weather_rain_day + "and" + "中雨";
                         else
                             return R.mipmap.weather_showers_day + "and" + "大雨";
                     case HOURLY_MODE:
-                        if (intensity <= 10)
+                        if (precipitation <= 10)
                             return R.mipmap.weather_drizzle_day + "and" + "小雨";
-                        else if (intensity <= 25)
+                        else if (precipitation <= 25)
                             return R.mipmap.weather_rain_day + "and" + "中雨";
                         else
                             return R.mipmap.weather_showers_day + "and" + "大雨";
@@ -625,8 +710,8 @@ public class WeatherActivity extends AppCompatActivity {
         }
     }
 
-    private int chooseWeatherIconOnly(String skycon, float intensity, int mode) {
-        String response = chooseWeatherIcon(skycon, intensity, mode);
+    public static int chooseWeatherIconOnly(String skycon, float precipitation, int mode) {
+        String response = chooseWeatherIcon(skycon, precipitation, mode);
         assert response != null;
         String[] responses = response.split("and");
         return Integer.parseInt(responses[0]);

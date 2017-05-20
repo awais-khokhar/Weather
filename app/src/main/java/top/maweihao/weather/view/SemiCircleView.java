@@ -75,7 +75,7 @@ public class SemiCircleView extends View {
 
         paint1.setColor(negativeColor);
         paint1.setStyle(Paint.Style.STROKE);
-        paint1.setStrokeWidth(10);
+        paint1.setStrokeWidth(7);
 
         paint2.setColor(paintColor);
         paint2.setStyle(Paint.Style.STROKE);

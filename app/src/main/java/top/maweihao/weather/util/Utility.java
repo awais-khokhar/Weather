@@ -45,21 +45,30 @@ public class Utility {
     }
 
     public static JSONArray[] handleDailyWeatherResponse(String url) {
-        JSONArray[] jsonArrays = new JSONArray[5];
+        JSONArray[] jsonArrays = new JSONArray[8];
         try {
             JSONObject all = new JSONObject(url);
             JSONObject result = all.getJSONObject("result");
             JSONObject daily = result.getJSONObject("daily");
+            JSONObject hourly = result.getJSONObject("hourly");
             JSONArray skycon = daily.getJSONArray("skycon");
             JSONArray humidity = daily.getJSONArray("humidity");
             JSONArray temperature = daily.getJSONArray("temperature");
             JSONArray precipitation = daily.getJSONArray("precipitation");
             JSONArray astro = daily.getJSONArray("astro");
+
+            JSONArray hourly_skycon = hourly.getJSONArray("skycon");
+            JSONArray hourly_temperature = hourly.getJSONArray("temperature");
+            JSONArray hourly_precipitation = hourly.getJSONArray("precipitation");
+            //will change to List quickly
             jsonArrays[0] = skycon;
             jsonArrays[1] = humidity;
             jsonArrays[2] = temperature;
             jsonArrays[3] = precipitation;
             jsonArrays[4] = astro;
+            jsonArrays[5] = hourly_skycon;
+            jsonArrays[6] = hourly_temperature;
+            jsonArrays[7] = hourly_precipitation;
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e(TAG, "handleFewDaysWeatherResponse: parse weather json error");

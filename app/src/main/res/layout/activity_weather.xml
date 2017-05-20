@@ -6,24 +6,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!--<android.support.design.widget.AppBarLayout-->
-    <!--android:id="@+id/app_bar"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="300dp"-->
-    <!--android:fitsSystemWindows="true">-->
-
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
         android:background="@color/colorPrimary" />
-
-    <!--<TextView-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="50dp"-->
-    <!--app:layout_scrollFlags="scroll|snap" />-->
-
-    <!--</android.support.design.widget.AppBarLayout>-->
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh"
@@ -43,24 +30,44 @@
                 <android.support.v7.widget.CardView
                     android:id="@+id/app_bar"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    app:cardCornerRadius="4dp"
-                    android:clickable="true"
+                    android:layout_height="350dp"
                     android:layout_margin="8dp"
-                    android:foreground="?android:attr/selectableItemBackground">
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    app:cardCornerRadius="4dp">
 
-                    <include layout="@layout/current_weather" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <include layout="@layout/current_weather" />
+
+                        <top.maweihao.weather.view.HScrollView
+                            android:id="@+id/HScrollView"
+                            android:layout_width="match_parent"
+                            android:layout_height="140dp"
+                            android:fillViewport="true"
+                            android:scrollbars="none">
+
+                            <top.maweihao.weather.view.LineChartView
+                                android:id="@+id/simpleLineChart"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent" />
+
+                        </top.maweihao.weather.view.HScrollView>
+                    </LinearLayout>
                 </android.support.v7.widget.CardView>
 
                 <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="150dp"
+                    android:layout_margin="8dp"
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
                     app:cardCornerRadius="4dp"
                     app:cardElevation="5dp"
-                    app:contentPaddingRight="5dp"
-                    android:clickable="true"
-                    android:layout_margin="8dp"
-                    android:foreground="?android:attr/selectableItemBackground">
+                    app:contentPaddingRight="5dp">
 
                     <include layout="@layout/few_days_content" />
 
@@ -69,10 +76,10 @@
                 <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="170dp"
-                    app:cardCornerRadius="4dp"
-                    android:clickable="true"
                     android:layout_margin="8dp"
-                    android:foreground="?android:attr/selectableItemBackground">
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    app:cardCornerRadius="4dp">
 
                     <include layout="@layout/more_weather_info" />
                 </android.support.v7.widget.CardView>
@@ -80,10 +87,10 @@
                 <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="150dp"
-                    app:cardCornerRadius="4dp"
-                    android:clickable="true"
                     android:layout_margin="8dp"
-                    android:foreground="?android:attr/selectableItemBackground">
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    app:cardCornerRadius="4dp">
 
                     <include layout="@layout/air_condition_layout" />
                 </android.support.v7.widget.CardView>
@@ -91,10 +98,10 @@
                 <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="150dp"
-                    app:cardCornerRadius="4dp"
-                    android:clickable="true"
                     android:layout_margin="8dp"
-                    android:foreground="?android:attr/selectableItemBackground">
+                    android:clickable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    app:cardCornerRadius="4dp">
 
                     <include layout="@layout/sun_time_layout" />
                 </android.support.v7.widget.CardView>
