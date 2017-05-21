@@ -4,7 +4,7 @@ package top.maweihao.weather;
  * Created by ma on 17-4-2.
  */
 
-public class extendWeatherData extends WeatherData {
+public class ExtendedWeatherData extends WeatherData {
 
     private String date;
     private String sunriseTime;

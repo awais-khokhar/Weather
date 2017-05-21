@@ -11,7 +11,7 @@
             android:id="@+id/start_service"
             android:title="Start Service [DEBUG]"
             android:icon="@drawable/ic_notifications_none_black_24dp"
-            android:visible="false"
+            android:visible="true"
 
             app:showAsAction="never" />
         <item

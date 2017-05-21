@@ -71,13 +71,15 @@ public class SunTimeView extends View {
         mPaint1.setStyle(Paint.Style.STROKE);
         mPaint1.setColor(nowColor);
         mPaint1.setStrokeWidth(15);
+
         mPaint2 = new Paint();
         mPaint2.setStyle(Paint.Style.STROKE);
-        mPaint2.setColor(darkColor);
+        mPaint2.setColor(dayColor);
         mPaint2.setStrokeWidth(20);
+
         mPaint3 = new Paint();
         mPaint3.setStyle(Paint.Style.STROKE);
-        mPaint3.setColor(dayColor);
+        mPaint3.setColor(darkColor);
         mPaint3.setStrokeWidth(20);
         mPaint1.setAntiAlias(true);
         mPaint2.setAntiAlias(true);

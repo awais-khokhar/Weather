@@ -83,10 +83,6 @@ public class LineChartView extends View implements HScrollView.OnMyHScrollView {
         Log.d(TAG, "widthSize:" + widthSize + ",heightSize:" + heightSize);
         //高度固定  150dp  == 304 px
         mHeight = heightSize;
-//        if (mXAxis == null) {
-//            Log.d(TAG, "mWidth:" + mWidth + ",mHeight:" + mHeight + "mXAxis:" + mXAxis);
-//            return;
-//        }
         //宽度通过数组长度计算
         int mWidth = mxInterval * (24 - 1) + mLeftInterval * 2;
         //1185dp  150dp
@@ -103,16 +99,10 @@ public class LineChartView extends View implements HScrollView.OnMyHScrollView {
         mYAxis = new ArrayList<>();
         mWeather = new ArrayList<>();
         precipitation = new ArrayList<>();
-//        mXAxis.add("N/A");
-//        mYAxis.add(10);
-//        mWeather.add("晴");
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-//        if (mXAxis == null || mYAxis == null || mWeather == null) {
-//            return;
-//        }
         if (mXAxis.size() == 0 || mYAxis.size() == 0) {
             Log.e(TAG, "数据异常");
             return;
@@ -120,7 +110,7 @@ public class LineChartView extends View implements HScrollView.OnMyHScrollView {
         //画坐标线的轴
         float mYAxisFontSize = 30;
         axisPaint.setTextSize(mYAxisFontSize);
-        axisPaint.setColor(Color.parseColor("#000000"));
+        axisPaint.setColor(Color.parseColor("#E0E0E0"));
         //画 X 轴
         xlinePaint.setColor(mLineColor);
         xlinePaint.setAntiAlias(true);
@@ -145,8 +135,7 @@ public class LineChartView extends View implements HScrollView.OnMyHScrollView {
         pointPaint.setColor(mLineColor);
         pointPaint.setStrokeWidth((float) 3.0);
         pointPaint.setStyle(Paint.Style.STROKE);
-//            pointPaint.setStyle(Paint.Style.FILL);
-        //画笔 线条
+//        画笔 线条
         linePaint.setColor(mLineColor);
         linePaint.setAntiAlias(true);
         //设置线条宽度
@@ -177,7 +166,7 @@ public class LineChartView extends View implements HScrollView.OnMyHScrollView {
             int IW = 60;
             int mLineToPoint = 10;
             if (0 == i) {
-//                    //画虚线  第一条
+//                画虚线  第一条
                 PaintDashed(canvas, xPoints[i], (int) (yAxisCentre + mPointRadius), xPoints[i], mHeight - mBottomInterval);
             } else if (i < (mXAxis.size() - 1)) {
                 int xx2 = mYAxis.get(i - 1) - mYAxis.get(0);
@@ -199,33 +188,27 @@ public class LineChartView extends View implements HScrollView.OnMyHScrollView {
                         if (xPoints[i] - mScrollLeft < count * mxInterval) {
                             if (mScrollLeft < xPoints[i] - weatherFontSize) { //判断当天气移动到虚线边界时候 就不移动
                                 float is2 = (xPoints[i - count] + count * mxInterval - mScrollLeft) / 2 + mScrollLeft;
-//                                canvas.drawText(mWeather.get(i - count), is2 - mYAxisFontSize, mHeight - mBottomInterval - mWeatherToXaxis, axisPaint); // 20  天气字体与x轴距离
                                 rectF.set(is2 - mYAxisFontSize, mHeight - mBottomInterval - IW, is2 - mYAxisFontSize + IW, mHeight - mBottomInterval);
                                 canvas.drawBitmap(chooseImage(i - count), null, rectF, axisPaint);
                             } else {
-//                                canvas.drawText(mWeather.get(i - count), xPoints[i] - weatherFontSize, mHeight - mBottomInterval - mWeatherToXaxis, axisPaint);
                                 rectF.set(xPoints[i] - weatherFontSize, mHeight - mBottomInterval - IW, xPoints[i] - weatherFontSize + IW, mHeight - mBottomInterval);
                                 canvas.drawBitmap(chooseImage(i - count), null, rectF, axisPaint);
                             }
                         } else if (rightDifference > 0) {//    右边天气位置  滑动时候
                             if (mScreenWidth + mScrollLeft > xPoints[i - count] + weatherFontSize) {//判断当天气移动到虚线边界时候 就不移动
                                 float x = mScreenWidth + mScrollLeft - (count * mxInterval - rightDifference) / 2;
-//                                canvas.drawText(mWeather.get(i - count), x - mYAxisFontSize, mHeight - mBottomInterval - mWeatherToXaxis, axisPaint);
                                 rectF.set(x - mYAxisFontSize, mHeight - mBottomInterval - IW, x - mYAxisFontSize + IW, mHeight - mBottomInterval);
                                 canvas.drawBitmap(chooseImage(i - count), null, rectF, axisPaint);
                             } else {
-//                                canvas.drawText(mWeather.get(i - count), xPoints[i - count], mHeight - mBottomInterval - mWeatherToXaxis, axisPaint);
                                 rectF.set(xPoints[i - count], mHeight - mBottomInterval - IW, xPoints[i - count] + IW, mHeight - mBottomInterval);
                                 canvas.drawBitmap(chooseImage(i - count), null, rectF, axisPaint);
                             }
                         } else {//天气位置  中间天气区域
-//                            canvas.drawText(mWeather.get(i - count), xPoints[i - count] + count * mxInterval / 2 - mYAxisFontSize, mHeight - mBottomInterval - mWeatherToXaxis, axisPaint);
                             rectF.set(xPoints[i - count] + count * mxInterval / 2 - mYAxisFontSize, mHeight - mBottomInterval - IW, xPoints[i - count] + count * mxInterval / 2 - mYAxisFontSize + IW, mHeight - mBottomInterval);
                             canvas.drawBitmap(chooseImage(i - count), null, rectF, axisPaint);
                         }
 
                     } else { //天气位置  初始化 没有滑动时候
-//                        canvas.drawText(mWeather.get(i - count), xPoints[i - count] + count * mxInterval / 2 - mYAxisFontSize, mHeight - mBottomInterval - mWeatherToXaxis, axisPaint);
                         rectF.set(xPoints[i - count] + count * mxInterval / 2 - mYAxisFontSize, mHeight - mBottomInterval - IW, xPoints[i - count] + count * mxInterval / 2 - mYAxisFontSize + IW, mHeight - mBottomInterval);
                         canvas.drawBitmap(chooseImage(i - count), null, rectF, axisPaint);
                     }
@@ -241,16 +224,13 @@ public class LineChartView extends View implements HScrollView.OnMyHScrollView {
                 if (rightDifference > 0) {//    //最有右边天气位置  滑动时候
                     if (mScreenWidth + mScrollLeft > xPoints[i - count] + weatherFontSize) {
                         float x = mScreenWidth + mScrollLeft - (count * mxInterval - rightDifference) / 2;
-//                        canvas.drawText(mWeather.get(i - count), x - mYAxisFontSize, mHeight - mBottomInterval - mWeatherToXaxis, axisPaint);
                         rectF.set(x - mYAxisFontSize, mHeight - mBottomInterval - IW, x - mYAxisFontSize + IW, mHeight - mBottomInterval);
                         canvas.drawBitmap(chooseImage(i - count), null, rectF, axisPaint);
                     } else {
-//                        canvas.drawText(mWeather.get(i - count), xPoints[i - count], mHeight - mBottomInterval - mWeatherToXaxis, axisPaint);
                         rectF.set(xPoints[i - count], mHeight - mBottomInterval - IW, xPoints[i - count] + IW, mHeight - mBottomInterval);
                         canvas.drawBitmap(chooseImage(i - count), null, rectF, axisPaint);
                     }
                 } else {
-//                    canvas.drawText(mWeather.get(i - count), xPoints[i - count] + count * mxInterval / 2 - mYAxisFontSize, mHeight - mBottomInterval - mWeatherToXaxis, axisPaint);
                     rectF.set(xPoints[i - count] + count * mxInterval / 2 - mYAxisFontSize, mHeight - mBottomInterval - IW, xPoints[i - count] + count * mxInterval / 2 - mYAxisFontSize + IW, mHeight - mBottomInterval);
                     canvas.drawBitmap(chooseImage(i - count), null, rectF, axisPaint);
                 }

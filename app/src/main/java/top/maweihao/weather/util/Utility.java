@@ -9,6 +9,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 import top.maweihao.weather.R;
 import top.maweihao.weather.WeatherData;
 import top.maweihao.weather.db.City;
@@ -47,8 +49,9 @@ public class Utility {
         return wd;
     }
 
-    public static JSONArray[] handleDailyWeatherResponse(String url) {
-        JSONArray[] jsonArrays = new JSONArray[8];
+    public static ArrayList<JSONArray> handleDailyWeatherResponse(String url) {
+        ArrayList<JSONArray> jsonArrays = new ArrayList<>();
+//        JSONArray[] jsonArrays = new JSONArray[8];
         try {
             JSONObject all = new JSONObject(url);
             JSONObject result = all.getJSONObject("result");
@@ -64,14 +67,14 @@ public class Utility {
             JSONArray hourly_temperature = hourly.getJSONArray("temperature");
             JSONArray hourly_precipitation = hourly.getJSONArray("precipitation");
             //will change to List quickly
-            jsonArrays[0] = skycon;
-            jsonArrays[1] = humidity;
-            jsonArrays[2] = temperature;
-            jsonArrays[3] = precipitation;
-            jsonArrays[4] = astro;
-            jsonArrays[5] = hourly_skycon;
-            jsonArrays[6] = hourly_temperature;
-            jsonArrays[7] = hourly_precipitation;
+            jsonArrays.add(0, skycon);
+            jsonArrays.add(1, humidity);
+            jsonArrays.add(2, temperature);
+            jsonArrays.add(3, precipitation);
+            jsonArrays.add(4, astro);
+            jsonArrays.add(5, hourly_skycon);
+            jsonArrays.add(6, hourly_temperature);
+            jsonArrays.add(7, hourly_precipitation);
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e(TAG, "handleFewDaysWeatherResponse: parse weather json error");

@@ -16,16 +16,16 @@
 
     <top.maweihao.weather.view.SunTimeView
         android:id="@+id/stv"
-        app:darkColor="#FFB300"
-        app:dayColor="#1A237E"
+        app:darkColor="#1A237E"
+        app:dayColor="#FFB300"
         android:layout_width="150dp"
         android:layout_height="100dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="0dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/guideline4"
@@ -126,4 +126,28 @@
         app:layout_constraintLeft_toLeftOf="@+id/textView5"
         app:layout_constraintRight_toRightOf="@+id/textView5"
         app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="0dp"
+        android:text="00: 00"
+        android:textColor="#1A237E"
+        android:textSize="10sp"
+        app:layout_constraintLeft_toLeftOf="@+id/stv"
+        app:layout_constraintTop_toBottomOf="@+id/stv" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="0dp"
+        android:text="24: 00"
+        android:textColor="#1A237E"
+        android:textSize="10sp"
+        app:layout_constraintRight_toRightOf="@+id/stv"
+        app:layout_constraintTop_toBottomOf="@+id/stv" />
 </android.support.constraint.ConstraintLayout>
