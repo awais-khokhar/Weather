@@ -29,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import okhttp3.Call;
@@ -42,6 +43,8 @@ import top.maweihao.weather.view.LineChartView;
 import top.maweihao.weather.view.SemiCircleView;
 import top.maweihao.weather.view.SunTimeView;
 
+import static top.maweihao.weather.util.Utility.chooseWeatherIcon;
+import static top.maweihao.weather.util.Utility.chooseWeatherIconOnly;
 import static top.maweihao.weather.util.Utility.handleCurrentWeatherResponse;
 import static top.maweihao.weather.util.Utility.intRoundString;
 
@@ -56,6 +59,7 @@ public class WeatherActivity extends AppCompatActivity {
     public static final int HOURLY_MODE = 5;
 
     static final int HANDLE_POSITION = 0;
+    static final int HANDLE_TOAST = 1;
 
     private boolean isDone = false;
     private String countyName = null;
@@ -64,7 +68,6 @@ public class WeatherActivity extends AppCompatActivity {
     private String locationCoordinates;
     private perDayWeatherView[] day = new perDayWeatherView[5];
 
-    private Toolbar toolbar;
     private TextView PM25_tv;
     private TextView temperature_text;
     private TextView skycon_text;
@@ -76,9 +79,44 @@ public class WeatherActivity extends AppCompatActivity {
     private SemiCircleView AQICircle;
     private SemiCircleView PMCircle;
 
-    private static Handler handler;
-
     private Boolean autoLocate;
+
+    private MyHandler handler = new MyHandler(this);
+
+    private static class MyHandler extends Handler {
+        private final WeakReference<WeatherActivity> mActivity;
+
+        MyHandler(WeatherActivity activity) {
+            mActivity = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            WeatherActivity activity = mActivity.get();
+            if (activity != null) {
+                switch (msg.what) {
+                    case HANDLE_POSITION:
+                        if (msg.obj instanceof String) {
+                            if (activity.getSupportActionBar() != null) {
+                                activity.getSupportActionBar().setTitle((String) msg.obj);
+                            } else {
+                                Log.e(TAG, "handleMessage: toolBar == null");
+                            }
+                        } else {
+                            Log.e(TAG, "handleMessage: HANDLE_POSITION obj == " + msg.obj.getClass());
+                        }
+                        break;
+                    case HANDLE_TOAST:
+                        if (msg.obj instanceof String) {
+                            Toast.makeText(activity, (String) msg.obj, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.e(TAG, "handleMessage: HANDLE_TOAST obj == " + msg.obj.getClass());
+                        }
+
+                }
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +145,7 @@ public class WeatherActivity extends AppCompatActivity {
         AQICircle = (SemiCircleView) findViewById(R.id.AQI_Circle);
         PMCircle = (SemiCircleView) findViewById(R.id.PM_Circle);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
@@ -119,23 +157,6 @@ public class WeatherActivity extends AppCompatActivity {
                 beforeRequestWeather(THROUGH_LOCATE);
             }
         }));
-
-        handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                switch (msg.what) {
-                    case HANDLE_POSITION:
-                        if (msg.obj instanceof String) {
-                            if (getSupportActionBar() != null) {
-                                getSupportActionBar().setTitle(countyName);
-                            } else {
-                                Log.e(TAG, "handleMessage: toolBar == null");
-                            }
-                        }
-                        break;
-                }
-            }
-        };
 
         loadPreferences();
 
@@ -449,12 +470,10 @@ public class WeatherActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(WeatherActivity.this, "load full weather failed", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                Message message = handler.obtainMessage();
+                message.what = HANDLE_TOAST;
+                message.obj = "load full weather failed";
+                handler.handleMessage(message);
             }
 
             @Override
@@ -526,19 +545,17 @@ public class WeatherActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(WeatherActivity.this, "load current weather failed", Toast.LENGTH_LONG).show();
-                    }
-                });
+                Message message = handler.obtainMessage();
+                message.what = HANDLE_TOAST;
+                message.obj = "load current weather failed";
+                handler.handleMessage(message);
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String responseText = response.body().string();
                 final WeatherData weatherData = handleCurrentWeatherResponse(responseText);
-                runOnUiThread(new Runnable() {
+                handler.post(new Runnable() {
                     @Override
                     public void run() {
                         if (weatherData != null) {
@@ -559,7 +576,7 @@ public class WeatherActivity extends AppCompatActivity {
 
     private void showHourlyWeatherInfo(final HourlyWeather[] hourlyWeathers) {
 
-        runOnUiThread(new Runnable() {
+        handler.post(new Runnable() {
             @Override
             public void run() {
                 HScrollView hScrollView = (HScrollView) findViewById(R.id.HScrollView);
@@ -597,7 +614,7 @@ public class WeatherActivity extends AppCompatActivity {
 
     private void showDailyWeatherInfo(final extendWeatherData[] weatherDatas) {
         if (weatherDatas.length == 5) {
-            runOnUiThread(new Runnable() {
+            handler.post(new Runnable() {
                 @Override
                 public void run() {
                     for (int i = 0; i < 5; i++) {
@@ -662,59 +679,12 @@ public class WeatherActivity extends AppCompatActivity {
     }
 
     private void AfterGetCoordinate() {
-        runOnUiThread(new Runnable() {
+        handler.post(new Runnable() {
             @Override
             public void run() {
                 initRequireUrl();
             }
         });
-    }
-
-    public static String chooseWeatherIcon(String skycon, float precipitation, int mode) {
-        switch (skycon) {
-            case "CLEAR_DAY":
-                return R.mipmap.weather_clear + "and" + "晴";
-            case "CLEAR_NIGHT":
-                return R.mipmap.weather_clear_night + "and" + "晴";
-            case "PARTLY_CLOUDY_DAY":
-                return R.mipmap.weather_few_clouds + "and" + "多云";
-            case "PARTLY_CLOUDY_NIGHT":
-                return R.mipmap.weather_few_clouds_night + "and" + "多云";
-            case "CLOUDY":
-                return R.mipmap.weather_clouds + "and" + "阴";
-            case "RAIN":
-                switch (mode) {
-                    case MINUTELY_MODE:
-                        if (precipitation <= 0.15)
-                            return R.mipmap.weather_drizzle_day + "and" + "小雨";
-                        else if (precipitation <= 0.35)
-                            return R.mipmap.weather_rain_day + "and" + "中雨";
-                        else
-                            return R.mipmap.weather_showers_day + "and" + "大雨";
-                    case HOURLY_MODE:
-                        if (precipitation <= 10)
-                            return R.mipmap.weather_drizzle_day + "and" + "小雨";
-                        else if (precipitation <= 25)
-                            return R.mipmap.weather_rain_day + "and" + "中雨";
-                        else
-                            return R.mipmap.weather_showers_day + "and" + "大雨";
-                }
-            case "SNOW":
-                return R.mipmap.weather_snow + "and" + "雪";
-            case "WIND":
-                return R.mipmap.weather_wind + "and" + "多风";
-            case "FOG":
-                return R.mipmap.weather_fog + "and" + "雾";
-            default:
-                return null;
-        }
-    }
-
-    public static int chooseWeatherIconOnly(String skycon, float precipitation, int mode) {
-        String response = chooseWeatherIcon(skycon, precipitation, mode);
-        assert response != null;
-        String[] responses = response.split("and");
-        return Integer.parseInt(responses[0]);
     }
 
     private void startSwipe() {

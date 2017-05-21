@@ -15,6 +15,9 @@ import top.maweihao.weather.db.City;
 import top.maweihao.weather.db.County;
 import top.maweihao.weather.db.Province;
 
+import static top.maweihao.weather.WeatherActivity.HOURLY_MODE;
+import static top.maweihao.weather.WeatherActivity.MINUTELY_MODE;
+
 
 /**
  * Created by ma on 17-3-5.
@@ -182,6 +185,53 @@ public class Utility {
             default:
                 return 0;
         }
+    }
+
+    public static String chooseWeatherIcon(String skycon, float precipitation, int mode) {
+        switch (skycon) {
+            case "CLEAR_DAY":
+                return R.mipmap.weather_clear + "and" + "晴";
+            case "CLEAR_NIGHT":
+                return R.mipmap.weather_clear_night + "and" + "晴";
+            case "PARTLY_CLOUDY_DAY":
+                return R.mipmap.weather_few_clouds + "and" + "多云";
+            case "PARTLY_CLOUDY_NIGHT":
+                return R.mipmap.weather_few_clouds_night + "and" + "多云";
+            case "CLOUDY":
+                return R.mipmap.weather_clouds + "and" + "阴";
+            case "RAIN":
+                switch (mode) {
+                    case MINUTELY_MODE:
+                        if (precipitation <= 0.15)
+                            return R.mipmap.weather_drizzle_day + "and" + "小雨";
+                        else if (precipitation <= 0.35)
+                            return R.mipmap.weather_rain_day + "and" + "中雨";
+                        else
+                            return R.mipmap.weather_showers_day + "and" + "大雨";
+                    case HOURLY_MODE:
+                        if (precipitation <= 10)
+                            return R.mipmap.weather_drizzle_day + "and" + "小雨";
+                        else if (precipitation <= 25)
+                            return R.mipmap.weather_rain_day + "and" + "中雨";
+                        else
+                            return R.mipmap.weather_showers_day + "and" + "大雨";
+                }
+            case "SNOW":
+                return R.mipmap.weather_snow + "and" + "雪";
+            case "WIND":
+                return R.mipmap.weather_wind + "and" + "多风";
+            case "FOG":
+                return R.mipmap.weather_fog + "and" + "雾";
+            default:
+                return null;
+        }
+    }
+
+    public static int chooseWeatherIconOnly(String skycon, float precipitation, int mode) {
+        String response = chooseWeatherIcon(skycon, precipitation, mode);
+        assert response != null;
+        String[] responses = response.split("and");
+        return Integer.parseInt(responses[0]);
     }
 }
 

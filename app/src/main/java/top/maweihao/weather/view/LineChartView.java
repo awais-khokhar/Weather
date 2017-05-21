@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import top.maweihao.weather.R;
 import top.maweihao.weather.WeatherActivity;
+import top.maweihao.weather.util.Utility;
 
 /**
  * View for LineChartView
@@ -37,7 +38,7 @@ public class LineChartView extends View implements HScrollView.OnMyHScrollView {
 //    private int mWeatherToXaxis = 20;
     private int mHeight;
     //线的颜色
-    private int mLineColor = Color.parseColor("#24c2f0");
+    private int mLineColor = Color.parseColor("#E0E0E0");
 
     //X轴的文字 (时间)
     private ArrayList mXAxis;
@@ -338,6 +339,6 @@ public class LineChartView extends View implements HScrollView.OnMyHScrollView {
         String skycon = mWeather.get(index);
         float precipitation = this.precipitation.get(index);
         return BitmapFactory.decodeResource(getResources(),
-                WeatherActivity.chooseWeatherIconOnly(skycon, precipitation, WeatherActivity.HOURLY_MODE));
+                Utility.chooseWeatherIconOnly(skycon, precipitation, WeatherActivity.HOURLY_MODE));
     }
 }
