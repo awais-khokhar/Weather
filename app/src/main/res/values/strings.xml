@@ -75,4 +75,19 @@
     <string name="choose_position">Choose Position</string>
     <string name="setting">Setting</string>
     <string name="select_disabled">Choose position disabled when auto locate is on</string>
+    <string name="uv">UV</string>
+    <string name="carWashing">Car Washing</string>
+    <string name="dressing">Dressing</string>
+    <string name="wind_direction">Direction</string>
+    <string name="wind_level">Level</string>
+
+    <!--Wind directions-->
+    <string name="north">North</string>
+    <string name="northeast">NE</string>
+    <string name="east">East</string>
+    <string name="southeast">SE</string>
+    <string name="south">South</string>
+    <string name="southwest">SW</string>
+    <string name="west">West</string>
+    <string name="northwest">NW</string>
 </resources>

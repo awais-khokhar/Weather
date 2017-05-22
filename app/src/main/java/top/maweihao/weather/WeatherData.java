@@ -1,6 +1,9 @@
 package top.maweihao.weather;
 
+import top.maweihao.weather.gson.Wind;
+
 /**
+ * gson object
  * Created by ma on 17-3-5.
  */
 
@@ -13,6 +16,7 @@ public class WeatherData {
     private String humidity;
     private String aqi;
     private String intensity;
+    private Wind wind;
 
     public String getIntensity() {
         return intensity;
@@ -68,5 +72,13 @@ public class WeatherData {
 
     public String getAqi() {
         return aqi;
+    }
+
+    public void setWind(Wind wind) {
+        this.wind = wind;
+    }
+
+    public Wind getWind() {
+        return wind;
     }
 }

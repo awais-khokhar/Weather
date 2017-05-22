@@ -62,6 +62,8 @@ public class WeatherActivity extends AppCompatActivity {
     static final int HANDLE_TOAST = 1;
     static final int HANDLE_SWIPE_BEGIN = 2;
     static final int HANDLE_SWIPE_STOP = 3;
+    static final int HANDLE_WIND_DIRECTION = 4;
+    static final int HANDLE_WIND_LEVEL = 5;
 
     private boolean isDone = false;
     private String countyName = null;
@@ -75,6 +77,8 @@ public class WeatherActivity extends AppCompatActivity {
     private TextView hum_text;
     private TextView sunrise_text;
     private TextView sunset_text;
+    private TextView windDirection_text;
+    private TextView windLevel_text;
     private SunTimeView sunTimeView;
     private SemiCircleView AQICircle;
     private SemiCircleView PMCircle;
@@ -123,6 +127,9 @@ public class WeatherActivity extends AppCompatActivity {
                             activity.swipeRefreshLayout.setRefreshing(false);
                         }
                         break;
+                    case HANDLE_WIND_DIRECTION:
+                        activity.windDirection_text.setText((String) msg.obj);
+                        break;
 
                 }
             }
@@ -148,10 +155,12 @@ public class WeatherActivity extends AppCompatActivity {
         day[3] = (perDayWeatherView) findViewById(R.id.daily_weather_3);
         day[4] = (perDayWeatherView) findViewById(R.id.daily_weather_4);
 
-        TextView aqi_text = (TextView) findViewById(R.id.aqi);
+        TextView uv_text = (TextView) findViewById(R.id.uv);
         hum_text = (TextView) findViewById(R.id.humidity);
         sunrise_text = (TextView) findViewById(R.id.sunrise);
         sunset_text = (TextView) findViewById(R.id.sunset);
+        windDirection_text = (TextView) findViewById(R.id.wind_direction_tv);
+        windLevel_text = (TextView) findViewById(R.id.wind_level_tv);
         sunTimeView = (SunTimeView) findViewById(R.id.stv);
         AQICircle = (SemiCircleView) findViewById(R.id.AQI_Circle);
         PMCircle = (SemiCircleView) findViewById(R.id.PM_Circle);
@@ -211,7 +220,6 @@ public class WeatherActivity extends AppCompatActivity {
                     message.what = HANDLE_POSITION;
                     message.obj = countyName;
                     handler.sendMessage(message);
-//                        getSupportActionBar().setTitle(countyName);
                     Log.d(TAG, "onActivityResult: county_return: " + countyName);
                     SharedPreferences.Editor editor = PreferenceManager
                             .getDefaultSharedPreferences(WeatherActivity.this).edit();
@@ -325,7 +333,6 @@ public class WeatherActivity extends AppCompatActivity {
         if (!TextUtils.isEmpty(coordinate)) {
             String[] part = coordinate.split(",");
             String reverseCoordinate = part[1] + ',' + part[0];
-//            Log.d(TAG, "WeatherActivity: reverseCoordinate: " + reverseCoordinate);
             url = "http://api.map.baidu.com/geocoder/v2/?location=" + reverseCoordinate + "&output=json&pois=1&ak=eTTiuvV4YisaBbLwvj4p8drl7BGfl1eo";
         } else {
             Log.e(TAG, "WeatherActivity::setCountyByCoordinate: coordinate == null");
@@ -382,13 +389,6 @@ public class WeatherActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Call call, IOException e) {
                     e.printStackTrace();
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            Log.e(TAG, "GetCoordinateByChoosePosition: failed");
-//                            stopSwipe();
-//                        }
-//                    });
                     message.what = HANDLE_SWIPE_STOP;
                     Log.e(TAG, "GetCoordinateByChoosePosition: failed");
                     handler.handleMessage(message);
@@ -424,7 +424,6 @@ public class WeatherActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.e(TAG, "onFailure: fetch locationCoordinates by IP failed");
-//                Toast.makeText(WeatherActivity.this, getResources().getString(R.string.access_network_failed), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -665,6 +664,10 @@ public class WeatherActivity extends AppCompatActivity {
         String aqi = weatherData.getAqi();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String countyName = prefs.getString("countyName", null);
+        if (weatherData.getWind() != null) {
+            setWindDirection(weatherData.getWind().getDirection());
+            setWindLevel(weatherData.getWind().getSpeed());
+        }
         if (!TextUtils.isEmpty(countyName)) {
             Message message = handler.obtainMessage();
             message.what = HANDLE_POSITION;
@@ -673,10 +676,8 @@ public class WeatherActivity extends AppCompatActivity {
         } else {
             Log.d(TAG, "showCurrentWeatherInfo: countyName == null");
         }
-//        PM25_tv.setText(getResources().getString(R.string.pm25) + PM25);
         PMCircle.setValue(Integer.valueOf(PM25));
         temperature_text.setText(temperature);
-//        aqi_text.setText(aqi);
         AQICircle.setValue(Integer.valueOf(aqi));
         Float hum = Float.parseFloat(humidity) * 100;
         hum_text.setText(hum.toString().substring(0, 2) + "%");
@@ -712,6 +713,78 @@ public class WeatherActivity extends AppCompatActivity {
     private void stopSwipe() {
         if (swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    private void setWindDirection(float direction) {
+        String dir = null;
+        if (direction <= 22.5 || direction >= 337.5) {
+            dir = getResources().getString(R.string.north);
+        } else if (direction <= 67.5) {
+            dir = getResources().getString(R.string.northeast);
+        } else if (direction <= 112.5) {
+            dir = getResources().getString(R.string.east);
+        } else if (direction <= 157.5) {
+            dir = getResources().getString(R.string.southeast);
+        } else if (direction <= 202.5) {
+            dir = getResources().getString(R.string.south);
+        } else if (direction <= 247.5) {
+            dir = getResources().getString(R.string.southwest);
+        } else if (direction <= 292.5) {
+            dir = getResources().getString(R.string.west);
+        } else {
+            dir = getResources().getString(R.string.northwest);
+        }
+        windDirection_text.setText(dir);
+    }
+
+    private void setWindLevel(float speed) {
+        int level;
+        String info;
+        if (speed <= 0.72) {
+            level = 0;
+            info = "无风";
+        } else if (speed <= 5.4) {
+            level = 1;
+            info = "软风";
+        } else if (speed <= 11.88) {
+            level = 2;
+            info = "轻风";
+        } else if (speed <= 19.44) {
+            level = 3;
+            info = "微风";
+        } else if (speed <= 28.44) {
+            level = 4;
+            info = "和风";
+        } else if (speed <= 38.52) {
+            level = 5;
+            info = "劲风";
+        } else if (speed <= 49.68) {
+            level = 6;
+            info = "强风";
+        } else if (speed <= 61.56) {
+            level = 7;
+            info = "疾风";
+        } else if (speed <= 74.52) {
+            level = 8;
+            info = "大风";
+        } else if (speed <= 87.84) {
+            level = 9;
+            info = "烈风";
+        } else if (speed <= 102.24) {
+            level = 10;
+            info = "狂风";
+        } else if (speed <= 117.36) {
+            level = 11;
+            info = "暴风";
+        } else {
+            level = 12;
+            info = "飓风";
+        }
+        if (Utility.isChinese(getApplicationContext())) {
+            windLevel_text.setText(level + " 级" + info);
+        } else {
+            windLevel_text.setText("LEVEL " + level);
         }
     }
 

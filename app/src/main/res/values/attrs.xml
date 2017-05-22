@@ -25,4 +25,8 @@
         <attr name="name" format="string" />
         <attr name="aqi" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="WindMillView">
+        <attr name="color" format="color" />
+    </declare-styleable>
 </resources>

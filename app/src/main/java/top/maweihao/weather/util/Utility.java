@@ -1,5 +1,7 @@
 package top.maweihao.weather.util;
 
+import android.content.Context;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -38,9 +40,9 @@ public class Utility {
             JSONObject resultJSON = allAttributes.getJSONObject("result");
             JSONObject precipitationJSON = resultJSON.getJSONObject("precipitation");
             JSONObject localJSON = precipitationJSON.getJSONObject("local");
-            String intensity = localJSON.getString("intensity");
             Gson gson = new Gson();
             wd = gson.fromJson(result, WeatherData.class);
+            String intensity = localJSON.getString("intensity");
             wd.setIntensity(intensity);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -235,6 +237,14 @@ public class Utility {
         assert response != null;
         String[] responses = response.split("and");
         return Integer.parseInt(responses[0]);
+    }
+
+    public static boolean isChinese(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return context.getResources().getConfiguration().getLocales().get(0).getDisplayLanguage().equals("中文");
+        } else {
+            return context.getResources().getConfiguration().locale.getDisplayLanguage().equals("zh-CN");
+        }
     }
 }
 
