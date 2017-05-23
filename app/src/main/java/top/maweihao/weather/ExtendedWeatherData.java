@@ -11,6 +11,12 @@ public class ExtendedWeatherData extends WeatherData {
     private String sunsetTime;
     private String minTemperature;
     private String maxTemperature;
+    private int uvIndex;
+    private String uvDesc;
+    private int derssingIndex;
+    private String dressingDesc;
+    private int carWashingIndex;
+    private String carWashingDesc;
 
     public String getDate() {
         return date;
@@ -52,4 +58,51 @@ public class ExtendedWeatherData extends WeatherData {
         this.minTemperature = minTemperature;
     }
 
+    public int getDerssingIndex() {
+        return derssingIndex;
+    }
+
+    public String getDressingDesc() {
+        return dressingDesc;
+    }
+
+    public int getCarWashingIndex() {
+        return carWashingIndex;
+    }
+
+    public int getUvIndex() {
+        return uvIndex;
+    }
+
+    public String getUvDesc() {
+        return uvDesc;
+    }
+
+    public String getCarWashingDesc() {
+        return carWashingDesc;
+    }
+
+    public void setDerssingIndex(int derssingIndex) {
+        this.derssingIndex = derssingIndex;
+    }
+
+    public void setUvIndex(int uvIndex) {
+        this.uvIndex = uvIndex;
+    }
+
+    public void setUvDesc(String uvDesc) {
+        this.uvDesc = uvDesc;
+    }
+
+    public void setCarWashingDesc(String carWashingDesc) {
+        this.carWashingDesc = carWashingDesc;
+    }
+
+    public void setCarWashingIndex(int carWashingIndex) {
+        this.carWashingIndex = carWashingIndex;
+    }
+
+    public void setDressingDesc(String dressingDesc) {
+        this.dressingDesc = dressingDesc;
+    }
 }

@@ -67,10 +67,18 @@
     <string name="weather_notifications">通知</string>
     <string name="select_disabled">当前为自动定位</string>
     <string name="pm25">首要污染物</string>
-    <string name="uv">UV</string>
-    <string name="carWashing">Car Washing</string>
-    <string name="dressing">Dressing</string>
+    <string name="uv">紫外线</string>
+    <string name="carWashing">洗车指南</string>
+    <string name="dressing">穿衣指南</string>
     <string name="wind_direction">风向</string>
     <string name="wind_level">风力</string>
+    <string name="north">北风</string>
+    <string name="northeast">东北风</string>
+    <string name="northwest">西北风</string>
+    <string name="south">南风</string>
+    <string name="southeast">东南风</string>
+    <string name="southwest">西南风</string>
+    <string name="west">西风</string>
+    <string name="east">东风</string>
 
 </resources>

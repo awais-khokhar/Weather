@@ -53,7 +53,6 @@ public class Utility {
 
     public static ArrayList<JSONArray> handleDailyWeatherResponse(String url) {
         ArrayList<JSONArray> jsonArrays = new ArrayList<>();
-//        JSONArray[] jsonArrays = new JSONArray[8];
         try {
             JSONObject all = new JSONObject(url);
             JSONObject result = all.getJSONObject("result");
@@ -64,11 +63,13 @@ public class Utility {
             JSONArray temperature = daily.getJSONArray("temperature");
             JSONArray precipitation = daily.getJSONArray("precipitation");
             JSONArray astro = daily.getJSONArray("astro");
+            JSONArray uv = daily.getJSONArray("ultraviolet");
+            JSONArray dressing = daily.getJSONArray("dressing");
+            JSONArray carWashing = daily.getJSONArray("carWashing");
 
             JSONArray hourly_skycon = hourly.getJSONArray("skycon");
             JSONArray hourly_temperature = hourly.getJSONArray("temperature");
             JSONArray hourly_precipitation = hourly.getJSONArray("precipitation");
-            //will change to List quickly
             jsonArrays.add(0, skycon);
             jsonArrays.add(1, humidity);
             jsonArrays.add(2, temperature);
@@ -77,6 +78,10 @@ public class Utility {
             jsonArrays.add(5, hourly_skycon);
             jsonArrays.add(6, hourly_temperature);
             jsonArrays.add(7, hourly_precipitation);
+            jsonArrays.add(8, uv);
+            jsonArrays.add(9, dressing);
+            jsonArrays.add(10, carWashing);
+
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e(TAG, "handleFewDaysWeatherResponse: parse weather json error");

@@ -62,8 +62,7 @@ public class WeatherActivity extends AppCompatActivity {
     static final int HANDLE_TOAST = 1;
     static final int HANDLE_SWIPE_BEGIN = 2;
     static final int HANDLE_SWIPE_STOP = 3;
-    static final int HANDLE_WIND_DIRECTION = 4;
-    static final int HANDLE_WIND_LEVEL = 5;
+    static final int HANDLE_RAIN_INFO = 4;
 
     private boolean isDone = false;
     private String countyName = null;
@@ -79,6 +78,10 @@ public class WeatherActivity extends AppCompatActivity {
     private TextView sunset_text;
     private TextView windDirection_text;
     private TextView windLevel_text;
+    private TextView uv_text;
+    private TextView carWashing_text;
+    private TextView dressing_text;
+    private TextView rainInfo;
     private SunTimeView sunTimeView;
     private SemiCircleView AQICircle;
     private SemiCircleView PMCircle;
@@ -127,10 +130,9 @@ public class WeatherActivity extends AppCompatActivity {
                             activity.swipeRefreshLayout.setRefreshing(false);
                         }
                         break;
-                    case HANDLE_WIND_DIRECTION:
-                        activity.windDirection_text.setText((String) msg.obj);
+                    case HANDLE_RAIN_INFO:  //BUG
+                        activity.rainInfo.setText((String) msg.obj);
                         break;
-
                 }
             }
         }
@@ -144,7 +146,7 @@ public class WeatherActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather);
 
-        TextView PM25_tv = (TextView) findViewById(R.id.pm25_Tv);
+        rainInfo = (TextView) findViewById(R.id.rain_info_tv);
         temperature_text = (TextView) findViewById(R.id.temperature_text);
         skycon_text = (TextView) findViewById(R.id.skycon_text);
         appBar = (CardView) findViewById(R.id.app_bar);
@@ -155,12 +157,14 @@ public class WeatherActivity extends AppCompatActivity {
         day[3] = (perDayWeatherView) findViewById(R.id.daily_weather_3);
         day[4] = (perDayWeatherView) findViewById(R.id.daily_weather_4);
 
-        TextView uv_text = (TextView) findViewById(R.id.uv);
         hum_text = (TextView) findViewById(R.id.humidity);
         sunrise_text = (TextView) findViewById(R.id.sunrise);
         sunset_text = (TextView) findViewById(R.id.sunset);
         windDirection_text = (TextView) findViewById(R.id.wind_direction_tv);
         windLevel_text = (TextView) findViewById(R.id.wind_level_tv);
+        uv_text = (TextView) findViewById(R.id.uv);
+        carWashing_text = (TextView) findViewById(R.id.carwash);
+        dressing_text = (TextView) findViewById(R.id.dressing);
         sunTimeView = (SunTimeView) findViewById(R.id.stv);
         AQICircle = (SemiCircleView) findViewById(R.id.AQI_Circle);
         PMCircle = (SemiCircleView) findViewById(R.id.PM_Circle);
@@ -505,8 +509,8 @@ public class WeatherActivity extends AppCompatActivity {
     private void handleFullWeatherData(String responseText) {
         ArrayList<ExtendedWeatherData> weatherDatas = new ArrayList<>(5);
         ArrayList<HourlyWeather> hourlyWeathers = new ArrayList<>(24);
-        ArrayList<JSONArray> jsonArrays = Utility.handleDailyWeatherResponse(responseText);
-        if (jsonArrays.size() == 8) {
+        ArrayList<JSONArray> jsonArrays = moreHandleDailyWeatherResponse(responseText);
+        if (jsonArrays.size() == 11) {
             for (int i = 0; i < 5; i++) {
                 try {
                     ExtendedWeatherData wd = new ExtendedWeatherData();
@@ -515,6 +519,9 @@ public class WeatherActivity extends AppCompatActivity {
                     JSONObject temperatures = jsonArrays.get(2).getJSONObject(i);
                     JSONObject precipitation = jsonArrays.get(3).getJSONObject(i);
                     JSONObject astro = jsonArrays.get(4).getJSONObject(i);
+                    JSONObject uv = jsonArrays.get(8).getJSONObject(i);
+                    JSONObject dressing = jsonArrays.get(9).getJSONObject(i);
+                    JSONObject carWashing = jsonArrays.get(10).getJSONObject(i);
                     wd.setDate(temperatures.getString("date"));
                     wd.setMaxTemperature(temperatures.getString("max"));
                     wd.setMinTemperature(temperatures.getString("min"));
@@ -523,6 +530,12 @@ public class WeatherActivity extends AppCompatActivity {
                     wd.setIntensity(precipitation.getString("max"));
                     wd.setSunriseTime(astro.getJSONObject("sunrise").getString("time"));
                     wd.setSunsetTime(astro.getJSONObject("sunset").getString("time"));
+                    wd.setUvIndex(uv.getInt("index"));
+                    wd.setUvDesc(uv.getString("desc"));
+                    wd.setDerssingIndex(dressing.getInt("index"));
+                    wd.setDressingDesc(dressing.getString("desc"));
+                    wd.setCarWashingIndex(carWashing.getInt("index"));
+                    wd.setCarWashingDesc(carWashing.getString("desc"));
                     weatherDatas.add(i, wd);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -635,7 +648,7 @@ public class WeatherActivity extends AppCompatActivity {
                     for (int i = 0; i < 5; i++) {
                         String[] simpleDate = weatherDatas.get(i).getDate().split("-");
                         day[i].setDate(simpleDate[1] + '/' + simpleDate[2]);
-                        day[i].setTemperature(Utility.roundString(weatherDatas.get(i).getMinTemperature()) + '~'
+                        day[i].setTemperature(Utility.roundString(weatherDatas.get(i).getMinTemperature()) + '/'
                                 + Utility.roundString(weatherDatas.get(i).getMaxTemperature()) + "ºC");
                         day[i].setIcon(chooseWeatherIconOnly(weatherDatas.get(i).getSkycon(), Float.parseFloat(weatherDatas.get(i).getIntensity()), HOURLY_MODE));
                     }
@@ -644,6 +657,9 @@ public class WeatherActivity extends AppCompatActivity {
                     sunrise_text.setText(weatherDatas.get(0).getSunriseTime());
                     sunset_text.setText(weatherDatas.get(0).getSunsetTime());
                     sunTimeView.setTime(weatherDatas.get(0).getSunriseTime(), weatherDatas.get(0).getSunsetTime());
+                    uv_text.setText(weatherDatas.get(0).getUvDesc());
+                    carWashing_text.setText(weatherDatas.get(0).getCarWashingDesc());
+                    dressing_text.setText(weatherDatas.get(0).getDressingDesc());
                     if (isDone) {
                         stopSwipe();
                         isDone = false;
@@ -695,6 +711,26 @@ public class WeatherActivity extends AppCompatActivity {
         }
     }
 
+    private ArrayList<JSONArray> moreHandleDailyWeatherResponse(String url) {
+        try {
+            JSONObject all = new JSONObject(url);
+            JSONObject result = all.getJSONObject("result");
+            final JSONObject minutely = result.getJSONObject("minutely");
+            final String des = minutely.getString("description");
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    rainInfo.setText(des);
+                }
+            });
+        } catch (JSONException e) {
+            Log.e(TAG, "moreHandleDailyWeatherResponse: parse weather json error");
+            e.printStackTrace();
+        }
+
+        return Utility.handleDailyWeatherResponse(url);
+    }
+
     private void AfterGetCoordinate() {
         handler.post(new Runnable() {
             @Override
@@ -717,7 +753,7 @@ public class WeatherActivity extends AppCompatActivity {
     }
 
     private void setWindDirection(float direction) {
-        String dir = null;
+        String dir;
         if (direction <= 22.5 || direction >= 337.5) {
             dir = getResources().getString(R.string.north);
         } else if (direction <= 67.5) {
