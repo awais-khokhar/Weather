@@ -29,7 +29,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import okhttp3.Call;
@@ -62,7 +61,6 @@ public class WeatherActivity extends AppCompatActivity {
     static final int HANDLE_TOAST = 1;
     static final int HANDLE_SWIPE_BEGIN = 2;
     static final int HANDLE_SWIPE_STOP = 3;
-    static final int HANDLE_RAIN_INFO = 4;
 
     private boolean isDone = false;
     private String countyName = null;
@@ -88,24 +86,14 @@ public class WeatherActivity extends AppCompatActivity {
 
     private Boolean autoLocate;
 
-    private MyHandler handler = new MyHandler(this);
-
-    private static class MyHandler extends Handler {
-        private final WeakReference<WeatherActivity> mActivity;
-
-        MyHandler(WeatherActivity activity) {
-            mActivity = new WeakReference<>(activity);
-        }
-
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            WeatherActivity activity = mActivity.get();
-            if (activity != null) {
                 switch (msg.what) {
                     case HANDLE_POSITION:
                         if (msg.obj instanceof String) {
-                            if (activity.getSupportActionBar() != null) {
-                                activity.getSupportActionBar().setTitle((String) msg.obj);
+                            if (getSupportActionBar() != null) {
+                                getSupportActionBar().setTitle((String) msg.obj);
                             } else {
                                 Log.e(TAG, "handleMessage: toolBar == null");
                             }
@@ -115,28 +103,69 @@ public class WeatherActivity extends AppCompatActivity {
                         break;
                     case HANDLE_TOAST:
                         if (msg.obj instanceof String) {
-                            Toast.makeText(activity, (String) msg.obj, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(WeatherActivity.this, (String) msg.obj, Toast.LENGTH_SHORT).show();
                         } else {
                             Log.e(TAG, "handleMessage: HANDLE_TOAST obj == " + msg.obj.getClass());
                         }
                         break;
                     case HANDLE_SWIPE_BEGIN:
-                        if (!activity.swipeRefreshLayout.isRefreshing()) {
-                            activity.swipeRefreshLayout.setRefreshing(true);
+                        if (!swipeRefreshLayout.isRefreshing()) {
+                            swipeRefreshLayout.setRefreshing(true);
                         }
                         break;
                     case HANDLE_SWIPE_STOP:
-                        if (activity.swipeRefreshLayout.isRefreshing()) {
-                            activity.swipeRefreshLayout.setRefreshing(false);
+                        if (swipeRefreshLayout.isRefreshing()) {
+                            swipeRefreshLayout.setRefreshing(false);
                         }
-                        break;
-                    case HANDLE_RAIN_INFO:  //BUG
-                        activity.rainInfo.setText((String) msg.obj);
                         break;
                 }
             }
-        }
-    }
+    };
+
+//    private static class MyHandler extends Handler {
+//        private final WeakReference<WeatherActivity> mActivity;
+//
+//        MyHandler(WeatherActivity activity) {
+//            mActivity = new WeakReference<>(activity);
+//        }
+//
+//        @Override
+//        public void handleMessage(Message msg) {
+//            WeatherActivity activity = mActivity.get();
+//            if (activity != null) {
+//                switch (msg.what) {
+//                    case HANDLE_POSITION:
+//                        if (msg.obj instanceof String) {
+//                            if (activity.getSupportActionBar() != null) {
+//                                activity.getSupportActionBar().setTitle((String) msg.obj);
+//                            } else {
+//                                Log.e(TAG, "handleMessage: toolBar == null");
+//                            }
+//                        } else {
+//                            Log.e(TAG, "handleMessage: HANDLE_POSITION obj == " + msg.obj.getClass());
+//                        }
+//                        break;
+//                    case HANDLE_TOAST:
+//                        if (msg.obj instanceof String) {
+//                            Toast.makeText(activity, (String) msg.obj, Toast.LENGTH_SHORT).show();
+//                        } else {
+//                            Log.e(TAG, "handleMessage: HANDLE_TOAST obj == " + msg.obj.getClass());
+//                        }
+//                        break;
+//                    case HANDLE_SWIPE_BEGIN:
+//                        if (!activity.swipeRefreshLayout.isRefreshing()) {
+//                            activity.swipeRefreshLayout.setRefreshing(true);
+//                        }
+//                        break;
+//                    case HANDLE_SWIPE_STOP:
+//                        if (activity.swipeRefreshLayout.isRefreshing()) {
+//                            activity.swipeRefreshLayout.setRefreshing(false);
+//                        }
+//                        break;
+//                }
+//            }
+//        }
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -229,7 +258,7 @@ public class WeatherActivity extends AppCompatActivity {
                             .getDefaultSharedPreferences(WeatherActivity.this).edit();
                     editor.putString("countyName", countyName);
                     editor.putLong("countyName_last_update_time", System.currentTimeMillis());
-                    editor.putBoolean("auto_locate_sp", false);
+                    editor.putBoolean("auto_locate", false);
                     editor.apply();
                     beforeRequestWeather(THROUGH_CHOOSE_POSITION);
                 }

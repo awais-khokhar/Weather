@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">天气</string>
+    <string name="app_name">速知天气</string>
     <string name="location">获取位置…</string>
     <string name="weather_icon">当前天气的图标</string>
     <string name="today">今天</string>
