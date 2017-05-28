@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -253,7 +252,7 @@ public class WeatherActivity extends AppCompatActivity {
 
     private void readCache() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        int minInterval = prefs.getInt("refresh_interval", 0);
+        int minInterval = prefs.getInt("refresh_interval", 10);
         String weatherNow = prefs.getString("weather_now", null);
         long weatherNowLastUpdateTime = prefs.getLong("weather_now_last_update_time", 0);
         String weatherFull = prefs.getString("weather_full", null);
@@ -320,13 +319,13 @@ public class WeatherActivity extends AppCompatActivity {
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
         }
-        ArrayList<String> providers = (ArrayList<String>) mLocationManager.getProviders(false);
-        for (String s: providers) {
-            Log.d(TAG, "locate: " + s);
-        }
-        Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        Log.d(TAG, "locate: best " + mLocationManager.getBestProvider(criteria, true));
+//        ArrayList<String> providers = (ArrayList<String>) mLocationManager.getProviders(false);
+//        for (String s: providers) {
+//            Log.d(TAG, "locate: " + s);
+//        }
+//        Criteria criteria = new Criteria();
+//        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+//        Log.d(TAG, "locate: best " + mLocationManager.getBestProvider(criteria, true));
         Location location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         if (location != null) {
             locationCoordinates = String.valueOf(location.getLongitude()) + ',' + String.valueOf(location.getLatitude());

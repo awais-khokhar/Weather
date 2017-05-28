@@ -175,13 +175,11 @@ public class Utility {
     public static int chooseBgImage(String skycon) {
         switch (skycon) {
             case "CLEAR_DAY":
-                return R.mipmap.weatherbg_sunshine;
             case "CLEAR_NIGHT":
-                return R.mipmap.weatherbg_sunshine_night;
+                return R.mipmap.weatherbg_sunshine;
             case "PARTLY_CLOUDY_DAY":
-                return R.mipmap.weatherbg_pcloud;
             case "PARTLY_CLOUDY_NIGHT":
-                return R.mipmap.weatherbg_pcloud_night;
+                return R.mipmap.weatherbg_pcloud;
             case "CLOUDY":
                 return R.mipmap.weatherbg_cloud;
             case "RAIN":
