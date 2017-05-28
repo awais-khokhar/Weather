@@ -14,7 +14,6 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -42,8 +41,7 @@ public class SyncService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+        return null;
     }
 
     @Override
@@ -138,7 +136,7 @@ public class SyncService extends Service {
     }
 
     private void sendAlarmNotification(int id, String text) {
-        //to complite
+        //to finish
     }
 
     private void parseJSON(String responseData) throws JSONException {
@@ -181,6 +179,6 @@ public class SyncService extends Service {
         super.onDestroy();
         Log.d(TAG, "onDestroy: SyncService destroyed");
         //DEBUG ONLY
-        Toast.makeText(getApplicationContext(), "weather stoped", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), "weather stoped", Toast.LENGTH_SHORT).show();
     }
 }

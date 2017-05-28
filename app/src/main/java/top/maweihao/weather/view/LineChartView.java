@@ -81,11 +81,9 @@ public class LineChartView extends View implements HScrollView.OnMyHScrollView {
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
         //自定义view 像素 宽度和高度
         Log.d(TAG, "widthSize:" + widthSize + ",heightSize:" + heightSize);
-        //高度固定  150dp  == 304 px
         mHeight = heightSize;
         //宽度通过数组长度计算
         int mWidth = mxInterval * (24 - 1) + mLeftInterval * 2;
-        //1185dp  150dp
         setMeasuredDimension(mWidth, mHeight);
     }
 
@@ -104,7 +102,6 @@ public class LineChartView extends View implements HScrollView.OnMyHScrollView {
     @Override
     protected void onDraw(Canvas canvas) {
         if (mXAxis.size() == 0 || mYAxis.size() == 0) {
-            Log.e(TAG, "数据异常");
             return;
         }
         //画坐标线的轴

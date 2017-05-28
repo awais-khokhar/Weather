@@ -251,5 +251,21 @@ public class Utility {
             return context.getResources().getConfiguration().locale.getDisplayLanguage().equals("zh-CN");
         }
     }
+
+    public static String getTime(Context context, long mills) {
+        long nowTime = System.currentTimeMillis();
+        long interval = nowTime - mills;
+        if (interval < 60 * 1000) {
+            return context.getResources().getString(R.string.just_now);
+        } else if (interval < 60 * 60 * 1000) {
+            return (interval / 1000 / 60) + context.getResources().getString(R.string.minute_age);
+        } else {
+            return (interval / 1000 / 60 / 60) + context.getResources().getString(R.string.hour_ago);
+        }
+    }
+
+    public static String getTime(Context context) {
+        return context.getResources().getString(R.string.just_now);
+    }
 }
 

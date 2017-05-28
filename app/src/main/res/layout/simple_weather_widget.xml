@@ -1,0 +1,79 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerInParent="true"
+    android:background="@android:color/transparent"
+    android:orientation="vertical"
+    android:padding="@dimen/widget_margin">
+
+
+    <RelativeLayout
+        android:id="@+id/widget_clock_day_horizontal_clockContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="24dp">
+
+        <TextClock
+            android:id="@+id/widget_clock_day_clock"
+            style="@style/widget_text_clock"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="24dp" />
+
+        <TextClock
+            android:id="@+id/widget_clock_day_title"
+            style="@style/content_text"
+            android:layout_below="@id/widget_clock_day_clock"
+            android:layout_centerHorizontal="true"
+            android:maxLines="1"
+            android:shadowColor="@color/colorTextGrey"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="1"
+            android:format12Hour="MM/dd EE"
+            android:format24Hour="MM/dd EE"
+            android:text="@string/na"
+            android:textColor="@color/colorTextLight"
+            tools:text="05-17 周三" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/weather_widget"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/widget_clock_day_horizontal_clockContainer"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="24dp"
+        tools:ignore="RtlHardcoded">
+
+        <TextView
+            android:id="@+id/widget_clock_day_subtitle"
+            style="@style/content_text"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:maxLines="1"
+            android:shadowColor="@color/colorTextGrey"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="1"
+            android:text="@string/na"
+            android:textAlignment="center"
+            android:textColor="@color/colorTextLight" />
+
+        <ImageView
+            android:id="@+id/widget_clock_day_icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_above="@id/widget_clock_day_subtitle"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="12dp"
+            android:layout_marginRight="24dp"
+            android:src="@mipmap/weather_few_clouds"
+            app:srcCompat="@mipmap/weather_clear_night"
+            tools:ignore="ContentDescription,RtlHardcoded" />
+
+    </RelativeLayout>
+</RelativeLayout>

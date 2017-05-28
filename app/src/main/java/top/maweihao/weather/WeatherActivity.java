@@ -1,10 +1,13 @@
 package top.maweihao.weather;
 
 import android.Manifest;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -21,6 +24,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -80,6 +86,9 @@ public class WeatherActivity extends AppCompatActivity {
     private TextView carWashing_text;
     private TextView dressing_text;
     private TextView rainInfo;
+    private ImageView locateModeImage;
+    private TextView locateMode;
+    private TextView lastUpdateTime;
     private SunTimeView sunTimeView;
     private SemiCircleView AQICircle;
     private SemiCircleView PMCircle;
@@ -108,64 +117,9 @@ public class WeatherActivity extends AppCompatActivity {
                             Log.e(TAG, "handleMessage: HANDLE_TOAST obj == " + msg.obj.getClass());
                         }
                         break;
-                    case HANDLE_SWIPE_BEGIN:
-                        if (!swipeRefreshLayout.isRefreshing()) {
-                            swipeRefreshLayout.setRefreshing(true);
-                        }
-                        break;
-                    case HANDLE_SWIPE_STOP:
-                        if (swipeRefreshLayout.isRefreshing()) {
-                            swipeRefreshLayout.setRefreshing(false);
-                        }
-                        break;
                 }
             }
     };
-
-//    private static class MyHandler extends Handler {
-//        private final WeakReference<WeatherActivity> mActivity;
-//
-//        MyHandler(WeatherActivity activity) {
-//            mActivity = new WeakReference<>(activity);
-//        }
-//
-//        @Override
-//        public void handleMessage(Message msg) {
-//            WeatherActivity activity = mActivity.get();
-//            if (activity != null) {
-//                switch (msg.what) {
-//                    case HANDLE_POSITION:
-//                        if (msg.obj instanceof String) {
-//                            if (activity.getSupportActionBar() != null) {
-//                                activity.getSupportActionBar().setTitle((String) msg.obj);
-//                            } else {
-//                                Log.e(TAG, "handleMessage: toolBar == null");
-//                            }
-//                        } else {
-//                            Log.e(TAG, "handleMessage: HANDLE_POSITION obj == " + msg.obj.getClass());
-//                        }
-//                        break;
-//                    case HANDLE_TOAST:
-//                        if (msg.obj instanceof String) {
-//                            Toast.makeText(activity, (String) msg.obj, Toast.LENGTH_SHORT).show();
-//                        } else {
-//                            Log.e(TAG, "handleMessage: HANDLE_TOAST obj == " + msg.obj.getClass());
-//                        }
-//                        break;
-//                    case HANDLE_SWIPE_BEGIN:
-//                        if (!activity.swipeRefreshLayout.isRefreshing()) {
-//                            activity.swipeRefreshLayout.setRefreshing(true);
-//                        }
-//                        break;
-//                    case HANDLE_SWIPE_STOP:
-//                        if (activity.swipeRefreshLayout.isRefreshing()) {
-//                            activity.swipeRefreshLayout.setRefreshing(false);
-//                        }
-//                        break;
-//                }
-//            }
-//        }
-//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -194,6 +148,9 @@ public class WeatherActivity extends AppCompatActivity {
         uv_text = (TextView) findViewById(R.id.uv);
         carWashing_text = (TextView) findViewById(R.id.carwash);
         dressing_text = (TextView) findViewById(R.id.dressing);
+        locateModeImage = (ImageView) findViewById(R.id.lacate_mode_image);
+        locateMode = (TextView) findViewById(R.id.locate_mode);
+        lastUpdateTime = (TextView) findViewById(R.id.last_update_time);
         sunTimeView = (SunTimeView) findViewById(R.id.stv);
         AQICircle = (SemiCircleView) findViewById(R.id.AQI_Circle);
         PMCircle = (SemiCircleView) findViewById(R.id.PM_Circle);
@@ -204,15 +161,13 @@ public class WeatherActivity extends AppCompatActivity {
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         swipeRefreshLayout.setDistanceToTriggerSync(200);
-        swipeRefreshLayout.setOnRefreshListener((new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                beforeRequestWeather(THROUGH_LOCATE);
-            }
-        }));
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         loadPreferences();
-
         readCache();
     }
 
@@ -287,11 +242,18 @@ public class WeatherActivity extends AppCompatActivity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         autoLocate = prefs.getBoolean("auto_locate", true);
         countyName = prefs.getString("countyName", null);
+
+        swipeRefreshLayout.setOnRefreshListener((new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                beforeRequestWeather(autoLocate ? THROUGH_LOCATE : THROUGH_CHOOSE_POSITION);
+            }
+        }));
     }
 
     private void readCache() {
-        int minInterval = 5;
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int minInterval = prefs.getInt("refresh_interval", 0);
         String weatherNow = prefs.getString("weather_now", null);
         long weatherNowLastUpdateTime = prefs.getLong("weather_now_last_update_time", 0);
         String weatherFull = prefs.getString("weather_full", null);
@@ -302,6 +264,7 @@ public class WeatherActivity extends AppCompatActivity {
                     + (System.currentTimeMillis() - weatherNowLastUpdateTime) / 1000 + "s ago");
             Log.d(TAG, "readCache: last fullWeather synced: "
                     + (System.currentTimeMillis() - weatherFullLastUpdateTime) / 1000 + "s ago");
+            lastUpdateTime.setText(Utility.getTime(getApplicationContext(), weatherNowLastUpdateTime));
             WeatherData wd = Utility.handleCurrentWeatherResponse(weatherNow);
             showCurrentWeatherInfo(wd);
             handleFullWeatherData(weatherFull);
@@ -314,15 +277,27 @@ public class WeatherActivity extends AppCompatActivity {
         startSwipe();
         switch (requestCode) {
             case THROUGH_IP:
+                locateModeImage.setImageResource(R.drawable.ic_location_on_black_24dp);
+                locateMode.setText("IP");
+                locateModeImage.setVisibility(View.VISIBLE);
+                locateMode.setVisibility(View.VISIBLE);
                 GetCoordinateByIp();
                 break;
             case THROUGH_CHOOSE_POSITION:
+                locateModeImage.setImageResource(R.drawable.ic_location_off_black_24dp);
+                locateModeImage.setVisibility(View.VISIBLE);
+                locateMode.setVisibility(View.INVISIBLE);
                 GetCoordinateByChoosePosition();
                 break;
             case THROUGH_LOCATE:
+                locateModeImage.setImageResource(R.drawable.ic_location_on_black_24dp);
+                locateModeImage.setVisibility(View.VISIBLE);
+                locateMode.setVisibility(View.INVISIBLE);
                 GetCoordinateByLocate();
                 break;
             case THROUGH_COORDINATE:
+                locateModeImage.setVisibility(View.INVISIBLE);
+                locateMode.setVisibility(View.INVISIBLE);
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
                 locationCoordinates = prefs.getString("coordinate", null);
                 initRequireUrl();
@@ -341,9 +316,17 @@ public class WeatherActivity extends AppCompatActivity {
 
     private void locate() {
         LocationManager mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
         }
+        ArrayList<String> providers = (ArrayList<String>) mLocationManager.getProviders(false);
+        for (String s: providers) {
+            Log.d(TAG, "locate: " + s);
+        }
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        Log.d(TAG, "locate: best " + mLocationManager.getBestProvider(criteria, true));
         Location location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         if (location != null) {
             locationCoordinates = String.valueOf(location.getLongitude()) + ',' + String.valueOf(location.getLatitude());
@@ -357,7 +340,7 @@ public class WeatherActivity extends AppCompatActivity {
             AfterGetCoordinate();
         } else {
             Log.d(TAG, "requestLocation: location == null, switch to IP method");
-            GetCoordinateByIp();
+            beforeRequestWeather(THROUGH_IP);
         }
     }
 
@@ -422,9 +405,13 @@ public class WeatherActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Call call, IOException e) {
                     e.printStackTrace();
-                    message.what = HANDLE_SWIPE_STOP;
                     Log.e(TAG, "GetCoordinateByChoosePosition: failed");
-                    handler.handleMessage(message);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            stopSwipe();
+                        }
+                    });
                 }
 
                 @Override
@@ -516,10 +503,12 @@ public class WeatherActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
-                Message message = handler.obtainMessage();
-                message.what = HANDLE_TOAST;
-                message.obj = "load full weather failed";
-                handler.handleMessage(message);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(WeatherActivity.this, "load full weather failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
@@ -529,6 +518,12 @@ public class WeatherActivity extends AppCompatActivity {
                         .getDefaultSharedPreferences(WeatherActivity.this).edit();
                 editor.putString("weather_full", responseText);
                 editor.putLong("weather_full_last_update_time", System.currentTimeMillis());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        lastUpdateTime.setText(Utility.getTime(getApplicationContext()));
+                    }
+                });
                 editor.apply();
                 handleFullWeatherData(responseText);
             }
@@ -602,10 +597,12 @@ public class WeatherActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
-                Message message = handler.obtainMessage();
-                message.what = HANDLE_TOAST;
-                message.obj = "load current weather failed";
-                handler.handleMessage(message);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(WeatherActivity.this, "load current weather failed", Toast.LENGTH_LONG).show();
+                    }
+                });
             }
 
             @Override
@@ -620,6 +617,12 @@ public class WeatherActivity extends AppCompatActivity {
                                     .getDefaultSharedPreferences(WeatherActivity.this).edit();
                             editor.putString("weather_now", responseText);
                             editor.putLong("weather_now_last_update_time", System.currentTimeMillis());
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    lastUpdateTime.setText(Utility.getTime(getApplicationContext()));
+                                }
+                            });
                             editor.apply();
                             showCurrentWeatherInfo(weatherData);
                         } else {
@@ -701,6 +704,7 @@ public class WeatherActivity extends AppCompatActivity {
     }
 
     private void showCurrentWeatherInfo(WeatherData weatherData) {
+        final RemoteViews remoteViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.simple_weather_widget);
         String temperature = Utility.roundString(weatherData.getTemperature());
         String skycon = weatherData.getSkycon();
         String humidity = weatherData.getHumidity();
@@ -730,7 +734,12 @@ public class WeatherActivity extends AppCompatActivity {
         if (weatherString != null) {
             String[] ws = weatherString.split("and");
             skycon_text.setText(ws[1]);
+            remoteViews.setImageViewResource(R.id.widget_clock_day_icon, Integer.parseInt(ws[0]));
+            remoteViews.setTextViewText(R.id.widget_clock_day_subtitle, countyName + " | " + ws[1] + ' ' + temperature + '°');
         }
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
+        appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext(), SimpleWeatherWidget.class),
+                remoteViews);
         appBar.setBackgroundResource(Utility.chooseBgImage(skycon));
         if (isDone) {
             stopSwipe();
