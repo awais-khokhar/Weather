@@ -15,17 +15,12 @@ public class SimpleWeatherWidget extends AppWidgetProvider {
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
         PendingIntent weatherPendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, WeatherActivity.class), 0);
-//        Intent clockIntent = new Intent();
-//        clockIntent.setClassName("com.google.android.deskclock", "com.google.android.deskclock.clock");
-//        PendingIntent clockPendingClock = PendingIntent.getActivity(context, 0, clockIntent, 0);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.simple_weather_widget);
-        views.setOnClickPendingIntent(R.id.weather_widget, weatherPendingIntent);
+        views.setOnClickPendingIntent(R.id.simple_weather_widget, weatherPendingIntent);
 //        views.setOnClickPendingIntent(R.id.widget_clock_day_horizontal_clockContainer, clockPendingClock);
-//        views.setTextViewText(R.id.appwidget_text, widgetText);
 
-//        // Instruct the widget manager to update the widget
+        // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
-//        context.startService(new Intent(context, SimpleWidgetUpdateService.class));
     }
 
     @Override
