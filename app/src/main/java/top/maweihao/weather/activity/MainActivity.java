@@ -1,9 +1,11 @@
-package top.maweihao.weather;
+package top.maweihao.weather.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+
+import top.maweihao.weather.R;
 
 public class MainActivity extends AppCompatActivity {
 

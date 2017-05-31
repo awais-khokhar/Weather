@@ -19,8 +19,8 @@ import top.maweihao.weather.db.City;
 import top.maweihao.weather.db.County;
 import top.maweihao.weather.db.Province;
 
-import static top.maweihao.weather.WeatherActivity.HOURLY_MODE;
-import static top.maweihao.weather.WeatherActivity.MINUTELY_MODE;
+import static top.maweihao.weather.activity.WeatherActivity.HOURLY_MODE;
+import static top.maweihao.weather.activity.WeatherActivity.MINUTELY_MODE;
 
 
 /**

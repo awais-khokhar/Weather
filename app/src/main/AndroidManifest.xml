@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
 
     <!-- <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /> -->
     <!-- <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" /> -->
@@ -22,7 +23,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".WeatherActivity"
+            android:name=".activity.WeatherActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask">
             <intent-filter>
@@ -35,16 +36,16 @@
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
         </activity>
-        <activity android:name=".ChoosePositionActivity" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".activity.ChoosePositionActivity" />
+        <activity android:name=".activity.MainActivity" />
 
         <service
-            android:name=".SyncService"
+            android:name=".service.SyncService"
             android:enabled="true"
             android:exported="false" />
 
         <receiver
-            android:name=".BootCompleteReceiver"
+            android:name=".receiver.BootCompleteReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -52,12 +53,12 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".SettingActivity" />
+        <activity android:name=".activity.SettingActivity" />
         <activity
-            android:name=".AboutActivity"
+            android:name=".activity.AboutActivity"
             android:launchMode="singleTop" />
 
-        <receiver android:name=".SimpleWeatherWidget">
+        <receiver android:name=".widget.SimpleWeatherWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -68,9 +69,11 @@
         </receiver>
 
         <service
-            android:name=".SimpleWidgetUpdateService"
+            android:name=".service.SimpleWidgetUpdateService"
             android:enabled="true"
             android:exported="false" />
+
+        <activity android:name=".AlertActivity"></activity>
     </application>
 
 </manifest>

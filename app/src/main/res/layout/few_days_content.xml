@@ -4,31 +4,31 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
 
-    <top.maweihao.weather.perDayWeatherView
+    <top.maweihao.weather.view.perDayWeatherView
         android:id="@+id/daily_weather_0"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
         android:layout_weight="1"/>
 
-    <top.maweihao.weather.perDayWeatherView
+    <top.maweihao.weather.view.perDayWeatherView
         android:id="@+id/daily_weather_1"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
         android:layout_weight="1"/>
 
-    <top.maweihao.weather.perDayWeatherView
+    <top.maweihao.weather.view.perDayWeatherView
         android:id="@+id/daily_weather_2"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
         android:layout_weight="1"/>
 
-    <top.maweihao.weather.perDayWeatherView
+    <top.maweihao.weather.view.perDayWeatherView
         android:id="@+id/daily_weather_3"
         android:layout_height="wrap_content"
         android:layout_width="0dp"
         android:layout_weight="1"/>
 
-    <top.maweihao.weather.perDayWeatherView
+    <top.maweihao.weather.view.perDayWeatherView
         android:id="@+id/daily_weather_4"
         android:layout_height="wrap_content"
         android:layout_width="0dp"

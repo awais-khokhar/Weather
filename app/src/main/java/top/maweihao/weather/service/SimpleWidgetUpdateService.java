@@ -1,4 +1,4 @@
-package top.maweihao.weather;
+package top.maweihao.weather.service;
 
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
@@ -18,6 +18,9 @@ import java.io.IOException;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import top.maweihao.weather.R;
+import top.maweihao.weather.widget.SimpleWeatherWidget;
+import top.maweihao.weather.activity.WeatherActivity;
 import top.maweihao.weather.util.Utility;
 
 public class SimpleWidgetUpdateService extends Service {

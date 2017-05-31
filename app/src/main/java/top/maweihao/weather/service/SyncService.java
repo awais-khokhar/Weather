@@ -1,4 +1,4 @@
-package top.maweihao.weather;
+package top.maweihao.weather.service;
 
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -30,6 +30,8 @@ import java.util.List;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import top.maweihao.weather.R;
+import top.maweihao.weather.activity.WeatherActivity;
 import top.maweihao.weather.gson.temperature;
 import top.maweihao.weather.util.Utility;
 

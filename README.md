@@ -44,4 +44,8 @@ ui 优化，支持 shortcut.
 上架：应用宝, 酷安    
 *2017/5/28 version 1.1.1:19[release]*    
 更换天气大图,新增桌面 widget, ui 优化，增加 上次刷新时间 与 当前定位方式指示, 修复 bug：下拉刷新无视自动定位开关    
+发布： 酷安    
+*2017/5/30 version 1.1.2:20[bug-fixed-release]*     
+修复 widget 的一些问题。    
+发布： 应用宝
 

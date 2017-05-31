@@ -1,4 +1,4 @@
-package top.maweihao.weather;
+package top.maweihao.weather.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
+
+import top.maweihao.weather.service.SyncService;
 
 public class BootCompleteReceiver extends BroadcastReceiver {
 

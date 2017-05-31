@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/transparent">
+    android:background="@android:color/transparent"
+    tools:background="#FF424242">
 
 
     <RelativeLayout
@@ -82,4 +83,27 @@
         </RelativeLayout>
 
     </RelativeLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageButton
+            android:id="@+id/simple_widget_left"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            tools:ignore="ContentDescription" />
+
+        <ImageButton
+            android:id="@+id/simple_widget_right"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            tools:ignore="ContentDescription" />
+
+    </LinearLayout>
 </RelativeLayout>

@@ -1,4 +1,4 @@
-package top.maweihao.weather;
+package top.maweihao.weather.activity;
 
 import android.Manifest;
 import android.appwidget.AppWidgetManager;
@@ -39,7 +39,13 @@ import java.util.ArrayList;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import top.maweihao.weather.ExtendedWeatherData;
+import top.maweihao.weather.R;
+import top.maweihao.weather.widget.SimpleWeatherWidget;
+import top.maweihao.weather.WeatherData;
 import top.maweihao.weather.gson.HourlyWeather;
+import top.maweihao.weather.view.perDayWeatherView;
+import top.maweihao.weather.service.SyncService;
 import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.view.HScrollView;

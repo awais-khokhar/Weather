@@ -18,7 +18,7 @@ import android.view.View;
 import java.util.ArrayList;
 
 import top.maweihao.weather.R;
-import top.maweihao.weather.WeatherActivity;
+import top.maweihao.weather.activity.WeatherActivity;
 import top.maweihao.weather.util.Utility;
 
 /**

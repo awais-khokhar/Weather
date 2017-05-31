@@ -1,4 +1,4 @@
-package top.maweihao.weather;
+package top.maweihao.weather.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,6 +13,9 @@ import android.preference.SwitchPreference;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
+
+import top.maweihao.weather.R;
+import top.maweihao.weather.service.SyncService;
 
 public class SettingActivity extends PreferenceActivity {
 

@@ -1,25 +1,39 @@
-package top.maweihao.weather;
+package top.maweihao.weather.widget;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.provider.AlarmClock;
 import android.widget.RemoteViews;
+
+import top.maweihao.weather.R;
+import top.maweihao.weather.activity.WeatherActivity;
+import top.maweihao.weather.service.SimpleWidgetUpdateService;
 
 /**
  * Implementation of App Widget functionality.
  */
 public class SimpleWeatherWidget extends AppWidgetProvider {
 
+    private static final int WEATHER_PENDING_INTENT_CODE = 122;
+    private static final int CLOCK_PENDING_INTENT_CODE = 221;
+
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
-        PendingIntent weatherPendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, WeatherActivity.class), 0);
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.simple_weather_widget);
-        views.setOnClickPendingIntent(R.id.simple_weather_widget, weatherPendingIntent);
-//        views.setOnClickPendingIntent(R.id.widget_clock_day_horizontal_clockContainer, clockPendingClock);
+        PendingIntent weatherPendingIntent = PendingIntent.getActivity(context, WEATHER_PENDING_INTENT_CODE,
+                new Intent(context, WeatherActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
-        // Instruct the widget manager to update the widget
+
+        Intent mClockIntent = new Intent(AlarmClock.ACTION_SHOW_ALARMS);
+        mClockIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent clockPendingIntent = PendingIntent.getActivity(context, CLOCK_PENDING_INTENT_CODE, mClockIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.simple_weather_widget);
+        views.setOnClickPendingIntent(R.id.simple_widget_left, clockPendingIntent);
+        views.setOnClickPendingIntent(R.id.simple_widget_right, weatherPendingIntent);
+
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 

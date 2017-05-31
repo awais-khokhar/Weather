@@ -1,4 +1,4 @@
-package top.maweihao.weather;
+package top.maweihao.weather.activity;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.TextView;
+
+import top.maweihao.weather.R;
 
 public class AboutActivity extends AppCompatActivity {
 

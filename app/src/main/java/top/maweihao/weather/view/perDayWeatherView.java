@@ -1,4 +1,4 @@
-package top.maweihao.weather;
+package top.maweihao.weather.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -7,6 +7,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import top.maweihao.weather.R;
 
 /**
  * Created by ma on 17-3-28.

@@ -1,4 +1,4 @@
-package top.maweihao.weather;
+package top.maweihao.weather.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -22,6 +22,7 @@ import java.util.List;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import top.maweihao.weather.R;
 import top.maweihao.weather.db.City;
 import top.maweihao.weather.db.County;
 import top.maweihao.weather.db.Province;
