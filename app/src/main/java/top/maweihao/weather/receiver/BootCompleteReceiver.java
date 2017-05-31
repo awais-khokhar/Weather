@@ -9,12 +9,16 @@ import android.widget.Toast;
 
 import top.maweihao.weather.service.SyncService;
 
+/**
+ * 开机启动 SyncService
+ */
 public class BootCompleteReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        if (prefs.getBoolean("notification", true)) {
+//        因为service还有问题，默认不开
+        if (prefs.getBoolean("notification", false)) {
             Intent startIntent = new Intent(context, SyncService.class);
             context.startService(startIntent);
             Toast.makeText(context, "SyncService started", Toast.LENGTH_SHORT).show();

@@ -35,6 +35,11 @@ import top.maweihao.weather.activity.WeatherActivity;
 import top.maweihao.weather.gson.temperature;
 import top.maweihao.weather.util.Utility;
 
+/**
+ * 后台刷新service， 每晚提示第二天温差
+ * 还有问题
+ */
+
 public class SyncService extends Service {
 
     static final String TAG = "SyncService";
@@ -55,15 +60,12 @@ public class SyncService extends Service {
         } else {
             isChinese = getResources().getConfiguration().locale.getDisplayLanguage().equals("zh-CN");
         }
-        //DEBUG ONLY
-//        Toast.makeText(getApplicationContext(), "weather started", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand: ");
         fetchData();
-//        stopSelf();
         startAgain();
         return START_NOT_STICKY;
     }
@@ -106,6 +108,7 @@ public class SyncService extends Service {
     }
 
     private void startAgain() {
+        //     每天18:00启动
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         Calendar calendar = new GregorianCalendar();
         int day = calendar.get(Calendar.DAY_OF_MONTH);
@@ -151,6 +154,9 @@ public class SyncService extends Service {
         }.getType());
     }
 
+    /**
+     * 计算温差，发送通知
+     */
     private void calTemDiff(int todayMax, int todayMin, int tomMax, int tomMin) {
         int maxDiff = tomMax - todayMax;
         int minDiff = tomMin - todayMin;
@@ -180,7 +186,5 @@ public class SyncService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy: SyncService destroyed");
-        //DEBUG ONLY
-//        Toast.makeText(getApplicationContext(), "weather stoped", Toast.LENGTH_SHORT).show();
     }
 }

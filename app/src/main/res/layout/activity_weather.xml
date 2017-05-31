@@ -51,7 +51,7 @@
                             android:fillViewport="true"
                             android:scrollbars="none">
 
-                            <top.maweihao.weather.view.LineChartView
+                            <top.maweihao.weather.view.hourlyWeatherView
                                 android:id="@+id/simpleLineChart"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent" />

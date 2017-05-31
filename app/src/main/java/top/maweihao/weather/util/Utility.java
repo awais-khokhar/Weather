@@ -40,7 +40,6 @@ public class Utility {
 
     /**
      * 解析当前天气json
-     *
      * @param url json
      * @return WeatherData 类
      */
@@ -64,11 +63,11 @@ public class Utility {
     }
 
     /**
-     * 解析
-     * @param url
+     * 大致解析json
      * @return
+     * <JSONArray> list
      */
-    public static ArrayList<JSONArray> handleDailyWeatherResponse(String url) {
+    public static ArrayList<JSONArray> handleFullWeatherResponse(String url) {
         ArrayList<JSONArray> jsonArrays = new ArrayList<>();
         try {
             JSONObject all = new JSONObject(url);
