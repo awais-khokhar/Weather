@@ -151,31 +151,32 @@ public class WeatherActivity extends AppCompatActivity {
         setContentView(R.layout.activity_weather);
         handler=new MessageHandler(this);
 
-        rainInfo = (TextView) findViewById(R.id.rain_info_tv);
-        temperature_text = (TextView) findViewById(R.id.temperature_text);
-        skycon_text = (TextView) findViewById(R.id.skycon_text);
-        appBar = (CardView) findViewById(R.id.app_bar);
+        rainInfo = (TextView) findViewById(R.id.rain_info_tv);  //两小时内天气描述
+        temperature_text = (TextView) findViewById(R.id.temperature_text);  //温度
+        skycon_text = (TextView) findViewById(R.id.skycon_text);  //天气
+        appBar = (CardView) findViewById(R.id.app_bar);  //第一个卡片，用来设置背景的
 
+//        未来五天的天气
         day[0] = (perDayWeatherView) findViewById(R.id.daily_weather_0);
         day[1] = (perDayWeatherView) findViewById(R.id.daily_weather_1);
         day[2] = (perDayWeatherView) findViewById(R.id.daily_weather_2);
         day[3] = (perDayWeatherView) findViewById(R.id.daily_weather_3);
         day[4] = (perDayWeatherView) findViewById(R.id.daily_weather_4);
 
-        hum_text = (TextView) findViewById(R.id.humidity);
-        sunrise_text = (TextView) findViewById(R.id.sunrise);
-        sunset_text = (TextView) findViewById(R.id.sunset);
-        windDirection_text = (TextView) findViewById(R.id.wind_direction_tv);
-        windLevel_text = (TextView) findViewById(R.id.wind_level_tv);
-        uv_text = (TextView) findViewById(R.id.uv);
-        carWashing_text = (TextView) findViewById(R.id.carwash);
-        dressing_text = (TextView) findViewById(R.id.dressing);
-        locateModeImage = (ImageView) findViewById(R.id.lacate_mode_image);
-        locateMode = (TextView) findViewById(R.id.locate_mode);
-        lastUpdateTime = (TextView) findViewById(R.id.last_update_time);
-        sunTimeView = (SunTimeView) findViewById(R.id.stv);
-        AQICircle = (SemiCircleView) findViewById(R.id.AQI_Circle);
-        PMCircle = (SemiCircleView) findViewById(R.id.PM_Circle);
+        hum_text = (TextView) findViewById(R.id.humidity);  //湿度
+        sunrise_text = (TextView) findViewById(R.id.sunrise);  //日出
+        sunset_text = (TextView) findViewById(R.id.sunset);  //日落
+        windDirection_text = (TextView) findViewById(R.id.wind_direction_tv);  //风向
+        windLevel_text = (TextView) findViewById(R.id.wind_level_tv);  //风力
+        uv_text = (TextView) findViewById(R.id.uv); //紫外线
+        carWashing_text = (TextView) findViewById(R.id.carwash);  //洗车
+        dressing_text = (TextView) findViewById(R.id.dressing);  //穿衣
+        locateModeImage = (ImageView) findViewById(R.id.lacate_mode_image);  //刷新方式图片
+        locateMode = (TextView) findViewById(R.id.locate_mode);  //刷新方式文字
+        lastUpdateTime = (TextView) findViewById(R.id.last_update_time);  //上次刷新时间
+        sunTimeView = (SunTimeView) findViewById(R.id.stv);  //日出日落的自定义 view
+        AQICircle = (SemiCircleView) findViewById(R.id.AQI_Circle);  //aqi圆环的自定义view
+        PMCircle = (SemiCircleView) findViewById(R.id.PM_Circle);  //PM2.5圆环的自定义iew
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -189,7 +190,9 @@ public class WeatherActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+//        读取首选项
         loadPreferences();
+//        读取缓存的天气
         readCache();
     }
 
@@ -224,6 +227,7 @@ public class WeatherActivity extends AppCompatActivity {
         switch (requestCode) {
             case 1:
             case 2:
+//                settingActivity 和 choosePositionActivity 返回的数据一样的
                 if (resultCode == RESULT_OK) {
                     countyName = data.getStringExtra("countyName");
                     Message message = handler.obtainMessage();
@@ -260,11 +264,14 @@ public class WeatherActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 是否自动定位？
+     */
     private void loadPreferences() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         autoLocate = prefs.getBoolean("auto_locate", true);
         countyName = prefs.getString("countyName", null);
-
+//        设置下拉刷新是否要重新定位
         swipeRefreshLayout.setOnRefreshListener((new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -273,13 +280,20 @@ public class WeatherActivity extends AppCompatActivity {
         }));
     }
 
+    /**
+     * 读取 SharedPreferences 中保存的天气数据json
+     */
     private void readCache() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        /*minInterval： 最低刷新间隔*/
         int minInterval = prefs.getInt("refresh_interval", 10);
+//        现在的天气， 原始json
         String weatherNow = prefs.getString("weather_now", null);
         long weatherNowLastUpdateTime = prefs.getLong("weather_now_last_update_time", 0);
+//        未来的天气， 原始json
         String weatherFull = prefs.getString("weather_full", null);
         long weatherFullLastUpdateTime = prefs.getLong("weather_full_last_update_time", 0);
+//        若保存的天气刷新时间和现在相差小于 minInterval，则直接使用
         if (weatherNow != null && System.currentTimeMillis() - weatherNowLastUpdateTime < minInterval * 60 * 1000
                 && weatherFull != null && System.currentTimeMillis() - weatherFullLastUpdateTime < minInterval * 60 * 1000) {
             Log.d(TAG, "readCache: last nowWeather synced: "
@@ -291,6 +305,7 @@ public class WeatherActivity extends AppCompatActivity {
             showCurrentWeatherInfo(wd);
             handleFullWeatherData(weatherFull);
         } else {
+//            全量刷新
             beforeRequestWeather(autoLocate ? THROUGH_LOCATE : THROUGH_CHOOSE_POSITION);
         }
     }
@@ -299,6 +314,8 @@ public class WeatherActivity extends AppCompatActivity {
         startSwipe();
         switch (requestCode) {
             case THROUGH_IP:
+//                主界面显示当前为 ip 定位
+//                locateMode 和 locateModeImage 用来显示当前定位方式
                 locateModeImage.setImageResource(R.drawable.ic_location_on_black_24dp);
                 locateMode.setText("IP");
                 locateModeImage.setVisibility(View.VISIBLE);
@@ -327,6 +344,9 @@ public class WeatherActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 通过定位获得坐标
+     */
     private void GetCoordinateByLocate() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -336,19 +356,15 @@ public class WeatherActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 定位
+     */
     private void locate() {
         LocationManager mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
         }
-//        ArrayList<String> providers = (ArrayList<String>) mLocationManager.getProviders(false);
-//        for (String s: providers) {
-//            Log.d(TAG, "locate: " + s);
-//        }
-//        Criteria criteria = new Criteria();
-//        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-//        Log.d(TAG, "locate: best " + mLocationManager.getBestProvider(criteria, true));
         Location location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         if (location != null) {
             locationCoordinates = String.valueOf(location.getLongitude()) + ',' + String.valueOf(location.getLatitude());
@@ -366,6 +382,11 @@ public class WeatherActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 通过获取的坐标获得位置描述， 使用 baidu web api
+     * @param coordinate
+     * 坐标
+     */
     private void setCountyByCoordinate(String coordinate) {
         String url;
         if (!TextUtils.isEmpty(coordinate)) {
@@ -410,8 +431,11 @@ public class WeatherActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * 选择地址进行定位
+     */
     private void GetCoordinateByChoosePosition() {
-        if (TextUtils.isEmpty(countyName)) {
+        if (TextUtils.isEmpty(countyName)) { //若无保存的地址，则打开 ChoosePositionActivity
             Log.e(TAG, "GetCoordinateByChoosePosition: choosed countyName == null");
             Toast.makeText(WeatherActivity.this, getResources().getString(R.string.choose_your_position),
                     Toast.LENGTH_LONG).show();
@@ -460,7 +484,11 @@ public class WeatherActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 当位置请求失败时，通过 ip 地址判别位置
+     */
     public void GetCoordinateByIp() {
+//        百度 web api
         String url = "http://api.map.baidu.com/location/ip?ak=eTTiuvV4YisaBbLwvj4p8drl7BGfl1eo&coor=bd09ll";
         HttpUtil.sendOkHttpRequest(url, new Callback() {
             @Override
@@ -498,9 +526,14 @@ public class WeatherActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * 初始化请求天气的url
+     */
     private void initRequireUrl() {
         if (!TextUtils.isEmpty(locationCoordinates)) {
+//            即 current weather Url， 获取当前天气的url
             String cUrl = "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/" + locationCoordinates + "/realtime.json";
+//            即 full weather Url， 获取未来天气的url
             String fUrl = "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/" + locationCoordinates + "/forecast.json";
             SharedPreferences.Editor editor = PreferenceManager
                     .getDefaultSharedPreferences(WeatherActivity.this).edit();
@@ -515,6 +548,12 @@ public class WeatherActivity extends AppCompatActivity {
         }
     }
 
+
+    /**
+     * 网络请求未来天气数据
+     * @param url
+     * 网址
+     */
     private void requestFullWeather(String url) {
         startSwipe();
         if (TextUtils.isEmpty(url)) {
@@ -552,6 +591,11 @@ public class WeatherActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * 解析获得的未来天气json
+     * @param responseText
+     *
+     */
     private void handleFullWeatherData(String responseText) {
         ArrayList<ExtendedWeatherData> weatherDatas = new ArrayList<>(5);
         ArrayList<HourlyWeather> hourlyWeathers = new ArrayList<>(24);
@@ -609,6 +653,9 @@ public class WeatherActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 网络请求现在的天气
+     */
     private void requestCurrentWeather(String url) {
         startSwipe();
         if (TextUtils.isEmpty(url)) {
@@ -656,6 +703,9 @@ public class WeatherActivity extends AppCompatActivity {
         });
     }
 
+    /*
+     *刷新24小时内的天气的自定义 view
+     */
     private void showHourlyWeatherInfo(final ArrayList<HourlyWeather> hourlyWeathers) {
 
         handler.post(new Runnable() {
@@ -694,6 +744,9 @@ public class WeatherActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * 展示未来5天的天气
+     */
     private void showDailyWeatherInfo(final ArrayList<ExtendedWeatherData> weatherDatas) {
         if (weatherDatas.size() == 5) {
             handler.post(new Runnable() {
@@ -725,6 +778,9 @@ public class WeatherActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     *展示现在的天气
+     */
     private void showCurrentWeatherInfo(WeatherData weatherData) {
         final RemoteViews remoteViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.simple_weather_widget);
         String temperature = Utility.roundString(weatherData.getTemperature());
@@ -771,6 +827,13 @@ public class WeatherActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * 就是在 Utility.handleDailyWeatherResponse() 前先获得2小时内天气描述并展示
+     * @param url
+     *
+     * @return
+     * 直接返回 Utility.handleDailyWeatherResponse(url)
+     */
     private ArrayList<JSONArray> moreHandleDailyWeatherResponse(String url) {
         try {
             JSONObject all = new JSONObject(url);
@@ -800,18 +863,27 @@ public class WeatherActivity extends AppCompatActivity {
         });
     }
 
+    /*
+     *刷新环开始刷新
+     */
     private void startSwipe() {
         if (!swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(true);
         }
     }
 
+    /*
+     *刷新环停止刷新
+     */
     private void stopSwipe() {
         if (swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }
     }
 
+    /**
+     * 显示风向
+     */
     private void setWindDirection(float direction) {
         String dir;
         if (direction <= 22.5 || direction >= 337.5) {
@@ -834,6 +906,9 @@ public class WeatherActivity extends AppCompatActivity {
         windDirection_text.setText(dir);
     }
 
+    /**
+     * 显示风力
+     */
     private void setWindLevel(float speed) {
         int level;
         String info;
