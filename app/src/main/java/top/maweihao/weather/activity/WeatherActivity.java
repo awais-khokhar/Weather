@@ -29,37 +29,34 @@ import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import top.maweihao.weather.ExtendedWeatherData;
 import top.maweihao.weather.R;
-import top.maweihao.weather.widget.SimpleWeatherWidget;
 import top.maweihao.weather.WeatherData;
+import top.maweihao.weather.contract.WeatherActivityContract;
 import top.maweihao.weather.gson.HourlyWeather;
-import top.maweihao.weather.view.perDayWeatherView;
+import top.maweihao.weather.presenter.WeatherActivityPresenter;
 import top.maweihao.weather.service.SyncService;
-import top.maweihao.weather.util.HttpUtil;
+import top.maweihao.weather.util.SimplePermissionUtils;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.view.HScrollView;
 import top.maweihao.weather.view.LineChartView;
 import top.maweihao.weather.view.SemiCircleView;
 import top.maweihao.weather.view.SunTimeView;
+import top.maweihao.weather.view.perDayWeatherView;
+import top.maweihao.weather.widget.SimpleWeatherWidget;
 
+import static top.maweihao.weather.R.id.skycon_text;
+import static top.maweihao.weather.R.id.temperature_text;
 import static top.maweihao.weather.util.Utility.chooseWeatherIcon;
 import static top.maweihao.weather.util.Utility.chooseWeatherIconOnly;
-import static top.maweihao.weather.util.Utility.handleCurrentWeatherResponse;
 import static top.maweihao.weather.util.Utility.intRoundString;
 
-public class WeatherActivity extends AppCompatActivity {
+public class WeatherActivity extends AppCompatActivity implements WeatherActivityContract.View {
 
     static final String TAG = "WeatherActivity";
     static final int THROUGH_IP = 0;
@@ -73,34 +70,161 @@ public class WeatherActivity extends AppCompatActivity {
     static final int HANDLE_TOAST = 1;
     static final int HANDLE_SWIPE_BEGIN = 2;
     static final int HANDLE_SWIPE_STOP = 3;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(temperature_text)
+    TextView temperatureText;
+    @BindView(skycon_text)
+    TextView skyconText;
+    @BindView(R.id.rain_info_tv)
+    TextView rainInfoTv;
+    @BindView(R.id.lacate_mode_image)
+    ImageView locateModeImage;
+    @BindView(R.id.locate_mode)
+    TextView locateMode;
+    @BindView(R.id.last_update_time)
+    TextView lastUpdateTime;
+    @BindView(R.id.app_bar)
+    CardView appBar;
+    @BindView(R.id.daily_weather_0)
+    perDayWeatherView dailyWeather0;
+    @BindView(R.id.daily_weather_1)
+    perDayWeatherView dailyWeather1;
+    @BindView(R.id.daily_weather_2)
+    perDayWeatherView dailyWeather2;
+    @BindView(R.id.daily_weather_3)
+    perDayWeatherView dailyWeather3;
+    @BindView(R.id.daily_weather_4)
+    perDayWeatherView dailyWeather4;
+    @BindView(R.id.aqi_image)
+    ImageView aqiImage;
+    @BindView(R.id.uv_name)
+    TextView uvName;
+    @BindView(R.id.uv)
+    TextView uv_text;
+    @BindView(R.id.carwash)
+    TextView carWashing_text;
+    @BindView(R.id.humidity)
+    TextView hum_text;
+    @BindView(R.id.dressing)
+    TextView dressing_text;
+    @BindView(R.id.wind_direction_tv)
+    TextView windDirectionTv;
+    @BindView(R.id.wind_level_tv)
+    TextView windLevelTv;
+    @BindView(R.id.AQI_Circle)
+    SemiCircleView AQICircle;
+    @BindView(R.id.PM_Circle)
+    SemiCircleView PMCircle;
+    @BindView(R.id.stv)
+    SunTimeView sunTimeView;
+    @BindView(R.id.sunrise)
+    TextView sunrise_text;
+    @BindView(R.id.sunset)
+    TextView sunset_text;
+    @BindView(R.id.swipe_refresh)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     private boolean isDone = false;
     private String countyName = null;
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private CardView appBar;
-    private String locationCoordinates;
-    private perDayWeatherView[] day = new perDayWeatherView[5];
 
-    private TextView temperature_text;
-    private TextView skycon_text;
-    private TextView hum_text;
-    private TextView sunrise_text;
-    private TextView sunset_text;
-    private TextView windDirection_text;
-    private TextView windLevel_text;
-    private TextView uv_text;
-    private TextView carWashing_text;
-    private TextView dressing_text;
-    private TextView rainInfo;
-    private ImageView locateModeImage;
-    private TextView locateMode;
-    private TextView lastUpdateTime;
-    private SunTimeView sunTimeView;
-    private SemiCircleView AQICircle;
-    private SemiCircleView PMCircle;
+
+    public static String locationCoordinates;
+    private perDayWeatherView[] day = new perDayWeatherView[5];
 
     private Boolean autoLocate;
     private MessageHandler handler; //消息队列
+    private WeatherActivityContract.Presenter presenter;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+
+        PreferenceManager.setDefaultValues(this, R.xml.settingpreference, false);
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_weather);
+        ButterKnife.bind(this);
+        handler = new MessageHandler(this);
+        presenter = new WeatherActivityPresenter(this, this);
+
+//        未来五天的天气
+        day[0] = dailyWeather0;
+        day[1] = dailyWeather1;
+        day[2] = dailyWeather2;
+        day[3] = dailyWeather3;
+        day[4] = dailyWeather4;
+
+        setSupportActionBar(toolbar);
+
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        swipeRefreshLayout.setDistanceToTriggerSync(200);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        permission();
+//        读取首选项
+        loadPreferences();
+//        读取缓存的天气
+//        readCache();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        presenter.destroy();
+        presenter = null;
+    }
+
+    @Override
+    public void setRainInfo(final String str) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                rainInfoTv.setText(str);
+            }
+        });
+    }
+
+    /**
+     * 设置显示更新时间
+     */
+    @Override
+    public void setLastUpdateTime() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                lastUpdateTime.setText(Utility.getTime(getApplicationContext()));
+            }
+        });
+    }
+
+    /**
+     * Toast消息
+     *
+     * @param msg 信息
+     */
+    @Override
+    public void showToastMessage(String msg) {
+        Message message = new Message();
+        message.what = HANDLE_TOAST;
+        message.obj = msg;
+        handler.sendMessage(message);
+    }
+
+    /**
+     * 设置城市
+     *
+     * @param countyStr 城市名
+     */
+    @Override
+    public void setCounty(String countyStr) {
+        Message message = handler.obtainMessage();
+        message.what = HANDLE_POSITION;
+        message.obj = countyStr;
+        handler.sendMessage(message);
+    }
 
     /**
      * 创建"弱引用"的Handler,而不是强引用
@@ -141,60 +265,6 @@ public class WeatherActivity extends AppCompatActivity {
         }
     }
 
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-
-        PreferenceManager.setDefaultValues(this, R.xml.settingpreference, false);
-
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_weather);
-        handler=new MessageHandler(this);
-
-        rainInfo = (TextView) findViewById(R.id.rain_info_tv);  //两小时内天气描述
-        temperature_text = (TextView) findViewById(R.id.temperature_text);  //温度
-        skycon_text = (TextView) findViewById(R.id.skycon_text);  //天气
-        appBar = (CardView) findViewById(R.id.app_bar);  //第一个卡片，用来设置背景的
-
-//        未来五天的天气
-        day[0] = (perDayWeatherView) findViewById(R.id.daily_weather_0);
-        day[1] = (perDayWeatherView) findViewById(R.id.daily_weather_1);
-        day[2] = (perDayWeatherView) findViewById(R.id.daily_weather_2);
-        day[3] = (perDayWeatherView) findViewById(R.id.daily_weather_3);
-        day[4] = (perDayWeatherView) findViewById(R.id.daily_weather_4);
-
-        hum_text = (TextView) findViewById(R.id.humidity);  //湿度
-        sunrise_text = (TextView) findViewById(R.id.sunrise);  //日出
-        sunset_text = (TextView) findViewById(R.id.sunset);  //日落
-        windDirection_text = (TextView) findViewById(R.id.wind_direction_tv);  //风向
-        windLevel_text = (TextView) findViewById(R.id.wind_level_tv);  //风力
-        uv_text = (TextView) findViewById(R.id.uv); //紫外线
-        carWashing_text = (TextView) findViewById(R.id.carwash);  //洗车
-        dressing_text = (TextView) findViewById(R.id.dressing);  //穿衣
-        locateModeImage = (ImageView) findViewById(R.id.lacate_mode_image);  //刷新方式图片
-        locateMode = (TextView) findViewById(R.id.locate_mode);  //刷新方式文字
-        lastUpdateTime = (TextView) findViewById(R.id.last_update_time);  //上次刷新时间
-        sunTimeView = (SunTimeView) findViewById(R.id.stv);  //日出日落的自定义 view
-        AQICircle = (SemiCircleView) findViewById(R.id.AQI_Circle);  //aqi圆环的自定义view
-        PMCircle = (SemiCircleView) findViewById(R.id.PM_Circle);  //PM2.5圆环的自定义iew
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
-        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
-        swipeRefreshLayout.setDistanceToTriggerSync(200);
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-//        读取首选项
-        loadPreferences();
-//        读取缓存的天气
-        readCache();
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -250,18 +320,33 @@ public class WeatherActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case 1:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    locate();
-                } else {
-                    Toast.makeText(this, getResources().getString(R.string.permission_denied), Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "onActivityResult: Locate permission denied, switch to ip mode");
-                    beforeRequestWeather(THROUGH_IP);
-                }
-                break;
-            default:
-        }
+        SimplePermissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    /**
+     * 申请权限，可批量授权
+     */
+    private void permission() {
+        SimplePermissionUtils.requestPermissionsResult(this, 1, new String[]{Manifest.permission.ACCESS_FINE_LOCATION
+                        , Manifest.permission.ACCESS_COARSE_LOCATION}
+                , new SimplePermissionUtils.OnPermissionListener() {
+                    @Override
+                    public void onPermissionGranted() {
+                        //Toast.makeText(BaseActivity.this, "获取权限成功!", Toast.LENGTH_SHORT).show();
+                        readCache();
+//                        locate();
+                    }
+
+                    @Override
+                    public void onPermissionDenied() {
+                        Toast.makeText(WeatherActivity.this, getResources().getString(R.string.permission_denied), Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "onActivityResult: Locate permission denied, switch to ip mode");
+//                        SimplePermissionUtils.showTipsDialog(WeatherActivity.this);
+                        readCache();
+//                        beforeRequestWeather(THROUGH_IP);
+                    }
+                });
     }
 
     /**
@@ -303,7 +388,8 @@ public class WeatherActivity extends AppCompatActivity {
             lastUpdateTime.setText(Utility.getTime(getApplicationContext(), weatherNowLastUpdateTime));
             WeatherData wd = Utility.handleCurrentWeatherResponse(weatherNow);
             showCurrentWeatherInfo(wd);
-            handleFullWeatherData(weatherFull);
+//            handleFullWeatherData(weatherFull);
+            presenter.getFullWeatherDataForJson(weatherFull);
         } else {
 //            全量刷新
             beforeRequestWeather(autoLocate ? THROUGH_LOCATE : THROUGH_CHOOSE_POSITION);
@@ -317,42 +403,34 @@ public class WeatherActivity extends AppCompatActivity {
 //                主界面显示当前为 ip 定位
 //                locateMode 和 locateModeImage 用来显示当前定位方式
                 locateModeImage.setImageResource(R.drawable.ic_location_on_black_24dp);
-                locateMode.setText("IP");
+                locateMode.setText(Utility.getIP(this));
                 locateModeImage.setVisibility(View.VISIBLE);
                 locateMode.setVisibility(View.VISIBLE);
-                GetCoordinateByIp();
+//                GetCoordinateByIp();
+                presenter.getCoordinateByIp();
                 break;
             case THROUGH_CHOOSE_POSITION:
                 locateModeImage.setImageResource(R.drawable.ic_location_off_black_24dp);
                 locateModeImage.setVisibility(View.VISIBLE);
                 locateMode.setVisibility(View.INVISIBLE);
-                GetCoordinateByChoosePosition();
+//                GetCoordinateByChoosePosition();
+                presenter.getCoordinateByChoosePosition(countyName);
                 break;
             case THROUGH_LOCATE:
                 locateModeImage.setImageResource(R.drawable.ic_location_on_black_24dp);
                 locateModeImage.setVisibility(View.VISIBLE);
                 locateMode.setVisibility(View.INVISIBLE);
-                GetCoordinateByLocate();
+//                GetCoordinateByLocate();
+                locate();
                 break;
             case THROUGH_COORDINATE:
                 locateModeImage.setVisibility(View.INVISIBLE);
                 locateMode.setVisibility(View.INVISIBLE);
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
                 locationCoordinates = prefs.getString("coordinate", null);
-                initRequireUrl();
+//                initRequireUrl();
+                presenter.afterGetCoordinate();
                 break;
-        }
-    }
-
-    /**
-     * 通过定位获得坐标
-     */
-    private void GetCoordinateByLocate() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-        } else {
-            locate();
         }
     }
 
@@ -361,11 +439,12 @@ public class WeatherActivity extends AppCompatActivity {
      */
     private void locate() {
         LocationManager mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+        Location location = null;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         }
-        Location location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
         if (location != null) {
             locationCoordinates = String.valueOf(location.getLongitude()) + ',' + String.valueOf(location.getLatitude());
             Log.d(TAG, "GetCoordinateByLocate: locationCoordinates = " + locationCoordinates);
@@ -374,339 +453,22 @@ public class WeatherActivity extends AppCompatActivity {
             editor.putString("coordinate", locationCoordinates);
             editor.putLong("coordinate_last_update", System.currentTimeMillis());
             editor.apply();
-            setCountyByCoordinate(locationCoordinates);
-            AfterGetCoordinate();
+//            setCountyByCoordinate(locationCoordinates);
+            presenter.getCountyByCoordinate(locationCoordinates);
+//            AfterGetCoordinate();
+            presenter.afterGetCoordinate();
         } else {
             Log.d(TAG, "requestLocation: location == null, switch to IP method");
             beforeRequestWeather(THROUGH_IP);
         }
     }
 
-    /**
-     * 通过获取的坐标获得位置描述， 使用 baidu web api
-     * @param coordinate
-     * 坐标
-     */
-    private void setCountyByCoordinate(String coordinate) {
-        String url;
-        if (!TextUtils.isEmpty(coordinate)) {
-            String[] part = coordinate.split(",");
-            String reverseCoordinate = part[1] + ',' + part[0];
-            url = "http://api.map.baidu.com/geocoder/v2/?location=" + reverseCoordinate + "&output=json&pois=1&ak=eTTiuvV4YisaBbLwvj4p8drl7BGfl1eo";
-        } else {
-            Log.e(TAG, "WeatherActivity::setCountyByCoordinate: coordinate == null");
-            return;
-        }
-        HttpUtil.sendOkHttpRequest(url, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                final String responseText = response.body().string();
-                try {
-                    JSONObject text = new JSONObject(responseText);
-                    JSONObject result = text.getJSONObject("result");
-                    JSONObject addressComponent = result.getJSONObject("addressComponent");
-                    countyName = addressComponent.getString("district");
-                    Log.d(TAG, "setCountyByCoordinate.onResponse: countyName: " + countyName);
-                    SharedPreferences.Editor editor = PreferenceManager
-                            .getDefaultSharedPreferences(WeatherActivity.this).edit();
-                    editor.putString("countyName", countyName);
-                    editor.putLong("countyName_last_update_time", System.currentTimeMillis());
-                    editor.apply();
-                    Message message = handler.obtainMessage();
-                    message.what = HANDLE_POSITION;
-                    message.obj = countyName;
-                    handler.sendMessage(message);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (NullPointerException ee) {
-                    Log.e(TAG, "onResponse: toolBar not found");
-                    ee.printStackTrace();
-                }
-            }
-        });
-    }
-
-    /**
-     * 选择地址进行定位
-     */
-    private void GetCoordinateByChoosePosition() {
-        if (TextUtils.isEmpty(countyName)) { //若无保存的地址，则打开 ChoosePositionActivity
-            Log.e(TAG, "GetCoordinateByChoosePosition: choosed countyName == null");
-            Toast.makeText(WeatherActivity.this, getResources().getString(R.string.choose_your_position),
-                    Toast.LENGTH_LONG).show();
-            Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
-            startActivityForResult(intent, 1);
-        } else {
-            final Message message = handler.obtainMessage();
-            message.what = HANDLE_POSITION;
-            message.obj = countyName;
-            handler.sendMessage(message);
-            String url = "http://api.map.baidu.com/geocoder/v2/?output=json&address=%" + countyName + "&ak=eTTiuvV4YisaBbLwvj4p8drl7BGfl1eo";
-            HttpUtil.sendOkHttpRequest(url, new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    e.printStackTrace();
-                    Log.e(TAG, "GetCoordinateByChoosePosition: failed");
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            stopSwipe();
-                        }
-                    });
-                }
-
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    String responseText = response.body().string();
-                    try {
-                        JSONObject res = new JSONObject(responseText);
-                        JSONObject JSONresult = res.getJSONObject("result");
-                        JSONObject location = JSONresult.getJSONObject("location");
-                        locationCoordinates = location.getString("lng") + ',' + location.getString("lat");
-                        SharedPreferences.Editor editor = PreferenceManager
-                                .getDefaultSharedPreferences(WeatherActivity.this).edit();
-                        editor.putString("coordinate", locationCoordinates);
-                        editor.putLong("coordinate_last_update", System.currentTimeMillis());
-                        editor.apply();
-                        AfterGetCoordinate();
-                    } catch (JSONException e) {
-                        Log.e(TAG, "GetCoordinateByChoosePosition: parse json error");
-                        Log.d(TAG, "GetCoordinateByChoosePosition: json result: " + responseText);
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
-    }
-
-    /**
-     * 当位置请求失败时，通过 ip 地址判别位置
-     */
-    public void GetCoordinateByIp() {
-//        百度 web api
-        String url = "http://api.map.baidu.com/location/ip?ak=eTTiuvV4YisaBbLwvj4p8drl7BGfl1eo&coor=bd09ll";
-        HttpUtil.sendOkHttpRequest(url, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.e(TAG, "onFailure: fetch locationCoordinates by IP failed");
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                final String responseText = response.body().string();
-                try {
-                    JSONObject allAttributes = new JSONObject(responseText);
-                    JSONObject content = allAttributes.getJSONObject("content");
-                    JSONObject address_detail = content.getJSONObject("address_detail");
-                    countyName = address_detail.getString("city") + " " + address_detail.getString("district");
-                    JSONObject point = content.getJSONObject("point");
-                    String x = point.getString("x");
-                    String y = point.getString("y");
-                    locationCoordinates = x + ',' + y;
-                    SharedPreferences.Editor editor = PreferenceManager
-                            .getDefaultSharedPreferences(WeatherActivity.this).edit();
-                    editor.putString("coordinate", locationCoordinates);
-                    editor.putLong("coordinate_last_update", System.currentTimeMillis());
-                    editor.putString("countyName", countyName);
-                    editor.putLong("countyName_last_update_time", System.currentTimeMillis());
-                    editor.apply();
-                    Log.d(TAG, "GetCoordinateByIp: locationCoordinates = " + locationCoordinates);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Log.e(TAG, "GetCoordinateByIp: parse IP address json error");
-                    Log.d(TAG, "response: " + responseText);
-                }
-                AfterGetCoordinate();
-            }
-        });
-    }
-
-    /**
-     * 初始化请求天气的url
-     */
-    private void initRequireUrl() {
-        if (!TextUtils.isEmpty(locationCoordinates)) {
-//            即 current weather Url， 获取当前天气的url
-            String cUrl = "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/" + locationCoordinates + "/realtime.json";
-//            即 full weather Url， 获取未来天气的url
-            String fUrl = "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/" + locationCoordinates + "/forecast.json";
-            SharedPreferences.Editor editor = PreferenceManager
-                    .getDefaultSharedPreferences(WeatherActivity.this).edit();
-            editor.putString("curl", cUrl);
-            editor.putString("furl", fUrl);
-            editor.apply();
-            requestCurrentWeather(cUrl);
-            requestFullWeather(fUrl);
-        } else {
-            Toast.makeText(WeatherActivity.this, "locationCoordinates = null", Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "initRequireUrl: locationCoordinates = null");
-        }
-    }
-
-
-    /**
-     * 网络请求未来天气数据
-     * @param url
-     * 网址
-     */
-    private void requestFullWeather(String url) {
-        startSwipe();
-        if (TextUtils.isEmpty(url)) {
-            Log.d(TAG, "requestFullWeather: url = null");
-            return;
-        }
-        HttpUtil.sendOkHttpRequest(url, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(WeatherActivity.this, "load full weather failed", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                final String responseText = response.body().string();
-                SharedPreferences.Editor editor = PreferenceManager
-                        .getDefaultSharedPreferences(WeatherActivity.this).edit();
-                editor.putString("weather_full", responseText);
-                editor.putLong("weather_full_last_update_time", System.currentTimeMillis());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        lastUpdateTime.setText(Utility.getTime(getApplicationContext()));
-                    }
-                });
-                editor.apply();
-                handleFullWeatherData(responseText);
-            }
-        });
-    }
-
-    /**
-     * 解析获得的未来天气json
-     * @param responseText
-     *
-     */
-    private void handleFullWeatherData(String responseText) {
-        ArrayList<ExtendedWeatherData> weatherDatas = new ArrayList<>(5);
-        ArrayList<HourlyWeather> hourlyWeathers = new ArrayList<>(24);
-        ArrayList<JSONArray> jsonArrays = moreHandleDailyWeatherResponse(responseText);
-        if (jsonArrays.size() == 11) {
-            for (int i = 0; i < 5; i++) {
-                try {
-                    ExtendedWeatherData wd = new ExtendedWeatherData();
-                    JSONObject skycon = jsonArrays.get(0).getJSONObject(i);
-                    JSONObject humidity = jsonArrays.get(1).getJSONObject(i);
-                    JSONObject temperatures = jsonArrays.get(2).getJSONObject(i);
-                    JSONObject precipitation = jsonArrays.get(3).getJSONObject(i);
-                    JSONObject astro = jsonArrays.get(4).getJSONObject(i);
-                    JSONObject uv = jsonArrays.get(8).getJSONObject(i);
-                    JSONObject dressing = jsonArrays.get(9).getJSONObject(i);
-                    JSONObject carWashing = jsonArrays.get(10).getJSONObject(i);
-                    wd.setDate(temperatures.getString("date"));
-                    wd.setMaxTemperature(temperatures.getString("max"));
-                    wd.setMinTemperature(temperatures.getString("min"));
-                    wd.setSkycon(skycon.getString("value"));
-                    wd.setHumidity(humidity.getString("max"));
-                    wd.setIntensity(precipitation.getString("max"));
-                    wd.setSunriseTime(astro.getJSONObject("sunrise").getString("time"));
-                    wd.setSunsetTime(astro.getJSONObject("sunset").getString("time"));
-                    wd.setUvIndex(uv.getInt("index"));
-                    wd.setUvDesc(uv.getString("desc"));
-                    wd.setDerssingIndex(dressing.getInt("index"));
-                    wd.setDressingDesc(dressing.getString("desc"));
-                    wd.setCarWashingIndex(carWashing.getInt("index"));
-                    wd.setCarWashingDesc(carWashing.getString("desc"));
-                    weatherDatas.add(i, wd);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Log.e(TAG, "handleFullWeatherData: parse jsonArrays error");
-                }
-            }
-            for (int i = 0; i < 24; i++) {
-                try {
-                    HourlyWeather hw = new HourlyWeather();
-                    JSONObject skyon = jsonArrays.get(5).getJSONObject(i);
-                    JSONObject temperatures = jsonArrays.get(6).getJSONObject(i);
-                    JSONObject precipitation = jsonArrays.get(7).getJSONObject(i);
-                    hw.setDatetime(skyon.getString("datetime"));
-                    hw.setSkyon(skyon.getString("value"));
-                    hw.setPrecipitation(precipitation.getString("value"));
-                    hw.setTemperature(temperatures.getString("value"));
-                    hourlyWeathers.add(i, hw);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Log.e(TAG, "handleFullWeatherData: parse jsonArrays error(hourly)");
-                }
-            }
-            showDailyWeatherInfo(weatherDatas);
-            showHourlyWeatherInfo(hourlyWeathers);
-        }
-    }
-
-    /**
-     * 网络请求现在的天气
-     */
-    private void requestCurrentWeather(String url) {
-        startSwipe();
-        if (TextUtils.isEmpty(url)) {
-            Log.d(TAG, "requestCurrentWeather: url = null");
-            return;
-        }
-        HttpUtil.sendOkHttpRequest(url, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(WeatherActivity.this, "load current weather failed", Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                final String responseText = response.body().string();
-                final WeatherData weatherData = handleCurrentWeatherResponse(responseText);
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (weatherData != null) {
-                            SharedPreferences.Editor editor = PreferenceManager
-                                    .getDefaultSharedPreferences(WeatherActivity.this).edit();
-                            editor.putString("weather_now", responseText);
-                            editor.putLong("weather_now_last_update_time", System.currentTimeMillis());
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    lastUpdateTime.setText(Utility.getTime(getApplicationContext()));
-                                }
-                            });
-                            editor.apply();
-                            showCurrentWeatherInfo(weatherData);
-                        } else {
-                            Toast.makeText(WeatherActivity.this, "weatherDate = null", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
-            }
-        });
-    }
 
     /*
      *刷新24小时内的天气的自定义 view
      */
-    private void showHourlyWeatherInfo(final ArrayList<HourlyWeather> hourlyWeathers) {
+    @Override
+    public void showHourlyWeatherInfo(final ArrayList<HourlyWeather> hourlyWeathers) {
 
         handler.post(new Runnable() {
             @Override
@@ -747,7 +509,8 @@ public class WeatherActivity extends AppCompatActivity {
     /**
      * 展示未来5天的天气
      */
-    private void showDailyWeatherInfo(final ArrayList<ExtendedWeatherData> weatherDatas) {
+    @Override
+    public void showDailyWeatherInfo(final ArrayList<ExtendedWeatherData> weatherDatas) {
         if (weatherDatas.size() == 5) {
             handler.post(new Runnable() {
                 @Override
@@ -779,86 +542,56 @@ public class WeatherActivity extends AppCompatActivity {
     }
 
     /**
-     *展示现在的天气
+     * 展示现在的天气
      */
-    private void showCurrentWeatherInfo(WeatherData weatherData) {
-        final RemoteViews remoteViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.simple_weather_widget);
-        String temperature = Utility.roundString(weatherData.getTemperature());
-        String skycon = weatherData.getSkycon();
-        String humidity = weatherData.getHumidity();
-        String PM25 = weatherData.getPm25();
-        float intensity = Float.parseFloat(weatherData.getIntensity());
-        String aqi = weatherData.getAqi();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String countyName = prefs.getString("countyName", null);
-        if (weatherData.getWind() != null) {
-            setWindDirection(weatherData.getWind().getDirection());
-            setWindLevel(weatherData.getWind().getSpeed());
-        }
-        if (!TextUtils.isEmpty(countyName)) {
-            Message message = handler.obtainMessage();
-            message.what = HANDLE_POSITION;
-            message.obj = countyName;
-            handler.sendMessage(message);
-        } else {
-            Log.d(TAG, "showCurrentWeatherInfo: countyName == null");
-        }
-        PMCircle.setValue(Integer.valueOf(PM25));
-        temperature_text.setText(temperature);
-        AQICircle.setValue(Integer.valueOf(aqi));
-        Float hum = Float.parseFloat(humidity) * 100;
-        hum_text.setText(hum.toString().substring(0, 2) + "%");
-        String weatherString = chooseWeatherIcon(skycon, intensity, MINUTELY_MODE);
-        if (weatherString != null) {
-            String[] ws = weatherString.split("and");
-            skycon_text.setText(ws[1]);
-            remoteViews.setImageViewResource(R.id.widget_clock_day_icon, Integer.parseInt(ws[0]));
-            remoteViews.setTextViewText(R.id.widget_clock_day_subtitle, countyName + " | " + ws[1] + ' ' + temperature + '°');
-        }
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
-        appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext(), SimpleWeatherWidget.class),
-                remoteViews);
-        appBar.setBackgroundResource(Utility.chooseBgImage(skycon));
-        if (isDone) {
-            stopSwipe();
-            isDone = false;
-        } else {
-            isDone = true;
-        }
-    }
-
-    /**
-     * 就是在 Utility.handleDailyWeatherResponse() 前先获得2小时内天气描述并展示
-     * @param url
-     *
-     * @return
-     * 直接返回 Utility.handleDailyWeatherResponse(url)
-     */
-    private ArrayList<JSONArray> moreHandleDailyWeatherResponse(String url) {
-        try {
-            JSONObject all = new JSONObject(url);
-            JSONObject result = all.getJSONObject("result");
-            final JSONObject minutely = result.getJSONObject("minutely");
-            final String des = minutely.getString("description");
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    rainInfo.setText(des);
-                }
-            });
-        } catch (JSONException e) {
-            Log.e(TAG, "moreHandleDailyWeatherResponse: parse weather json error");
-            e.printStackTrace();
-        }
-
-        return Utility.handleDailyWeatherResponse(url);
-    }
-
-    private void AfterGetCoordinate() {
+    @Override
+    public void showCurrentWeatherInfo(final WeatherData weatherData) {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                initRequireUrl();
+                final RemoteViews remoteViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.simple_weather_widget);
+                String temperature = Utility.roundString(weatherData.getTemperature());
+                String skycon = weatherData.getSkycon();
+                String humidity = weatherData.getHumidity();
+                String PM25 = weatherData.getPm25();
+                float intensity = Float.parseFloat(weatherData.getIntensity());
+                String aqi = weatherData.getAqi();
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this);
+                String countyName = prefs.getString("countyName", null);
+                if (weatherData.getWind() != null) {
+                    setWindDirection(weatherData.getWind().getDirection());
+                    setWindLevel(weatherData.getWind().getSpeed());
+                }
+                if (!TextUtils.isEmpty(countyName)) {
+                    Message message = handler.obtainMessage();
+                    message.what = HANDLE_POSITION;
+                    message.obj = countyName;
+                    handler.sendMessage(message);
+                } else {
+                    Log.d(TAG, "showCurrentWeatherInfo: countyName == null");
+                }
+                PMCircle.setValue(Integer.valueOf(PM25));
+                temperatureText.setText(temperature);
+                AQICircle.setValue(Integer.valueOf(aqi));
+                Float hum = Float.parseFloat(humidity) * 100;
+                hum_text.setText(hum.toString().substring(0, 2) + "%");
+                String weatherString = chooseWeatherIcon(skycon, intensity, MINUTELY_MODE);
+                if (weatherString != null) {
+                    String[] ws = weatherString.split("and");
+                    skyconText.setText(ws[1]);
+                    remoteViews.setImageViewResource(R.id.widget_clock_day_icon, Integer.parseInt(ws[0]));
+                    remoteViews.setTextViewText(R.id.widget_clock_day_subtitle, countyName + " | " + ws[1] + ' ' + temperature + '°');
+                }
+                AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
+                appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext(), SimpleWeatherWidget.class),
+                        remoteViews);
+                appBar.setBackgroundResource(Utility.chooseBgImage(skycon));
+                if (isDone) {
+                    stopSwipe();
+                    isDone = false;
+                } else {
+                    isDone = true;
+                }
             }
         });
     }
@@ -866,19 +599,31 @@ public class WeatherActivity extends AppCompatActivity {
     /*
      *刷新环开始刷新
      */
-    private void startSwipe() {
-        if (!swipeRefreshLayout.isRefreshing()) {
-            swipeRefreshLayout.setRefreshing(true);
-        }
+    @Override
+    public void startSwipe() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (!swipeRefreshLayout.isRefreshing()) {
+                    swipeRefreshLayout.setRefreshing(true);
+                }
+            }
+        });
     }
 
     /*
      *刷新环停止刷新
      */
-    private void stopSwipe() {
-        if (swipeRefreshLayout.isRefreshing()) {
-            swipeRefreshLayout.setRefreshing(false);
-        }
+    @Override
+    public void stopSwipe() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (swipeRefreshLayout.isRefreshing()) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            }
+        });
     }
 
     /**
@@ -903,7 +648,7 @@ public class WeatherActivity extends AppCompatActivity {
         } else {
             dir = getResources().getString(R.string.northwest);
         }
-        windDirection_text.setText(dir);
+        windDirectionTv.setText(dir);
     }
 
     /**
@@ -953,9 +698,9 @@ public class WeatherActivity extends AppCompatActivity {
             info = "飓风";
         }
         if (Utility.isChinese(getApplicationContext())) {
-            windLevel_text.setText(level + " 级" + info);
+            windLevelTv.setText(level + " 级" + info);
         } else {
-            windLevel_text.setText("LEVEL " + level);
+            windLevelTv.setText("LEVEL " + level);
         }
     }
 
