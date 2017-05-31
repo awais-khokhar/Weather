@@ -34,6 +34,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import okhttp3.Call;
@@ -93,15 +94,28 @@ public class WeatherActivity extends AppCompatActivity {
     private SemiCircleView PMCircle;
 
     private Boolean autoLocate;
+    private MessageHandler handler; //消息队列
 
-    private Handler handler = new Handler() {
+    /**
+     * 创建"弱引用"的Handler,而不是强引用
+     * 避免内存泄漏
+     */
+    private static class MessageHandler extends Handler {
+        WeakReference<WeatherActivity> activityWeakReference;
+
+        MessageHandler(WeatherActivity activity) {
+            activityWeakReference = new WeakReference<>(activity);
+        }
+
         @Override
         public void handleMessage(Message msg) {
+            WeatherActivity activity = activityWeakReference.get();
+            if (activity != null) {
                 switch (msg.what) {
                     case HANDLE_POSITION:
                         if (msg.obj instanceof String) {
-                            if (getSupportActionBar() != null) {
-                                getSupportActionBar().setTitle((String) msg.obj);
+                            if (activity.getSupportActionBar() != null) {
+                                activity.getSupportActionBar().setTitle((String) msg.obj);
                             } else {
                                 Log.e(TAG, "handleMessage: toolBar == null");
                             }
@@ -111,14 +125,16 @@ public class WeatherActivity extends AppCompatActivity {
                         break;
                     case HANDLE_TOAST:
                         if (msg.obj instanceof String) {
-                            Toast.makeText(WeatherActivity.this, (String) msg.obj, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, (String) msg.obj, Toast.LENGTH_SHORT).show();
                         } else {
                             Log.e(TAG, "handleMessage: HANDLE_TOAST obj == " + msg.obj.getClass());
                         }
                         break;
                 }
             }
-    };
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,6 +143,7 @@ public class WeatherActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather);
+        handler=new MessageHandler(this);
 
         rainInfo = (TextView) findViewById(R.id.rain_info_tv);
         temperature_text = (TextView) findViewById(R.id.temperature_text);
