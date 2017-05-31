@@ -32,6 +32,7 @@ import static top.maweihao.weather.util.Utility.handleCurrentWeatherResponse;
  * Created by limuyang on 2017/5/31.
  */
 
+
 public class WeatherActivityModel implements WeatherActivityContract.Model {
     private static final String TAG = "WeatherActivityModel";
     private WeatherActivityContract.Presenter presenter;
