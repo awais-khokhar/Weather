@@ -50,7 +50,7 @@ import top.maweihao.weather.service.SyncService;
 import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.view.HScrollView;
-import top.maweihao.weather.view.LineChartView;
+import top.maweihao.weather.view.hourlyWeatherView;
 import top.maweihao.weather.view.SemiCircleView;
 import top.maweihao.weather.view.SunTimeView;
 
@@ -712,7 +712,7 @@ public class WeatherActivity extends AppCompatActivity {
             @Override
             public void run() {
                 HScrollView hScrollView = (HScrollView) findViewById(R.id.HScrollView);
-                LineChartView mLineChartView = (LineChartView) findViewById(R.id.simpleLineChart);
+                hourlyWeatherView mHourlyWeatherView = (hourlyWeatherView) findViewById(R.id.simpleLineChart);
                 ArrayList<String> xItemArray = new ArrayList<>();
                 for (HourlyWeather hourlyWeather : hourlyWeathers) {
                     xItemArray.add(hourlyWeather.getDatetime().substring(11, 16));
@@ -733,12 +733,12 @@ public class WeatherActivity extends AppCompatActivity {
                     precipitation.add(Float.parseFloat(hourlyWeather.getPrecipitation()));
                 }
 
-                mLineChartView.setXItem(xItemArray);
-                mLineChartView.setYItem(yItemArray);
-                mLineChartView.setWeather(weatherArray);
-                mLineChartView.setPrecipitation(precipitation);
-                mLineChartView.setmHScrollView(hScrollView);
-                mLineChartView.applyChanges();
+                mHourlyWeatherView.setXItem(xItemArray);
+                mHourlyWeatherView.setYItem(yItemArray);
+                mHourlyWeatherView.setWeather(weatherArray);
+                mHourlyWeatherView.setPrecipitation(precipitation);
+                mHourlyWeatherView.setmHScrollView(hScrollView);
+                mHourlyWeatherView.applyChanges();
             }
         });
 
@@ -828,11 +828,11 @@ public class WeatherActivity extends AppCompatActivity {
     }
 
     /**
-     * 就是在 Utility.handleDailyWeatherResponse() 前先获得2小时内天气描述并展示
+     * 就是在 Utility.handleFullWeatherResponse() 前先获得2小时内天气描述并展示
      * @param url
      *
      * @return
-     * 直接返回 Utility.handleDailyWeatherResponse(url)
+     * 直接返回 Utility.handleFullWeatherResponse(url)
      */
     private ArrayList<JSONArray> moreHandleDailyWeatherResponse(String url) {
         try {
@@ -851,7 +851,7 @@ public class WeatherActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        return Utility.handleDailyWeatherResponse(url);
+        return Utility.handleFullWeatherResponse(url);
     }
 
     private void AfterGetCoordinate() {

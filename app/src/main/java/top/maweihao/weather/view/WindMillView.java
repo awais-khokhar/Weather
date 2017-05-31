@@ -13,7 +13,7 @@ import android.view.View;
 import top.maweihao.weather.R;
 
 /**
- * view for WindMill
+ * 风车的那个view， 不是我写的
  * Created by ma on 17-5-22.
  */
 

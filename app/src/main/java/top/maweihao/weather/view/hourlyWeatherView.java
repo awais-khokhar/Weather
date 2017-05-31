@@ -17,16 +17,15 @@ import android.view.View;
 
 import java.util.ArrayList;
 
-import top.maweihao.weather.R;
 import top.maweihao.weather.activity.WeatherActivity;
 import top.maweihao.weather.util.Utility;
 
 /**
- * View for LineChartView
+ * 24小时天气图表的自定义 view， 不是我写的， 我只做了修改
  * Created by ma on 17-5-20.
  */
 
-public class LineChartView extends View implements HScrollView.OnMyHScrollView {
+public class hourlyWeatherView extends View implements HScrollView.OnMyHScrollView {
 
     private static final String TAG = "LineChartView";
 
@@ -58,17 +57,17 @@ public class LineChartView extends View implements HScrollView.OnMyHScrollView {
     private Paint pointPaint;
     private Paint linePaint;
 
-    public LineChartView(Context context) {
+    public hourlyWeatherView(Context context) {
         this(context, null);
         initPaint();
     }
 
-    public LineChartView(Context context, AttributeSet attrs) {
+    public hourlyWeatherView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
         initPaint();
     }
 
-    public LineChartView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public hourlyWeatherView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initPaint();
     }
@@ -306,10 +305,6 @@ public class LineChartView extends View implements HScrollView.OnMyHScrollView {
     public void onMyScrollChanged(int l, int t, int oldl, int oldt) {
         this.mScrollLeft = l;
         invalidate();
-    }
-
-    private Bitmap chooseImage(String s) {
-        return BitmapFactory.decodeResource(getResources(), R.drawable.ic_cloud_queue_black_24dp);
     }
 
     private Bitmap chooseImage(int index) {

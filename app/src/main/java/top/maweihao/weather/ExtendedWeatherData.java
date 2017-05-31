@@ -1,6 +1,7 @@
 package top.maweihao.weather;
 
 /**
+ * 扩充的 WeatherData
  * Created by ma on 17-4-2.
  */
 
