@@ -94,6 +94,10 @@
     <string name="just_now">just now</string>
     <string name="minute_age">" minute ago"</string>
     <string name="hour_ago">" hour ago"</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="configure">Configure</string>
+    <string name="add_widget">Add widget</string>
+    <string name="Lunar">Lunar Date</string>
     <!--<string name="appwidget_text">EXAMPLE</string>-->
     <!--<string name="add_widget">Add widget</string>-->
 </resources>
