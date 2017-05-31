@@ -44,9 +44,9 @@ import top.maweihao.weather.service.SyncService;
 import top.maweihao.weather.util.SimplePermissionUtils;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.view.HScrollView;
-import top.maweihao.weather.view.LineChartView;
 import top.maweihao.weather.view.SemiCircleView;
 import top.maweihao.weather.view.SunTimeView;
+import top.maweihao.weather.view.hourlyWeatherView;
 import top.maweihao.weather.view.perDayWeatherView;
 import top.maweihao.weather.widget.SimpleWeatherWidget;
 
@@ -474,7 +474,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
             @Override
             public void run() {
                 HScrollView hScrollView = (HScrollView) findViewById(R.id.HScrollView);
-                LineChartView mLineChartView = (LineChartView) findViewById(R.id.simpleLineChart);
+                hourlyWeatherView mLineChartView = (hourlyWeatherView) findViewById(R.id.simpleLineChart);
                 ArrayList<String> xItemArray = new ArrayList<>();
                 for (HourlyWeather hourlyWeather : hourlyWeathers) {
                     xItemArray.add(hourlyWeather.getDatetime().substring(11, 16));

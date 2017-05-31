@@ -135,7 +135,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             e.printStackTrace();
         }
 
-        return Utility.handleDailyWeatherResponse(url);
+        return Utility.handleFullWeatherResponse(url);
     }
 
     /**
