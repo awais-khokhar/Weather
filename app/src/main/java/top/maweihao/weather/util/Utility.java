@@ -1,6 +1,8 @@
 package top.maweihao.weather.util;
 
 import android.content.Context;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
@@ -11,7 +13,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 
 import top.maweihao.weather.R;
 import top.maweihao.weather.WeatherData;
@@ -321,6 +327,44 @@ public class Utility {
      */
     public static String getTime(Context context) {
         return context.getResources().getString(R.string.just_now);
+    }
+
+    /**
+     * getIP 获取网络IP地址(优先获取wifi地址)
+     * @param ctx
+     * @return ip地址字符串
+     */
+    public static String getIP(Context ctx) {
+        WifiManager wifiManager = (WifiManager) ctx.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        return wifiManager.isWifiEnabled() ? getWifiIP(wifiManager) : getGPRSIP();
+    }
+
+    private static String getWifiIP(WifiManager wifiManager) {
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        String ip = intToIp(wifiInfo.getIpAddress());
+        return ip != null ? ip : "";
+    }
+
+    private static String getGPRSIP() {
+        String ip = null;
+        try {
+            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
+                for (Enumeration<InetAddress> enumIpAddr = en.nextElement().getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
+                    InetAddress inetAddress = enumIpAddr.nextElement();
+                    if (!inetAddress.isLoopbackAddress()) {
+                        ip = inetAddress.getHostAddress();
+                    }
+                }
+            }
+        } catch (SocketException e) {
+            e.printStackTrace();
+            ip = null;
+        }
+        return ip;
+    }
+
+    private static String intToIp(int i) {
+        return (i & 0xFF) + "." + ((i >> 8) & 0xFF) + "." + ((i >> 16) & 0xFF) + "." + (i >> 24 & 0xFF);
     }
 }
 
