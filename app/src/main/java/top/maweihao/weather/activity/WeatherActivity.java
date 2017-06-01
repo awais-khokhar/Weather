@@ -163,9 +163,10 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     @Override
     protected void onStart() {
         super.onStart();
+        loadPreferences();
         permission();
 //        读取首选项
-        loadPreferences();
+
 //        读取缓存的天气
 //        readCache();
     }

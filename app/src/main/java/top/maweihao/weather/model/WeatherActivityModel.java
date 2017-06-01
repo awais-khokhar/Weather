@@ -141,7 +141,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
 
     /**
      * 网络请求未来天气数据
-     *
      * @param url 网址
      */
     @Override
@@ -315,12 +314,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                 public void onFailure(Call call, IOException e) {
                     e.printStackTrace();
                     Log.e(TAG, "GetCoordinateByChoosePosition: failed");
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            stopSwipe();
-//                        }
-//                    });
                     presenter.stopSwipe();
                 }
 
@@ -391,8 +384,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
         });
     }
 
-
-
     /**
      * 初始化请求天气的url
      */
@@ -424,13 +415,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
 
     @Override
     public void afterGetCoordinate() {
-//        handler.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                initRequireUrl();
-//            }
-//        });
-//
         Runnable runnable=new Runnable() {
             @Override
             public void run() {

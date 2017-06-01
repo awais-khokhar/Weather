@@ -1,9 +1,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#09C"
+    android:background="@android:color/transparent"
     android:orientation="vertical"
-    android:padding="@dimen/widget_margin">
+    android:padding="@dimen/widget_margin"
+    tools:background="#FF424242">
 
 
     <RelativeLayout
@@ -23,7 +26,7 @@
             android:shadowDy="1"
             android:shadowRadius="1"
             android:textColor="#fafafa"
-            android:textSize="56sp" />
+            android:textSize="72sp" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -31,12 +34,101 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
+        <TextClock
+            android:id="@+id/tall_widget_minute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:fontFamily="sans-serif-light"
+            android:format12Hour="MM"
+            android:format24Hour="MM"
+            android:shadowColor="#9e9e9e"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="1"
+            android:textColor="#fafafa"
+            android:textSize="72sp" />
+
+
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1.5">
+
+        <ImageView
+            android:id="@+id/tall_widget_skyon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:src="@mipmap/ic_launcher" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/tall_widget_skyon">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:orientation="horizontal">
+
+                <TextClock
+                    android:id="@+id/tall_widget_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-light"
+                    android:format12Hour="MM/dd EE"
+                    android:format24Hour="MM/dd EE"
+                    android:shadowColor="#9e9e9e"
+                    android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:shadowRadius="1"
+                    android:textColor="#fafafa"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tall_widget_lunar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingStart="7dp"
+                    android:shadowColor="#9e9e9e"
+                    android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:shadowRadius="1"
+                    android:text="十月廿一"
+                    android:textColor="#fafafa"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tall_widget_skyon">
+
+            <TextView
+                android:id="@+id/widget_clock_day_subtitle"
+                style="@style/content_text"
+                android:layout_centerHorizontal="true"
+                android:maxLines="1"
+                android:shadowColor="@color/colorTextGrey"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="1"
+                android:text="QIXIA | 28°"
+                android:textAlignment="center"
+                android:textColor="@color/colorTextLight"
+                tools:text="QIXIA | 28°"/>
+
+        </RelativeLayout>
 
     </RelativeLayout>
 </LinearLayout>
