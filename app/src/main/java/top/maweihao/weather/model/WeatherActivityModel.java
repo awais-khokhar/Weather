@@ -25,6 +25,7 @@ import top.maweihao.weather.gson.HourlyWeather;
 import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.Utility;
 
+import static top.maweihao.weather.activity.WeatherActivity.DEBUG;
 import static top.maweihao.weather.activity.WeatherActivity.locationCoordinates;
 import static top.maweihao.weather.util.Utility.handleCurrentWeatherResponse;
 
@@ -42,7 +43,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
     public WeatherActivityModel(Context context, WeatherActivityContract.Presenter presenter) {
         this.context = context;
         this.presenter = presenter;
-
     }
 
     /**
@@ -84,7 +84,8 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                     weatherDatas.add(i, wd);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Log.e(TAG, "handleFullWeatherData: parse jsonArrays error");
+                    if (DEBUG)
+                        Log.e(TAG, "handleFullWeatherData: parse jsonArrays error");
                 }
             }
             for (int i = 0; i < 24; i++) {
@@ -100,7 +101,8 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                     hourlyWeathers.add(i, hw);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Log.e(TAG, "handleFullWeatherData: parse jsonArrays error(hourly)");
+                    if (DEBUG)
+                        Log.e(TAG, "handleFullWeatherData: parse jsonArrays error(hourly)");
                 }
             }
 //            showDailyWeatherInfo(weatherDatas);
@@ -132,7 +134,8 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
 //            });
             presenter.rainInfo(des);
         } catch (JSONException e) {
-            Log.e(TAG, "moreHandleDailyWeatherResponse: parse weather json error");
+            if (DEBUG)
+                Log.e(TAG, "moreHandleDailyWeatherResponse: parse weather json error");
             e.printStackTrace();
         }
 
@@ -141,12 +144,14 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
 
     /**
      * 网络请求未来天气数据
+     *
      * @param url 网址
      */
     @Override
     public void requestFullWeather(String url) {
         if (TextUtils.isEmpty(url)) {
-            Log.d(TAG, "requestFullWeather: url = null");
+            if (DEBUG)
+                Log.d(TAG, "requestFullWeather: url = null");
             return;
         }
         HttpUtil.sendOkHttpRequest(url, new Callback() {
@@ -169,12 +174,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                         .getDefaultSharedPreferences(context).edit();
                 editor.putString("weather_full", responseText);
                 editor.putLong("weather_full_last_update_time", System.currentTimeMillis());
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        lastUpdateTime.setText(Utility.getTime(getApplicationContext()));
-//                    }
-//                });
+
                 editor.apply();
 
                 presenter.isUpdate(true);
@@ -191,20 +191,17 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
     public void requestCurrentWeather(String url) {
 
         if (TextUtils.isEmpty(url)) {
-            Log.d(TAG, "requestCurrentWeather: url = null");
+            if (DEBUG)
+                Log.d(TAG, "requestCurrentWeather: url = null");
             return;
         }
         HttpUtil.sendOkHttpRequest(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        Toast.makeText(WeatherActivity.this, "load current weather failed", Toast.LENGTH_LONG).show();
-//                    }
-//                });
+
                 presenter.toastMessage("load current weather failed");
+                presenter.stopSwipe();
             }
 
             @Override
@@ -219,12 +216,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                             .getDefaultSharedPreferences(context).edit();
                     editor.putString("weather_now", responseText);
                     editor.putLong("weather_now_last_update_time", System.currentTimeMillis());
-//                    runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            lastUpdateTime.setText(Utility.getTime(getApplicationContext()));
-//                        }
-//                    });
+
                     editor.apply();
 //                            showCurrentWeatherInfo(weatherData);
                     presenter.setCurrentWeatherInfo(weatherData);
@@ -252,7 +244,8 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             String reverseCoordinate = part[1] + ',' + part[0];
             url = "http://api.map.baidu.com/geocoder/v2/?location=" + reverseCoordinate + "&output=json&pois=1&ak=eTTiuvV4YisaBbLwvj4p8drl7BGfl1eo";
         } else {
-            Log.e(TAG, "WeatherActivity::setCountyByCoordinate: coordinate == null");
+            if (DEBUG)
+                Log.e(TAG, "WeatherActivity::setCountyByCoordinate: coordinate == null");
             return;
         }
         HttpUtil.sendOkHttpRequest(url, new Callback() {
@@ -283,7 +276,8 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } catch (NullPointerException ee) {
-                    Log.e(TAG, "onResponse: toolBar not found");
+                    if (DEBUG)
+                        Log.e(TAG, "onResponse: toolBar not found");
                     ee.printStackTrace();
                 }
             }
@@ -308,36 +302,39 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
 //            message.obj = countyName;
 //            handler.sendMessage(message);
 
-            String url = "http://api.map.baidu.com/geocoder/v2/?output=json&address=%" + countyName + "&ak=eTTiuvV4YisaBbLwvj4p8drl7BGfl1eo";
-            HttpUtil.sendOkHttpRequest(url, new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    e.printStackTrace();
+        String url = "http://api.map.baidu.com/geocoder/v2/?output=json&address=%" + countyName + "&ak=eTTiuvV4YisaBbLwvj4p8drl7BGfl1eo";
+        HttpUtil.sendOkHttpRequest(url, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                if (DEBUG)
                     Log.e(TAG, "GetCoordinateByChoosePosition: failed");
-                    presenter.stopSwipe();
-                }
+                presenter.stopSwipe();
+            }
 
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    String responseText = response.body().string();
-                    try {
-                        JSONObject res = new JSONObject(responseText);
-                        JSONObject JSONResult = res.getJSONObject("result");
-                        JSONObject location = JSONResult.getJSONObject("location");
-                        locationCoordinates = location.getString("lng") + ',' + location.getString("lat");
-                        SharedPreferences.Editor editor = PreferenceManager
-                                .getDefaultSharedPreferences(context).edit();
-                        editor.putString("coordinate", locationCoordinates);
-                        editor.putLong("coordinate_last_update", System.currentTimeMillis());
-                        editor.apply();
-                        afterGetCoordinate();
-                    } catch (JSONException e) {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String responseText = response.body().string();
+                try {
+                    JSONObject res = new JSONObject(responseText);
+                    JSONObject JSONResult = res.getJSONObject("result");
+                    JSONObject location = JSONResult.getJSONObject("location");
+                    locationCoordinates = location.getString("lng") + ',' + location.getString("lat");
+                    SharedPreferences.Editor editor = PreferenceManager
+                            .getDefaultSharedPreferences(context).edit();
+                    editor.putString("coordinate", locationCoordinates);
+                    editor.putLong("coordinate_last_update", System.currentTimeMillis());
+                    editor.apply();
+                    afterGetCoordinate();
+                } catch (JSONException e) {
+                    if (DEBUG) {
                         Log.e(TAG, "GetCoordinateByChoosePosition: parse json error");
                         Log.d(TAG, "GetCoordinateByChoosePosition: json result: " + responseText);
-                        e.printStackTrace();
                     }
+                    e.printStackTrace();
                 }
-            });
+            }
+        });
 //        }
     }
 
@@ -351,7 +348,10 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
         HttpUtil.sendOkHttpRequest(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                Log.e(TAG, "onFailure: fetch locationCoordinates by IP failed");
+                if (DEBUG)
+                    Log.e(TAG, "onFailure: fetch locationCoordinates by IP failed");
+                presenter.toastMessage("onFailure: fetch locationCoordinates by IP failed");
+                presenter.stopSwipe();
             }
 
             @Override
@@ -361,7 +361,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                     JSONObject allAttributes = new JSONObject(responseText);
                     JSONObject content = allAttributes.getJSONObject("content");
                     JSONObject address_detail = content.getJSONObject("address_detail");
-                   String countyName = address_detail.getString("city") + " " + address_detail.getString("district");
+                    String countyName = address_detail.getString("city") + " " + address_detail.getString("district");
                     JSONObject point = content.getJSONObject("point");
                     String x = point.getString("x");
                     String y = point.getString("y");
@@ -372,12 +372,16 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                     editor.putLong("coordinate_last_update", System.currentTimeMillis());
                     editor.putString("countyName", countyName);
                     editor.putLong("countyName_last_update_time", System.currentTimeMillis());
+                    editor.putString("IP", Utility.getIP(context));
                     editor.apply();
-                    Log.d(TAG, "GetCoordinateByIp: locationCoordinates = " + locationCoordinates);
+                    if (DEBUG)
+                        Log.d(TAG, "GetCoordinateByIp: locationCoordinates = " + locationCoordinates);
                 } catch (JSONException e) {
                     e.printStackTrace();
-                    Log.e(TAG, "GetCoordinateByIp: parse IP address json error");
-                    Log.d(TAG, "response: " + responseText);
+                    if (DEBUG) {
+                        Log.e(TAG, "GetCoordinateByIp: parse IP address json error");
+                        Log.d(TAG, "response: " + responseText);
+                    }
                 }
                 afterGetCoordinate();
             }
@@ -408,29 +412,29 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
         } else {
 //            Toast.makeText(WeatherActivity.this, "locationCoordinates = null", Toast.LENGTH_SHORT).show();
             presenter.toastMessage("locationCoordinates = null");
-            Log.e(TAG, "initRequireUrl: locationCoordinates = null");
+            if (DEBUG)
+                Log.e(TAG, "initRequireUrl: locationCoordinates = null");
         }
     }
 
 
     @Override
     public void afterGetCoordinate() {
-        Runnable runnable=new Runnable() {
+        Runnable runnable = new Runnable() {
             @Override
             public void run() {
                 initRequireUrl();
             }
         };
-        if (singleThreadPool==null)
-        {
-            singleThreadPool=Executors.newSingleThreadExecutor();
+        if (singleThreadPool == null) {
+            singleThreadPool = Executors.newSingleThreadExecutor();
         }
         singleThreadPool.execute(runnable);
     }
 
     @Override
     public void destroy() {
-        context=null;
+        context = null;
 //        singleThreadPool.shutdownNow();
     }
 }

@@ -57,6 +57,7 @@ import static top.maweihao.weather.util.Utility.chooseWeatherIconOnly;
 import static top.maweihao.weather.util.Utility.intRoundString;
 
 public class WeatherActivity extends AppCompatActivity implements WeatherActivityContract.View {
+    public static boolean DEBUG = true;
 
     static final String TAG = "WeatherActivity";
     static final int THROUGH_IP = 0;
@@ -158,12 +159,18 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         swipeRefreshLayout.setDistanceToTriggerSync(200);
+        swipeRefreshLayout.setOnRefreshListener((new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                beforeRequestWeather(autoLocate ? THROUGH_LOCATE : THROUGH_CHOOSE_POSITION);
+            }
+        }));
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        loadPreferences();
+//        loadPreferences();
         permission();
 //        读取首选项
 
@@ -301,11 +308,9 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 //                settingActivity 和 choosePositionActivity 返回的数据一样的
                 if (resultCode == RESULT_OK) {
                     countyName = data.getStringExtra("countyName");
-                    Message message = handler.obtainMessage();
-                    message.what = HANDLE_POSITION;
-                    message.obj = countyName;
-                    handler.sendMessage(message);
-                    Log.d(TAG, "onActivityResult: county_return: " + countyName);
+                    setCounty(countyName);
+                    if (DEBUG)
+                        Log.d(TAG, "onActivityResult: county_return: " + countyName);
                     SharedPreferences.Editor editor = PreferenceManager
                             .getDefaultSharedPreferences(WeatherActivity.this).edit();
                     editor.putString("countyName", countyName);
@@ -335,42 +340,30 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                     @Override
                     public void onPermissionGranted() {
                         //Toast.makeText(BaseActivity.this, "获取权限成功!", Toast.LENGTH_SHORT).show();
-                        readCache();
-//                        locate();
+                        readPreferencesAndCache();
                     }
 
                     @Override
                     public void onPermissionDenied() {
                         Toast.makeText(WeatherActivity.this, getResources().getString(R.string.permission_denied), Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, "onActivityResult: Locate permission denied, switch to ip mode");
+                        if (DEBUG)
+                            Log.d(TAG, "onActivityResult: Locate permission denied, switch to ip mode");
 //                        SimplePermissionUtils.showTipsDialog(WeatherActivity.this);
-                        readCache();
-//                        beforeRequestWeather(THROUGH_IP);
+                        readPreferencesAndCache();
                     }
                 });
     }
 
     /**
-     * 是否自动定位？
-     */
-    private void loadPreferences() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        autoLocate = prefs.getBoolean("auto_locate", true);
-        countyName = prefs.getString("countyName", null);
-//        设置下拉刷新是否要重新定位
-        swipeRefreshLayout.setOnRefreshListener((new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                beforeRequestWeather(autoLocate ? THROUGH_LOCATE : THROUGH_CHOOSE_POSITION);
-            }
-        }));
-    }
-
-    /**
      * 读取 SharedPreferences 中保存的天气数据json
      */
-    private void readCache() {
+    private void readPreferencesAndCache() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        //读取配置
+        autoLocate = prefs.getBoolean("auto_locate", true);
+        countyName = prefs.getString("countyName", null);
+
         /*minInterval： 最低刷新间隔*/
         int minInterval = prefs.getInt("refresh_interval", 10);
 //        现在的天气， 原始json
@@ -382,15 +375,26 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 //        若保存的天气刷新时间和现在相差小于 minInterval，则直接使用
         if (weatherNow != null && System.currentTimeMillis() - weatherNowLastUpdateTime < minInterval * 60 * 1000
                 && weatherFull != null && System.currentTimeMillis() - weatherFullLastUpdateTime < minInterval * 60 * 1000) {
-            Log.d(TAG, "readCache: last nowWeather synced: "
-                    + (System.currentTimeMillis() - weatherNowLastUpdateTime) / 1000 + "s ago");
-            Log.d(TAG, "readCache: last fullWeather synced: "
-                    + (System.currentTimeMillis() - weatherFullLastUpdateTime) / 1000 + "s ago");
+            if (DEBUG) {
+                Log.d(TAG, "readCache: last nowWeather synced: "
+                        + (System.currentTimeMillis() - weatherNowLastUpdateTime) / 1000 + "s ago");
+                Log.d(TAG, "readCache: last fullWeather synced: "
+                        + (System.currentTimeMillis() - weatherFullLastUpdateTime) / 1000 + "s ago");
+            }
             lastUpdateTime.setText(Utility.getTime(getApplicationContext(), weatherNowLastUpdateTime));
             WeatherData wd = Utility.handleCurrentWeatherResponse(weatherNow);
             showCurrentWeatherInfo(wd);
-//            handleFullWeatherData(weatherFull);
             presenter.getFullWeatherDataForJson(weatherFull);
+
+            if (autoLocate) {
+                setLocateModeImage(true);
+                locateMode.setVisibility(View.INVISIBLE);
+                String ip;
+                if ((ip = prefs.getString("IP", null)) != null) {
+                    locateMode.setText(ip);
+                    locateMode.setVisibility(View.VISIBLE);
+                }
+            }
         } else {
 //            全量刷新
             beforeRequestWeather(autoLocate ? THROUGH_LOCATE : THROUGH_CHOOSE_POSITION);
@@ -403,23 +407,20 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
             case THROUGH_IP:
 //                主界面显示当前为 ip 定位
 //                locateMode 和 locateModeImage 用来显示当前定位方式
-                locateModeImage.setImageResource(R.drawable.ic_location_on_black_24dp);
+                setLocateModeImage(true);
                 locateMode.setText(Utility.getIP(this));
-                locateModeImage.setVisibility(View.VISIBLE);
                 locateMode.setVisibility(View.VISIBLE);
 //                GetCoordinateByIp();
                 presenter.getCoordinateByIp();
                 break;
             case THROUGH_CHOOSE_POSITION:
-                locateModeImage.setImageResource(R.drawable.ic_location_off_black_24dp);
-                locateModeImage.setVisibility(View.VISIBLE);
+                setLocateModeImage(false);
                 locateMode.setVisibility(View.INVISIBLE);
 //                GetCoordinateByChoosePosition();
                 presenter.getCoordinateByChoosePosition(countyName);
                 break;
             case THROUGH_LOCATE:
-                locateModeImage.setImageResource(R.drawable.ic_location_on_black_24dp);
-                locateModeImage.setVisibility(View.VISIBLE);
+                setLocateModeImage(true);
                 locateMode.setVisibility(View.INVISIBLE);
 //                GetCoordinateByLocate();
                 locate();
@@ -448,7 +449,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
         if (location != null) {
             locationCoordinates = String.valueOf(location.getLongitude()) + ',' + String.valueOf(location.getLatitude());
-            Log.d(TAG, "GetCoordinateByLocate: locationCoordinates = " + locationCoordinates);
+            if (DEBUG)
+                Log.d(TAG, "GetCoordinateByLocate: locationCoordinates = " + locationCoordinates);
             SharedPreferences.Editor editor = PreferenceManager
                     .getDefaultSharedPreferences(WeatherActivity.this).edit();
             editor.putString("coordinate", locationCoordinates);
@@ -459,11 +461,24 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 //            AfterGetCoordinate();
             presenter.afterGetCoordinate();
         } else {
-            Log.d(TAG, "requestLocation: location == null, switch to IP method");
+            if (DEBUG)
+                Log.d(TAG, "requestLocation: location == null, switch to IP method");
             beforeRequestWeather(THROUGH_IP);
         }
     }
 
+    /**
+     * 定位图片的显示
+     *
+     * @param isLocation 是否是定位状态
+     */
+    private void setLocateModeImage(boolean isLocation) {
+        locateModeImage.setVisibility(View.VISIBLE);
+        if (isLocation)
+            locateModeImage.setImageResource(R.drawable.ic_location_on_black_24dp);
+        else
+            locateModeImage.setImageResource(R.drawable.ic_location_off_black_24dp);
+    }
 
     /*
      *刷新24小时内的天气的自定义 view
@@ -564,12 +579,10 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                     setWindLevel(weatherData.getWind().getSpeed());
                 }
                 if (!TextUtils.isEmpty(countyName)) {
-                    Message message = handler.obtainMessage();
-                    message.what = HANDLE_POSITION;
-                    message.obj = countyName;
-                    handler.sendMessage(message);
+                    setCounty(countyName);
                 } else {
-                    Log.d(TAG, "showCurrentWeatherInfo: countyName == null");
+                    if (DEBUG)
+                        Log.d(TAG, "showCurrentWeatherInfo: countyName == null");
                 }
                 PMCircle.setValue(Integer.valueOf(PM25));
                 temperatureText.setText(temperature);
