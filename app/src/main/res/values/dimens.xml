@@ -1,5 +1,4 @@
 <resources>
-    <dimen name="fab_margin">16dp</dimen>
 
     <!--
 Refer to App Widget Documentation for margin information
