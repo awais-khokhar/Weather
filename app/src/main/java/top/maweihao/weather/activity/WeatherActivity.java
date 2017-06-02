@@ -9,15 +9,18 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -25,6 +28,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -86,7 +90,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     @BindView(R.id.last_update_time)
     TextView lastUpdateTime;
     @BindView(R.id.app_bar)
-    CardView appBar;
+    LinearLayout appBar;
     @BindView(R.id.daily_weather_0)
     perDayWeatherView dailyWeather0;
     @BindView(R.id.daily_weather_1)
@@ -125,6 +129,22 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     TextView sunset_text;
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.head_layout)
+    ConstraintLayout headLayout;
+    @BindView(R.id.toolbar_layout)
+    CollapsingToolbarLayout toolbarLayout;
+    @BindView(R.id.app_bar_layout)
+    AppBarLayout appBarLayout;
+    @BindView(R.id.navigation_bar_view)
+    View navigationBarView;
+
+    private CollapsingToolbarLayoutState state;
+
+    private enum CollapsingToolbarLayoutState {
+        EXPANDED,
+        COLLAPSED,
+        INTERNEDIATE
+    }
 
     private boolean isDone = false;
     private String countyName = null;
@@ -139,12 +159,27 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         PreferenceManager.setDefaultValues(this, R.xml.settingpreference, false);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather);
         ButterKnife.bind(this);
+
+        int statusHeight = Utility.getStatusBarHeight(this);
+        int navigationBarHeight = Utility.getNavigationBarHeight(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            CollapsingToolbarLayout.LayoutParams lp = (CollapsingToolbarLayout.LayoutParams) toolbar.getLayoutParams();
+            LinearLayout.LayoutParams lp2 = (LinearLayout.LayoutParams) headLayout.getLayoutParams();
+            LinearLayout.LayoutParams lp3 = (LinearLayout.LayoutParams) navigationBarView.getLayoutParams();
+            lp.topMargin = lp2.topMargin = statusHeight;
+            lp3.topMargin = navigationBarHeight;
+            toolbar.setLayoutParams(lp);
+            headLayout.setLayoutParams(lp2);
+            navigationBarView.setLayoutParams(lp3);
+        }
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
+
         handler = new MessageHandler(this);
         presenter = new WeatherActivityPresenter(this, this);
 
@@ -155,7 +190,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         day[3] = dailyWeather3;
         day[4] = dailyWeather4;
 
-        setSupportActionBar(toolbar);
 
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         swipeRefreshLayout.setDistanceToTriggerSync(200);
@@ -165,17 +199,15 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 beforeRequestWeather(autoLocate ? THROUGH_LOCATE : THROUGH_CHOOSE_POSITION);
             }
         }));
+
+        appBarLayout.addOnOffsetChangedListener(new AppBarOnOffsetChanged());
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-//        loadPreferences();
-        permission();
-//        读取首选项
 
-//        读取缓存的天气
-//        readCache();
+        permission();
     }
 
     @Override
@@ -235,6 +267,34 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     }
 
     /**
+     * CollapsingToolbarLayout滑动改变监听
+     */
+    private class AppBarOnOffsetChanged implements AppBarLayout.OnOffsetChangedListener {
+        @Override
+        public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+            if (verticalOffset == 0) {
+                if (state != CollapsingToolbarLayoutState.EXPANDED) {
+                    state = CollapsingToolbarLayoutState.EXPANDED;//修改状态标记为展开
+                    toolbarLayout.setTitle(null);
+                }
+            } else if (Math.abs(verticalOffset) >= appBarLayout.getTotalScrollRange()) {
+                if (state != CollapsingToolbarLayoutState.COLLAPSED) {
+                    toolbarLayout.setTitle(countyName);//设置title
+
+                    state = CollapsingToolbarLayoutState.COLLAPSED;//修改状态标记为折叠
+                }
+            } else {
+                if (state != CollapsingToolbarLayoutState.INTERNEDIATE) {
+                    if (state == CollapsingToolbarLayoutState.COLLAPSED) {
+                        toolbarLayout.setTitle(null);
+                    }
+                    state = CollapsingToolbarLayoutState.INTERNEDIATE;//修改状态标记为中间
+                }
+            }
+        }
+    }
+
+    /**
      * 创建"弱引用"的Handler,而不是强引用
      * 避免内存泄漏
      */
@@ -252,11 +312,13 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 switch (msg.what) {
                     case HANDLE_POSITION:
                         if (msg.obj instanceof String) {
-                            if (activity.getSupportActionBar() != null) {
-                                activity.getSupportActionBar().setTitle((String) msg.obj);
-                            } else {
-                                Log.e(TAG, "handleMessage: toolBar == null");
-                            }
+                            activity.countyName = (String) msg.obj;
+                            activity.locateMode.setText((String) msg.obj);
+//                            if (activity.toolbar != null) {
+//                                activity.toolbar.setTitle((String) msg.obj);
+//                            } else {
+//                                Log.e(TAG, "handleMessage: toolBar == null");
+//                            }
                         } else {
                             Log.e(TAG, "handleMessage: HANDLE_POSITION obj == " + msg.obj.getClass());
                         }
@@ -386,14 +448,15 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
             showCurrentWeatherInfo(wd);
             presenter.getFullWeatherDataForJson(weatherFull);
 
-            if (autoLocate) {
+            if (autoLocate)
                 setLocateModeImage(true);
-                locateMode.setVisibility(View.INVISIBLE);
-                String ip;
-                if ((ip = prefs.getString("IP", null)) != null) {
-                    locateMode.setText(ip);
-                    locateMode.setVisibility(View.VISIBLE);
-                }
+            else
+                setLocateModeImage(false);
+            String ip;
+            if (countyName != null)
+                locateMode.setText(countyName);
+            else if ((ip = prefs.getString("IP", null)) != null) {
+                locateMode.setText(ip);
             }
         } else {
 //            全量刷新
@@ -403,26 +466,21 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
     private void beforeRequestWeather(int requestCode) {
         startSwipe();
+        locateMode.setVisibility(View.VISIBLE);
         switch (requestCode) {
             case THROUGH_IP:
 //                主界面显示当前为 ip 定位
 //                locateMode 和 locateModeImage 用来显示当前定位方式
                 setLocateModeImage(true);
                 locateMode.setText(Utility.getIP(this));
-                locateMode.setVisibility(View.VISIBLE);
-//                GetCoordinateByIp();
                 presenter.getCoordinateByIp();
                 break;
             case THROUGH_CHOOSE_POSITION:
                 setLocateModeImage(false);
-                locateMode.setVisibility(View.INVISIBLE);
-//                GetCoordinateByChoosePosition();
                 presenter.getCoordinateByChoosePosition(countyName);
                 break;
             case THROUGH_LOCATE:
                 setLocateModeImage(true);
-                locateMode.setVisibility(View.INVISIBLE);
-//                GetCoordinateByLocate();
                 locate();
                 break;
             case THROUGH_COORDINATE:

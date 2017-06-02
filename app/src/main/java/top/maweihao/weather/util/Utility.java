@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -25,6 +26,7 @@ import top.maweihao.weather.db.City;
 import top.maweihao.weather.db.County;
 import top.maweihao.weather.db.Province;
 
+import static top.maweihao.weather.activity.WeatherActivity.DEBUG;
 import static top.maweihao.weather.activity.WeatherActivity.HOURLY_MODE;
 import static top.maweihao.weather.activity.WeatherActivity.MINUTELY_MODE;
 
@@ -40,6 +42,7 @@ public class Utility {
 
     /**
      * 解析当前天气json
+     *
      * @param url json
      * @return WeatherData 类
      */
@@ -64,8 +67,8 @@ public class Utility {
 
     /**
      * 大致解析json
-     * @return
-     * <JSONArray> list
+     *
+     * @return <JSONArray> list
      */
     public static ArrayList<JSONArray> handleFullWeatherResponse(String url) {
         ArrayList<JSONArray> jsonArrays = new ArrayList<>();
@@ -194,7 +197,7 @@ public class Utility {
     }
 
     /**
-     *摄氏度华氏度转换的 还没用
+     * 摄氏度华氏度转换的 还没用
      */
     public static int Cel2Fah(int cel) {
         double fah = cel * 1.8 + 32;
@@ -202,7 +205,7 @@ public class Utility {
     }
 
     /**
-     *摄氏度华氏度转换的 还没用
+     * 摄氏度华氏度转换的 还没用
      */
     public static int Cel2Fah(float cel) {
         double fah = cel * 1.8 + 32;
@@ -237,14 +240,11 @@ public class Utility {
 
     /**
      * 选择天气图标
-     * @param skycon
-     * 天气
-     * @param precipitation
-     * 雨量
-     * @param mode
-     * Mode 代表 precipitation 精度， 以确定雨量
-     * @return
-     * 图片（int） + ‘and’ + 描述（string）
+     *
+     * @param skycon        天气
+     * @param precipitation 雨量
+     * @param mode          Mode 代表 precipitation 精度， 以确定雨量
+     * @return 图片（int） + ‘and’ + 描述（string）
      */
     public static String chooseWeatherIcon(String skycon, float precipitation, int mode) {
         switch (skycon) {
@@ -306,8 +306,8 @@ public class Utility {
 
     /**
      * 判断时间和现在的时间相差
-     * @param mills
-     * 时间
+     *
+     * @param mills 时间
      */
     public static String getTime(Context context, long mills) {
         long nowTime = System.currentTimeMillis();
@@ -330,6 +330,7 @@ public class Utility {
 
     /**
      * getIP 获取网络IP地址(优先获取wifi地址)
+     *
      * @param ctx
      * @return ip地址字符串
      */
@@ -364,6 +365,46 @@ public class Utility {
 
     private static String intToIp(int i) {
         return (i & 0xFF) + "." + ((i >> 8) & 0xFF) + "." + ((i >> 16) & 0xFF) + "." + (i >> 24 & 0xFF);
+    }
+
+    /**
+     * 获取状态栏高度
+     * @param context
+     * @return 高度值
+     */
+    public static int getStatusBarHeight(Context context) {
+        Class<?> c = null;
+        Object obj = null;
+        Field field = null;
+        int x = 0;
+        try {
+            c = Class.forName("com.android.internal.R$dimen");
+            obj = c.newInstance();
+            field = c.getField("status_bar_height");
+            x = Integer.parseInt(field.get(obj).toString());
+            return context.getResources().getDimensionPixelSize(x);
+        } catch (Exception e1) {
+            if (DEBUG)
+                Log.d(TAG, "get status bar height fail");
+            e1.printStackTrace();
+            return 75;
+        }
+    }
+
+    /**
+     * 获取导航栏高度
+     * @param context
+     * @return 高度值
+     */
+    public static int getNavigationBarHeight(Context context) {
+        int result = 0;
+        int resourceId=0;
+        int rid = context.getResources().getIdentifier("config_showNavigationBar", "bool", "android");
+        if (rid!=0){
+            resourceId = context.getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+            return context.getResources().getDimensionPixelSize(resourceId);
+        }else
+            return 0;
     }
 }
 
