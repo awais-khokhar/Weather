@@ -42,11 +42,11 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import top.maweihao.weather.bean.ExtendedWeatherData;
 import top.maweihao.weather.R;
-import top.maweihao.weather.bean.WeatherData;
+import top.maweihao.weather.bean.ExtendedWeatherData;
 import top.maweihao.weather.bean.HourlyWeather;
 import top.maweihao.weather.bean.MyLocation;
+import top.maweihao.weather.bean.WeatherData;
 import top.maweihao.weather.contract.WeatherActivityContract;
 import top.maweihao.weather.presenter.WeatherActivityPresenter;
 import top.maweihao.weather.service.SyncService;
@@ -55,6 +55,7 @@ import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.view.HScrollView;
 import top.maweihao.weather.view.SemiCircleView;
 import top.maweihao.weather.view.SunTimeView;
+import top.maweihao.weather.view.dynamicweather.DynamicWeatherView;
 import top.maweihao.weather.view.hourlyWeatherView;
 import top.maweihao.weather.view.perDayWeatherView;
 import top.maweihao.weather.widget.SimpleWeatherWidget;
@@ -98,8 +99,10 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     TextView locateMode;
     @BindView(R.id.last_update_time)
     TextView lastUpdateTime;
-    @BindView(R.id.app_bar)
-    LinearLayout appBar;
+    @BindView(R.id.toolbar_LinearLayout)
+    LinearLayout toolBarLinearLayout;
+    @BindView(R.id.dynamicWeatherView)
+    DynamicWeatherView dynamicWeatherView;
     @BindView(R.id.daily_weather_0)
     perDayWeatherView dailyWeather0;
     @BindView(R.id.daily_weather_1)
@@ -217,6 +220,18 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        dynamicWeatherView.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dynamicWeatherView.onPause();
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         permission();
@@ -233,6 +248,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     @Override
     public void onDestroy() {
         super.onDestroy();
+        dynamicWeatherView.onDestroy();
         presenter.destroy();
         presenter = null;
     }
@@ -296,19 +312,24 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 if (state != CollapsingToolbarLayoutState.EXPANDED) {
                     state = CollapsingToolbarLayoutState.EXPANDED;//修改状态标记为展开
                     toolbarLayout.setTitle(null);
+                    toolBarLinearLayout.setVisibility(View.VISIBLE);
+
                 }
             } else if (Math.abs(verticalOffset) >= appBarLayout.getTotalScrollRange()) {
                 if (state != CollapsingToolbarLayoutState.COLLAPSED) {
                     toolbarLayout.setTitle(countyName);//设置title
-
+                    toolBarLinearLayout.setVisibility(View.INVISIBLE);
                     state = CollapsingToolbarLayoutState.COLLAPSED;//修改状态标记为折叠
                 }
             } else {
                 if (state != CollapsingToolbarLayoutState.INTERNEDIATE) {
                     if (state == CollapsingToolbarLayoutState.COLLAPSED) {
                         toolbarLayout.setTitle(null);
+                        if (toolBarLinearLayout.getVisibility()==View.INVISIBLE)
+                            toolBarLinearLayout.setVisibility(View.VISIBLE);
                     }
                     state = CollapsingToolbarLayoutState.INTERNEDIATE;//修改状态标记为中间
+
                 }
             }
         }
@@ -722,7 +743,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
                 appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext(), SimpleWeatherWidget.class),
                         remoteViews);
-                appBar.setBackgroundResource(Utility.chooseBgImage(skycon));
+//                dynamicWeatherView.setBackgroundResource(Utility.chooseBgImage(skycon));
+                dynamicWeatherView.setDrawerType(Utility.chooseBgImage(skycon));
                 if (isDone) {
                     stopSwipe();
                     isDone = false;
