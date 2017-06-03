@@ -22,6 +22,7 @@ import top.maweihao.weather.R;
 import top.maweihao.weather.widget.SimpleWeatherWidget;
 import top.maweihao.weather.activity.WeatherActivity;
 import top.maweihao.weather.util.Utility;
+import top.maweihao.weather.widget.TallWeatherWidget;
 
 public class SimpleWidgetUpdateService extends Service {
 
@@ -51,7 +52,7 @@ public class SimpleWidgetUpdateService extends Service {
     private void updateWidget() {
 
         final RemoteViews remoteViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.simple_weather_widget);
-
+        final RemoteViews remoteViews1 = new RemoteViews(getApplicationContext().getPackageName(), R.layout.tall_weather_widget);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -88,6 +89,8 @@ public class SimpleWidgetUpdateService extends Service {
                         String[] ws = icon.split("and");
                         remoteViews.setImageViewResource(R.id.widget_clock_day_icon, Integer.parseInt(ws[0]));
                         remoteViews.setTextViewText(R.id.widget_clock_day_subtitle, countyName + " | " + ws[1] + ' ' + tem + '°');
+                        remoteViews1.setImageViewResource(R.id.tall_widget_skyon, Integer.parseInt(ws[0]));
+                        remoteViews1.setTextViewText(R.id.tall_widget_info, countyName + " | " + ws[1] + ' ' + tem + '°');
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -95,6 +98,7 @@ public class SimpleWidgetUpdateService extends Service {
                 }
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
                 appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext(), SimpleWeatherWidget.class), remoteViews);
+                appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext(), TallWeatherWidget.class), remoteViews1);
                 stopSelf();
             }
         }).start();

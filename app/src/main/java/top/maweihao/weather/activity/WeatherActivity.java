@@ -78,8 +78,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
     static final int HANDLE_POSITION = 0;
     static final int HANDLE_TOAST = 1;
-    static final int HANDLE_SWIPE_BEGIN = 2;
-    static final int HANDLE_SWIPE_STOP = 3;
+//    static final int HANDLE_SWIPE_BEGIN = 2;
+//    static final int HANDLE_SWIPE_STOP = 3;
 
     private Long locateTime;
     private LocationClient mLocationClient;

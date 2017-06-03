@@ -3,9 +3,11 @@ package top.maweihao.weather.widget;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
+import android.content.Intent;
 import android.widget.RemoteViews;
 
 import top.maweihao.weather.R;
+import top.maweihao.weather.service.SimpleWidgetUpdateService;
 
 /**
  * Implementation of App Widget functionality.
@@ -16,10 +18,8 @@ public class TallWeatherWidget extends AppWidgetProvider {
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
-        CharSequence widgetText = TallWeatherWidgetConfigureActivity.loadTitlePref(context, appWidgetId);
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.tall_weather_widget);
-        views.setTextViewText(R.id.appwidget_text, widgetText);
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
@@ -31,14 +31,12 @@ public class TallWeatherWidget extends AppWidgetProvider {
         for (int appWidgetId : appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId);
         }
+        context.startService(new Intent(context, SimpleWidgetUpdateService.class));
     }
 
     @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
-        // When the user deletes the widget, delete the preference associated with it.
-        for (int appWidgetId : appWidgetIds) {
-            TallWeatherWidgetConfigureActivity.deleteTitlePref(context, appWidgetId);
-        }
+
     }
 
     @Override
