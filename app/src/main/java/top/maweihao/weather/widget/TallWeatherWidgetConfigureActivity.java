@@ -18,7 +18,6 @@ import top.maweihao.weather.service.SimpleWidgetUpdateService;
 public class TallWeatherWidgetConfigureActivity extends Activity {
 
     public static final String TAG = "TWConfigureActivity";
-    private Switch aSwitch;
 
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     View.OnClickListener mOnClickListener = new View.OnClickListener() {
@@ -56,7 +55,6 @@ public class TallWeatherWidgetConfigureActivity extends Activity {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        aSwitch = (Switch) findViewById(R.id.tall_lunar_switch);
 
         setResult(RESULT_CANCELED);
 

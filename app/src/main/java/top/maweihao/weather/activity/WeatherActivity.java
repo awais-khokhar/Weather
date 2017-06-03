@@ -871,10 +871,13 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 if (bdLocation.getLocType() != BDLocation.TypeGpsLocation) {
                     // do nothing
                     if (DEBUG) {
-                        Log.d(TAG, "BAIDU onReceiveLocation: locationManagerLocate type == GPS");
-                        presenter.toastMessage("GPS!");
+                        Log.d(TAG, "BAIDU onReceiveLocation: Locate type == " + bdLocation.getLocType());
                     }
                 } else {
+                    if (DEBUG) {
+                        Log.d(TAG, "BAIDU onReceiveLocation: Locate type == GPS");
+                        presenter.toastMessage("GPS!");
+                    }
                     mLocationClient.stop();
                     locateSuccess(simplifyBDLocation(bdLocation));
                 }
