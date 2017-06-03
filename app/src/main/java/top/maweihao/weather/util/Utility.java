@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 
 import top.maweihao.weather.R;
-import top.maweihao.weather.WeatherData;
+import top.maweihao.weather.bean.WeatherData;
 import top.maweihao.weather.db.City;
 import top.maweihao.weather.db.County;
 import top.maweihao.weather.db.Province;

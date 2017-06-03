@@ -1,4 +1,4 @@
-package top.maweihao.weather;
+package top.maweihao.weather.bean;
 
 import top.maweihao.weather.bean.Wind;
 

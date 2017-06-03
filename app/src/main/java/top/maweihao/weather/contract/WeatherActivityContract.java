@@ -2,8 +2,8 @@ package top.maweihao.weather.contract;
 
 import java.util.ArrayList;
 
-import top.maweihao.weather.ExtendedWeatherData;
-import top.maweihao.weather.WeatherData;
+import top.maweihao.weather.bean.ExtendedWeatherData;
+import top.maweihao.weather.bean.WeatherData;
 import top.maweihao.weather.bean.HourlyWeather;
 
 /**

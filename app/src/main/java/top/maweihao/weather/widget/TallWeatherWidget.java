@@ -1,9 +1,11 @@
-package top.maweihao.weather;
+package top.maweihao.weather.widget;
 
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.widget.RemoteViews;
+
+import top.maweihao.weather.R;
 
 /**
  * Implementation of App Widget functionality.

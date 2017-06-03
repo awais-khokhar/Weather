@@ -1,4 +1,4 @@
-package top.maweihao.weather;
+package top.maweihao.weather.widget;
 
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
@@ -8,12 +8,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
+import top.maweihao.weather.R;
+
 /**
  * The configuration screen for the {@link TallWeatherWidget TallWeatherWidget} AppWidget.
  */
 public class TallWeatherWidgetConfigureActivity extends Activity {
 
-    private static final String PREFS_NAME = "top.maweihao.weather.TallWeatherWidget";
+    private static final String PREFS_NAME = "top.maweihao.weather.widget.TallWeatherWidget";
     private static final String PREF_PREFIX_KEY = "appwidget_";
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     View.OnClickListener mOnClickListener = new View.OnClickListener() {

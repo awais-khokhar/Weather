@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:configure="top.maweihao.weather.TallWeatherWidgetConfigureActivity"
+    android:configure="top.maweihao.weather.widget.TallWeatherWidgetConfigureActivity"
     android:initialKeyguardLayout="@layout/tall_weather_widget"
     android:initialLayout="@layout/tall_weather_widget"
     android:minHeight="180dp"

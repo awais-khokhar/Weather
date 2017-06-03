@@ -1,5 +1,4 @@
 # Weather
-my first android weather app, just for learn.    
 **更新日志**    
 *2017/3/4verison 0.0.0:1*  
 First commit.  
@@ -47,5 +46,7 @@ ui 优化，支持 shortcut.
 发布： 酷安    
 *2017/5/30 version 1.1.2:20[bug-fixed-release]*     
 修复 widget 的一些问题。    
-发布： 应用宝
+发布： 应用宝    
+*2017/6/3 version 1.1.3:21*    
+代码重构，优化定位，ui 优化    
 

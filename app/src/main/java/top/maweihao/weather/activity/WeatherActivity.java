@@ -42,9 +42,9 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import top.maweihao.weather.ExtendedWeatherData;
+import top.maweihao.weather.bean.ExtendedWeatherData;
 import top.maweihao.weather.R;
-import top.maweihao.weather.WeatherData;
+import top.maweihao.weather.bean.WeatherData;
 import top.maweihao.weather.bean.HourlyWeather;
 import top.maweihao.weather.bean.MyLocation;
 import top.maweihao.weather.contract.WeatherActivityContract;
