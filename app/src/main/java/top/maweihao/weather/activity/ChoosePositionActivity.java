@@ -3,33 +3,37 @@ package top.maweihao.weather.activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.OrientationHelper;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
+import android.text.InputType;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import org.litepal.crud.DataSupport;
+import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import top.maweihao.weather.R;
+import top.maweihao.weather.contract.ChoosePositionActivityContract;
 import top.maweihao.weather.db.City;
 import top.maweihao.weather.db.County;
 import top.maweihao.weather.db.Province;
-import top.maweihao.weather.util.HttpUtil;
+import top.maweihao.weather.presenter.ChoosePositionActivityPresenter;
 import top.maweihao.weather.util.Utility;
 
-public class ChoosePositionActivity extends AppCompatActivity {
+public class ChoosePositionActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, ChoosePositionActivityContract.View {
 
     public static final String TAG = "ChoosePositionActivity";
 
@@ -38,192 +42,240 @@ public class ChoosePositionActivity extends AppCompatActivity {
     public static final int LEVEL_CITY = 1;
 
     public static final int LEVEL_COUNTY = 2;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.posion_RecyclerView)
+    RecyclerView posionRecyclerView;
 
     private ProgressDialog progressDialog;
 
-    private TextView titleText;
+    private ChoosePositionRecyclerViewAdapter adapter;
 
-    private Button backButton;
-
-    private ListView listView;
-
-    private ArrayAdapter<String> adapter;
+    LinearLayoutManager linearLayoutManager;
 
     private List<String> dataList = new ArrayList<>();
 
-    private List<Province> provinceList;
+    private List<String> filterList = new ArrayList<>(); //筛选后的List
 
-    private List<City> cityList;
+    public static List<Province> provinceList;
 
-    private  List<County> countyList;
+    public static List<City> cityList;
 
-    private Province selectedProvince;
+    public static List<County> countyList;
 
-    private City selectedCity;
+    public static Province selectedProvince;
 
-    private int currentLevel;
+    public static City selectedCity;
+
+    public static int currentLevel;
+
+    private ChoosePositionActivityContract.Presenter presenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_position);
+        ButterKnife.bind(this);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_back);
 
-        titleText = (TextView) findViewById(R.id.position_title_text);
-        backButton = (Button) findViewById(R.id.back_button);
-        listView = (ListView) findViewById(R.id.posion_list_view);
-        adapter = new ArrayAdapter<>(ChoosePositionActivity.this, android.R.layout.simple_list_item_1, dataList);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        presenter = new ChoosePositionActivityPresenter(this);
+
+        linearLayoutManager = new LinearLayoutManager(this);//RecyclerView布局管理器
+        linearLayoutManager.setOrientation(OrientationHelper.VERTICAL);//纵向item布局
+        adapter = new ChoosePositionRecyclerViewAdapter(null);//初始化适配器，给适配器设置数据。当前先不设置数据，获取到区域List后，再更新数据
+        adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
+        posionRecyclerView.addItemDecoration(
+                new HorizontalDividerItemDecoration.Builder(this)
+                        .color(ContextCompat.getColor(this, R.color.split_line))
+                        .sizeResId(R.dimen.recyclerView_divider_height)
+                        .marginResId(R.dimen.recyclerView_divider_leftmargin, R.dimen.recyclerView_divider_rightmargin)
+                        .build());//绘制分割线
+        posionRecyclerView.setHasFixedSize(true);
+        posionRecyclerView.setLayoutManager(linearLayoutManager);
+        posionRecyclerView.setAdapter(adapter);
+        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                Utility.closeSoftInput(ChoosePositionActivity.this);//关闭软键盘
                 if (currentLevel == LEVEL_PROVINCE) {
-                    selectedProvince = provinceList.get(position);
-                    queryCities();
-                } else if (currentLevel == LEVEL_CITY) {
-                    selectedCity = cityList.get(position);
-                    queryCounties();
-                } else if (currentLevel == LEVEL_COUNTY) {
-                    String countyName = countyList.get(position).getCountyName();
-                    Log.d(TAG, "county name = " + countyName);
-                    Intent intent = new Intent();
-                    intent.putExtra("countyName", countyName);
-                    setResult(RESULT_OK, intent);
-                    Toast.makeText(ChoosePositionActivity.this, getResources().getString(R.string.auto_locate_disabled), Toast.LENGTH_SHORT).show();
-                    finish();
-                }
-            }
-        });
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (currentLevel == LEVEL_COUNTY) {
-                    queryCities();
-                } else if (currentLevel == LEVEL_CITY) {
-                    queryProvinces();
-                }
-            }
-        });
-        queryProvinces();
-    }
-
-    private void queryProvinces() {
-        titleText.setText("中国");
-        backButton.setVisibility(View.GONE);
-        provinceList = DataSupport.findAll(Province.class);
-        if (provinceList.size() > 0) {
-            dataList.clear();
-            for (Province province : provinceList) {
-                dataList.add(province.getProvinceName());
-                Log.i(TAG, "dataList add " + province.getProvinceName());
-            }
-            adapter.notifyDataSetChanged();
-            Log.d(TAG, "queryProvinces: adapter has been notified");
-            listView.setSelection(0);
-            currentLevel = LEVEL_PROVINCE;
-        } else {
-            String address = "http://guolin.tech/api/china";
-            queryFromServer(address, "province");
-        }
-    }
-
-    private void queryFromServer(String address, final String type) {
-        showProgressDialog();
-        HttpUtil.sendOkHttpRequest(address, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        closeProgressDialog();
-                        Toast.makeText(ChoosePositionActivity.this, "从服务器加载失败", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String responseText = response.body().string();
-                boolean result = false;
-                if ("province".equals(type)) {
-                    result = Utility.handleProvinceResponse(responseText);
-                } else if ("city".equals(type)) {
-                    result = Utility.handleCityResponse(responseText, selectedProvince.getId());
-                } else if ("county".equals(type)) {
-                    result = Utility.handleCountyResponse(responseText, selectedCity.getId());
-                    Log.d(TAG, "onResponse: result: " + result);
-                }
-                if (result) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            closeProgressDialog();
-                            if ("province".equals(type)) {
-                                queryProvinces();
-                            } else if ("city".equals(type)) {
-                                queryCities();
-                            } else if ("county".equals(type)) {
-                                queryCounties();
+                    /*通过比对原始list数据和筛选后所点击的name，名字相同则为当前点击的选项。
+                     如果数组越界，则没有进行筛选，直接取出原始数据
+                    */
+                    try {
+                        for (Province province : provinceList) {
+                            if (province.getProvinceName().equals(filterList.get(position))) {
+                                selectedProvince = province;
+                                break;
                             }
                         }
-                    });
+                    } catch (IndexOutOfBoundsException e) {
+                        selectedProvince = provinceList.get(position);
+                    } finally {
+                        presenter.queryCities();
+                    }
+
+                } else if (currentLevel == LEVEL_CITY) {
+                    try {
+                        for (City city : cityList) {
+                            if (city.getCityName().equals(filterList.get(position))) {
+                                selectedCity = city;
+                                break;
+                            }
+                        }
+                    } catch (IndexOutOfBoundsException e) {
+                        selectedCity = cityList.get(position);
+                    } finally {
+                        presenter.queryCounties();
+                    }
+                } else if (currentLevel == LEVEL_COUNTY) {
+                    String countyName = null;
+                    try {
+                        for (County county : countyList) {
+                            if (county.getCountyName().equals(filterList.get(position))) {
+                                countyName = county.getCountyName();
+                                break;
+                            }
+                        }
+                    } catch (IndexOutOfBoundsException e) {
+                        countyName = countyList.get(position).getCountyName();
+                    } finally {
+                        Intent intent = new Intent();
+                        intent.putExtra("countyName", countyName);
+                        setResult(RESULT_OK, intent);
+                        Toast.makeText(ChoosePositionActivity.this, getResources().getString(R.string.auto_locate_disabled), Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                }
+            }
+        });
+
+        presenter.queryProvinces();
+    }
+
+    /**
+     * 设置搜索框在Toolbar上
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.search_menu, menu);
+        final MenuItem searchItem = menu.findItem(R.id.menu_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(this);
+        searchView.setInputType(InputType.TYPE_CLASS_TEXT);
+        searchView.setQueryHint("地区名");
+
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        presenter.filterListData(dataList, newText);
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    /**
+     * 捕获返回按键
+     */
+    @Override
+    public void onBackPressed() {
+        backListener();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            backListener();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void backListener() {
+        Utility.closeSoftInput(ChoosePositionActivity.this); //关闭软键盘
+        if (toolbar.getTitle().equals("中国"))
+            finish();
+        else if (currentLevel == LEVEL_COUNTY) {
+            filterList = new ArrayList<>(); //清空筛选数据
+            presenter.queryCities();
+        } else if (currentLevel == LEVEL_CITY) {
+            filterList = new ArrayList<>();
+            presenter.queryProvinces();
+        }
+    }
+
+    @Override
+    public void showProgressDialog() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (progressDialog == null) {
+                    progressDialog = new ProgressDialog(ChoosePositionActivity.this);
+                    progressDialog.setMessage("正在加载...");
+                    progressDialog.setCanceledOnTouchOutside(false);
+                }
+                progressDialog.show();
+            }
+        });
+    }
+
+    @Override
+    public void closeProgressDialog() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (progressDialog != null) {
+                    progressDialog.dismiss();
                 }
             }
         });
     }
 
-    private void queryCounties() {
-        Log.d(TAG, "queryCounties: on");
-        titleText.setText(selectedCity.getCityName());
-        backButton.setVisibility(View.VISIBLE);
-        countyList = DataSupport.where("cityid = ?",String.valueOf(selectedCity.getId())).find(County.class);
-        Log.d(TAG, "queryCounties: countyList.size" + cityList.size());
-        if (countyList.size() > 0) {
-            dataList.clear();
-            for (County county : countyList) {
-                dataList.add(county.getCountyName());
+    @Override
+    public void showToastMsg(final String msg) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                closeProgressDialog();
+                Toast.makeText(ChoosePositionActivity.this, msg, Toast.LENGTH_SHORT).show();
             }
-            adapter.notifyDataSetChanged();
-            listView.setSelection(0);
-            currentLevel = LEVEL_COUNTY;
-        } else {
-            int provinceCode = selectedProvince.getProvinceCode();
-            int cityCode = selectedCity.getCityCode();
-            String address = "http://guolin.tech/api/china/" + provinceCode + "/" + cityCode;
-            queryFromServer(address, "county");
-        }
+        });
     }
 
-    private void queryCities() {
-        titleText.setText(selectedProvince.getProvinceName());
-        backButton.setVisibility(View.VISIBLE);
-        cityList = DataSupport.where("provinceid = ?", String.valueOf(selectedProvince.getId())).find(City.class);
-        if (cityList.size() > 0) {
-            dataList.clear();
-            for (City city : cityList) {
-                dataList.add(city.getCityName());
+    @Override
+    @SuppressWarnings("unchecked")
+    public void setRecyclerViewData(final List<String> dataList) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ChoosePositionActivity.this.dataList = dataList;
+                adapter.setNewData(dataList); //给适配器设置新的数据
+                linearLayoutManager.scrollToPosition(0);
             }
-            adapter.notifyDataSetChanged();
-            listView.setSelection(0);
-            currentLevel = LEVEL_CITY;
-        } else {
-            int provinceCode = selectedProvince.getProvinceCode();
-            String address = "http://guolin.tech/api/china/" + provinceCode;
-            queryFromServer(address, "city");
-        }
+        });
     }
 
-    private void showProgressDialog() {
-        if (progressDialog == null) {
-            progressDialog = new ProgressDialog(ChoosePositionActivity.this);
-            progressDialog.setMessage("正在加载...");
-            progressDialog.setCanceledOnTouchOutside(false);
-        }
-        progressDialog.show();
+    @Override
+    public void setToolBarTitle(final String str) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                toolbar.setTitle(str);
+                setSupportActionBar(toolbar);
+            }
+        });
     }
 
-    private void closeProgressDialog() {
-        if (progressDialog != null) {
-            progressDialog.dismiss();
-        }
+    @Override
+    public void setRecyclerViewFilterData(List<String> dataList) {
+        this.filterList = dataList;
+        adapter.setNewData(dataList);
+        linearLayoutManager.scrollToPosition(0);
     }
 }

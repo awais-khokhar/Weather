@@ -1,11 +1,14 @@
 package top.maweihao.weather.util;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.inputmethod.InputMethodManager;
 
 import com.google.gson.Gson;
 
@@ -372,7 +375,7 @@ public class Utility {
      * @param context
      * @return 高度值
      */
-    public static int getStatusBarHeight(Context context) {
+    public static int getStatusBarHeight(@Nullable Context context) {
         Class<?> c = null;
         Object obj = null;
         Field field = null;
@@ -396,7 +399,7 @@ public class Utility {
      * @param context
      * @return 高度值
      */
-    public static int getNavigationBarHeight(Context context) {
+    public static int getNavigationBarHeight(@Nullable Context context) {
         int result = 0;
         int resourceId=0;
         int rid = context.getResources().getIdentifier("config_showNavigationBar", "bool", "android");
@@ -405,6 +408,18 @@ public class Utility {
             return context.getResources().getDimensionPixelSize(resourceId);
         }else
             return 0;
+    }
+
+    /**
+     * 关闭软键盘
+     * @param context
+     */
+    public static void closeSoftInput(@Nullable Context context) {
+        assert context != null;
+        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null && ((Activity) context).getCurrentFocus() != null) {
+            inputMethodManager.hideSoftInputFromWindow(((Activity) context).getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
 }
 
