@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +33,8 @@ import top.maweihao.weather.db.County;
 import top.maweihao.weather.db.Province;
 import top.maweihao.weather.presenter.ChoosePositionActivityPresenter;
 import top.maweihao.weather.util.Utility;
+
+import static top.maweihao.weather.activity.WeatherActivity.DEBUG;
 
 public class ChoosePositionActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, ChoosePositionActivityContract.View {
 
@@ -112,9 +115,11 @@ public class ChoosePositionActivity extends AppCompatActivity implements SearchV
                     } catch (IndexOutOfBoundsException e) {
                         selectedProvince = provinceList.get(position);
                     } finally {
+                        filterList = new ArrayList<>();
                         presenter.queryCities();
                     }
-
+                    if (DEBUG)
+                        Log.i(TAG, "selectedProvince = " + selectedProvince.getProvinceName());
                 } else if (currentLevel == LEVEL_CITY) {
                     try {
                         for (City city : cityList) {
@@ -126,8 +131,12 @@ public class ChoosePositionActivity extends AppCompatActivity implements SearchV
                     } catch (IndexOutOfBoundsException e) {
                         selectedCity = cityList.get(position);
                     } finally {
+                        if (DEBUG)
+                            Log.i(TAG, "selectedCity = " + selectedCity.getCityName());
+                        filterList = new ArrayList<>();
                         presenter.queryCounties();
                     }
+
                 } else if (currentLevel == LEVEL_COUNTY) {
                     String countyName = null;
                     try {
@@ -140,6 +149,8 @@ public class ChoosePositionActivity extends AppCompatActivity implements SearchV
                     } catch (IndexOutOfBoundsException e) {
                         countyName = countyList.get(position).getCountyName();
                     } finally {
+                        if (DEBUG)
+                            Log.i(TAG, "countyName = " + countyName);
                         Intent intent = new Intent();
                         intent.putExtra("countyName", countyName);
                         setResult(RESULT_OK, intent);
