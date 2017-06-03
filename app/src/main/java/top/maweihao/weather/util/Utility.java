@@ -28,6 +28,7 @@ import top.maweihao.weather.bean.WeatherData;
 import top.maweihao.weather.db.City;
 import top.maweihao.weather.db.County;
 import top.maweihao.weather.db.Province;
+import top.maweihao.weather.view.dynamicweather.BaseDrawer;
 
 import static top.maweihao.weather.activity.WeatherActivity.DEBUG;
 import static top.maweihao.weather.activity.WeatherActivity.HOURLY_MODE;
@@ -218,26 +219,28 @@ public class Utility {
     /**
      * 通过天气获取背景图
      */
-    public static int chooseBgImage(String skycon) {
+    public static BaseDrawer.Type chooseBgImage(String skycon) {
         switch (skycon) {
             case "CLEAR_DAY":
+                return BaseDrawer.Type.CLEAR_D;
             case "CLEAR_NIGHT":
-                return R.mipmap.weatherbg_sunshine;
+                return BaseDrawer.Type.CLEAR_N;
             case "PARTLY_CLOUDY_DAY":
+                return BaseDrawer.Type.OVERCAST_D;
             case "PARTLY_CLOUDY_NIGHT":
-                return R.mipmap.weatherbg_pcloud;
+                return BaseDrawer.Type.OVERCAST_N;
             case "CLOUDY":
-                return R.mipmap.weatherbg_cloud;
+                return BaseDrawer.Type.CLOUDY_D;
             case "RAIN":
-                return R.mipmap.weatherbg_rain;
+                return BaseDrawer.Type.RAIN_D;
             case "SNOW":
-                return R.mipmap.weatherbg_snow;
+                return BaseDrawer.Type.SNOW_D;
             case "WIND":
-                return R.mipmap.weatherbg_wind;
+                return BaseDrawer.Type.WIND_D;
             case "FOG":
-                return R.mipmap.weatherbg_haze;
+                return BaseDrawer.Type.FOG_D;
             default:
-                return 0;
+                return BaseDrawer.Type.UNKNOWN_D;
         }
     }
 
