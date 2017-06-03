@@ -1,4 +1,4 @@
-package top.maweihao.weather.gson;
+package top.maweihao.weather.bean;
 
 /**
  * Created by ma on 17-4-20.

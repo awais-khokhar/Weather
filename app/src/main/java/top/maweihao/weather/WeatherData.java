@@ -1,6 +1,6 @@
 package top.maweihao.weather;
 
-import top.maweihao.weather.gson.Wind;
+import top.maweihao.weather.bean.Wind;
 
 /**
  * gson object

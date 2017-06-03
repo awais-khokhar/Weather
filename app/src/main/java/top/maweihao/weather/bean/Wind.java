@@ -1,4 +1,4 @@
-package top.maweihao.weather.gson;
+package top.maweihao.weather.bean;
 
 /**
  * gson Wind

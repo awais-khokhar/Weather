@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import top.maweihao.weather.ExtendedWeatherData;
 import top.maweihao.weather.WeatherData;
 import top.maweihao.weather.contract.WeatherActivityContract;
-import top.maweihao.weather.gson.HourlyWeather;
+import top.maweihao.weather.bean.HourlyWeather;
 import top.maweihao.weather.model.WeatherActivityModel;
 
 /**

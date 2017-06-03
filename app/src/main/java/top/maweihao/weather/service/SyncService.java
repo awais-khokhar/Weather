@@ -32,7 +32,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import top.maweihao.weather.R;
 import top.maweihao.weather.activity.WeatherActivity;
-import top.maweihao.weather.gson.temperature;
+import top.maweihao.weather.bean.temperature;
 import top.maweihao.weather.util.Utility;
 
 /**

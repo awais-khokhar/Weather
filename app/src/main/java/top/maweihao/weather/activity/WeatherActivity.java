@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -33,6 +32,11 @@ import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
@@ -41,8 +45,9 @@ import butterknife.ButterKnife;
 import top.maweihao.weather.ExtendedWeatherData;
 import top.maweihao.weather.R;
 import top.maweihao.weather.WeatherData;
+import top.maweihao.weather.bean.HourlyWeather;
+import top.maweihao.weather.bean.MyLocation;
 import top.maweihao.weather.contract.WeatherActivityContract;
-import top.maweihao.weather.gson.HourlyWeather;
 import top.maweihao.weather.presenter.WeatherActivityPresenter;
 import top.maweihao.weather.service.SyncService;
 import top.maweihao.weather.util.SimplePermissionUtils;
@@ -75,6 +80,10 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     static final int HANDLE_TOAST = 1;
     static final int HANDLE_SWIPE_BEGIN = 2;
     static final int HANDLE_SWIPE_STOP = 3;
+
+    private Long locateTime;
+    private LocationClient mLocationClient;
+
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(temperature_text)
@@ -167,16 +176,16 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
         int statusHeight = Utility.getStatusBarHeight(this);
         int navigationBarHeight = Utility.getNavigationBarHeight(this);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            CollapsingToolbarLayout.LayoutParams lp = (CollapsingToolbarLayout.LayoutParams) toolbar.getLayoutParams();
-            LinearLayout.LayoutParams lp2 = (LinearLayout.LayoutParams) headLayout.getLayoutParams();
-            LinearLayout.LayoutParams lp3 = (LinearLayout.LayoutParams) navigationBarView.getLayoutParams();
-            lp.topMargin = lp2.topMargin = statusHeight;
-            lp3.topMargin = navigationBarHeight;
-            toolbar.setLayoutParams(lp);
-            headLayout.setLayoutParams(lp2);
-            navigationBarView.setLayoutParams(lp3);
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {   //not necessary
+        CollapsingToolbarLayout.LayoutParams lp = (CollapsingToolbarLayout.LayoutParams) toolbar.getLayoutParams();
+        LinearLayout.LayoutParams lp2 = (LinearLayout.LayoutParams) headLayout.getLayoutParams();
+        LinearLayout.LayoutParams lp3 = (LinearLayout.LayoutParams) navigationBarView.getLayoutParams();
+        lp.topMargin = lp2.topMargin = statusHeight;
+        lp3.topMargin = navigationBarHeight;
+        toolbar.setLayoutParams(lp);
+        headLayout.setLayoutParams(lp2);
+        navigationBarView.setLayoutParams(lp3);
+//        }
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
@@ -190,7 +199,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         day[3] = dailyWeather3;
         day[4] = dailyWeather4;
 
-
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         swipeRefreshLayout.setDistanceToTriggerSync(200);
         swipeRefreshLayout.setOnRefreshListener((new SwipeRefreshLayout.OnRefreshListener() {
@@ -201,13 +209,25 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         }));
 
         appBarLayout.addOnOffsetChangedListener(new AppBarOnOffsetChanged());
+
+        mLocationClient = new LocationClient(getApplicationContext());
+        mLocationClient.registerLocationListener(new MainLocationListener());
+        initLocation();
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
         permission();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mLocationClient.isStarted()) {
+            mLocationClient.stop();
+        }
     }
 
     @Override
@@ -417,6 +437,20 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     }
 
     /**
+     * 初始化百度定位
+     */
+    private void initLocation() {
+        LocationClientOption option = new LocationClientOption();
+//        刷新间隔（ms）
+        option.setScanSpan(1000);
+//        定位模式：精确
+        option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
+        // 需要地址信息
+        option.setIsNeedAddress(true);
+        mLocationClient.setLocOption(option);
+    }
+
+    /**
      * 读取 SharedPreferences 中保存的天气数据json
      */
     private void readPreferencesAndCache() {
@@ -481,7 +515,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 break;
             case THROUGH_LOCATE:
                 setLocateModeImage(true);
-                locate();
+                bdLocate();
                 break;
             case THROUGH_COORDINATE:
                 locateModeImage.setVisibility(View.INVISIBLE);
@@ -495,9 +529,41 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     }
 
     /**
-     * 定位
+     * 使用百度定位
      */
-    private void locate() {
+    private void bdLocate() {
+        locateTime = System.currentTimeMillis();
+        //等着回调 MainLocationListener
+        mLocationClient.start();
+    }
+
+    /**
+     * 百度定位成功
+     *
+     * @param location 自定义的位置类
+     */
+    private void locateSuccess(MyLocation location) {
+        locationCoordinates = location.getCoordinate();
+        countyName = location.getDistrict();
+        if (DEBUG) {
+            Log.d(TAG, "locateSuccess: locationCoordinates == " + locationCoordinates);
+            Log.d(TAG, "locateSuccess: location: " + countyName + location.getStreet());
+        }
+        SharedPreferences.Editor editor = PreferenceManager
+                .getDefaultSharedPreferences(WeatherActivity.this).edit();
+        editor.putString("coordinate", locationCoordinates);
+        editor.putLong("coordinate_last_update", System.currentTimeMillis());
+        editor.putString("countyName", countyName);
+        editor.putLong("countyName_last_update_time", System.currentTimeMillis());
+        editor.apply();
+        presenter.setCounty(countyName);
+        presenter.afterGetCoordinate();
+    }
+
+    /**
+     * 当百度定位失败时，使用 locationManager 定位
+     */
+    private void locationManagerLocate() {
         LocationManager mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         Location location = null;
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
@@ -514,9 +580,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
             editor.putString("coordinate", locationCoordinates);
             editor.putLong("coordinate_last_update", System.currentTimeMillis());
             editor.apply();
-//            setCountyByCoordinate(locationCoordinates);
+
             presenter.getCountyByCoordinate(locationCoordinates);
-//            AfterGetCoordinate();
             presenter.afterGetCoordinate();
         } else {
             if (DEBUG)
@@ -773,6 +838,51 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
             windLevelTv.setText(level + " 级" + info);
         } else {
             windLevelTv.setText("LEVEL " + level);
+        }
+    }
+
+    private class MainLocationListener implements BDLocationListener {
+        @Override
+        public void onReceiveLocation(BDLocation bdLocation) {
+            Log.d(TAG, "BAIDU: received" + (System.currentTimeMillis() - locateTime));
+            if (System.currentTimeMillis() - locateTime < 2 * 1001) {  //at most x second
+                if (bdLocation.getLocType() != BDLocation.TypeGpsLocation) {
+                    // do nothing
+                    if (DEBUG) {
+                        Log.d(TAG, "BAIDU onReceiveLocation: locationManagerLocate type == GPS");
+                        presenter.toastMessage("GPS!");
+                    }
+                } else {
+                    mLocationClient.stop();
+                    locateSuccess(simplifyBDLocation(bdLocation));
+                }
+            } else {
+                mLocationClient.stop();
+                if (DEBUG) {
+                    Log.d(TAG, "BAIDU onReceiveLocation: baidu locate time out, locType == " + bdLocation.getLocType());
+                }
+                if (MyLocation.locateSuccess(bdLocation.getLocType())) {
+                    locateSuccess(simplifyBDLocation(bdLocation));
+                } else {
+                    Log.d(TAG, "BAIDU onReceiveLocation: baidu locate failed, switch to LocationManager method");
+                    locationManagerLocate();
+                }
+            }
+        }
+
+        @Override
+        public void onConnectHotSpotMessage(String s, int i) {
+//      nothing to do
+        }
+
+        private MyLocation simplifyBDLocation(BDLocation bdLocation) {
+            MyLocation location = new MyLocation(bdLocation.getLongitude(), bdLocation.getLatitude());
+            location.setType(bdLocation.getLocType());
+            location.setProvince(bdLocation.getProvince());
+            location.setCity(bdLocation.getCity());
+            location.setDistrict(bdLocation.getDistrict());
+            location.setStreet(bdLocation.getStreet());
+            return location;
         }
     }
 

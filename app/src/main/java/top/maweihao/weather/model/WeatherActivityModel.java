@@ -21,7 +21,7 @@ import okhttp3.Response;
 import top.maweihao.weather.ExtendedWeatherData;
 import top.maweihao.weather.WeatherData;
 import top.maweihao.weather.contract.WeatherActivityContract;
-import top.maweihao.weather.gson.HourlyWeather;
+import top.maweihao.weather.bean.HourlyWeather;
 import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.Utility;
 
@@ -30,6 +30,7 @@ import static top.maweihao.weather.activity.WeatherActivity.locationCoordinates;
 import static top.maweihao.weather.util.Utility.handleCurrentWeatherResponse;
 
 /**
+ *
  * Created by limuyang on 2017/5/31.
  */
 
@@ -117,7 +118,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
     /**
      * 就是在 Utility.handleDailyWeatherResponse() 前先获得2小时内天气描述并展示
      *
-     * @param url
+     * @param url json
      * @return 直接返回 Utility.handleDailyWeatherResponse(url)
      */
     private ArrayList<JSONArray> moreHandleDailyWeatherResponse(String url) {
@@ -268,10 +269,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                     editor.putString("countyName", countyName);
                     editor.putLong("countyName_last_update_time", System.currentTimeMillis());
                     editor.apply();
-//                    Message message = handler.obtainMessage();
-//                    message.what = HANDLE_POSITION;
-//                    message.obj = countyName;
-//                    handler.sendMessage(message);
                     presenter.setCounty(countyName);
                 } catch (JSONException e) {
                     e.printStackTrace();

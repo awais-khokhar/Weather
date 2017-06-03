@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import top.maweihao.weather.ExtendedWeatherData;
 import top.maweihao.weather.WeatherData;
-import top.maweihao.weather.gson.HourlyWeather;
+import top.maweihao.weather.bean.HourlyWeather;
 
 /**
  * Created by limuyang on 2017/5/31.
