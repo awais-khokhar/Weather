@@ -35,6 +35,8 @@ import top.maweihao.weather.activity.WeatherActivity;
 import top.maweihao.weather.bean.temperature;
 import top.maweihao.weather.util.Utility;
 
+import static top.maweihao.weather.activity.WeatherActivity.DEBUG;
+
 /**
  * 后台刷新service， 每晚提示第二天温差
  * 还有问题
@@ -46,6 +48,8 @@ public class SyncService extends Service {
     List<temperature> temList;
     Boolean isChinese = false;
 
+    private static boolean isCreateService; //计数器
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -54,6 +58,7 @@ public class SyncService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        isCreateService = true;
         Log.d(TAG, "onCreate: SyncService created");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             isChinese = getResources().getConfiguration().getLocales().get(0).getDisplayLanguage().equals("中文");
@@ -65,8 +70,10 @@ public class SyncService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand: ");
-        fetchData();
+        if (!isCreateService) //onCreate只会初始化一次，service初始化的时候不执行通知发送
+            fetchData();
         startAgain();
+        isCreateService = false;
         return START_NOT_STICKY;
     }
 
@@ -112,16 +119,32 @@ public class SyncService extends Service {
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         Calendar calendar = new GregorianCalendar();
         int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        if (hour > 18) {
-            calendar.set(Calendar.DAY_OF_MONTH, day + 1);
-        }
+//        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+//        if (hour > 2) {
+//            calendar.set(Calendar.DAY_OF_MONTH, day +1);
+//        }
+
         calendar.set(Calendar.HOUR_OF_DAY, 18);
         calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0); //加上秒和毫秒，以精确时间，保证设置的时间为绝对时间。
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        if (System.currentTimeMillis() > calendar.getTimeInMillis()) //使用系统时间进行判断，保证绝对性
+        {
+            calendar.set(Calendar.DAY_OF_MONTH, day + 1);
+            if (DEBUG)
+                Log.d(TAG, "startAgain: day+1    now is:" + calendar.get(Calendar.DAY_OF_MONTH));
+        }
+
+        if (DEBUG) {
+            Log.d(TAG, "startAgain: calendar == " + calendar.getTime());
+            Log.d(TAG, "startAgain: calendar getTimeInMillis== " + calendar.getTimeInMillis());
+            Log.d(TAG, "startAgain: System.currentTimeMillis== " + System.currentTimeMillis());
+        }
         Intent intent = new Intent(this, SyncService.class);
-        Log.d(TAG, "startAgain: calendar == " + calendar.getTime());
-        PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, 0);
-        alarmManager.set(AlarmManager.RTC, calendar.getTimeInMillis(), pendingIntent);
+        PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
     }
 
     private void sendNotification(String title, String text) {

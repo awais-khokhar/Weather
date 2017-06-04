@@ -39,7 +39,7 @@ public class SettingActivity extends PreferenceActivity {
 
         private Preference feedBack;
 
-        private SwitchPreference autoUpdateSP;
+        private SwitchPreference autoUpdateSP;private SwitchPreference n;
 
         String countyName;
 
@@ -67,6 +67,8 @@ public class SettingActivity extends PreferenceActivity {
             autoUpdateSP.setOnPreferenceChangeListener(changeListener);
             aboutPreference.setOnPreferenceClickListener(enterActivityListener);
 
+            n=(SwitchPreference) findPreference("notification");
+            n.setOnPreferenceChangeListener(changeListener);
 //            temLp.setSummary(temLp.getEntry());
 //            temLp.setOnPreferenceChangeListener(changeListener);
 
