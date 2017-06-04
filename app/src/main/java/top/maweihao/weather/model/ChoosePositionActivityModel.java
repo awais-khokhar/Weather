@@ -27,6 +27,7 @@ import static top.maweihao.weather.activity.ChoosePositionActivity.countyList;
 import static top.maweihao.weather.activity.ChoosePositionActivity.provinceList;
 import static top.maweihao.weather.activity.ChoosePositionActivity.selectedCity;
 import static top.maweihao.weather.activity.ChoosePositionActivity.selectedProvince;
+import static top.maweihao.weather.activity.WeatherActivity.DEBUG;
 
 /**
  * Created by limuyang on 2017/6/2.
@@ -52,10 +53,12 @@ public class ChoosePositionActivityModel implements ChoosePositionActivityContra
             dataList.clear();
             for (Province province : provinceList) {
                 dataList.add(province.getProvinceName());
-                Log.i(TAG, "dataList add " + province.getProvinceName());
+                if (DEBUG)
+                    Log.i(TAG, "dataList add " + province.getProvinceName());
             }
             presenter.setRecyclerViewData(dataList);
-            Log.d(TAG, "queryProvinces: adapter has been notified");
+            if (DEBUG)
+                Log.d(TAG, "queryProvinces: adapter has been notified");
             ChoosePositionActivity.currentLevel = LEVEL_PROVINCE;
         } else {
             String address = "http://guolin.tech/api/china";
@@ -83,7 +86,8 @@ public class ChoosePositionActivityModel implements ChoosePositionActivityContra
                     result = Utility.handleCityResponse(responseText, selectedProvince.getId());
                 } else if ("county".equals(type)) {
                     result = Utility.handleCountyResponse(responseText, selectedCity.getId());
-                    Log.d(TAG, "onResponse: result: " + result);
+                    if (DEBUG)
+                        Log.d(TAG, "onResponse: result: " + result);
                 }
                 if (result) {
                     presenter.closeProgressDialog();
@@ -101,7 +105,8 @@ public class ChoosePositionActivityModel implements ChoosePositionActivityContra
 
     @Override
     public void queryCounties() {
-        Log.d(TAG, "queryCounties: on");
+        if (DEBUG)
+            Log.d(TAG, "queryCounties: on");
 
         presenter.setToolBarTitle(selectedCity.getCityName());
 
