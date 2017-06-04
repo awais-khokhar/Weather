@@ -20,14 +20,14 @@
         android:id="@+id/relativeLayout">
 
         <ImageView
-            android:id="@+id/imageView7"
+            android:id="@+id/tall_widget_preview"
+            android:src="@drawable/tall_widget_lunar_off"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@drawable/simple_widget_preview"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="18dp"
-            android:layout_centerInParent="true" />
+            android:layout_centerInParent="true"
+            android:layout_marginTop="18dp" />
     </RelativeLayout>
 
     <RelativeLayout

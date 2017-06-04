@@ -5,7 +5,7 @@
     android:initialLayout="@layout/tall_weather_widget"
     android:minHeight="180dp"
     android:minWidth="110dp"
-    android:previewImage="@drawable/example_appwidget_preview"
+    android:previewImage="@drawable/tall_widget_lunar_on"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="3600000"
     android:widgetCategory="home_screen" />

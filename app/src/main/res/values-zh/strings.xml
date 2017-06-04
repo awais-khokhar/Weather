@@ -84,7 +84,7 @@
     <string name="just_now">刚刚</string>
     <string name="minute_age">分钟前</string>
     <string name="hour_ago">小时前</string>
-    <string name="Lunar">Lunar Date</string>
+    <string name="Lunar">中国农历</string>
     <string name="configure">配置</string>
     <string name="add_widget">添加桌面插件</string>
 
