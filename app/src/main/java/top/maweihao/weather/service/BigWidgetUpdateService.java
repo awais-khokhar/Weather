@@ -81,7 +81,7 @@ public class BigWidgetUpdateService extends Service {
     }
 
     private void updateWeather(String weatherNow, String countyName) {
-        RemoteViews bigViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.tall_weather_widget);
+        RemoteViews bigViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.big_weather_widget);
         try {
             JSONObject jsonObject = new JSONObject(weatherNow);
             JSONObject result = jsonObject.getJSONObject("result");
@@ -102,7 +102,7 @@ public class BigWidgetUpdateService extends Service {
             } else {
                 Log.e(TAG, "updateWeather: icon == null");
             }
-            Log.d(TAG, "successful");
+            Log.d(TAG, "successful" + tem + skycon + intensity);
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e(TAG, "parseNowJson: error");
