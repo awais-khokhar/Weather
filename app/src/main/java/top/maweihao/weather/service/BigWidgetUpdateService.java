@@ -41,7 +41,6 @@ public class BigWidgetUpdateService extends Service {
             Log.d(TAG, "onStartCommand: ");
         }
         updateWidget();
-        stopSelf();
         return super.onStartCommand(intent, flags, startId);
     }
 
