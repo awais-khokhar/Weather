@@ -12,6 +12,9 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
+
+    defaultConfig { ndk { abiFilters 'armeabi', 'x86','arm64-v8a'} }
+
     buildTypes {
         release {
             minifyEnabled false
