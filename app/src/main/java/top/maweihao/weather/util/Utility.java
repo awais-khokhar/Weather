@@ -433,5 +433,10 @@ public class Utility {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.CHINA);
         return simpleDateFormat.format(date);
     }
+
+    public static String ampm(String time) {
+        int hour = Integer.parseInt(time);
+        return (hour < 12) ? (hour + "am") : ((hour - 12) + "pm");
+    }
 }
 

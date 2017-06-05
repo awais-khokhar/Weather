@@ -633,7 +633,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 hourlyWeatherView mLineChartView = (hourlyWeatherView) findViewById(R.id.simpleLineChart);
                 ArrayList<String> xItemArray = new ArrayList<>();
                 for (HourlyWeather hourlyWeather : hourlyWeathers) {
-                    xItemArray.add(hourlyWeather.getDatetime().substring(11, 16));
+                    xItemArray.add(Utility.ampm(hourlyWeather.getDatetime().substring(11, 13)));
                 }
                 //天气
                 ArrayList<String> weatherArray = new ArrayList<>();
