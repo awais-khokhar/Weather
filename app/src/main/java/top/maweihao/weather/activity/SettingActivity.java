@@ -40,7 +40,8 @@ public class SettingActivity extends PreferenceActivity {
         private Preference feedBack;
 
         private SwitchPreference autoUpdateSP;
-        private SwitchPreference n;
+        private SwitchPreference notification;
+        private Preference notificationTime;
 
         String countyName;
 
@@ -68,8 +69,13 @@ public class SettingActivity extends PreferenceActivity {
             autoUpdateSP.setOnPreferenceChangeListener(changeListener);
             aboutPreference.setOnPreferenceClickListener(enterActivityListener);
 
-            n = (SwitchPreference) findPreference("notification");
-            n.setOnPreferenceChangeListener(changeListener);
+            notification = (SwitchPreference) findPreference("notification");
+            notification.setOnPreferenceChangeListener(changeListener);
+
+//            notificationTime = findPreference("notification_time");
+//            notificationTime.setOnPreferenceClickListener(new NotificationTimePreferenceClickListener());
+//            notificationTime.setOnPreferenceChangeListener(changeListener);
+
 //            temLp.setSummary(temLp.getEntry());
 //            temLp.setOnPreferenceChangeListener(changeListener);
 
@@ -120,7 +126,13 @@ public class SettingActivity extends PreferenceActivity {
                         getActivity().stopService(startIntent);
                         Log.d(TAG, "onPreferenceChange: stop SyncService");
                     }
+                    return true;
                 }
+//                else if (preference.getKey().equals("notification_time")) {
+//                    Log.d(TAG, "onPreferenceChange: notification_time");
+//                    notificationTime.setSummary(preference.getKey());
+//                    return true;
+//                }
                 return false;
             }
         };
@@ -157,5 +169,21 @@ public class SettingActivity extends PreferenceActivity {
             }
 
         }
+
+//        private class NotificationTimePreferenceClickListener implements Preference.OnPreferenceClickListener {
+//            @Override
+//            public boolean onPreferenceClick(Preference preference) {
+//                TimePickerDialog timeDialog = new TimePickerDialog(getActivity(),
+//                        new TimePickerDialog.OnTimeSetListener() {
+//                            //从这个方法中取得获得的时间
+//                            @Override
+//                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+//                                notificationTime.setSummary(hourOfDay + " : " + minute);
+//                            }
+//                        }, 0, 0, true);
+//                timeDialog.show();
+//                return false;
+//            }
+//        }
     }
 }
