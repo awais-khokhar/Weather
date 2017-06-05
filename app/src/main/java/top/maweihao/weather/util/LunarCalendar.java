@@ -604,9 +604,9 @@ public class LunarCalendar {
                 (mm == 2 && dd == 8) || (mm == 8 && dd == 2) || (mm == 3 && dd == 9) || (mm == 9 && dd == 3) ||
                 (mm == 4 && dd == 10) || (mm == 10 && dd == 4) || (mm == 5 && dd == 11) || (mm == 11 && dd == 5)) {
             return "日值月破 大事不宜";
-        } else if ((y == 0 && Objects.equals(dy, "911")) || (y == 1 && Objects.equals(dy, "55")) || (y == 2 && dy == "111") ||
-                (y == 3 && Objects.equals(dy, "75")) || (y == 4 && Objects.equals(dy, "311")) || (y == 5 && dy == "95") ||
-                (y == 6 && Objects.equals(dy, "511")) || (y == 7 && Objects.equals(dy, "15")) || (y == 8 && dy == "711") || (y == 9 && dy == "35")) {
+        } else if ((y == 0 && Objects.equals(dy, "911")) || (y == 1 && Objects.equals(dy, "55")) || (y == 2 && dy.equals("111")) ||
+                (y == 3 && Objects.equals(dy, "75")) || (y == 4 && Objects.equals(dy, "311")) || (y == 5 && dy.equals("95")) ||
+                (y == 6 && Objects.equals(dy, "511")) || (y == 7 && Objects.equals(dy, "15")) || (y == 8 && dy.equals("711")) || (y == 9 && dy.equals("35"))) {
             return "日值上朔 大事不宜";
         } else if ((m == 1 && dt == 13) || (m == 2 && dt == 11) || (m == 3 && dt == 9) || (m == 4 && dt == 7) ||
                 (m == 5 && dt == 5) || (m == 6 && dt == 3) || (m == 7 && dt == 1) || (m == 7 && dt == 29) ||

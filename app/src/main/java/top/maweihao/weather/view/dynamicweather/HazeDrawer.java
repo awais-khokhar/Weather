@@ -88,7 +88,7 @@ public class HazeDrawer extends BaseDrawer {
 			if (maxDX < minDX || (maxDY < minDY)) {
 				throw new IllegalArgumentException("max should bigger than min!!!!");
 			}
-			this.x += (getRandom(minDX, maxDX) * w);;
+			this.x += (getRandom(minDX, maxDX) * w);
 			this.y += (getRandom(minDY, maxDY) * h);
 //			this.x = Math.min(maxX, Math.max(this.x, minX));
 //			this.y = Math.min(maxY, Math.max(this.y, minY));
