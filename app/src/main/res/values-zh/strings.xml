@@ -26,7 +26,7 @@
     <string name="appearance_setting">外观</string>
     <string name="temperature">气温</string>
     <string name="notification_setting">通知</string>
-    <string name="notification_summary">您将在18点整收到天气相关信息</string>
+    <string name="notification_summary">您将收到天气相关信息</string>
     <string name="location_setting">地区</string>
     <string name="about_setting">关于</string>
     <string name="auto_locate">自动定位</string>
@@ -87,5 +87,6 @@
     <string name="Lunar">中国农历</string>
     <string name="configure">配置</string>
     <string name="add_widget">添加桌面插件</string>
+    <string name="notification_time">通知时间</string>
 
 </resources>

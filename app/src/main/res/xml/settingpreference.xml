@@ -38,12 +38,10 @@
             android:key="notification"
             android:summary="@string/notification_summary"
             android:title="@string/weather_notifications" />
-        <!--<Preference-->
-            <!--android:persistent="true"-->
-
-            <!--android:key="notification_time"-->
-            <!--android:summary="checktime"-->
-            <!--android:title="time" />-->
+        <Preference
+            android:persistent="true"
+            android:key="notification_time"
+            android:title="@string/notification_time" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/about_setting">

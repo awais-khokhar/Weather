@@ -31,6 +31,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import top.maweihao.weather.R;
+import top.maweihao.weather.activity.SettingActivity;
 import top.maweihao.weather.activity.WeatherActivity;
 import top.maweihao.weather.bean.temperature;
 import top.maweihao.weather.util.Utility;
@@ -48,7 +49,12 @@ public class SyncService extends Service {
     List<temperature> temList;
     Boolean isChinese = false;
 
-    private static boolean isCreateService; //计数器
+    public static boolean isStarSendNotification; //标记
+
+    private static String GET_HOUR;
+
+    private static String GET_MINUTE;
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -58,7 +64,6 @@ public class SyncService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        isCreateService = true;
         Log.d(TAG, "onCreate: SyncService created");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             isChinese = getResources().getConfiguration().getLocales().get(0).getDisplayLanguage().equals("中文");
@@ -70,10 +75,9 @@ public class SyncService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand: ");
-        if (!isCreateService) //onCreate只会初始化一次，service初始化的时候不执行通知发送
+        if (isStarSendNotification) //onCreate只会初始化一次，service初始化的时候不执行通知发送
             fetchData();
         startAgain();
-        isCreateService = false;
         return START_NOT_STICKY;
     }
 
@@ -82,11 +86,11 @@ public class SyncService extends Service {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    Thread.sleep(3 * 1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    Thread.sleep(3 * 1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 String fUrl = prefs.getString("furl", null);
                 if (fUrl != null) {
@@ -115,17 +119,28 @@ public class SyncService extends Service {
     }
 
     private void startAgain() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//                                Log.d(TAG, "SettingActivity::notification_time " + sp.getString("notification_time",null));
+        String time = sp.getString("notification_time", null);
+        String[] splitTime = null;
+        if (time != null) {
+            splitTime = time.split(SettingActivity.TIME_SPLIT);
+            GET_HOUR = splitTime[0];
+            GET_MINUTE = splitTime[1];
+        }
+        else
+        {
+            GET_HOUR = "18";
+            GET_MINUTE = "0";
+        }
+        Log.d(TAG, "startAgain: SharedPreferences == " + time);
+
         //     每天18:00启动
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         Calendar calendar = new GregorianCalendar();
         int day = calendar.get(Calendar.DAY_OF_MONTH);
-//        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-//        if (hour > 2) {
-//            calendar.set(Calendar.DAY_OF_MONTH, day +1);
-//        }
-
-        calendar.set(Calendar.HOUR_OF_DAY, 18);
-        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(GET_HOUR));
+        calendar.set(Calendar.MINUTE, Integer.parseInt(GET_MINUTE));
         calendar.set(Calendar.SECOND, 0); //加上秒和毫秒，以精确时间，保证设置的时间为绝对时间。
         calendar.set(Calendar.MILLISECOND, 0);
 
@@ -141,10 +156,13 @@ public class SyncService extends Service {
             Log.d(TAG, "startAgain: calendar getTimeInMillis== " + calendar.getTimeInMillis());
             Log.d(TAG, "startAgain: System.currentTimeMillis== " + System.currentTimeMillis());
         }
+
+
         Intent intent = new Intent(this, SyncService.class);
         PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+        isStarSendNotification = true;
     }
 
     private void sendNotification(String title, String text) {
