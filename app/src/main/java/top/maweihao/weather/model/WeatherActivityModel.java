@@ -133,7 +133,9 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
 //                    rainInfo.setText(des);
 //                }
 //            });
+            String test = "9分钟后开始下小雨，但17分钟后会停";
             presenter.rainInfo(des);
+            Log.d(TAG, "moreHandleDailyWeatherResponse: " + des);
         } catch (JSONException e) {
             if (DEBUG)
                 Log.e(TAG, "moreHandleDailyWeatherResponse: parse weather json error");

@@ -63,7 +63,7 @@ import static top.maweihao.weather.util.Utility.chooseWeatherIconOnly;
 import static top.maweihao.weather.util.Utility.intRoundString;
 
 public class WeatherActivity extends AppCompatActivity implements WeatherActivityContract.View {
-    public static boolean DEBUG = true;
+    public static boolean DEBUG = false;
 
     static final String TAG = "WeatherActivity";
     static final int THROUGH_IP = 0;
@@ -865,7 +865,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         @Override
         public void onReceiveLocation(BDLocation bdLocation) {
             Log.d(TAG, "BAIDU: received" + (System.currentTimeMillis() - locateTime));
-            if (System.currentTimeMillis() - locateTime < 2 * 1001) {  //at most x second
+            if (System.currentTimeMillis() - locateTime < 3 * 1000) {  //at most x second
                 if (bdLocation.getLocType() != BDLocation.TypeGpsLocation) {
                     // do nothing
                     if (DEBUG) {

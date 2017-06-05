@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
+import top.maweihao.weather.activity.WeatherActivity;
 import top.maweihao.weather.service.SyncService;
 
 /**
@@ -21,7 +22,9 @@ public class BootCompleteReceiver extends BroadcastReceiver {
         if (prefs.getBoolean("notification", false)) {
             Intent startIntent = new Intent(context, SyncService.class);
             context.startService(startIntent);
-            Toast.makeText(context, "SyncService started", Toast.LENGTH_SHORT).show();
+            if (WeatherActivity.DEBUG) {
+                Toast.makeText(context, "Weather: SyncService started", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }
