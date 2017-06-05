@@ -71,9 +71,11 @@ public class BigWidgetUpdateService extends Service {
                         } catch (IOException e) {
                             e.printStackTrace();
                             Log.e(TAG, "run: network error");
+                            stopSelf();
                         }
                     } else {
                         Log.e(TAG, "run: fUrl == null");
+                        stopSelf();
                     }
                 }
             }).start();

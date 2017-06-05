@@ -22,24 +22,28 @@
             tools:ignore="RtlHardcoded">
 
             <TextClock
-                android:id="@+id/widget_clock_day_clock"
+                android:id="@+id/big_widget_clock"
                 style="@style/widget_text_clock"
                 android:layout_centerHorizontal="true"
                 android:layout_marginLeft="24dp"
+                android:shadowColor="@color/colorTextDark"
+                android:shadowDx="1.0"
+                android:shadowDy="1.0"
+                android:shadowRadius="1.0"
                 tools:ignore="RtlHardcoded" />
 
             <TextClock
                 android:id="@+id/widget_clock_day_title"
                 style="@style/content_text"
-                android:layout_below="@id/widget_clock_day_clock"
+                android:layout_below="@id/big_widget_clock"
                 android:layout_centerHorizontal="true"
                 android:format12Hour="MM/dd EE"
                 android:format24Hour="MM/dd EE"
                 android:maxLines="1"
-                android:shadowColor="@color/colorTextGrey"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="1"
+                android:shadowColor="@color/colorTextDark"
+                android:shadowDx="1.0"
+                android:shadowDy="1.0"
+                android:shadowRadius="1.0"
                 android:text="@string/na"
                 android:textColor="@color/colorTextLight"
                 tools:text="05-17 周三" />
@@ -61,10 +65,10 @@
                 android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
                 android:maxLines="1"
-                android:shadowColor="@color/colorTextGrey"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="1"
+                android:shadowColor="@color/colorTextDark"
+                android:shadowDx="1.0"
+                android:shadowDy="1.0"
+                android:shadowRadius="1.0"
                 android:text="@string/na"
                 android:textAlignment="center"
                 android:textColor="@color/colorTextLight" />

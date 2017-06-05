@@ -9,6 +9,13 @@
     tools:background="#FF424242">
 
 
+    <LinearLayout
+        android:id="@+id/tall_widget_clock"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:weightSum="2"
+        android:orientation="vertical">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -21,10 +28,10 @@
             android:fontFamily="sans-serif-light"
             android:format12Hour="hh"
             android:format24Hour="HH"
-            android:shadowColor="#9e9e9e"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:shadowRadius="1"
+            android:shadowColor="@color/colorTextDark"
+            android:shadowDx="1.0"
+            android:shadowDy="1.0"
+            android:shadowRadius="1.0"
             android:textColor="#fafafa"
             android:textSize="72sp" />
     </RelativeLayout>
@@ -42,17 +49,18 @@
             android:fontFamily="sans-serif-light"
             android:format12Hour="mm"
             android:format24Hour="mm"
-            android:shadowColor="#9e9e9e"
-            android:shadowDx="1"
-            android:shadowDy="1"
-            android:shadowRadius="1"
+            android:shadowColor="@color/colorTextDark"
+            android:shadowDx="1.0"
+            android:shadowDy="1.0"
+            android:shadowRadius="1.0"
             android:textColor="#fafafa"
             android:textSize="72sp" />
 
-
     </RelativeLayout>
+    </LinearLayout>
 
     <RelativeLayout
+        android:id="@+id/tall_widget_weather"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1.5">
@@ -84,10 +92,10 @@
                     android:fontFamily="sans-serif-light"
                     android:format12Hour="MM/dd EE"
                     android:format24Hour="MM/dd EE"
-                    android:shadowColor="#9e9e9e"
-                    android:shadowDx="1"
-                    android:shadowDy="1"
-                    android:shadowRadius="1"
+                    android:shadowColor="@color/colorTextDark"
+                    android:shadowDx="1.0"
+                    android:shadowDy="1.0"
+                    android:shadowRadius="1.0"
                     android:textColor="#fafafa"
                     android:textSize="14sp" />
 
@@ -97,10 +105,10 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:paddingStart="7dp"
-                    android:shadowColor="#9e9e9e"
-                    android:shadowDx="1"
-                    android:shadowDy="1"
-                    android:shadowRadius="1"
+                    android:shadowColor="@color/colorTextDark"
+                    android:shadowDx="1.0"
+                    android:shadowDy="1.0"
+                    android:shadowRadius="1.0"
                     tools:text="十月廿一"
                     android:textColor="#fafafa"
                     android:textSize="14sp" />
@@ -119,10 +127,10 @@
                 style="@style/content_text"
                 android:layout_centerHorizontal="true"
                 android:maxLines="1"
-                android:shadowColor="@color/colorTextGrey"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="1"
+                android:shadowColor="@color/colorTextDark"
+                android:shadowDx="1.0"
+                android:shadowDy="1.0"
+                android:shadowRadius="1.0"
                 android:textAlignment="center"
                 android:textColor="@color/colorTextLight"
                 tools:text="QIXIA | 28°°"/>

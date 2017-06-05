@@ -642,9 +642,12 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 }
                 //温度
                 ArrayList<Integer> yItemArray = new ArrayList<>();
+//                StringBuilder stringBuilder = new StringBuilder();
                 for (HourlyWeather hourlyWeather : hourlyWeathers) {
                     yItemArray.add(intRoundString(hourlyWeather.getTemperature()));
+//                    stringBuilder.append(hourlyWeather.getTemperature()).append(" ");
                 }
+//                Log.d(TAG, "run: sb" + stringBuilder);
 
                 ArrayList<Float> precipitation = new ArrayList<>();
                 for (HourlyWeather hourlyWeather : hourlyWeathers) {

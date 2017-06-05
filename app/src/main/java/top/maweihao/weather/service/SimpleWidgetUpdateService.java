@@ -22,7 +22,6 @@ import top.maweihao.weather.R;
 import top.maweihao.weather.activity.WeatherActivity;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.widget.SimpleWeatherWidget;
-import top.maweihao.weather.widget.TallWeatherWidget;
 
 public class SimpleWidgetUpdateService extends Service {
 
@@ -89,7 +88,7 @@ public class SimpleWidgetUpdateService extends Service {
 
     private void updateWeather(String weatherNow, String countyName) {
         RemoteViews simpleViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.simple_weather_widget);
-        RemoteViews tallViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.tall_weather_widget);
+//        RemoteViews tallViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.tall_weather_widget);
         try {
             JSONObject jsonObject = new JSONObject(weatherNow);
             JSONObject result = jsonObject.getJSONObject("result");
@@ -101,8 +100,8 @@ public class SimpleWidgetUpdateService extends Service {
                 String[] ws = icon.split("and");
                 simpleViews.setImageViewResource(R.id.simple_widget_skycon, Integer.parseInt(ws[0]));
                 simpleViews.setTextViewText(R.id.simple_widget_info, countyName + " | " + ws[1] + ' ' + tem + '°');
-                tallViews.setImageViewResource(R.id.tall_widget_skycon, Integer.parseInt(ws[0]));
-                tallViews.setTextViewText(R.id.tall_widget_info, countyName + " | " + ws[1] + ' ' + tem + '°');
+//                tallViews.setImageViewResource(R.id.tall_widget_skycon, Integer.parseInt(ws[0]));
+//                tallViews.setTextViewText(R.id.tall_widget_info, countyName + " | " + ws[1] + ' ' + tem + '°');
 //                        bigViews.setImageViewResource(R.id.big_widget_skycon, Integer.parseInt(ws[0]));
 //                        bigViews.setTextViewText(R.id.tall_widget_info, countyName + "\n" + ws[1] + ' ' + tem + '°');
             }
@@ -112,7 +111,7 @@ public class SimpleWidgetUpdateService extends Service {
         }
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
         appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext(), SimpleWeatherWidget.class), simpleViews);
-        appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext(), TallWeatherWidget.class), tallViews);
+//        appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext(), TallWeatherWidget.class), tallViews);
 //        appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext(), BIgWeatherWidget.class), bigViews);
         stopSelf();
     }
