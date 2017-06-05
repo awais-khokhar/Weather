@@ -759,7 +759,7 @@ public class LunarCalendar {
         return 10000 * year + 100 * month + day;
     }
 
-    String getLunarDateFromTimeMills(long mill) {
+    public String getLunarDateFromTimeMills(long mill) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(mill);
         int year = calendar.get(Calendar.YEAR);

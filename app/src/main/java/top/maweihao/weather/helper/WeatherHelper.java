@@ -6,4 +6,5 @@ package top.maweihao.weather.helper;
  */
 
 public class WeatherHelper {
+
 }

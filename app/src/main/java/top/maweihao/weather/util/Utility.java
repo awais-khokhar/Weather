@@ -20,8 +20,11 @@ import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
+import java.util.Locale;
 
 import top.maweihao.weather.R;
 import top.maweihao.weather.bean.WeatherData;
@@ -423,6 +426,12 @@ public class Utility {
         if (inputMethodManager != null && ((Activity) context).getCurrentFocus() != null) {
             inputMethodManager.hideSoftInputFromWindow(((Activity) context).getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
+    }
+
+    public static String parseTime() {
+        Date date = new Date();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.CHINA);
+        return simpleDateFormat.format(date);
     }
 }
 

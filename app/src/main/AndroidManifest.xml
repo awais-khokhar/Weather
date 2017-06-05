@@ -24,15 +24,16 @@
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="RUUaavVwpwqYdz8QGHLXSFBfwhs2ba6j" />
+
         <activity
-            android:screenOrientation="portrait"
+            android:name=".activity.WeatherActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:hardwareAccelerated="true"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustNothing"
-            android:name=".activity.WeatherActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -46,12 +47,10 @@
         <activity android:name=".activity.ChoosePositionActivity" />
         <activity android:name=".activity.MainActivity" />
 
-
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
             android:process=":remote" />
-
         <service
             android:name=".service.SyncService"
             android:enabled="true"
@@ -104,7 +103,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".widget.BIgWeatherWidget">
+        <receiver android:name=".widget.BigWeatherWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -113,6 +112,15 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/big_weather_widget_info" />
         </receiver>
+
+        <service
+            android:name=".service.BigWidgetUpdateService"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name=".service.TallWidgetUpdateService"
+            android:enabled="true"
+            android:exported="false"></service>
     </application>
 
 </manifest>

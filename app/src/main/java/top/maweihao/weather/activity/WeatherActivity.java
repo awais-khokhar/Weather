@@ -1,8 +1,6 @@
 package top.maweihao.weather.activity;
 
 import android.Manifest;
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -28,7 +26,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,7 +55,6 @@ import top.maweihao.weather.view.SunTimeView;
 import top.maweihao.weather.view.dynamicweather.DynamicWeatherView;
 import top.maweihao.weather.view.hourlyWeatherView;
 import top.maweihao.weather.view.perDayWeatherView;
-import top.maweihao.weather.widget.SimpleWeatherWidget;
 
 import static top.maweihao.weather.R.id.skycon_text;
 import static top.maweihao.weather.R.id.temperature_text;
@@ -709,7 +705,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         handler.post(new Runnable() {
             @Override
             public void run() {
-                final RemoteViews remoteViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.simple_weather_widget);
+//                final RemoteViews remoteViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.simple_weather_widget);
                 String temperature = Utility.roundString(weatherData.getTemperature());
                 String skycon = weatherData.getSkycon();
                 String humidity = weatherData.getHumidity();
@@ -737,13 +733,12 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 if (weatherString != null) {
                     String[] ws = weatherString.split("and");
                     skyconText.setText(ws[1]);
-                    remoteViews.setImageViewResource(R.id.widget_clock_day_icon, Integer.parseInt(ws[0]));
-                    remoteViews.setTextViewText(R.id.widget_clock_day_subtitle, countyName + " | " + ws[1] + ' ' + temperature + '°');
+//                    remoteViews.setImageViewResource(R.id.simple_widget_skycon, Integer.parseInt(ws[0]));
+//                    remoteViews.setTextViewText(R.id.simple_widget_info, countyName + " | " + ws[1] + ' ' + temperature + '°');
                 }
-                AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
-                appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext(), SimpleWeatherWidget.class),
-                        remoteViews);
-//                dynamicWeatherView.setBackgroundResource(Utility.chooseBgImage(skycon));
+//                AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
+//                appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext(), SimpleWeatherWidget.class),
+//                        remoteViews);
                 dynamicWeatherView.setDrawerType(Utility.chooseBgImage(skycon));
                 if (isDone) {
                     stopSwipe();

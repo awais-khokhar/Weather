@@ -21,24 +21,18 @@ import okhttp3.Response;
 import top.maweihao.weather.R;
 import top.maweihao.weather.activity.WeatherActivity;
 import top.maweihao.weather.util.Utility;
-import top.maweihao.weather.widget.SimpleWeatherWidget;
-import top.maweihao.weather.widget.TallWeatherWidget;
+import top.maweihao.weather.widget.BigWeatherWidget;
 
-public class SimpleWidgetUpdateService extends Service {
+public class BigWidgetUpdateService extends Service {
 
-    public static final String TAG = "sWidgetUpdateService";
+    public static final String TAG = "bWidgetUpdateService";
 
-    public SimpleWidgetUpdateService() {
+    public BigWidgetUpdateService() {
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         return null;
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
     }
 
     @Override
@@ -55,24 +49,24 @@ public class SimpleWidgetUpdateService extends Service {
 
         final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         int minInterval = prefs.getInt("refresh_interval", 5);
-        String weatherNow = prefs.getString("weather_now", null);
-        long weatherNowLastUpdateTime = prefs.getLong("weather_now_last_update_time", 0);
+        String weatherFull = prefs.getString("weather_full", null);
+        long weatherFullLastUpdateTime = prefs.getLong("weather_full_last_update_time", 0);
         final String countyName = prefs.getString("countyName", "error");
-        if (weatherNow != null && System.currentTimeMillis() - weatherNowLastUpdateTime < minInterval * 60 * 1000) {
-            updateWeather(weatherNow, countyName);
+        if (weatherFull != null && System.currentTimeMillis() - weatherFullLastUpdateTime < minInterval * 60 * 1000) {
+            updateWeather(weatherFull, countyName);
         } else {
             if (WeatherActivity.DEBUG) {
                 Log.d(TAG, "updateWidget: weather data out of date");
             }
-            final String cUrl = prefs.getString("curl", null);
+            final String fUrl = prefs.getString("furl", null);
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    if (cUrl != null) {
+                    if (fUrl != null) {
                         try {
                             OkHttpClient client = new OkHttpClient();
                             Request request = new Request.Builder()
-                                    .url(cUrl).build();
+                                    .url(fUrl).build();
                             Response response = client.newCall(request).execute();
                             updateWeather(response.body().string(), countyName);
                         } catch (IOException e) {
@@ -80,7 +74,7 @@ public class SimpleWidgetUpdateService extends Service {
                             Log.e(TAG, "run: network error");
                         }
                     } else {
-                        Log.e(TAG, "run: cUrl == null");
+                        Log.e(TAG, "run: fUrl == null");
                     }
                 }
             }).start();
@@ -88,33 +82,34 @@ public class SimpleWidgetUpdateService extends Service {
     }
 
     private void updateWeather(String weatherNow, String countyName) {
-        RemoteViews simpleViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.simple_weather_widget);
-        RemoteViews tallViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.tall_weather_widget);
+        RemoteViews bigViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.tall_weather_widget);
         try {
             JSONObject jsonObject = new JSONObject(weatherNow);
             JSONObject result = jsonObject.getJSONObject("result");
-            int tem = Utility.intRoundString(result.getString("temperature"));
-            String skycon = result.getString("skycon");
-            String intensity = result.getJSONObject("precipitation").getJSONObject("local").getString("intensity");
+            JSONObject minutely = result.getJSONObject("minutely");
+            JSONObject hourly = result.getJSONObject("hourly");
+            String description = minutely.getString("description");
+            bigViews.setTextViewText(R.id.big_widget_description, description);
+
+            int tem = Utility.intRoundString(((JSONObject) (hourly.getJSONArray("temperature").get(0))).getString("value"));
+            String skycon = ((JSONObject) (hourly.getJSONArray("skycon").get(0))).getString("value");
+            String intensity = ((JSONObject) (hourly.getJSONArray("precipitation").get(0))).getString("value");
             String icon = Utility.chooseWeatherIcon(skycon, Float.parseFloat(intensity), WeatherActivity.MINUTELY_MODE);
             if (icon != null) {
                 String[] ws = icon.split("and");
-                simpleViews.setImageViewResource(R.id.simple_widget_skycon, Integer.parseInt(ws[0]));
-                simpleViews.setTextViewText(R.id.simple_widget_info, countyName + " | " + ws[1] + ' ' + tem + '°');
-                tallViews.setImageViewResource(R.id.tall_widget_skycon, Integer.parseInt(ws[0]));
-                tallViews.setTextViewText(R.id.tall_widget_info, countyName + " | " + ws[1] + ' ' + tem + '°');
-//                        bigViews.setImageViewResource(R.id.big_widget_skycon, Integer.parseInt(ws[0]));
-//                        bigViews.setTextViewText(R.id.tall_widget_info, countyName + "\n" + ws[1] + ' ' + tem + '°');
+                bigViews.setImageViewResource(R.id.big_widget_skycon, Integer.parseInt(ws[0]));
+                bigViews.setTextViewText(R.id.big_widget_info, countyName + "\n" + ws[1] + ' ' + tem + '°');
+                bigViews.setTextViewText(R.id.big_widget_refresh_time, Utility.parseTime());
+            } else {
+                Log.e(TAG, "updateWeather: icon == null");
             }
+            Log.d(TAG, "successful");
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e(TAG, "parseNowJson: error");
         }
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
-        appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext(), SimpleWeatherWidget.class), simpleViews);
-        appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext(), TallWeatherWidget.class), tallViews);
-//        appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext(), BIgWeatherWidget.class), bigViews);
+        appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext(), BigWeatherWidget.class), bigViews);
         stopSelf();
     }
-
 }
