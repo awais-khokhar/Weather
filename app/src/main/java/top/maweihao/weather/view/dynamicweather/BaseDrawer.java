@@ -137,7 +137,7 @@ public abstract class BaseDrawer {
 	public boolean draw(Canvas canvas, float alpha) {
 		drawSkyBackground(canvas, alpha);
 		//long start = AnimationUtils.currentAnimationTimeMillis();
-		boolean needDrawNextFrame = drawWeather(canvas, alpha);
+//		boolean needDrawNextFrame = drawWeather(canvas, alpha);
 //		if (needDrawNextFrame) {
 //			curPercent += getFrameOffsetPercent();
 //			if (curPercent > 1) {
@@ -146,7 +146,8 @@ public abstract class BaseDrawer {
 //		}
 		// Log.i(TAG, getClass().getSimpleName() + " drawWeather: "
 		// + (AnimationUtils.currentAnimationTimeMillis() - start) + "ms");
-		return needDrawNextFrame;
+//		return needDrawNextFrame;
+		return drawWeather(canvas, alpha);
 	}
 
 	public abstract boolean drawWeather(Canvas canvas, float alpha);// return

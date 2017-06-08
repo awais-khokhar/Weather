@@ -23,6 +23,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -52,6 +53,7 @@ import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.view.HScrollView;
 import top.maweihao.weather.view.SemiCircleView;
 import top.maweihao.weather.view.SunTimeView;
+import top.maweihao.weather.view.dynamicweather.BaseDrawer;
 import top.maweihao.weather.view.dynamicweather.DynamicWeatherView;
 import top.maweihao.weather.view.hourlyWeatherView;
 import top.maweihao.weather.view.perDayWeatherView;
@@ -215,6 +217,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -248,6 +251,30 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         presenter.destroy();
         presenter = null;
     }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        Log.i(TAG, "dispatchTouchEvent");
+        int action = ev.getAction();
+//        switch (action) {
+////            case MotionEvent.ACTION_DOWN://按下
+////                Log.i(TAG, "ACTION_DOWN");
+////                dynamicWeatherView.onPause();
+////                break;
+//            case MotionEvent.ACTION_MOVE://移动
+//                Log.i(TAG, "ACTION_MOVE");
+//                dynamicWeatherView.onPause();
+//                break;
+//            case MotionEvent.ACTION_UP://松开
+//                Log.i(TAG, "ACTION_UP");
+//
+//                dynamicWeatherView.onResume();
+//                break;
+//        }
+        return super.dispatchTouchEvent(ev);
+//        return true;
+    }
+
 
     @Override
     public void setRainInfo(final String str) {
@@ -371,6 +398,32 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
             }
         }
     }
+    boolean isMenuOpen=true;
+    boolean isMenuClose=true;
+    //菜单打开时，暂停天气view绘制
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+
+            dynamicWeatherView.onPause();
+
+        Log.i(TAG,"onMenuOpened" + featureId);
+        return super.onMenuOpened(featureId, menu);
+
+    }
+    boolean isItemSelected=false;
+    //菜单关闭时，重启天气view绘制
+    @Override
+    public void onPanelClosed(int featureId, Menu menu) {
+
+
+//        super.onPanelClosed(featureId, menu);
+        if (!isItemSelected) {
+            Log.i(TAG,"onPanelClosed" + featureId);
+//            if (isMenuClose)
+                dynamicWeatherView.onResume();
+        }
+//        isMenuClose = false;
+    }
 
 
     @Override
@@ -381,6 +434,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Log.i(TAG,"onOptionsItemSelected");
+        isItemSelected=true;
         switch (item.getItemId()) {
             case R.id.change_position:
                 Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
@@ -429,12 +484,15 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
+    String[] per={Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
     /**
      * 申请权限，可批量授权
      */
     private void permission() {
-        SimplePermissionUtils.requestPermissionsResult(this, 1, new String[]{Manifest.permission.ACCESS_FINE_LOCATION
-                        , Manifest.permission.ACCESS_COARSE_LOCATION}
+        SimplePermissionUtils.requestPermissionsResult(this, 1, per
                 , new SimplePermissionUtils.OnPermissionListener() {
                     @Override
                     public void onPermissionGranted() {
@@ -742,7 +800,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 //                AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
 //                appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext(), SimpleWeatherWidget.class),
 //                        remoteViews);
-                dynamicWeatherView.setDrawerType(Utility.chooseBgImage(skycon));
+//                dynamicWeatherView.setDrawerType(Utility.chooseBgImage(skycon));
+                dynamicWeatherView.setDrawerType(BaseDrawer.Type.RAIN_D);
                 if (isDone) {
                     stopSwipe();
                     isDone = false;

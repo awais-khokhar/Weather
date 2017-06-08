@@ -2,9 +2,7 @@ package top.maweihao.weather.view.dynamicweather;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
-import android.graphics.PorterDuff.Mode;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -118,9 +116,9 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
 				preDrawer = null;
 			}
 		}
-		// if (needDrawNextFrame) {
-		// ViewCompat.postInvalidateOnAnimation(this);
-		// }
+//		 if (needDrawNextFrame) {
+//		 ViewCompat.postInvalidateOnAnimation(this);
+//		 }
 		return needDrawNextFrame;
 	}
 
@@ -193,6 +191,7 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
 
 		@Override
 		public void run() {
+			Canvas canvas=null;
 			while (true) {
 				// Log.i(TAG, "DrawThread run..");
 				// Synchronize with activity: block until the activity is ready
@@ -221,11 +220,11 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
 					final long startTime = AnimationUtils.currentAnimationTimeMillis();
 					//TimingLogger logger = new TimingLogger("DrawThread");
 					// Lock the canvas for drawing.
-					Canvas canvas = mSurface.lockCanvas();
+					canvas = mSurface.lockCanvas();
 					//logger.addSplit("lockCanvas");
 					
 					if (canvas != null) {
-						canvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
+//						canvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
 						// Update graphics.
 						
 						drawSurface(canvas);
@@ -238,8 +237,8 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
 						Log.i(TAG, "Failure locking canvas");
 					}
 					final long drawTime = AnimationUtils.currentAnimationTimeMillis() - startTime;
-					final long needSleepTime = 16 - drawTime;
-					//Log.i(TAG, "drawSurface drawTime->" + drawTime + " needSleepTime->" + Math.max(0, needSleepTime));// needSleepTime);
+					final long needSleepTime = 40 - drawTime;
+					Log.i(TAG, "drawSurface drawTime->" + drawTime + " needSleepTime->" + Math.max(0, needSleepTime));// needSleepTime);
 					if (needSleepTime > 0) {
 						try {
 							Thread.sleep(needSleepTime);
