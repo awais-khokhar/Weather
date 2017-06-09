@@ -53,7 +53,6 @@ import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.view.HScrollView;
 import top.maweihao.weather.view.SemiCircleView;
 import top.maweihao.weather.view.SunTimeView;
-import top.maweihao.weather.view.dynamicweather.BaseDrawer;
 import top.maweihao.weather.view.dynamicweather.DynamicWeatherView;
 import top.maweihao.weather.view.hourlyWeatherView;
 import top.maweihao.weather.view.perDayWeatherView;
@@ -800,8 +799,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 //                AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
 //                appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext(), SimpleWeatherWidget.class),
 //                        remoteViews);
-//                dynamicWeatherView.setDrawerType(Utility.chooseBgImage(skycon));
-                dynamicWeatherView.setDrawerType(BaseDrawer.Type.RAIN_D);
+                dynamicWeatherView.setDrawerType(Utility.chooseBgImage(skycon));
+//                dynamicWeatherView.setDrawerType(BaseDrawer.Type.RAIN_D);
                 if (isDone) {
                     stopSwipe();
                     isDone = false;
