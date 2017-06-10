@@ -23,7 +23,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -220,6 +219,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     @Override
     protected void onResume() {
         super.onResume();
+        isItemSelected=false;
         dynamicWeatherView.onResume();
     }
 
@@ -251,28 +251,28 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         presenter = null;
     }
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        Log.i(TAG, "dispatchTouchEvent");
-        int action = ev.getAction();
-//        switch (action) {
-////            case MotionEvent.ACTION_DOWN://按下
-////                Log.i(TAG, "ACTION_DOWN");
+//    @Override
+//    public boolean dispatchTouchEvent(MotionEvent ev) {
+//        Log.i(TAG, "dispatchTouchEvent");
+//        int action = ev.getAction();
+////        switch (action) {
+//////            case MotionEvent.ACTION_DOWN://按下
+//////                Log.i(TAG, "ACTION_DOWN");
+//////                dynamicWeatherView.onPause();
+//////                break;
+////            case MotionEvent.ACTION_MOVE://移动
+////                Log.i(TAG, "ACTION_MOVE");
 ////                dynamicWeatherView.onPause();
 ////                break;
-//            case MotionEvent.ACTION_MOVE://移动
-//                Log.i(TAG, "ACTION_MOVE");
-//                dynamicWeatherView.onPause();
-//                break;
-//            case MotionEvent.ACTION_UP://松开
-//                Log.i(TAG, "ACTION_UP");
-//
-//                dynamicWeatherView.onResume();
-//                break;
-//        }
-        return super.dispatchTouchEvent(ev);
-//        return true;
-    }
+////            case MotionEvent.ACTION_UP://松开
+////                Log.i(TAG, "ACTION_UP");
+////
+////                dynamicWeatherView.onResume();
+////                break;
+////        }
+//        return super.dispatchTouchEvent(ev);
+////        return true;
+//    }
 
 
     @Override
@@ -405,7 +405,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
             dynamicWeatherView.onPause();
 
-        Log.i(TAG,"onMenuOpened" + featureId);
+//        Log.i(TAG,"onMenuOpened" + featureId);
         return super.onMenuOpened(featureId, menu);
 
     }
@@ -417,7 +417,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
 //        super.onPanelClosed(featureId, menu);
         if (!isItemSelected) {
-            Log.i(TAG,"onPanelClosed" + featureId);
+//            Log.i(TAG,"onPanelClosed" + featureId);
 //            if (isMenuClose)
                 dynamicWeatherView.onResume();
         }
@@ -433,7 +433,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.i(TAG,"onOptionsItemSelected");
+//        Log.i(TAG,"onOptionsItemSelected");
         isItemSelected=true;
         switch (item.getItemId()) {
             case R.id.change_position:
