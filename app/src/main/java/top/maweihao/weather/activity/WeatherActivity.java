@@ -220,7 +220,13 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     protected void onResume() {
         super.onResume();
         isItemSelected=false;
-        dynamicWeatherView.onResume();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                dynamicWeatherView.onResume();
+            }
+        },150);
+
     }
 
     @Override
@@ -397,13 +403,18 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
             }
         }
     }
-    boolean isMenuOpen=true;
-    boolean isMenuClose=true;
+
     //菜单打开时，暂停天气view绘制
     @Override
     public boolean onMenuOpened(int featureId, Menu menu) {
 
-            dynamicWeatherView.onPause();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                dynamicWeatherView.onPause();
+            }
+        },400);
+
 
 //        Log.i(TAG,"onMenuOpened" + featureId);
         return super.onMenuOpened(featureId, menu);
