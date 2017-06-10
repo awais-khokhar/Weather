@@ -46,4 +46,5 @@ dependencies {
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.18'
     //https://github.com/yqritc/RecyclerView-FlexibleDivider  分割线
     compile 'com.yqritc:recyclerview-flexibledivider:1.4.0'
+    compile 'com.alibaba:fastjson:1.1.58.android'
 }

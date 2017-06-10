@@ -29,21 +29,24 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 
 import java.lang.ref.WeakReference;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import top.maweihao.weather.R;
-import top.maweihao.weather.bean.ExtendedWeatherData;
-import top.maweihao.weather.bean.HourlyWeather;
+import top.maweihao.weather.bean.ForecastBean;
 import top.maweihao.weather.bean.MyLocation;
-import top.maweihao.weather.bean.WeatherData;
+import top.maweihao.weather.bean.RealTimeBean;
 import top.maweihao.weather.contract.WeatherActivityContract;
 import top.maweihao.weather.presenter.WeatherActivityPresenter;
 import top.maweihao.weather.service.SyncService;
@@ -58,12 +61,12 @@ import top.maweihao.weather.view.perDayWeatherView;
 
 import static top.maweihao.weather.R.id.skycon_text;
 import static top.maweihao.weather.R.id.temperature_text;
+import static top.maweihao.weather.util.Constants.DEBUG;
 import static top.maweihao.weather.util.Utility.chooseWeatherIcon;
 import static top.maweihao.weather.util.Utility.chooseWeatherIconOnly;
-import static top.maweihao.weather.util.Utility.intRoundString;
+import static top.maweihao.weather.util.Utility.intRoundFloat;
 
 public class WeatherActivity extends AppCompatActivity implements WeatherActivityContract.View {
-    public static boolean DEBUG = false;
 
     static final String TAG = "WeatherActivity";
     static final int THROUGH_IP = 0;
@@ -219,13 +222,13 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     @Override
     protected void onResume() {
         super.onResume();
-        isItemSelected=false;
+        isItemSelected = false;
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 dynamicWeatherView.onResume();
             }
-        },150);
+        }, 150);
 
     }
 
@@ -353,7 +356,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 if (state != CollapsingToolbarLayoutState.INTERNEDIATE) {
                     if (state == CollapsingToolbarLayoutState.COLLAPSED) {
                         toolbarLayout.setTitle(null);
-                        if (toolBarLinearLayout.getVisibility()==View.INVISIBLE)
+                        if (toolBarLinearLayout.getVisibility() == View.INVISIBLE)
                             toolBarLinearLayout.setVisibility(View.VISIBLE);
                     }
                     state = CollapsingToolbarLayoutState.INTERNEDIATE;//修改状态标记为中间
@@ -413,14 +416,16 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
             public void run() {
                 dynamicWeatherView.onPause();
             }
-        },400);
+        }, 400);
 
 
 //        Log.i(TAG,"onMenuOpened" + featureId);
         return super.onMenuOpened(featureId, menu);
 
     }
-    boolean isItemSelected=false;
+
+    boolean isItemSelected = false;
+
     //菜单关闭时，重启天气view绘制
     @Override
     public void onPanelClosed(int featureId, Menu menu) {
@@ -430,7 +435,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         if (!isItemSelected) {
 //            Log.i(TAG,"onPanelClosed" + featureId);
 //            if (isMenuClose)
-                dynamicWeatherView.onResume();
+            dynamicWeatherView.onResume();
         }
 //        isMenuClose = false;
     }
@@ -445,7 +450,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 //        Log.i(TAG,"onOptionsItemSelected");
-        isItemSelected=true;
+        isItemSelected = true;
         switch (item.getItemId()) {
             case R.id.change_position:
                 Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
@@ -494,7 +499,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    String[] per={Manifest.permission.ACCESS_FINE_LOCATION,
+    String[] per = {Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,};
 
     /**
@@ -562,8 +567,9 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                         + (System.currentTimeMillis() - weatherFullLastUpdateTime) / 1000 + "s ago");
             }
             lastUpdateTime.setText(Utility.getTime(getApplicationContext(), weatherNowLastUpdateTime));
-            WeatherData wd = Utility.handleCurrentWeatherResponse(weatherNow);
-            showCurrentWeatherInfo(wd);
+//            WeatherData wd = Utility.handleCurrentWeatherResponse(weatherNow);
+            RealTimeBean bean = JSON.parseObject(weatherNow, RealTimeBean.class);
+            showCurrentWeatherInfo(bean);
             presenter.getFullWeatherDataForJson(weatherFull);
 
             if (autoLocate)
@@ -691,7 +697,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
      *刷新24小时内的天气的自定义 view
      */
     @Override
-    public void showHourlyWeatherInfo(final ArrayList<HourlyWeather> hourlyWeathers) {
+    public void showHourlyWeatherInfo(final ForecastBean.ResultBean.HourlyBean hourlyBean) {
 
         handler.post(new Runnable() {
             @Override
@@ -699,26 +705,27 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 HScrollView hScrollView = (HScrollView) findViewById(R.id.HScrollView);
                 hourlyWeatherView mLineChartView = (hourlyWeatherView) findViewById(R.id.simpleLineChart);
                 ArrayList<String> xItemArray = new ArrayList<>();
-                for (HourlyWeather hourlyWeather : hourlyWeathers) {
-                    xItemArray.add(Utility.ampm(hourlyWeather.getDatetime().substring(11, 13)));
-                }
+//                for (ForecastBean.ResultBean.HourlyBean.TemperatureBean hourlyWeather : hourlyBean.getTemperature()) {
+//                    xItemArray.add(Utility.ampm(hourlyWeather.getDatetime().substring(11, 13)));
+//                }
                 //天气
                 ArrayList<String> weatherArray = new ArrayList<>();
-                for (HourlyWeather hourlyWeather : hourlyWeathers) {
-                    weatherArray.add(hourlyWeather.getSkyon());
+                for (ForecastBean.ResultBean.HourlyBean.SkyconBean hourlyWeather : hourlyBean.getSkycon()) {
+                    weatherArray.add(hourlyWeather.getValue());
+                    xItemArray.add(Utility.ampm(hourlyWeather.getDatetime().substring(11, 13)));
                 }
                 //温度
                 ArrayList<Integer> yItemArray = new ArrayList<>();
 //                StringBuilder stringBuilder = new StringBuilder();
-                for (HourlyWeather hourlyWeather : hourlyWeathers) {
-                    yItemArray.add(intRoundString(hourlyWeather.getTemperature()));
+                for (ForecastBean.ResultBean.HourlyBean.TemperatureBean hourlyWeather : hourlyBean.getTemperature()) {
+                    yItemArray.add(intRoundFloat(hourlyWeather.getValue()));
 //                    stringBuilder.append(hourlyWeather.getTemperature()).append(" ");
                 }
 //                Log.d(TAG, "run: sb" + stringBuilder);
-
+                //降水强度
                 ArrayList<Float> precipitation = new ArrayList<>();
-                for (HourlyWeather hourlyWeather : hourlyWeathers) {
-                    precipitation.add(Float.parseFloat(hourlyWeather.getPrecipitation()));
+                for (ForecastBean.ResultBean.HourlyBean.PrecipitationBean hourlyWeather : hourlyBean.getPrecipitation()) {
+                    precipitation.add(hourlyWeather.getValue());
                 }
 
                 mLineChartView.setXItem(xItemArray);
@@ -736,26 +743,37 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
      * 展示未来5天的天气
      */
     @Override
-    public void showDailyWeatherInfo(final ArrayList<ExtendedWeatherData> weatherDatas) {
-        if (weatherDatas.size() == 5) {
+    public void showDailyWeatherInfo(final ForecastBean.ResultBean.DailyBean dailyBean) {
+        if (dailyBean.getStatus().equals("ok")) {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
                     for (int i = 0; i < 5; i++) {
-                        String[] simpleDate = weatherDatas.get(i).getDate().split("-");
-                        day[i].setDate(simpleDate[1] + '/' + simpleDate[2]);
-                        day[i].setTemperature(Utility.roundString(weatherDatas.get(i).getMinTemperature()) + '/'
-                                + Utility.roundString(weatherDatas.get(i).getMaxTemperature()) + "ºC");
-                        day[i].setIcon(chooseWeatherIconOnly(weatherDatas.get(i).getSkycon(), Float.parseFloat(weatherDatas.get(i).getIntensity()), HOURLY_MODE));
+                        SimpleDateFormat oldsdf = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat newsdf = new SimpleDateFormat("MM/dd");
+                        try {
+                            Date date =oldsdf.parse(dailyBean.getSkycon().get(i).getDate());
+                            day[i].setDate(newsdf.format(date));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+//                        String[] simpleDate = weatherDatas.get(i).getDate().split("-");
+//                        day[i].setDate(simpleDate[1] + '/' + simpleDate[2]);
+                        day[i].setTemperature(Utility.stringRoundFloat(dailyBean.getTemperature().get(i).getMin()) + '/'
+                                + Utility.stringRoundFloat(dailyBean.getTemperature().get(i).getMax()) + "ºC");
+                        day[i].setIcon(chooseWeatherIconOnly(dailyBean.getSkycon().get(i).getValue(), dailyBean.getPrecipitation().get(i).getMax(), HOURLY_MODE));
                     }
                     day[0].setDate(getResources().getString(R.string.today));
                     day[1].setDate(getResources().getString(R.string.tomorrow));
-                    sunrise_text.setText(weatherDatas.get(0).getSunriseTime());
-                    sunset_text.setText(weatherDatas.get(0).getSunsetTime());
-                    sunTimeView.setTime(weatherDatas.get(0).getSunriseTime(), weatherDatas.get(0).getSunsetTime());
-                    uv_text.setText(weatherDatas.get(0).getUvDesc());
-                    carWashing_text.setText(weatherDatas.get(0).getCarWashingDesc());
-                    dressing_text.setText(weatherDatas.get(0).getDressingDesc());
+                    String sunRise=dailyBean.getAstro().get(0).getSunrise().getTime();
+                    String sunSet=dailyBean.getAstro().get(0).getSunrise().getTime();
+                    sunrise_text.setText(sunRise);
+                    sunset_text.setText(sunSet);
+                    sunTimeView.setTime(sunRise, sunSet);
+                    uv_text.setText(dailyBean.getUltraviolet().get(0).getDesc());
+                    carWashing_text.setText(dailyBean.getCarWashing().get(0).getDesc());
+                    dressing_text.setText(dailyBean.getDressing().get(0).getDesc());
                     if (isDone) {
                         stopSwipe();
                         isDone = false;
@@ -771,22 +789,30 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
      * 展示现在的天气
      */
     @Override
-    public void showCurrentWeatherInfo(final WeatherData weatherData) {
+    public void showCurrentWeatherInfo(final RealTimeBean realTimeBean) {
         handler.post(new Runnable() {
             @Override
             public void run() {
 //                final RemoteViews remoteViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.simple_weather_widget);
-                String temperature = Utility.roundString(weatherData.getTemperature());
-                String skycon = weatherData.getSkycon();
-                String humidity = weatherData.getHumidity();
-                String PM25 = weatherData.getPm25();
-                float intensity = Float.parseFloat(weatherData.getIntensity());
-                String aqi = weatherData.getAqi();
+
+//                String temperature = Utility.roundString(weatherData.getTemperature());
+//                String skycon = weatherData.getSkycon();
+//                String humidity = weatherData.getHumidity();
+//                String PM25 = weatherData.getPm25();
+//                float intensity = Float.parseFloat(weatherData.getIntensity());
+//                String aqi = weatherData.getAqi();
+                String temperature = Utility.stringRoundFloat(realTimeBean.getResult().getTemperature());
+                String skycon = realTimeBean.getResult().getSkycon();
+                float humidity = realTimeBean.getResult().getHumidity();
+                float PM25 = realTimeBean.getResult().getPm25();
+                float intensity = realTimeBean.getResult().getPrecipitation().getLocal().getIntensity();
+                float aqi = realTimeBean.getResult().getAqi();
+
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this);
                 String countyName = prefs.getString("countyName", null);
-                if (weatherData.getWind() != null) {
-                    setWindDirection(weatherData.getWind().getDirection());
-                    setWindLevel(weatherData.getWind().getSpeed());
+                if (realTimeBean.getResult().getWind() != null) {
+                    setWindDirection(realTimeBean.getResult().getWind().getDirection());
+                    setWindLevel(realTimeBean.getResult().getWind().getSpeed());
                 }
                 if (!TextUtils.isEmpty(countyName)) {
                     setCounty(countyName);
@@ -794,10 +820,10 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                     if (DEBUG)
                         Log.d(TAG, "showCurrentWeatherInfo: countyName == null");
                 }
-                PMCircle.setValue(Integer.valueOf(PM25));
+                PMCircle.setValue((int) PM25);
                 temperatureText.setText(temperature);
-                AQICircle.setValue(Integer.valueOf(aqi));
-                Float hum = Float.parseFloat(humidity) * 100;
+                AQICircle.setValue((int) aqi);
+                Float hum = humidity * 100;
                 hum_text.setText(hum.toString().substring(0, 2) + "%");
                 String weatherString = chooseWeatherIcon(skycon, intensity, MINUTELY_MODE);
                 if (weatherString != null) {

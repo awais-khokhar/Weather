@@ -34,7 +34,7 @@ import top.maweihao.weather.db.Province;
 import top.maweihao.weather.presenter.ChoosePositionActivityPresenter;
 import top.maweihao.weather.util.Utility;
 
-import static top.maweihao.weather.activity.WeatherActivity.DEBUG;
+import static top.maweihao.weather.util.Constants.DEBUG;
 
 public class ChoosePositionActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, ChoosePositionActivityContract.View {
 

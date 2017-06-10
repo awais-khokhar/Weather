@@ -10,8 +10,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.alibaba.fastjson.JSON;
 
 import java.io.IOException;
 
@@ -20,8 +19,11 @@ import okhttp3.Request;
 import okhttp3.Response;
 import top.maweihao.weather.R;
 import top.maweihao.weather.activity.WeatherActivity;
+import top.maweihao.weather.bean.ForecastBean;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.widget.BigWeatherWidget;
+
+import static top.maweihao.weather.util.Constants.DEBUG;
 
 public class BigWidgetUpdateService extends Service {
 
@@ -37,7 +39,7 @@ public class BigWidgetUpdateService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (WeatherActivity.DEBUG) {
+        if (DEBUG) {
             Log.d(TAG, "onStartCommand: ");
         }
         updateWidget();
@@ -54,7 +56,7 @@ public class BigWidgetUpdateService extends Service {
         if (weatherFull != null && System.currentTimeMillis() - weatherFullLastUpdateTime < minInterval * 60 * 1000) {
             updateWeather(weatherFull, countyName);
         } else {
-            if (WeatherActivity.DEBUG) {
+            if (DEBUG) {
                 Log.d(TAG, "updateWidget: weather data out of date");
             }
             final String fUrl = prefs.getString("furl", null);
@@ -82,33 +84,41 @@ public class BigWidgetUpdateService extends Service {
         }
     }
 
-    private void updateWeather(String weatherNow, String countyName) {
+    private void updateWeather(String weatherJson, String countyName) {
         RemoteViews bigViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.big_weather_widget);
-        try {
-            JSONObject jsonObject = new JSONObject(weatherNow);
-            JSONObject result = jsonObject.getJSONObject("result");
-            JSONObject minutely = result.getJSONObject("minutely");
-            JSONObject hourly = result.getJSONObject("hourly");
-            String description = minutely.getString("description");
-            bigViews.setTextViewText(R.id.big_widget_description, description);
+//        try {
+        ForecastBean bean = JSON.parseObject(weatherJson, ForecastBean.class);
 
-            int tem = Utility.intRoundString(((JSONObject) (hourly.getJSONArray("temperature").get(0))).getString("value"));
-            String skycon = ((JSONObject) (hourly.getJSONArray("skycon").get(0))).getString("value");
-            String intensity = ((JSONObject) (hourly.getJSONArray("precipitation").get(0))).getString("value");
-            String icon = Utility.chooseWeatherIcon(skycon, Float.parseFloat(intensity), WeatherActivity.MINUTELY_MODE);
-            if (icon != null) {
-                String[] ws = icon.split("and");
-                bigViews.setImageViewResource(R.id.big_widget_skycon, Integer.parseInt(ws[0]));
-                bigViews.setTextViewText(R.id.big_widget_info, countyName + "\n" + ws[1] + ' ' + tem + '°');
-                bigViews.setTextViewText(R.id.big_widget_refresh_time, Utility.parseTime());
-            } else {
-                Log.e(TAG, "updateWeather: icon == null");
-            }
-            Log.d(TAG, "successful" + tem + skycon + intensity);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "parseNowJson: error");
+        String description = bean.getResult().getMinutely().getDescription();
+
+//            JSONObject jsonObject = new JSONObject(weatherNow);
+//            JSONObject result = jsonObject.getJSONObject("result");
+//            JSONObject minutely = result.getJSONObject("minutely");
+//            JSONObject hourly = result.getJSONObject("hourly");
+//            String description = minutely.getString("description");
+        bigViews.setTextViewText(R.id.big_widget_description, description);
+        int tem = Utility.intRoundFloat(bean.getResult().getHourly().getTemperature().get(0).getValue());
+        String skycon = bean.getResult().getHourly().getSkycon().get(0).getValue();
+        float intensity = bean.getResult().getHourly().getPrecipitation().get(0).getValue();
+        String icon = Utility.chooseWeatherIcon(skycon, intensity, WeatherActivity.MINUTELY_MODE);
+//            int tem = Utility.intRoundString(((JSONObject) (hourly.getJSONArray("temperature").get(0))).getString("value"));
+//            String skycon = ((JSONObject) (hourly.getJSONArray("skycon").get(0))).getString("value");
+//            String intensity = ((JSONObject) (hourly.getJSONArray("precipitation").get(0))).getString("value");
+//            String icon = Utility.chooseWeatherIcon(skycon, Float.parseFloat(intensity), WeatherActivity.MINUTELY_MODE);
+        if (icon != null) {
+            String[] ws = icon.split("and");
+            bigViews.setImageViewResource(R.id.big_widget_skycon, Integer.parseInt(ws[0]));
+            bigViews.setTextViewText(R.id.big_widget_info, countyName + "\n" + ws[1] + ' ' + tem + '°');
+            bigViews.setTextViewText(R.id.big_widget_refresh_time, Utility.parseTime());
+        } else {
+            Log.e(TAG, "updateWeather: icon == null");
         }
+        Log.d(TAG, "successful" + tem + skycon + intensity);
+//        }
+//        catch (JSONException e) {
+//            e.printStackTrace();
+//            Log.e(TAG, "parseNowJson: error");
+//        }
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
         appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext(), BigWeatherWidget.class), bigViews);
         stopSelf();

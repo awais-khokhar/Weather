@@ -2,12 +2,9 @@ package top.maweihao.weather.presenter;
 
 import android.content.Context;
 
-import java.util.ArrayList;
-
-import top.maweihao.weather.bean.ExtendedWeatherData;
-import top.maweihao.weather.bean.WeatherData;
+import top.maweihao.weather.bean.ForecastBean;
+import top.maweihao.weather.bean.RealTimeBean;
 import top.maweihao.weather.contract.WeatherActivityContract;
-import top.maweihao.weather.bean.HourlyWeather;
 import top.maweihao.weather.model.WeatherActivityModel;
 
 /**
@@ -34,13 +31,13 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
      * 展示未来5天的天气
      */
     @Override
-    public void setDailyWeatherInfo(final ArrayList<ExtendedWeatherData> weatherDatas) {
-        weatherView.showDailyWeatherInfo(weatherDatas);
+    public void setDailyWeatherInfo(final ForecastBean.ResultBean.DailyBean dailyBean) {
+        weatherView.showDailyWeatherInfo(dailyBean);
     }
 
     @Override
-    public void setHourlyWeatherInfo(final ArrayList<HourlyWeather> hourlyWeathers) {
-        weatherView.showHourlyWeatherInfo(hourlyWeathers);
+    public void setHourlyWeatherInfo(final ForecastBean.ResultBean.HourlyBean hourlyBean) {
+        weatherView.showHourlyWeatherInfo(hourlyBean);
     }
 
     /**
@@ -69,8 +66,8 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
 
 
     @Override
-    public void setCurrentWeatherInfo(WeatherData weatherData) {
-        weatherView.showCurrentWeatherInfo(weatherData);
+    public void setCurrentWeatherInfo(RealTimeBean realTimeBean) {
+        weatherView.showCurrentWeatherInfo(realTimeBean);
     }
 
     @Override

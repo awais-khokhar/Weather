@@ -15,17 +15,11 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.alibaba.fastjson.JSON;
 
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -33,10 +27,10 @@ import okhttp3.Response;
 import top.maweihao.weather.R;
 import top.maweihao.weather.activity.SettingActivity;
 import top.maweihao.weather.activity.WeatherActivity;
-import top.maweihao.weather.bean.temperature;
+import top.maweihao.weather.bean.ForecastBean;
 import top.maweihao.weather.util.Utility;
 
-import static top.maweihao.weather.activity.WeatherActivity.DEBUG;
+import static top.maweihao.weather.util.Constants.DEBUG;
 
 /**
  * 后台刷新service， 每晚提示第二天温差
@@ -46,7 +40,7 @@ import static top.maweihao.weather.activity.WeatherActivity.DEBUG;
 public class SyncService extends Service {
 
     static final String TAG = "SyncService";
-    List<temperature> temList;
+
     Boolean isChinese = false;
 
     public static boolean isStarSendNotification; //标记
@@ -75,7 +69,7 @@ public class SyncService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand: ");
-        if (isStarSendNotification) //onCreate只会初始化一次，service初始化的时候不执行通知发送
+        if (isStarSendNotification) //标记是否发送通知
             fetchData();
         startAgain();
         return START_NOT_STICKY;
@@ -86,11 +80,7 @@ public class SyncService extends Service {
         new Thread(new Runnable() {
             @Override
             public void run() {
-//                try {
-//                    Thread.sleep(3 * 1000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
+
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 String fUrl = prefs.getString("furl", null);
                 if (fUrl != null) {
@@ -99,17 +89,16 @@ public class SyncService extends Service {
                                 .url(fUrl).build();
                         Response response = client.newCall(request).execute();
                         String responseData = response.body().string();
-                        parseJSON(responseData);
-                        temperature temp = temList.get(0);
-                        temperature temp2 = temList.get(1);
-                        calTemDiff(Utility.intRoundString(temp.getMax()), Utility.intRoundString(temp.getMin()),
-                                Utility.intRoundString(temp2.getMax()), Utility.intRoundString(temp2.getMin()));
+                        //fastJson解析数据
+                        ForecastBean forecastBean = JSON.parseObject(responseData, ForecastBean.class);
+                        ForecastBean.ResultBean.DailyBean.TemperatureBeanX temp = forecastBean.getResult().getDaily().getTemperature().get(0);
+                        ForecastBean.ResultBean.DailyBean.TemperatureBeanX temp2 = forecastBean.getResult().getDaily().getTemperature().get(1);
+//                        parseJSON(responseData);
+                        calTemDiff(Utility.intRoundFloat(temp.getMax()), Utility.intRoundFloat(temp.getMin()),
+                                Utility.intRoundFloat(temp2.getMax()), Utility.intRoundFloat(temp2.getMin()));
                     } catch (IOException e) {
                         e.printStackTrace();
                         Log.e(TAG, "onStartCommand: okhttp error");
-                    } catch (JSONException e) {
-                        Log.e(TAG, "onStartCommand: Gson error");
-                        e.printStackTrace();
                     }
                 } else {
                     Log.e(TAG, "onStartCommand: furl == null");
@@ -127,9 +116,7 @@ public class SyncService extends Service {
             splitTime = time.split(SettingActivity.TIME_SPLIT);
             GET_HOUR = splitTime[0];
             GET_MINUTE = splitTime[1];
-        }
-        else
-        {
+        } else {
             GET_HOUR = "18";
             GET_MINUTE = "0";
         }
@@ -181,19 +168,7 @@ public class SyncService extends Service {
         manager.notify(1, notification);
     }
 
-    private void sendAlarmNotification(int id, String text) {
-        //to finish
-    }
 
-    private void parseJSON(String responseData) throws JSONException {
-        Gson gson = new Gson();
-        JSONObject all = new JSONObject(responseData);
-        JSONObject result = all.getJSONObject("result");
-        JSONObject daily = result.getJSONObject("daily");
-        JSONArray tem = daily.getJSONArray("temperature");
-        temList = gson.fromJson(tem.toString(), new TypeToken<List<temperature>>() {
-        }.getType());
-    }
 
     /**
      * 计算温差，发送通知
@@ -211,10 +186,10 @@ public class SyncService extends Service {
                 String tem = (maxDiff > 0 || minDiff > 0) ? getResources().getString(R.string.warmer) : getResources().getString(R.string.colder);
                 if (isChinese) {
                     sendNotification(dayOfWeek + "将" + tem + ' ' + Math.max(a, b) + "° ",
-                            todayMin + "° - " + todayMax + "° -> " + tomMin + "° - " + tomMax + "° ");
+                            todayMin + "°/" + todayMax + "°  ···>  " + tomMin + "°/" + tomMax + "° ");
                 } else {
                     sendNotification(Math.max(a, b) + "° " + tem + " than " + dayOfWeek,
-                            todayMin + "° - " + todayMax + "° -> " + tomMin + "° - " + tomMax + "° ");
+                            todayMin + "°/" + todayMax + "°  ···>  " + tomMin + "°/" + tomMax + "° ");
                 }
             }
         } else {

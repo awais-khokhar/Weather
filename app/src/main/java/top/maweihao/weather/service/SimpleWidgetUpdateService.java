@@ -10,8 +10,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.alibaba.fastjson.JSON;
 
 import java.io.IOException;
 
@@ -20,8 +19,11 @@ import okhttp3.Request;
 import okhttp3.Response;
 import top.maweihao.weather.R;
 import top.maweihao.weather.activity.WeatherActivity;
+import top.maweihao.weather.bean.RealTimeBean;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.widget.SimpleWeatherWidget;
+
+import static top.maweihao.weather.util.Constants.DEBUG;
 
 public class SimpleWidgetUpdateService extends Service {
 
@@ -42,7 +44,7 @@ public class SimpleWidgetUpdateService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (WeatherActivity.DEBUG) {
+        if (DEBUG) {
             Log.d(TAG, "onStartCommand: ");
         }
         updateWidget();
@@ -60,7 +62,7 @@ public class SimpleWidgetUpdateService extends Service {
         if (weatherNow != null && System.currentTimeMillis() - weatherNowLastUpdateTime < minInterval * 60 * 1000) {
             updateWeather(weatherNow, countyName);
         } else {
-            if (WeatherActivity.DEBUG) {
+            if (DEBUG) {
                 Log.d(TAG, "updateWidget: weather data out of date");
             }
             final String cUrl = prefs.getString("curl", null);
@@ -89,26 +91,31 @@ public class SimpleWidgetUpdateService extends Service {
     private void updateWeather(String weatherNow, String countyName) {
         RemoteViews simpleViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.simple_weather_widget);
 //        RemoteViews tallViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.tall_weather_widget);
-        try {
-            JSONObject jsonObject = new JSONObject(weatherNow);
-            JSONObject result = jsonObject.getJSONObject("result");
-            int tem = Utility.intRoundString(result.getString("temperature"));
-            String skycon = result.getString("skycon");
-            String intensity = result.getJSONObject("precipitation").getJSONObject("local").getString("intensity");
-            String icon = Utility.chooseWeatherIcon(skycon, Float.parseFloat(intensity), WeatherActivity.MINUTELY_MODE);
-            if (icon != null) {
-                String[] ws = icon.split("and");
-                simpleViews.setImageViewResource(R.id.simple_widget_skycon, Integer.parseInt(ws[0]));
-                simpleViews.setTextViewText(R.id.simple_widget_info, countyName + " | " + ws[1] + ' ' + tem + '°');
+//        try {
+        RealTimeBean bean = JSON.parseObject(weatherNow, RealTimeBean.class);
+        int tem = Utility.intRoundFloat(bean.getResult().getTemperature());
+        String skycon = bean.getResult().getSkycon();
+        float intensity = bean.getResult().getPrecipitation().getLocal().getIntensity();
+        String icon = Utility.chooseWeatherIcon(skycon, intensity, WeatherActivity.MINUTELY_MODE);
+//            JSONObject jsonObject = new JSONObject(weatherNow);
+//            JSONObject result = jsonObject.getJSONObject("result");
+//            int tem = Utility.intRoundString(result.getString("temperature"));
+//            String skycon = result.getString("skycon");
+//            String intensity = result.getJSONObject("precipitation").getJSONObject("local").getString("intensity");
+//            String icon = Utility.chooseWeatherIcon(skycon, Float.parseFloat(intensity), WeatherActivity.MINUTELY_MODE);
+        if (icon != null) {
+            String[] ws = icon.split("and");
+            simpleViews.setImageViewResource(R.id.simple_widget_skycon, Integer.parseInt(ws[0]));
+            simpleViews.setTextViewText(R.id.simple_widget_info, countyName + " | " + ws[1] + ' ' + tem + '°');
 //                tallViews.setImageViewResource(R.id.tall_widget_skycon, Integer.parseInt(ws[0]));
 //                tallViews.setTextViewText(R.id.tall_widget_info, countyName + " | " + ws[1] + ' ' + tem + '°');
 //                        bigViews.setImageViewResource(R.id.big_widget_skycon, Integer.parseInt(ws[0]));
 //                        bigViews.setTextViewText(R.id.tall_widget_info, countyName + "\n" + ws[1] + ' ' + tem + '°');
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "parseNowJson: error");
         }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            Log.e(TAG, "parseNowJson: error");
+//        }
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
         appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext(), SimpleWeatherWidget.class), simpleViews);
 //        appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext(), TallWeatherWidget.class), tallViews);

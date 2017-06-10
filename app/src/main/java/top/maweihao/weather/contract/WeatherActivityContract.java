@@ -1,10 +1,7 @@
 package top.maweihao.weather.contract;
 
-import java.util.ArrayList;
-
-import top.maweihao.weather.bean.ExtendedWeatherData;
-import top.maweihao.weather.bean.WeatherData;
-import top.maweihao.weather.bean.HourlyWeather;
+import top.maweihao.weather.bean.ForecastBean;
+import top.maweihao.weather.bean.RealTimeBean;
 
 /**
  * Created by limuyang on 2017/5/31.
@@ -15,11 +12,11 @@ public interface WeatherActivityContract {
 
         void setRainInfo(String str);
 
-        void showDailyWeatherInfo(final ArrayList<ExtendedWeatherData> weatherDatas);
+        void showDailyWeatherInfo(final ForecastBean.ResultBean.DailyBean dailyBean);
 
-        void showHourlyWeatherInfo(final ArrayList<HourlyWeather> hourlyWeathers);
+        void showHourlyWeatherInfo(final ForecastBean.ResultBean.HourlyBean hourlyBean);
 
-        void showCurrentWeatherInfo(WeatherData weatherData);
+        void showCurrentWeatherInfo(RealTimeBean realTimeBean);
 
         void setLastUpdateTime();
 
@@ -35,9 +32,9 @@ public interface WeatherActivityContract {
     public interface Presenter {
         void rainInfo(String str);
 
-        void setDailyWeatherInfo(final ArrayList<ExtendedWeatherData> weatherDatas);
+        void setDailyWeatherInfo(final ForecastBean.ResultBean.DailyBean dailyBean);
 
-        void setHourlyWeatherInfo(final ArrayList<HourlyWeather> hourlyWeathers);
+        void setHourlyWeatherInfo(final ForecastBean.ResultBean.HourlyBean hourlyBean);
 
         void isUpdate(boolean bool);
 
@@ -45,7 +42,7 @@ public interface WeatherActivityContract {
 
         void getFullWeatherDataForJson(String responseText);
 
-        void setCurrentWeatherInfo(WeatherData weatherData);
+        void setCurrentWeatherInfo(RealTimeBean realTimeBean);
 
         void setCounty(String countyStr);
 

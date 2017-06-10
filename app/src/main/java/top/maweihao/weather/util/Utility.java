@@ -10,8 +10,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 
-import com.google.gson.Gson;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,21 +19,19 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Locale;
 
 import top.maweihao.weather.R;
-import top.maweihao.weather.bean.WeatherData;
 import top.maweihao.weather.db.City;
 import top.maweihao.weather.db.County;
 import top.maweihao.weather.db.Province;
 import top.maweihao.weather.view.dynamicweather.BaseDrawer;
 
-import static top.maweihao.weather.activity.WeatherActivity.DEBUG;
 import static top.maweihao.weather.activity.WeatherActivity.HOURLY_MODE;
 import static top.maweihao.weather.activity.WeatherActivity.MINUTELY_MODE;
+import static top.maweihao.weather.util.Constants.DEBUG;
 
 
 /**
@@ -53,67 +49,67 @@ public class Utility {
      * @param url json
      * @return WeatherData 类
      */
-    public static WeatherData handleCurrentWeatherResponse(String url) {
-        WeatherData wd = null;
-        try {
-            JSONObject allAttributes = new JSONObject(url);
-            String result = allAttributes.getString("result");
-            JSONObject resultJSON = allAttributes.getJSONObject("result");
-            JSONObject precipitationJSON = resultJSON.getJSONObject("precipitation");
-            JSONObject localJSON = precipitationJSON.getJSONObject("local");
-            Gson gson = new Gson();
-            wd = gson.fromJson(result, WeatherData.class);
-            String intensity = localJSON.getString("intensity");
-            wd.setIntensity(intensity);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "handleCurrentWeatherResponse: parse weather json error");
-        }
-        return wd;
-    }
+//    public static RealTimeBean handleCurrentWeatherResponse(String url) {
+////        WeatherData wd = null;
+////        try {
+////            JSONObject allAttributes = new JSONObject(url);
+////            String result = allAttributes.getString("result");
+////            JSONObject resultJSON = allAttributes.getJSONObject("result");
+////            JSONObject precipitationJSON = resultJSON.getJSONObject("precipitation");
+////            JSONObject localJSON = precipitationJSON.getJSONObject("local");
+////            Gson gson = new Gson();
+////            wd = gson.fromJson(result, WeatherData.class);
+////            String intensity = localJSON.getString("intensity");
+////            wd.setIntensity(intensity);
+////        } catch (JSONException e) {
+////            e.printStackTrace();
+////            Log.e(TAG, "handleCurrentWeatherResponse: parse weather json error");
+////        }
+//        return JSON.parseObject(url,RealTimeBean.class);
+//    }
 
-    /**
-     * 大致解析json
-     *
-     * @return <JSONArray> list
-     */
-    public static ArrayList<JSONArray> handleFullWeatherResponse(String url) {
-        ArrayList<JSONArray> jsonArrays = new ArrayList<>();
-        try {
-            JSONObject all = new JSONObject(url);
-            JSONObject result = all.getJSONObject("result");
-            JSONObject daily = result.getJSONObject("daily");
-            JSONObject hourly = result.getJSONObject("hourly");
-            JSONArray skycon = daily.getJSONArray("skycon");
-            JSONArray humidity = daily.getJSONArray("humidity");
-            JSONArray temperature = daily.getJSONArray("temperature");
-            JSONArray precipitation = daily.getJSONArray("precipitation");
-            JSONArray astro = daily.getJSONArray("astro");
-            JSONArray uv = daily.getJSONArray("ultraviolet");
-            JSONArray dressing = daily.getJSONArray("dressing");
-            JSONArray carWashing = daily.getJSONArray("carWashing");
-
-            JSONArray hourly_skycon = hourly.getJSONArray("skycon");
-            JSONArray hourly_temperature = hourly.getJSONArray("temperature");
-            JSONArray hourly_precipitation = hourly.getJSONArray("precipitation");
-            jsonArrays.add(0, skycon);
-            jsonArrays.add(1, humidity);
-            jsonArrays.add(2, temperature);
-            jsonArrays.add(3, precipitation);
-            jsonArrays.add(4, astro);
-            jsonArrays.add(5, hourly_skycon);
-            jsonArrays.add(6, hourly_temperature);
-            jsonArrays.add(7, hourly_precipitation);
-            jsonArrays.add(8, uv);
-            jsonArrays.add(9, dressing);
-            jsonArrays.add(10, carWashing);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "handleFewDaysWeatherResponse: parse weather json error");
-        }
-        return jsonArrays;
-    }
+//    /**
+//     * 大致解析json
+//     *
+//     * @return <JSONArray> list
+//     */
+//    public static ArrayList<JSONArray> handleFullWeatherResponse(String url) {
+//        ArrayList<JSONArray> jsonArrays = new ArrayList<>();
+//        try {
+//            JSONObject all = new JSONObject(url);
+//            JSONObject result = all.getJSONObject("result");
+//            JSONObject daily = result.getJSONObject("daily");
+//            JSONObject hourly = result.getJSONObject("hourly");
+//            JSONArray skycon = daily.getJSONArray("skycon");
+//            JSONArray humidity = daily.getJSONArray("humidity");
+//            JSONArray temperature = daily.getJSONArray("temperature");
+//            JSONArray precipitation = daily.getJSONArray("precipitation");
+//            JSONArray astro = daily.getJSONArray("astro");
+//            JSONArray uv = daily.getJSONArray("ultraviolet");
+//            JSONArray dressing = daily.getJSONArray("dressing");
+//            JSONArray carWashing = daily.getJSONArray("carWashing");
+//
+//            JSONArray hourly_skycon = hourly.getJSONArray("skycon");
+//            JSONArray hourly_temperature = hourly.getJSONArray("temperature");
+//            JSONArray hourly_precipitation = hourly.getJSONArray("precipitation");
+//            jsonArrays.add(0, skycon);
+//            jsonArrays.add(1, humidity);
+//            jsonArrays.add(2, temperature);
+//            jsonArrays.add(3, precipitation);
+//            jsonArrays.add(4, astro);
+//            jsonArrays.add(5, hourly_skycon);
+//            jsonArrays.add(6, hourly_temperature);
+//            jsonArrays.add(7, hourly_precipitation);
+//            jsonArrays.add(8, uv);
+//            jsonArrays.add(9, dressing);
+//            jsonArrays.add(10, carWashing);
+//
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//            Log.e(TAG, "handleFewDaysWeatherResponse: parse weather json error");
+//        }
+//        return jsonArrays;
+//    }
 
     /**
      * choosePositionActivity 里用的方法，应该不用改
@@ -121,6 +117,7 @@ public class Utility {
     public static boolean handleProvinceResponse(String response) {
         if (!TextUtils.isEmpty(response)) {
             try {
+
                 JSONArray allProvinces = new JSONArray(response);
                 for (int i = 0; i < allProvinces.length(); i++) {
                     JSONObject provinceObject = allProvinces.getJSONObject(i);
@@ -190,17 +187,18 @@ public class Utility {
     }
 
     /**
-     * 把 代表 float 的 String 四舍五入再返回，用来处理温度的
+     * 把 float  四舍五入再返回 String，用来处理温度的
      */
-    public static String roundString(String s) {
-        return String.valueOf(Math.round(Float.parseFloat(s)));
+    public static String stringRoundFloat(float f) {
+        return String.valueOf(Math.round(f));
     }
 
+
     /**
-     * 把 代表 float 的 String 四舍五入再返回 int，用来处理温度的
+     * 把  float 四舍五入再返回 int，用来处理温度的
      */
-    public static int intRoundString(String s) {
-        return Math.round(Float.parseFloat(s));
+    public static int intRoundFloat(float s) {
+        return Math.round(s);
     }
 
     /**

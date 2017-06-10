@@ -6,31 +6,30 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.alibaba.fastjson.JSON;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
-import top.maweihao.weather.bean.ExtendedWeatherData;
-import top.maweihao.weather.bean.WeatherData;
+import top.maweihao.weather.bean.BaiDu.BaiDuChoosePositionBean;
+import top.maweihao.weather.bean.BaiDu.BaiDuCoordinateBean;
+import top.maweihao.weather.bean.BaiDu.BaiDuIPLocationBean;
+import top.maweihao.weather.bean.ForecastBean;
+import top.maweihao.weather.bean.RealTimeBean;
 import top.maweihao.weather.contract.WeatherActivityContract;
-import top.maweihao.weather.bean.HourlyWeather;
+import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.Utility;
 
-import static top.maweihao.weather.activity.WeatherActivity.DEBUG;
+import static top.maweihao.weather.util.Constants.DEBUG;
 import static top.maweihao.weather.activity.WeatherActivity.locationCoordinates;
-import static top.maweihao.weather.util.Utility.handleCurrentWeatherResponse;
 
 /**
- *
  * Created by limuyang on 2017/5/31.
  */
 
@@ -52,95 +51,67 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
      * @param responseText json
      */
     @Override
+    @SuppressWarnings("unchecked")
     public void jsonFullWeatherData(String responseText) {
-        ArrayList<ExtendedWeatherData> weatherDatas = new ArrayList<>(5);
-        ArrayList<HourlyWeather> hourlyWeathers = new ArrayList<>(24);
-        ArrayList<JSONArray> jsonArrays = moreHandleDailyWeatherResponse(responseText);
-        if (jsonArrays.size() == 11) {
-            for (int i = 0; i < 5; i++) {
-                try {
-                    ExtendedWeatherData wd = new ExtendedWeatherData();
-                    JSONObject skycon = jsonArrays.get(0).getJSONObject(i);
-                    JSONObject humidity = jsonArrays.get(1).getJSONObject(i);
-                    JSONObject temperatures = jsonArrays.get(2).getJSONObject(i);
-                    JSONObject precipitation = jsonArrays.get(3).getJSONObject(i);
-                    JSONObject astro = jsonArrays.get(4).getJSONObject(i);
-                    JSONObject uv = jsonArrays.get(8).getJSONObject(i);
-                    JSONObject dressing = jsonArrays.get(9).getJSONObject(i);
-                    JSONObject carWashing = jsonArrays.get(10).getJSONObject(i);
-                    wd.setDate(temperatures.getString("date"));
-                    wd.setMaxTemperature(temperatures.getString("max"));
-                    wd.setMinTemperature(temperatures.getString("min"));
-                    wd.setSkycon(skycon.getString("value"));
-                    wd.setHumidity(humidity.getString("max"));
-                    wd.setIntensity(precipitation.getString("max"));
-                    wd.setSunriseTime(astro.getJSONObject("sunrise").getString("time"));
-                    wd.setSunsetTime(astro.getJSONObject("sunset").getString("time"));
-                    wd.setUvIndex(uv.getInt("index"));
-                    wd.setUvDesc(uv.getString("desc"));
-                    wd.setDerssingIndex(dressing.getInt("index"));
-                    wd.setDressingDesc(dressing.getString("desc"));
-                    wd.setCarWashingIndex(carWashing.getInt("index"));
-                    wd.setCarWashingDesc(carWashing.getString("desc"));
-                    weatherDatas.add(i, wd);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    if (DEBUG)
-                        Log.e(TAG, "handleFullWeatherData: parse jsonArrays error");
-                }
-            }
-            for (int i = 0; i < 24; i++) {
-                try {
-                    HourlyWeather hw = new HourlyWeather();
-                    JSONObject skyon = jsonArrays.get(5).getJSONObject(i);
-                    JSONObject temperatures = jsonArrays.get(6).getJSONObject(i);
-                    JSONObject precipitation = jsonArrays.get(7).getJSONObject(i);
-                    hw.setDatetime(skyon.getString("datetime"));
-                    hw.setSkyon(skyon.getString("value"));
-                    hw.setPrecipitation(precipitation.getString("value"));
-                    hw.setTemperature(temperatures.getString("value"));
-                    hourlyWeathers.add(i, hw);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    if (DEBUG)
-                        Log.e(TAG, "handleFullWeatherData: parse jsonArrays error(hourly)");
-                }
-            }
-//            showDailyWeatherInfo(weatherDatas);
-//            showHourlyWeatherInfo(hourlyWeathers);
+        //fastJson解析数据
+        ForecastBean forecastBean = JSON.parseObject(responseText, ForecastBean.class);
+        if (forecastBean.getStatus().equals(Constants.STATUS_OK)) {
+            List list;
+            //返回的json是48小时的预报，截取前24小时
+            if ((list = forecastBean.getResult().getHourly().getSkycon()) != null)
+                forecastBean.getResult().getHourly().setSkycon(list.subList(0, 23));
+            if ((list = forecastBean.getResult().getHourly().getCloudrate()) != null)
+                forecastBean.getResult().getHourly().setCloudrate(list.subList(0, 23));
+            if ((list = forecastBean.getResult().getHourly().getAqi()) != null)
+                forecastBean.getResult().getHourly().setAqi(list.subList(0, 23));
+            if ((list = forecastBean.getResult().getHourly().getHumidity()) != null)
+                forecastBean.getResult().getHourly().setHumidity(list.subList(0, 23));
+            if ((list = forecastBean.getResult().getHourly().getPm25()) != null)
+                forecastBean.getResult().getHourly().setPm25(list.subList(0, 23));
+            if ((list = forecastBean.getResult().getHourly().getPrecipitation()) != null)
+                forecastBean.getResult().getHourly().setPrecipitation(list.subList(0, 23));
+            if ((list = forecastBean.getResult().getHourly().getWind()) != null)
+                forecastBean.getResult().getHourly().setWind(list.subList(0, 23));
+            if ((list = forecastBean.getResult().getHourly().getTemperature()) != null)
+                forecastBean.getResult().getHourly().setTemperature(list.subList(0, 23));
+            //截取前5天
+            if ((list = forecastBean.getResult().getDaily().getColdRisk()) != null)
+                forecastBean.getResult().getDaily().setColdRisk(list.subList(0, 5));
+            if ((list = forecastBean.getResult().getDaily().getTemperature()) != null)
+                forecastBean.getResult().getDaily().setTemperature(list.subList(0, 5));
+            if ((list = forecastBean.getResult().getDaily().getSkycon()) != null)
+                forecastBean.getResult().getDaily().setSkycon(list.subList(0, 5));
+            if ((list = forecastBean.getResult().getDaily().getCloudrate()) != null)
+                forecastBean.getResult().getDaily().setCloudrate(list.subList(0, 5));
+            if ((list = forecastBean.getResult().getDaily().getAqi()) != null)
+                forecastBean.getResult().getDaily().setAqi(list.subList(0, 5));
+            if ((list = forecastBean.getResult().getDaily().getHumidity()) != null)
+                forecastBean.getResult().getDaily().setHumidity(list.subList(0, 5));
+            if ((list = forecastBean.getResult().getDaily().getAstro()) != null)
+                forecastBean.getResult().getDaily().setAstro(list.subList(0, 5));
+            if ((list = forecastBean.getResult().getDaily().getUltraviolet()) != null)
+                forecastBean.getResult().getDaily().setUltraviolet(list.subList(0, 5));
+            if ((list = forecastBean.getResult().getDaily().getPm25()) != null)
+                forecastBean.getResult().getDaily().setPm25(list.subList(0, 5));
+            if ((list = forecastBean.getResult().getDaily().getDressing()) != null)
+                forecastBean.getResult().getDaily().setDressing(list.subList(0, 5));
+            if ((list = forecastBean.getResult().getDaily().getCarWashing()) != null)
+                forecastBean.getResult().getDaily().setCarWashing(list.subList(0, 5));
+            if ((list = forecastBean.getResult().getDaily().getPrecipitation()) != null)
+                forecastBean.getResult().getDaily().setPrecipitation(list.subList(0, 5));
+            if ((list = forecastBean.getResult().getDaily().getWind()) != null)
+                forecastBean.getResult().getDaily().setWind(list.subList(0, 5));
+            if ((list = forecastBean.getResult().getDaily().getDesc()) != null)
+                forecastBean.getResult().getDaily().setDesc(list.subList(0, 5));
 
-            presenter.setDailyWeatherInfo(weatherDatas);
-            presenter.setHourlyWeatherInfo(hourlyWeathers);
+
+            ForecastBean.ResultBean.HourlyBean hourlyBean = forecastBean.getResult().getHourly();
+            ForecastBean.ResultBean.DailyBean dailyBean = forecastBean.getResult().getDaily();
+
+            presenter.setDailyWeatherInfo(dailyBean);
+            presenter.setHourlyWeatherInfo(hourlyBean);
+            presenter.rainInfo(forecastBean.getResult().getMinutely().getDescription());
         }
-    }
-
-
-    /**
-     * 就是在 Utility.handleDailyWeatherResponse() 前先获得2小时内天气描述并展示
-     *
-     * @param url json
-     * @return 直接返回 Utility.handleDailyWeatherResponse(url)
-     */
-    private ArrayList<JSONArray> moreHandleDailyWeatherResponse(String url) {
-        try {
-            JSONObject all = new JSONObject(url);
-            JSONObject result = all.getJSONObject("result");
-            final JSONObject minutely = result.getJSONObject("minutely");
-            final String des = minutely.getString("description");
-//            handler.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    rainInfo.setText(des);
-//                }
-//            });
-            presenter.rainInfo(des);
-        } catch (JSONException e) {
-            if (DEBUG)
-                Log.e(TAG, "moreHandleDailyWeatherResponse: parse weather json error");
-            e.printStackTrace();
-        }
-
-        return Utility.handleFullWeatherResponse(url);
     }
 
     /**
@@ -159,12 +130,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        Toast.makeText(WeatherActivity.this, "load full weather failed", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
                 presenter.toastMessage("load full weather failed");
             }
 
@@ -208,25 +173,21 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String responseText = response.body().string();
-                final WeatherData weatherData = handleCurrentWeatherResponse(responseText);
-//                handler.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-                if (weatherData != null) {
+//                final WeatherData weatherData = handleCurrentWeatherResponse(responseText);
+                RealTimeBean bean = JSON.parseObject(responseText, RealTimeBean.class);
+
+                if (bean != null) {
                     SharedPreferences.Editor editor = PreferenceManager
                             .getDefaultSharedPreferences(context).edit();
                     editor.putString("weather_now", responseText);
                     editor.putLong("weather_now_last_update_time", System.currentTimeMillis());
 
                     editor.apply();
-//                            showCurrentWeatherInfo(weatherData);
-                    presenter.setCurrentWeatherInfo(weatherData);
+                    presenter.setCurrentWeatherInfo(bean);
                     presenter.isUpdate(true);
                 } else {
                     presenter.toastMessage("weatherDate = null");
                 }
-//                    }
-//                });
             }
         });
     }
@@ -258,25 +219,28 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String responseText = response.body().string();
-                try {
-                    JSONObject text = new JSONObject(responseText);
-                    JSONObject result = text.getJSONObject("result");
-                    JSONObject addressComponent = result.getJSONObject("addressComponent");
-                    String countyName = addressComponent.getString("district");
+                BaiDuCoordinateBean bean = JSON.parseObject(responseText, BaiDuCoordinateBean.class);
+                String countyName = bean.getResult().getAddressComponent().getDistrict();
+//                try {
+//                    JSONObject text = new JSONObject(responseText);
+//                    JSONObject result = text.getJSONObject("result");
+//                    JSONObject addressComponent = result.getJSONObject("addressComponent");
+//                    String countyName = addressComponent.getString("district");
+                if (DEBUG)
                     Log.d(TAG, "setCountyByCoordinate.onResponse: countyName: " + countyName);
-                    SharedPreferences.Editor editor = PreferenceManager
-                            .getDefaultSharedPreferences(context).edit();
-                    editor.putString("countyName", countyName);
-                    editor.putLong("countyName_last_update_time", System.currentTimeMillis());
-                    editor.apply();
-                    presenter.setCounty(countyName);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (NullPointerException ee) {
-                    if (DEBUG)
-                        Log.e(TAG, "onResponse: toolBar not found");
-                    ee.printStackTrace();
-                }
+                SharedPreferences.Editor editor = PreferenceManager
+                        .getDefaultSharedPreferences(context).edit();
+                editor.putString("countyName", countyName);
+                editor.putLong("countyName_last_update_time", System.currentTimeMillis());
+                editor.apply();
+                presenter.setCounty(countyName);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                } catch (NullPointerException ee) {
+//                    if (DEBUG)
+//                        Log.e(TAG, "onResponse: toolBar not found");
+//                    ee.printStackTrace();
+//                }
             }
         });
     }
@@ -312,24 +276,26 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-                try {
-                    JSONObject res = new JSONObject(responseText);
-                    JSONObject JSONResult = res.getJSONObject("result");
-                    JSONObject location = JSONResult.getJSONObject("location");
-                    locationCoordinates = location.getString("lng") + ',' + location.getString("lat");
-                    SharedPreferences.Editor editor = PreferenceManager
-                            .getDefaultSharedPreferences(context).edit();
-                    editor.putString("coordinate", locationCoordinates);
-                    editor.putLong("coordinate_last_update", System.currentTimeMillis());
-                    editor.apply();
-                    afterGetCoordinate();
-                } catch (JSONException e) {
-                    if (DEBUG) {
-                        Log.e(TAG, "GetCoordinateByChoosePosition: parse json error");
-                        Log.d(TAG, "GetCoordinateByChoosePosition: json result: " + responseText);
-                    }
-                    e.printStackTrace();
-                }
+//                try {
+                BaiDuChoosePositionBean bean = JSON.parseObject(responseText, BaiDuChoosePositionBean.class);
+//                    JSONObject res = new JSONObject(responseText);
+//                    JSONObject JSONResult = res.getJSONObject("result");
+//                    JSONObject location = JSONResult.getJSONObject("location");
+//                    locationCoordinates = location.getString("lng") + ',' + location.getString("lat");
+                locationCoordinates = bean.getResult().getLocation().getLng() + "," + bean.getResult().getLocation().getLat();
+                SharedPreferences.Editor editor = PreferenceManager
+                        .getDefaultSharedPreferences(context).edit();
+                editor.putString("coordinate", locationCoordinates);
+                editor.putLong("coordinate_last_update", System.currentTimeMillis());
+                editor.apply();
+                afterGetCoordinate();
+//                } catch (JSONException e) {
+//                    if (DEBUG) {
+//                        Log.e(TAG, "GetCoordinateByChoosePosition: parse json error");
+//                        Log.d(TAG, "GetCoordinateByChoosePosition: json result: " + responseText);
+//                    }
+//                    e.printStackTrace();
+//                }
             }
         });
 //        }
@@ -354,32 +320,35 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String responseText = response.body().string();
-                try {
-                    JSONObject allAttributes = new JSONObject(responseText);
-                    JSONObject content = allAttributes.getJSONObject("content");
-                    JSONObject address_detail = content.getJSONObject("address_detail");
-                    String countyName = address_detail.getString("city") + " " + address_detail.getString("district");
-                    JSONObject point = content.getJSONObject("point");
-                    String x = point.getString("x");
-                    String y = point.getString("y");
-                    locationCoordinates = x + ',' + y;
-                    SharedPreferences.Editor editor = PreferenceManager
-                            .getDefaultSharedPreferences(context).edit();
-                    editor.putString("coordinate", locationCoordinates);
-                    editor.putLong("coordinate_last_update", System.currentTimeMillis());
-                    editor.putString("countyName", countyName);
-                    editor.putLong("countyName_last_update_time", System.currentTimeMillis());
-                    editor.putString("IP", Utility.getIP(context));
-                    editor.apply();
-                    if (DEBUG)
-                        Log.d(TAG, "GetCoordinateByIp: locationCoordinates = " + locationCoordinates);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    if (DEBUG) {
-                        Log.e(TAG, "GetCoordinateByIp: parse IP address json error");
-                        Log.d(TAG, "response: " + responseText);
-                    }
-                }
+                BaiDuIPLocationBean bean = JSON.parseObject(responseText, BaiDuIPLocationBean.class);
+                locationCoordinates = bean.getContent().getPoint().getX() + "," + bean.getContent().getPoint().getY();
+                String countyName = bean.getContent().getAddress_detail().getCity() + " " + bean.getContent().getAddress_detail().getDistrict();
+//                try {
+//                    JSONObject allAttributes = new JSONObject(responseText);
+//                    JSONObject content = allAttributes.getJSONObject("content");
+//                    JSONObject address_detail = content.getJSONObject("address_detail");
+//                    String countyName = address_detail.getString("city") + " " + address_detail.getString("district");
+//                    JSONObject point = content.getJSONObject("point");
+//                    String x = point.getString("x");
+//                    String y = point.getString("y");
+//                    locationCoordinates = x + ',' + y;
+                SharedPreferences.Editor editor = PreferenceManager
+                        .getDefaultSharedPreferences(context).edit();
+                editor.putString("coordinate", locationCoordinates);
+                editor.putLong("coordinate_last_update", System.currentTimeMillis());
+                editor.putString("countyName", countyName);
+                editor.putLong("countyName_last_update_time", System.currentTimeMillis());
+                editor.putString("IP", Utility.getIP(context));
+                editor.apply();
+                if (DEBUG)
+                    Log.d(TAG, "GetCoordinateByIp: locationCoordinates = " + locationCoordinates);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                    if (DEBUG) {
+//                        Log.e(TAG, "GetCoordinateByIp: parse IP address json error");
+//                        Log.d(TAG, "response: " + responseText);
+//                    }
+//                }
                 afterGetCoordinate();
             }
         });
@@ -401,9 +370,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             editor.apply();
 
             presenter.startSwipe();
-//            startSwipe();
-//            requestCurrentWeather(cUrl);
-//            requestFullWeather(fUrl);
+
             requestCurrentWeather(cUrl);
             requestFullWeather(fUrl);
         } else {

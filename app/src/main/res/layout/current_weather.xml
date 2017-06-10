@@ -55,9 +55,9 @@
 
     <TextView
         android:id="@+id/rain_info_tv"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="17dp"
         android:maxLines="2"
         android:shadowColor="@color/colorTextDark"
         android:shadowDx="1.0"
@@ -68,10 +68,12 @@
         android:textColor="@color/colorTextLight2nd"
         android:textSize="14sp"
         android:textStyle="bold"
-        app:layout_constraintHorizontal_bias="0.518"
-        app:layout_constraintLeft_toLeftOf="@+id/temperature_text"
-        app:layout_constraintRight_toRightOf="@+id/temperature_text"
-        app:layout_constraintTop_toBottomOf="@+id/temperature_text" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/temperature_text"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp" />
 
     <ImageView
         android:id="@+id/lacate_mode_image"

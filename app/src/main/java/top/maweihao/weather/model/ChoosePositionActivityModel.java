@@ -27,7 +27,7 @@ import static top.maweihao.weather.activity.ChoosePositionActivity.countyList;
 import static top.maweihao.weather.activity.ChoosePositionActivity.provinceList;
 import static top.maweihao.weather.activity.ChoosePositionActivity.selectedCity;
 import static top.maweihao.weather.activity.ChoosePositionActivity.selectedProvince;
-import static top.maweihao.weather.activity.WeatherActivity.DEBUG;
+import static top.maweihao.weather.util.Constants.DEBUG;
 
 /**
  * Created by limuyang on 2017/6/2.
