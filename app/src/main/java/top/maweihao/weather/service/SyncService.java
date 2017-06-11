@@ -83,6 +83,7 @@ public class SyncService extends Service {
 
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 String fUrl = prefs.getString("furl", null);
+                Log.i(TAG, "furl  " + fUrl);
                 if (fUrl != null) {
                     try {
                         Request request = new Request.Builder()
@@ -111,16 +112,16 @@ public class SyncService extends Service {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 //                                Log.d(TAG, "SettingActivity::notification_time " + sp.getString("notification_time",null));
         String time = sp.getString("notification_time", null);
-        String[] splitTime = null;
         if (time != null) {
-            splitTime = time.split(SettingActivity.TIME_SPLIT);
+            String[] splitTime = time.split(SettingActivity.TIME_SPLIT);
             GET_HOUR = splitTime[0];
             GET_MINUTE = splitTime[1];
         } else {
             GET_HOUR = "18";
             GET_MINUTE = "0";
         }
-        Log.d(TAG, "startAgain: SharedPreferences == " + time);
+        if (DEBUG)
+            Log.d(TAG, "startAgain: SharedPreferences == " + time);
 
         //     每天18:00启动
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
@@ -138,12 +139,11 @@ public class SyncService extends Service {
                 Log.d(TAG, "startAgain: day+1    now is:" + calendar.get(Calendar.DAY_OF_MONTH));
         }
 
-        if (DEBUG) {
-            Log.d(TAG, "startAgain: calendar == " + calendar.getTime());
-            Log.d(TAG, "startAgain: calendar getTimeInMillis== " + calendar.getTimeInMillis());
-            Log.d(TAG, "startAgain: System.currentTimeMillis== " + System.currentTimeMillis());
-        }
-
+//        if (DEBUG) {
+//            Log.d(TAG, "startAgain: calendar == " + calendar.getTime());
+//            Log.d(TAG, "startAgain: calendar getTimeInMillis== " + calendar.getTimeInMillis());
+//            Log.d(TAG, "startAgain: System.currentTimeMillis== " + System.currentTimeMillis());
+//        }
 
         Intent intent = new Intent(this, SyncService.class);
         PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -169,7 +169,6 @@ public class SyncService extends Service {
     }
 
 
-
     /**
      * 计算温差，发送通知
      */
@@ -179,19 +178,30 @@ public class SyncService extends Service {
         if (maxDiff * minDiff >= 0) {
             int a = Math.abs(maxDiff);
             int b = Math.abs(minDiff);
+            String titleStr;
             if (Math.max(a, b) >= 3) {
                 Calendar calendar = new GregorianCalendar();
                 int nextDay = calendar.get(Calendar.DAY_OF_WEEK) + 1;
                 String dayOfWeek = getResources().getStringArray(R.array.weekend)[nextDay == 7 ? 0 : nextDay];
                 String tem = (maxDiff > 0 || minDiff > 0) ? getResources().getString(R.string.warmer) : getResources().getString(R.string.colder);
                 if (isChinese) {
-                    sendNotification(dayOfWeek + "将" + tem + ' ' + Math.max(a, b) + "° ",
-                            todayMin + "°/" + todayMax + "°  ···>  " + tomMin + "°/" + tomMax + "° ");
+                    Log.i(TAG, "Chinese");
+                    titleStr = dayOfWeek + "将" + tem + ' ' + Math.max(a, b) + "° ";
                 } else {
-                    sendNotification(Math.max(a, b) + "° " + tem + " than " + dayOfWeek,
-                            todayMin + "°/" + todayMax + "°  ···>  " + tomMin + "°/" + tomMax + "° ");
+                    Log.i(TAG, "no Chinese");
+                    titleStr = Math.max(a, b) + "° " + tem + " than " + dayOfWeek;
+                }
+            } else {
+                if (isChinese) {
+                    Log.i(TAG, "Chinese");
+                    titleStr = "明天温差变化不大哦~";
+                } else {
+                    Log.i(TAG, "no Chinese");
+                    titleStr = "The temperature doesn't change much tomorrow~";
                 }
             }
+            sendNotification(titleStr,
+                    todayMin + "°/" + todayMax + "°  ···>  " + tomMin + "°/" + tomMax + "° ");
         } else {
             Log.d(TAG, "calTemDiff: diff: " + maxDiff * minDiff);
             sendNotification("Temperature", todayMin + "° - " + todayMax + "° -> " + tomMin + "° - " + tomMax + "° ");
@@ -200,7 +210,8 @@ public class SyncService extends Service {
 
     @Override
     public void onDestroy() {
+        if (DEBUG)
+            Log.d(TAG, "onDestroy: SyncService destroyed");
         super.onDestroy();
-        Log.d(TAG, "onDestroy: SyncService destroyed");
     }
 }
