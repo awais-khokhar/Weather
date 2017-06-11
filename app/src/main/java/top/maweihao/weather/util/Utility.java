@@ -268,16 +268,16 @@ public class Utility {
             case "RAIN":
                 switch (mode) {
                     case MINUTELY_MODE:
-                        if (precipitation <= 0.15)
+                        if (precipitation <= 0.25)
                             return R.mipmap.weather_drizzle_day + "and" + "小雨";
                         else if (precipitation <= 0.35)
                             return R.mipmap.weather_rain_day + "and" + "中雨";
                         else
                             return R.mipmap.weather_showers_day + "and" + "大雨";
                     case HOURLY_MODE:
-                        if (precipitation <= 10)
+                        if (precipitation <= 0.9)
                             return R.mipmap.weather_drizzle_day + "and" + "小雨";
-                        else if (precipitation <= 25)
+                        else if (precipitation <= 2.87)
                             return R.mipmap.weather_rain_day + "and" + "中雨";
                         else
                             return R.mipmap.weather_showers_day + "and" + "大雨";
