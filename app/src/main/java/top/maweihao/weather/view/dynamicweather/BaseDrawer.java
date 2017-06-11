@@ -3,7 +3,9 @@ package top.maweihao.weather.view.dynamicweather;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.GradientDrawable;
+import android.support.annotation.IntDef;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Random;
@@ -11,9 +13,15 @@ import java.util.Random;
 import static top.maweihao.weather.view.dynamicweather.BaseDrawer.SkyBackground.CLEAR_D;
 import static top.maweihao.weather.view.dynamicweather.BaseDrawer.SkyBackground.CLEAR_N;
 
+
 public abstract class BaseDrawer {
 
+    @IntDef({Type.DEFAULT, Type.CLEAR_D, Type.CLEAR_N, Type.RAIN_D, Type.RAIN_N, Type.SNOW_D, Type.SNOW_N,
+            Type.CLOUDY_D, Type.CLOUDY_N, Type.OVERCAST_D, Type.OVERCAST_N, Type.FOG_D, Type.FOG_N,
+            Type.HAZE_D, Type.HAZE_N, Type.SAND_D, Type.SAND_N, Type.WIND_D, Type.WIND_N, Type.RAIN_SNOW_D,
+            Type.RAIN_SNOW_N, Type.UNKNOWN_D, Type.UNKNOWN_N})
     @Retention(RetentionPolicy.SOURCE)
+    @Documented
     public @interface Type {
         int DEFAULT = 0;
         int CLEAR_D = 1;

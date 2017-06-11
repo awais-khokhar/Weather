@@ -1,14 +1,17 @@
 package top.maweihao.weather.contract;
 
+import android.support.annotation.Nullable;
+
 import top.maweihao.weather.bean.ForecastBean;
 import top.maweihao.weather.bean.RealTimeBean;
+import top.maweihao.weather.util.Constants;
 
 /**
  * Created by limuyang on 2017/5/31.
  */
 
 public interface WeatherActivityContract {
-    public interface View {
+    interface View {
 
         void setRainInfo(String str);
 
@@ -18,7 +21,7 @@ public interface WeatherActivityContract {
 
         void showCurrentWeatherInfo(RealTimeBean realTimeBean);
 
-        void setLastUpdateTime();
+        void setLastUpdateTime(long time);
 
         void showToastMessage(String msg);
 
@@ -27,54 +30,44 @@ public interface WeatherActivityContract {
         void startSwipe();
 
         void stopSwipe();
+
+        void setLocateModeImage(boolean isLocation);
     }
 
-    public interface Presenter {
+    interface Presenter {
         void rainInfo(String str);
 
         void setDailyWeatherInfo(final ForecastBean.ResultBean.DailyBean dailyBean);
 
         void setHourlyWeatherInfo(final ForecastBean.ResultBean.HourlyBean hourlyBean);
 
-        void isUpdate(boolean bool);
+        void setLastUpdateTime(long time);
 
         void toastMessage(String msg);
 
-        void getFullWeatherDataForJson(String responseText);
+        void setLocateModeImage(boolean isLocation);
 
         void setCurrentWeatherInfo(RealTimeBean realTimeBean);
 
         void setCounty(String countyStr);
 
-        void getCountyByCoordinate(String coordinate);
-
         void startSwipe();
 
         void stopSwipe();
 
-        void afterGetCoordinate();
+        void refreshWeather(boolean forceRefresh, @Nullable String countyName);
 
-        void getCoordinateByIp();
-
-        void getCoordinateByChoosePosition(String countyName);
+        void stopBdLocation();
 
         void destroy();
     }
 
-    public interface Model {
-        void requestFullWeather(String url);
+    interface Model {
+        void refreshWeather(boolean forceRefresh, @Nullable String countyName);
 
-        void jsonFullWeatherData(String responseText);
+        void beforeRequestWeather(@Constants.Through int requestCode);
 
-        void requestCurrentWeather(String url);
-
-        void getCountyByCoordinate(String coordinate);
-
-        void afterGetCoordinate();
-
-        void getCoordinateByIp();
-
-        void getCoordinateByChoosePosition(String countyName);
+        void stopBdLocation();
 
         void destroy();
     }

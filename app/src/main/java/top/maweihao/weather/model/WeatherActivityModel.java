@@ -1,12 +1,22 @@
 package top.maweihao.weather.model;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,6 +30,7 @@ import top.maweihao.weather.bean.BaiDu.BaiDuChoosePositionBean;
 import top.maweihao.weather.bean.BaiDu.BaiDuCoordinateBean;
 import top.maweihao.weather.bean.BaiDu.BaiDuIPLocationBean;
 import top.maweihao.weather.bean.ForecastBean;
+import top.maweihao.weather.bean.MyLocation;
 import top.maweihao.weather.bean.RealTimeBean;
 import top.maweihao.weather.contract.WeatherActivityContract;
 import top.maweihao.weather.util.Constants;
@@ -27,15 +38,27 @@ import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.Utility;
 
 import static top.maweihao.weather.util.Constants.DEBUG;
-import static top.maweihao.weather.activity.WeatherActivity.locationCoordinates;
+import static top.maweihao.weather.util.Constants.SYSTEM_NOW_TIME;
+import static top.maweihao.weather.util.Constants.Through.THROUGH_CHOOSE_POSITION;
+import static top.maweihao.weather.util.Constants.Through.THROUGH_COORDINATE;
+import static top.maweihao.weather.util.Constants.Through.THROUGH_IP;
+import static top.maweihao.weather.util.Constants.Through.THROUGH_LOCATE;
 
 /**
+ * WeatherActivity 的 model 层
  * Created by limuyang on 2017/5/31.
  */
 
 
 public class WeatherActivityModel implements WeatherActivityContract.Model {
     private static final String TAG = "WeatherActivityModel";
+    //    private Boolean autoLocate;
+    private String countyName = null;
+
+    private String locationCoordinates;
+
+    private Long locateTime;
+    private LocationClient mLocationClient;
     private WeatherActivityContract.Presenter presenter;
     private Context context;
     private static ExecutorService singleThreadPool = Executors.newSingleThreadExecutor();
@@ -43,6 +66,323 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
     public WeatherActivityModel(Context context, WeatherActivityContract.Presenter presenter) {
         this.context = context;
         this.presenter = presenter;
+
+        mLocationClient = new LocationClient(context);
+        mLocationClient.registerLocationListener(new MainLocationListener());
+        initLocation();
+    }
+
+    /**
+     * 刷新天气
+     *
+     * @param forceAllRefresh 是否强制全量刷新
+     * @param getCountyName   需要刷新的城市名
+     */
+    @Override
+    public void refreshWeather(boolean forceAllRefresh, @Nullable String getCountyName) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+        //读取配置
+        boolean getAutoLocate = prefs.getBoolean("auto_locate", true);
+        countyName = prefs.getString("countyName", null);
+        if (!forceAllRefresh) {
+
+            /*
+             * 判断是否超过刷新间隔。
+             * 如果需要刷新的城市和配置文件中的城市一样 或 传递进来的城市为空，则进行刷新间隔判断。
+             */
+            if ((getCountyName != null && countyName != null && countyName.equals(getCountyName)) || getCountyName == null) {
+
+                 /*minInterval： 最低刷新间隔*/
+                int minInterval = prefs.getInt("refresh_interval", 10);
+//               现在的天气， 原始json
+                String weatherNow = prefs.getString("weather_now", null);
+                long weatherNowLastUpdateTime = prefs.getLong("weather_now_last_update_time", 0);
+//               未来的天气， 原始json
+                String weatherFull = prefs.getString("weather_full", null);
+                long weatherFullLastUpdateTime = prefs.getLong("weather_full_last_update_time", 0);
+//               若保存的天气刷新时间和现在相差小于 minInterval，则直接使用
+                if (weatherNow != null && System.currentTimeMillis() - weatherNowLastUpdateTime < minInterval * 60 * 1000
+                        && weatherFull != null && System.currentTimeMillis() - weatherFullLastUpdateTime < minInterval * 60 * 1000) {
+                    if (DEBUG) {
+                        Log.d(TAG, "readCache: last nowWeather synced: "
+                                + (System.currentTimeMillis() - weatherNowLastUpdateTime) / 1000 + "s ago");
+                        Log.d(TAG, "readCache: last fullWeather synced: "
+                                + (System.currentTimeMillis() - weatherFullLastUpdateTime) / 1000 + "s ago");
+                    }
+//            lastUpdateTime.setText(Utility.getTime(context, weatherNowLastUpdateTime));
+                    presenter.setLastUpdateTime(weatherNowLastUpdateTime);
+
+                    RealTimeBean bean = JSON.parseObject(weatherNow, RealTimeBean.class);
+                    presenter.setCurrentWeatherInfo(bean);
+                    jsonFullWeatherData(weatherFull);
+
+                    presenter.setLocateModeImage(getAutoLocate);
+
+                    String ip;
+                    if (countyName != null)
+                        presenter.setCounty(countyName);
+                    else if ((ip = prefs.getString("IP", null)) != null) {
+                        presenter.setCounty(ip);
+                    }
+                } else {
+//            全量刷新
+                    beforeRequestWeather(getAutoLocate ? THROUGH_LOCATE : THROUGH_CHOOSE_POSITION);
+                }
+            } else {
+                beforeRequestWeather(getAutoLocate ? THROUGH_LOCATE : THROUGH_CHOOSE_POSITION);
+            }
+        } else {
+//            全量刷新
+            if (getCountyName != null)
+                countyName = getCountyName;
+            beforeRequestWeather(getAutoLocate ? THROUGH_LOCATE : THROUGH_CHOOSE_POSITION);
+        }
+    }
+
+    @Override
+    public void beforeRequestWeather(@Constants.Through int requestCode) {
+        presenter.startSwipe();
+//        locateMode.setVisibility(View.VISIBLE);
+        switch (requestCode) {
+            case THROUGH_IP:
+//                主界面显示当前为 ip 定位
+//                locateMode 和 locateModeImage 用来显示当前定位方式
+                presenter.setLocateModeImage(true);
+                presenter.setCounty(Utility.getIP(context));
+                getCoordinateByIp();
+                break;
+            case THROUGH_CHOOSE_POSITION:
+                presenter.setLocateModeImage(false);
+                getCoordinateByChoosePosition(countyName);
+                break;
+            case THROUGH_LOCATE:
+                presenter.setLocateModeImage(true);
+                bdLocate();
+                break;
+            case THROUGH_COORDINATE:
+//                locateModeImage.setVisibility(View.INVISIBLE);
+//                locateMode.setVisibility(View.INVISIBLE);
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                locationCoordinates = prefs.getString("coordinate", null);
+//                initRequireUrl();
+                afterGetCoordinate();
+                break;
+        }
+    }
+
+    /**
+     * 初始化百度定位
+     */
+    private void initLocation() {
+        LocationClientOption option = new LocationClientOption();
+//        刷新间隔（ms）
+        option.setScanSpan(1000);
+//        定位模式：精确
+        option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
+        // 需要地址信息
+        option.setIsNeedAddress(true);
+        mLocationClient.setLocOption(option);
+    }
+
+    /**
+     * 使用百度定位
+     */
+    private void bdLocate() {
+        locateTime = System.currentTimeMillis();
+        //等着回调 MainLocationListener
+        mLocationClient.start();
+    }
+
+    @Override
+    public void stopBdLocation() {
+        if (mLocationClient.isStarted()) {
+            mLocationClient.stop();
+        }
+    }
+
+    /**
+     * 百度定位成功
+     *
+     * @param location 自定义的位置类
+     */
+    private void bdLocateSuccess(MyLocation location) {
+        locationCoordinates = location.getCoordinate();
+        String countyName = location.getDistrict();
+        if (DEBUG) {
+            Log.d(TAG, "locateSuccess: locationCoordinates == " + locationCoordinates);
+            Log.d(TAG, "locateSuccess: location: " + countyName + location.getStreet());
+        }
+        SharedPreferences.Editor editor = PreferenceManager
+                .getDefaultSharedPreferences(context).edit();
+        editor.putString("coordinate", locationCoordinates);
+        editor.putLong("coordinate_last_update", System.currentTimeMillis());
+        editor.putString("countyName", countyName);
+        editor.putLong("countyName_last_update_time", System.currentTimeMillis());
+        editor.apply();
+        presenter.setCounty(countyName);
+        afterGetCoordinate();
+    }
+
+    /**
+     * 当百度定位失败时，使用 locationManager 定位
+     */
+    private void bdLocateFail() {
+        LocationManager mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        Location location = null;
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        }
+
+        if (location != null) {
+            locationCoordinates = String.valueOf(location.getLongitude()) + ',' + String.valueOf(location.getLatitude());
+            if (DEBUG)
+                Log.d(TAG, "GetCoordinateByLocate: locationCoordinates = " + locationCoordinates);
+            SharedPreferences.Editor editor = PreferenceManager
+                    .getDefaultSharedPreferences(context).edit();
+            editor.putString("coordinate", locationCoordinates);
+            editor.putLong("coordinate_last_update", System.currentTimeMillis());
+            editor.apply();
+
+            getCountyByCoordinate(locationCoordinates);
+            afterGetCoordinate();
+        } else {
+            if (DEBUG)
+                Log.d(TAG, "requestLocation: location == null, switch to IP method");
+            beforeRequestWeather(THROUGH_IP);
+        }
+    }
+
+    /**
+     * 百度定位监听类
+     */
+    private class MainLocationListener implements BDLocationListener {
+        @Override
+        public void onReceiveLocation(BDLocation bdLocation) {
+            Log.d(TAG, "BAIDU: received" + (System.currentTimeMillis() - locateTime));
+            if (System.currentTimeMillis() - locateTime < 3 * 1000) {  //at most x second
+                if (bdLocation.getLocType() != BDLocation.TypeGpsLocation) {
+                    // do nothing
+                    if (DEBUG) {
+                        Log.d(TAG, "BAIDU onReceiveLocation: Locate type == " + bdLocation.getLocType());
+                    }
+                } else {
+                    mLocationClient.stop();
+                    if (DEBUG) {
+                        Log.d(TAG, "BAIDU onReceiveLocation: Locate type == GPS");
+                        presenter.toastMessage("GPS!");
+                    }
+                    bdLocateSuccess(simplifyBDLocation(bdLocation));
+                }
+            } else {
+                mLocationClient.stop();
+                if (DEBUG) {
+                    Log.d(TAG, "BAIDU onReceiveLocation: baidu locate time out, locType == " + bdLocation.getLocType());
+                }
+                if (MyLocation.locateSuccess(bdLocation.getLocType())) {
+                    bdLocateSuccess(simplifyBDLocation(bdLocation));
+                } else {
+                    Log.d(TAG, "BAIDU onReceiveLocation: baidu locate failed, switch to LocationManager method");
+                    bdLocateFail();
+                }
+            }
+        }
+
+        @Override
+        public void onConnectHotSpotMessage(String s, int i) {
+//      nothing to do
+        }
+
+        private MyLocation simplifyBDLocation(BDLocation bdLocation) {
+            MyLocation location = new MyLocation(bdLocation.getLongitude(), bdLocation.getLatitude());
+            location.setType(bdLocation.getLocType());
+            location.setProvince(bdLocation.getProvince());
+            location.setCity(bdLocation.getCity());
+            location.setDistrict(bdLocation.getDistrict());
+            location.setStreet(bdLocation.getStreet());
+            return location;
+        }
+    }
+    //=========================================================================================================
+
+    /**
+     * 网络请求未来天气数据
+     *
+     * @param url 网址
+     */
+//    @Override
+    private void requestFullWeather(String url) {
+        if (TextUtils.isEmpty(url)) {
+            if (DEBUG)
+                Log.d(TAG, "requestFullWeather: url = null");
+            return;
+        }
+        HttpUtil.sendOkHttpRequest(url, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                presenter.toastMessage("load full weather failed");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String responseText = response.body().string();
+                SharedPreferences.Editor editor = PreferenceManager
+                        .getDefaultSharedPreferences(context).edit();
+                editor.putString("weather_full", responseText);
+                editor.putLong("weather_full_last_update_time", System.currentTimeMillis());
+
+                editor.apply();
+
+//                presenter.isUpdate(true);
+                presenter.setLastUpdateTime(SYSTEM_NOW_TIME);
+                jsonFullWeatherData(responseText);
+            }
+        });
+    }
+
+
+    /**
+     * 网络请求现在的天气
+     */
+//    @Override
+    private void requestCurrentWeather(String url) {
+
+        if (TextUtils.isEmpty(url)) {
+            if (DEBUG)
+                Log.d(TAG, "requestCurrentWeather: url = null");
+            return;
+        }
+        HttpUtil.sendOkHttpRequest(url, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+
+                presenter.toastMessage("load current weather failed");
+                presenter.stopSwipe();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String responseText = response.body().string();
+//                final WeatherData weatherData = handleCurrentWeatherResponse(responseText);
+                RealTimeBean bean = JSON.parseObject(responseText, RealTimeBean.class);
+
+                if (bean != null) {
+                    SharedPreferences.Editor editor = PreferenceManager
+                            .getDefaultSharedPreferences(context).edit();
+                    editor.putString("weather_now", responseText);
+                    editor.putLong("weather_now_last_update_time", System.currentTimeMillis());
+
+                    editor.apply();
+                    presenter.setCurrentWeatherInfo(bean);
+                    presenter.setLastUpdateTime(SYSTEM_NOW_TIME);
+                } else {
+                    presenter.toastMessage("weatherDate = null");
+                }
+            }
+        });
     }
 
     /**
@@ -50,9 +390,8 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
      *
      * @param responseText json
      */
-    @Override
     @SuppressWarnings("unchecked")
-    public void jsonFullWeatherData(String responseText) {
+    private void jsonFullWeatherData(String responseText) {
         //fastJson解析数据
         ForecastBean forecastBean = JSON.parseObject(responseText, ForecastBean.class);
         if (forecastBean.getStatus().equals(Constants.STATUS_OK)) {
@@ -114,83 +453,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
         }
     }
 
-    /**
-     * 网络请求未来天气数据
-     *
-     * @param url 网址
-     */
-    @Override
-    public void requestFullWeather(String url) {
-        if (TextUtils.isEmpty(url)) {
-            if (DEBUG)
-                Log.d(TAG, "requestFullWeather: url = null");
-            return;
-        }
-        HttpUtil.sendOkHttpRequest(url, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-                presenter.toastMessage("load full weather failed");
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                final String responseText = response.body().string();
-                SharedPreferences.Editor editor = PreferenceManager
-                        .getDefaultSharedPreferences(context).edit();
-                editor.putString("weather_full", responseText);
-                editor.putLong("weather_full_last_update_time", System.currentTimeMillis());
-
-                editor.apply();
-
-                presenter.isUpdate(true);
-                jsonFullWeatherData(responseText);
-            }
-        });
-    }
-
-
-    /**
-     * 网络请求现在的天气
-     */
-    @Override
-    public void requestCurrentWeather(String url) {
-
-        if (TextUtils.isEmpty(url)) {
-            if (DEBUG)
-                Log.d(TAG, "requestCurrentWeather: url = null");
-            return;
-        }
-        HttpUtil.sendOkHttpRequest(url, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-
-                presenter.toastMessage("load current weather failed");
-                presenter.stopSwipe();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                final String responseText = response.body().string();
-//                final WeatherData weatherData = handleCurrentWeatherResponse(responseText);
-                RealTimeBean bean = JSON.parseObject(responseText, RealTimeBean.class);
-
-                if (bean != null) {
-                    SharedPreferences.Editor editor = PreferenceManager
-                            .getDefaultSharedPreferences(context).edit();
-                    editor.putString("weather_now", responseText);
-                    editor.putLong("weather_now_last_update_time", System.currentTimeMillis());
-
-                    editor.apply();
-                    presenter.setCurrentWeatherInfo(bean);
-                    presenter.isUpdate(true);
-                } else {
-                    presenter.toastMessage("weatherDate = null");
-                }
-            }
-        });
-    }
+    //=========================================================================================================
 
 
     /**
@@ -198,8 +461,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
      *
      * @param coordinate 坐标
      */
-    @Override
-    public void getCountyByCoordinate(String coordinate) {
+    private void getCountyByCoordinate(String coordinate) {
         String url;
         if (!TextUtils.isEmpty(coordinate)) {
             String[] part = coordinate.split(",");
@@ -221,11 +483,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                 final String responseText = response.body().string();
                 BaiDuCoordinateBean bean = JSON.parseObject(responseText, BaiDuCoordinateBean.class);
                 String countyName = bean.getResult().getAddressComponent().getDistrict();
-//                try {
-//                    JSONObject text = new JSONObject(responseText);
-//                    JSONObject result = text.getJSONObject("result");
-//                    JSONObject addressComponent = result.getJSONObject("addressComponent");
-//                    String countyName = addressComponent.getString("district");
                 if (DEBUG)
                     Log.d(TAG, "setCountyByCoordinate.onResponse: countyName: " + countyName);
                 SharedPreferences.Editor editor = PreferenceManager
@@ -234,13 +491,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                 editor.putLong("countyName_last_update_time", System.currentTimeMillis());
                 editor.apply();
                 presenter.setCounty(countyName);
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                } catch (NullPointerException ee) {
-//                    if (DEBUG)
-//                        Log.e(TAG, "onResponse: toolBar not found");
-//                    ee.printStackTrace();
-//                }
+
             }
         });
     }
@@ -249,8 +500,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
     /**
      * 选择地址进行定位
      */
-    @Override
-    public void getCoordinateByChoosePosition(String countyName) {
+    private void getCoordinateByChoosePosition(String countyName) {
 //        if (TextUtils.isEmpty(countyName)) { //若无保存的地址，则打开 ChoosePositionActivity
 //            Log.e(TAG, "GetCoordinateByChoosePosition: choosed countyName == null");
 //            Toast.makeText(WeatherActivity.this, getResources().getString(R.string.choose_your_position),
@@ -276,12 +526,8 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
-//                try {
                 BaiDuChoosePositionBean bean = JSON.parseObject(responseText, BaiDuChoosePositionBean.class);
-//                    JSONObject res = new JSONObject(responseText);
-//                    JSONObject JSONResult = res.getJSONObject("result");
-//                    JSONObject location = JSONResult.getJSONObject("location");
-//                    locationCoordinates = location.getString("lng") + ',' + location.getString("lat");
+
                 locationCoordinates = bean.getResult().getLocation().getLng() + "," + bean.getResult().getLocation().getLat();
                 SharedPreferences.Editor editor = PreferenceManager
                         .getDefaultSharedPreferences(context).edit();
@@ -289,13 +535,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                 editor.putLong("coordinate_last_update", System.currentTimeMillis());
                 editor.apply();
                 afterGetCoordinate();
-//                } catch (JSONException e) {
-//                    if (DEBUG) {
-//                        Log.e(TAG, "GetCoordinateByChoosePosition: parse json error");
-//                        Log.d(TAG, "GetCoordinateByChoosePosition: json result: " + responseText);
-//                    }
-//                    e.printStackTrace();
-//                }
             }
         });
 //        }
@@ -304,8 +543,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
     /**
      * 当位置请求失败时，通过 ip 地址判别位置
      */
-    @Override
-    public void getCoordinateByIp() {
+    private void getCoordinateByIp() {
 //        百度 web api
         String url = "http://api.map.baidu.com/location/ip?ak=eTTiuvV4YisaBbLwvj4p8drl7BGfl1eo&coor=bd09ll";
         HttpUtil.sendOkHttpRequest(url, new Callback() {
@@ -374,7 +612,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             requestCurrentWeather(cUrl);
             requestFullWeather(fUrl);
         } else {
-//            Toast.makeText(WeatherActivity.this, "locationCoordinates = null", Toast.LENGTH_SHORT).show();
             presenter.toastMessage("locationCoordinates = null");
             if (DEBUG)
                 Log.e(TAG, "initRequireUrl: locationCoordinates = null");
@@ -382,8 +619,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
     }
 
 
-    @Override
-    public void afterGetCoordinate() {
+    private void afterGetCoordinate() {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {

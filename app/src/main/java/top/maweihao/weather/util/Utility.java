@@ -220,7 +220,7 @@ public class Utility {
     /**
      * 通过天气获取背景图
      */
-    public static int chooseBgImage(String skycon) {
+    public static @BaseDrawer.Type int chooseBgImage(String skycon) {
         switch (skycon) {
             case "CLEAR_DAY":
                 return BaseDrawer.Type.CLEAR_D;

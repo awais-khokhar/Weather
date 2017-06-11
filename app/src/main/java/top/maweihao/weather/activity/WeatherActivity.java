@@ -1,12 +1,8 @@
 package top.maweihao.weather.activity;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,7 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -29,12 +24,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
-import com.baidu.location.BDLocation;
-import com.baidu.location.BDLocationListener;
-import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
-
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -45,11 +34,11 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import top.maweihao.weather.R;
 import top.maweihao.weather.bean.ForecastBean;
-import top.maweihao.weather.bean.MyLocation;
 import top.maweihao.weather.bean.RealTimeBean;
 import top.maweihao.weather.contract.WeatherActivityContract;
 import top.maweihao.weather.presenter.WeatherActivityPresenter;
 import top.maweihao.weather.service.SyncService;
+import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.SimplePermissionUtils;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.view.HScrollView;
@@ -69,10 +58,7 @@ import static top.maweihao.weather.util.Utility.intRoundFloat;
 public class WeatherActivity extends AppCompatActivity implements WeatherActivityContract.View {
 
     static final String TAG = "WeatherActivity";
-    static final int THROUGH_IP = 0;
-    static final int THROUGH_CHOOSE_POSITION = 1;
-    static final int THROUGH_LOCATE = 2;
-    static final int THROUGH_COORDINATE = 3;
+
     public static final int MINUTELY_MODE = 4;
     public static final int HOURLY_MODE = 5;
 
@@ -80,9 +66,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     static final int HANDLE_TOAST = 1;
 //    static final int HANDLE_SWIPE_BEGIN = 2;
 //    static final int HANDLE_SWIPE_STOP = 3;
-
-    private Long locateTime;
-    private LocationClient mLocationClient;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -149,22 +132,16 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     @BindView(R.id.navigation_bar_view)
     View navigationBarView;
 
-    private CollapsingToolbarLayoutState state;
-
-    private enum CollapsingToolbarLayoutState {
-        EXPANDED,
-        COLLAPSED,
-        INTERNEDIATE
-    }
+    @Constants.CollapsingToolbarLayoutState
+    private int state;
 
     private boolean isDone = false;
-    private String countyName = null;
+    public String countyName = null;
 
-
-    public static String locationCoordinates;
+    //    public static String locationCoordinates;
     private perDayWeatherView[] day = new perDayWeatherView[5];
 
-    private Boolean autoLocate;
+
     private MessageHandler handler; //消息队列
     private WeatherActivityContract.Presenter presenter;
 
@@ -206,16 +183,11 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         swipeRefreshLayout.setOnRefreshListener((new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                beforeRequestWeather(autoLocate ? THROUGH_LOCATE : THROUGH_CHOOSE_POSITION);
+                presenter.refreshWeather(true, countyName);
             }
         }));
 
         appBarLayout.addOnOffsetChangedListener(new AppBarOnOffsetChanged());
-
-        mLocationClient = new LocationClient(getApplicationContext());
-        mLocationClient.registerLocationListener(new MainLocationListener());
-        initLocation();
-
     }
 
 
@@ -247,9 +219,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     @Override
     protected void onStop() {
         super.onStop();
-        if (mLocationClient.isStarted()) {
-            mLocationClient.stop();
-        }
+        presenter.stopBdLocation();
     }
 
     @Override
@@ -298,11 +268,14 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
      * 设置显示更新时间
      */
     @Override
-    public void setLastUpdateTime() {
+    public void setLastUpdateTime(final long time) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                lastUpdateTime.setText(Utility.getTime(getApplicationContext()));
+                if (time == 0)
+                    lastUpdateTime.setText(Utility.getTime(getApplicationContext()));
+                else
+                    lastUpdateTime.setText(Utility.getTime(WeatherActivity.this, time));
             }
         });
     }
@@ -340,26 +313,26 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         @Override
         public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
             if (verticalOffset == 0) {
-                if (state != CollapsingToolbarLayoutState.EXPANDED) {
-                    state = CollapsingToolbarLayoutState.EXPANDED;//修改状态标记为展开
+                if (state != Constants.CollapsingToolbarLayoutState.EXPANDED) {
+                    state = Constants.CollapsingToolbarLayoutState.EXPANDED;//修改状态标记为展开
                     toolbarLayout.setTitle(null);
                     toolBarLinearLayout.setVisibility(View.VISIBLE);
 
                 }
             } else if (Math.abs(verticalOffset) >= appBarLayout.getTotalScrollRange()) {
-                if (state != CollapsingToolbarLayoutState.COLLAPSED) {
+                if (state != Constants.CollapsingToolbarLayoutState.COLLAPSED) {
                     toolbarLayout.setTitle(countyName);//设置title
                     toolBarLinearLayout.setVisibility(View.INVISIBLE);
-                    state = CollapsingToolbarLayoutState.COLLAPSED;//修改状态标记为折叠
+                    state = Constants.CollapsingToolbarLayoutState.COLLAPSED;//修改状态标记为折叠
                 }
             } else {
-                if (state != CollapsingToolbarLayoutState.INTERNEDIATE) {
-                    if (state == CollapsingToolbarLayoutState.COLLAPSED) {
+                if (state != Constants.CollapsingToolbarLayoutState.INTERNEDIATE) {
+                    if (state == Constants.CollapsingToolbarLayoutState.COLLAPSED) {
                         toolbarLayout.setTitle(null);
                         if (toolBarLinearLayout.getVisibility() == View.INVISIBLE)
                             toolBarLinearLayout.setVisibility(View.VISIBLE);
                     }
-                    state = CollapsingToolbarLayoutState.INTERNEDIATE;//修改状态标记为中间
+                    state = Constants.CollapsingToolbarLayoutState.INTERNEDIATE;//修改状态标记为中间
 
                 }
             }
@@ -386,11 +359,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                         if (msg.obj instanceof String) {
                             activity.countyName = (String) msg.obj;
                             activity.locateMode.setText((String) msg.obj);
-//                            if (activity.toolbar != null) {
-//                                activity.toolbar.setTitle((String) msg.obj);
-//                            } else {
-//                                Log.e(TAG, "handleMessage: toolBar == null");
-//                            }
+
                         } else {
                             Log.e(TAG, "handleMessage: HANDLE_POSITION obj == " + msg.obj.getClass());
                         }
@@ -410,18 +379,13 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     //菜单打开时，暂停天气view绘制
     @Override
     public boolean onMenuOpened(int featureId, Menu menu) {
-
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 dynamicWeatherView.onPause();
             }
         }, 400);
-
-
-//        Log.i(TAG,"onMenuOpened" + featureId);
         return super.onMenuOpened(featureId, menu);
-
     }
 
     boolean isItemSelected = false;
@@ -429,15 +393,12 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     //菜单关闭时，重启天气view绘制
     @Override
     public void onPanelClosed(int featureId, Menu menu) {
-
-
-//        super.onPanelClosed(featureId, menu);
         if (!isItemSelected) {
 //            Log.i(TAG,"onPanelClosed" + featureId);
 //            if (isMenuClose)
             dynamicWeatherView.onResume();
         }
-//        isMenuClose = false;
+        super.onPanelClosed(featureId, menu);
     }
 
 
@@ -449,7 +410,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-//        Log.i(TAG,"onOptionsItemSelected");
         isItemSelected = true;
         switch (item.getItemId()) {
             case R.id.change_position:
@@ -486,7 +446,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                     editor.putLong("countyName_last_update_time", System.currentTimeMillis());
                     editor.putBoolean("auto_locate", false);
                     editor.apply();
-                    beforeRequestWeather(THROUGH_CHOOSE_POSITION);
+                    presenter.refreshWeather(true, countyName);
                 }
                 break;
             default:
@@ -511,7 +471,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                     @Override
                     public void onPermissionGranted() {
                         //Toast.makeText(BaseActivity.this, "获取权限成功!", Toast.LENGTH_SHORT).show();
-                        readPreferencesAndCache();
+//                        readPreferencesAndCache();
+                        presenter.refreshWeather(false, null);
                     }
 
                     @Override
@@ -520,172 +481,19 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                         if (DEBUG)
                             Log.d(TAG, "onActivityResult: Locate permission denied, switch to ip mode");
 //                        SimplePermissionUtils.showTipsDialog(WeatherActivity.this);
-                        readPreferencesAndCache();
+//                        readPreferencesAndCache();
+                        presenter.refreshWeather(false, null);
                     }
                 });
     }
 
-    /**
-     * 初始化百度定位
-     */
-    private void initLocation() {
-        LocationClientOption option = new LocationClientOption();
-//        刷新间隔（ms）
-        option.setScanSpan(1000);
-//        定位模式：精确
-        option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
-        // 需要地址信息
-        option.setIsNeedAddress(true);
-        mLocationClient.setLocOption(option);
-    }
-
-    /**
-     * 读取 SharedPreferences 中保存的天气数据json
-     */
-    private void readPreferencesAndCache() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-        //读取配置
-        autoLocate = prefs.getBoolean("auto_locate", true);
-        countyName = prefs.getString("countyName", null);
-
-        /*minInterval： 最低刷新间隔*/
-        int minInterval = prefs.getInt("refresh_interval", 10);
-//        现在的天气， 原始json
-        String weatherNow = prefs.getString("weather_now", null);
-        long weatherNowLastUpdateTime = prefs.getLong("weather_now_last_update_time", 0);
-//        未来的天气， 原始json
-        String weatherFull = prefs.getString("weather_full", null);
-        long weatherFullLastUpdateTime = prefs.getLong("weather_full_last_update_time", 0);
-//        若保存的天气刷新时间和现在相差小于 minInterval，则直接使用
-        if (weatherNow != null && System.currentTimeMillis() - weatherNowLastUpdateTime < minInterval * 60 * 1000
-                && weatherFull != null && System.currentTimeMillis() - weatherFullLastUpdateTime < minInterval * 60 * 1000) {
-            if (DEBUG) {
-                Log.d(TAG, "readCache: last nowWeather synced: "
-                        + (System.currentTimeMillis() - weatherNowLastUpdateTime) / 1000 + "s ago");
-                Log.d(TAG, "readCache: last fullWeather synced: "
-                        + (System.currentTimeMillis() - weatherFullLastUpdateTime) / 1000 + "s ago");
-            }
-            lastUpdateTime.setText(Utility.getTime(getApplicationContext(), weatherNowLastUpdateTime));
-//            WeatherData wd = Utility.handleCurrentWeatherResponse(weatherNow);
-            RealTimeBean bean = JSON.parseObject(weatherNow, RealTimeBean.class);
-            showCurrentWeatherInfo(bean);
-            presenter.getFullWeatherDataForJson(weatherFull);
-
-            if (autoLocate)
-                setLocateModeImage(true);
-            else
-                setLocateModeImage(false);
-            String ip;
-            if (countyName != null)
-                locateMode.setText(countyName);
-            else if ((ip = prefs.getString("IP", null)) != null) {
-                locateMode.setText(ip);
-            }
-        } else {
-//            全量刷新
-            beforeRequestWeather(autoLocate ? THROUGH_LOCATE : THROUGH_CHOOSE_POSITION);
-        }
-    }
-
-    private void beforeRequestWeather(int requestCode) {
-        startSwipe();
-        locateMode.setVisibility(View.VISIBLE);
-        switch (requestCode) {
-            case THROUGH_IP:
-//                主界面显示当前为 ip 定位
-//                locateMode 和 locateModeImage 用来显示当前定位方式
-                setLocateModeImage(true);
-                locateMode.setText(Utility.getIP(this));
-                presenter.getCoordinateByIp();
-                break;
-            case THROUGH_CHOOSE_POSITION:
-                setLocateModeImage(false);
-                presenter.getCoordinateByChoosePosition(countyName);
-                break;
-            case THROUGH_LOCATE:
-                setLocateModeImage(true);
-                bdLocate();
-                break;
-            case THROUGH_COORDINATE:
-                locateModeImage.setVisibility(View.INVISIBLE);
-                locateMode.setVisibility(View.INVISIBLE);
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-                locationCoordinates = prefs.getString("coordinate", null);
-//                initRequireUrl();
-                presenter.afterGetCoordinate();
-                break;
-        }
-    }
-
-    /**
-     * 使用百度定位
-     */
-    private void bdLocate() {
-        locateTime = System.currentTimeMillis();
-        //等着回调 MainLocationListener
-        mLocationClient.start();
-    }
-
-    /**
-     * 百度定位成功
-     *
-     * @param location 自定义的位置类
-     */
-    private void locateSuccess(MyLocation location) {
-        locationCoordinates = location.getCoordinate();
-        countyName = location.getDistrict();
-        if (DEBUG) {
-            Log.d(TAG, "locateSuccess: locationCoordinates == " + locationCoordinates);
-            Log.d(TAG, "locateSuccess: location: " + countyName + location.getStreet());
-        }
-        SharedPreferences.Editor editor = PreferenceManager
-                .getDefaultSharedPreferences(WeatherActivity.this).edit();
-        editor.putString("coordinate", locationCoordinates);
-        editor.putLong("coordinate_last_update", System.currentTimeMillis());
-        editor.putString("countyName", countyName);
-        editor.putLong("countyName_last_update_time", System.currentTimeMillis());
-        editor.apply();
-        presenter.setCounty(countyName);
-        presenter.afterGetCoordinate();
-    }
-
-    /**
-     * 当百度定位失败时，使用 locationManager 定位
-     */
-    private void locationManagerLocate() {
-        LocationManager mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        Location location = null;
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        }
-
-        if (location != null) {
-            locationCoordinates = String.valueOf(location.getLongitude()) + ',' + String.valueOf(location.getLatitude());
-            if (DEBUG)
-                Log.d(TAG, "GetCoordinateByLocate: locationCoordinates = " + locationCoordinates);
-            SharedPreferences.Editor editor = PreferenceManager
-                    .getDefaultSharedPreferences(WeatherActivity.this).edit();
-            editor.putString("coordinate", locationCoordinates);
-            editor.putLong("coordinate_last_update", System.currentTimeMillis());
-            editor.apply();
-
-            presenter.getCountyByCoordinate(locationCoordinates);
-            presenter.afterGetCoordinate();
-        } else {
-            if (DEBUG)
-                Log.d(TAG, "requestLocation: location == null, switch to IP method");
-            beforeRequestWeather(THROUGH_IP);
-        }
-    }
 
     /**
      * 定位图片的显示
      *
      * @param isLocation 是否是定位状态
      */
-    private void setLocateModeImage(boolean isLocation) {
+    public void setLocateModeImage(boolean isLocation) {
         locateModeImage.setVisibility(View.VISIBLE);
         if (isLocation)
             locateModeImage.setImageResource(R.drawable.ic_location_on_black_24dp);
@@ -705,9 +513,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 HScrollView hScrollView = (HScrollView) findViewById(R.id.HScrollView);
                 hourlyWeatherView mLineChartView = (hourlyWeatherView) findViewById(R.id.simpleLineChart);
                 ArrayList<String> xItemArray = new ArrayList<>();
-//                for (ForecastBean.ResultBean.HourlyBean.TemperatureBean hourlyWeather : hourlyBean.getTemperature()) {
-//                    xItemArray.add(Utility.ampm(hourlyWeather.getDatetime().substring(11, 13)));
-//                }
+
                 //天气
                 ArrayList<String> weatherArray = new ArrayList<>();
                 for (ForecastBean.ResultBean.HourlyBean.SkyconBean hourlyWeather : hourlyBean.getSkycon()) {
@@ -721,7 +527,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                     yItemArray.add(intRoundFloat(hourlyWeather.getValue()));
 //                    stringBuilder.append(hourlyWeather.getTemperature()).append(" ");
                 }
-//                Log.d(TAG, "run: sb" + stringBuilder);
                 //降水强度
                 ArrayList<Float> precipitation = new ArrayList<>();
                 for (ForecastBean.ResultBean.HourlyBean.PrecipitationBean hourlyWeather : hourlyBean.getPrecipitation()) {
@@ -752,12 +557,11 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                         SimpleDateFormat oldsdf = new SimpleDateFormat("yyyy-MM-dd");
                         SimpleDateFormat newsdf = new SimpleDateFormat("MM/dd");
                         try {
-                            Date date =oldsdf.parse(dailyBean.getSkycon().get(i).getDate());
+                            Date date = oldsdf.parse(dailyBean.getSkycon().get(i).getDate());
                             day[i].setDate(newsdf.format(date));
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
-
 //                        String[] simpleDate = weatherDatas.get(i).getDate().split("-");
 //                        day[i].setDate(simpleDate[1] + '/' + simpleDate[2]);
                         day[i].setTemperature(Utility.stringRoundFloat(dailyBean.getTemperature().get(i).getMin()) + '/'
@@ -766,8 +570,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                     }
                     day[0].setDate(getResources().getString(R.string.today));
                     day[1].setDate(getResources().getString(R.string.tomorrow));
-                    String sunRise=dailyBean.getAstro().get(0).getSunrise().getTime();
-                    String sunSet=dailyBean.getAstro().get(0).getSunrise().getTime();
+                    String sunRise = dailyBean.getAstro().get(0).getSunrise().getTime();
+                    String sunSet = dailyBean.getAstro().get(0).getSunrise().getTime();
                     sunrise_text.setText(sunRise);
                     sunset_text.setText(sunSet);
                     sunTimeView.setTime(sunRise, sunSet);
@@ -795,12 +599,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
             public void run() {
 //                final RemoteViews remoteViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.simple_weather_widget);
 
-//                String temperature = Utility.roundString(weatherData.getTemperature());
-//                String skycon = weatherData.getSkycon();
-//                String humidity = weatherData.getHumidity();
-//                String PM25 = weatherData.getPm25();
-//                float intensity = Float.parseFloat(weatherData.getIntensity());
-//                String aqi = weatherData.getAqi();
                 String temperature = Utility.stringRoundFloat(realTimeBean.getResult().getTemperature());
                 String skycon = realTimeBean.getResult().getSkycon();
                 float humidity = realTimeBean.getResult().getHumidity();
@@ -952,54 +750,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
             windLevelTv.setText(level + " 级" + info);
         } else {
             windLevelTv.setText("LEVEL " + level);
-        }
-    }
-
-    private class MainLocationListener implements BDLocationListener {
-        @Override
-        public void onReceiveLocation(BDLocation bdLocation) {
-            Log.d(TAG, "BAIDU: received" + (System.currentTimeMillis() - locateTime));
-            if (System.currentTimeMillis() - locateTime < 3 * 1000) {  //at most x second
-                if (bdLocation.getLocType() != BDLocation.TypeGpsLocation) {
-                    // do nothing
-                    if (DEBUG) {
-                        Log.d(TAG, "BAIDU onReceiveLocation: Locate type == " + bdLocation.getLocType());
-                    }
-                } else {
-                    mLocationClient.stop();
-                    if (DEBUG) {
-                        Log.d(TAG, "BAIDU onReceiveLocation: Locate type == GPS");
-                        presenter.toastMessage("GPS!");
-                    }
-                    locateSuccess(simplifyBDLocation(bdLocation));
-                }
-            } else {
-                mLocationClient.stop();
-                if (DEBUG) {
-                    Log.d(TAG, "BAIDU onReceiveLocation: baidu locate time out, locType == " + bdLocation.getLocType());
-                }
-                if (MyLocation.locateSuccess(bdLocation.getLocType())) {
-                    locateSuccess(simplifyBDLocation(bdLocation));
-                } else {
-                    Log.d(TAG, "BAIDU onReceiveLocation: baidu locate failed, switch to LocationManager method");
-                    locationManagerLocate();
-                }
-            }
-        }
-
-        @Override
-        public void onConnectHotSpotMessage(String s, int i) {
-//      nothing to do
-        }
-
-        private MyLocation simplifyBDLocation(BDLocation bdLocation) {
-            MyLocation location = new MyLocation(bdLocation.getLongitude(), bdLocation.getLatitude());
-            location.setType(bdLocation.getLocType());
-            location.setProvince(bdLocation.getProvince());
-            location.setCity(bdLocation.getCity());
-            location.setDistrict(bdLocation.getDistrict());
-            location.setStreet(bdLocation.getStreet());
-            return location;
         }
     }
 

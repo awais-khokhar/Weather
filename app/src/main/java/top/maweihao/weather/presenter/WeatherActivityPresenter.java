@@ -1,6 +1,7 @@
 package top.maweihao.weather.presenter;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 import top.maweihao.weather.bean.ForecastBean;
 import top.maweihao.weather.bean.RealTimeBean;
@@ -16,10 +17,9 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
     private WeatherActivityContract.View weatherView;
     private WeatherActivityContract.Model weatherModel;
 
-    public WeatherActivityPresenter(Context context, WeatherActivityContract.View weatherView)
-    {
-        this.weatherView=weatherView;
-        this.weatherModel=new WeatherActivityModel(context,this);
+    public WeatherActivityPresenter(Context context, WeatherActivityContract.View weatherView) {
+        this.weatherView = weatherView;
+        this.weatherModel = new WeatherActivityModel(context, this);
     }
 
     @Override
@@ -42,12 +42,17 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
 
     /**
      * 更新成功后设置显示时间
-     * @param bool
+     *
+     * @param time 更新时间
      */
     @Override
-    public void isUpdate(boolean bool) {
-        if (bool)
-            weatherView.setLastUpdateTime();
+    public void setLastUpdateTime(long time) {
+        weatherView.setLastUpdateTime(time);
+    }
+
+    @Override
+    public void setLocateModeImage(boolean isLocation) {
+        weatherView.setLocateModeImage(isLocation);
     }
 
     @Override
@@ -55,15 +60,11 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
         weatherView.showToastMessage(msg);
     }
 
-    /**
-     * 通过json获取未来天气数据
-     * @param responseText json数据
-     */
-    @Override
-    public void getFullWeatherDataForJson(String responseText) {
-        weatherModel.jsonFullWeatherData(responseText);
-    }
 
+    @Override
+    public void refreshWeather(boolean forceRefresh, @Nullable String countyName) {
+        weatherModel.refreshWeather(forceRefresh, countyName);
+    }
 
     @Override
     public void setCurrentWeatherInfo(RealTimeBean realTimeBean) {
@@ -76,9 +77,8 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
     }
 
     @Override
-    public void getCountyByCoordinate(String coordinate)
-    {
-        weatherModel.getCountyByCoordinate(coordinate);
+    public void stopBdLocation() {
+        weatherModel.stopBdLocation();
     }
 
     @Override
@@ -92,24 +92,9 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
     }
 
     @Override
-    public void afterGetCoordinate() {
-        weatherModel.afterGetCoordinate();
-    }
-
-    @Override
-    public void getCoordinateByIp() {
-        weatherModel.getCoordinateByIp();
-    }
-
-    @Override
-    public void getCoordinateByChoosePosition(String countyName) {
-        weatherModel.getCoordinateByChoosePosition(countyName);
-    }
-
-    @Override
     public void destroy() {
         weatherView = null;
-        if(weatherModel != null) {
+        if (weatherModel != null) {
             weatherModel.destroy();
             weatherModel = null;
         }
