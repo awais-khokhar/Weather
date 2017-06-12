@@ -50,7 +50,11 @@ import top.maweihao.weather.view.perDayWeatherView;
 
 import static top.maweihao.weather.R.id.skycon_text;
 import static top.maweihao.weather.R.id.temperature_text;
+import static top.maweihao.weather.util.Constants.ChooseCode;
+import static top.maweihao.weather.util.Constants.ChoosePositionActivityRequestCode;
 import static top.maweihao.weather.util.Constants.DEBUG;
+import static top.maweihao.weather.util.Constants.SettingActivityRequestCode;
+import static top.maweihao.weather.util.Constants.SettingCode;
 import static top.maweihao.weather.util.Utility.chooseWeatherIcon;
 import static top.maweihao.weather.util.Utility.chooseWeatherIconOnly;
 import static top.maweihao.weather.util.Utility.intRoundFloat;
@@ -138,9 +142,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     private boolean isDone = false;
     public String countyName = null;
 
-    //    public static String locationCoordinates;
     private perDayWeatherView[] day = new perDayWeatherView[5];
-
 
     private MessageHandler handler; //消息队列
     private WeatherActivityContract.Presenter presenter;
@@ -414,7 +416,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         switch (item.getItemId()) {
             case R.id.change_position:
                 Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
-                startActivityForResult(intent, 1);
+                startActivityForResult(intent, ChoosePositionActivityRequestCode);
                 break;
             case R.id.start_service:
                 Intent startIntent = new Intent(WeatherActivity.this, SyncService.class);
@@ -422,7 +424,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 break;
             case R.id.setting:
                 Intent intent1 = new Intent(WeatherActivity.this, SettingActivity.class);
-                startActivityForResult(intent1, 2);
+                startActivityForResult(intent1, SettingActivityRequestCode);
                 break;
             default:
         }
@@ -431,17 +433,39 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        SharedPreferences.Editor editor = PreferenceManager
+                .getDefaultSharedPreferences(WeatherActivity.this).edit();
+
+        SharedPreferences per = PreferenceManager
+                .getDefaultSharedPreferences(WeatherActivity.this);
+        Log.d(TAG, "onActivityResult: SettingActivity:  requestCode"+requestCode);
         switch (requestCode) {
-            case 1:
-            case 2:
-//                settingActivity 和 choosePositionActivity 返回的数据一样的
-                if (resultCode == RESULT_OK) {
+            case SettingActivityRequestCode:
+                if (resultCode == SettingCode) {
+                    editor.putBoolean("auto_locate", data.getBooleanExtra("autoLocate", false));
+                    if (DEBUG)
+                        Log.d(TAG, "onActivityResult: SettingActivity:  changeAutoLocate");
+                    String perCountyName=per.getString("countyName",null);
+                    if (perCountyName==null||perCountyName.equals(""))
+                    {
+                        Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
+                        startActivityForResult(intent, ChoosePositionActivityRequestCode);
+                    }
+                    else {
+                        presenter.refreshWeather(true, countyName);
+                    }
+                }
+                if (resultCode == ChooseCode)
+                {
+                    onActivityResult(ChoosePositionActivityRequestCode,ChooseCode,data);
+                }
+                break;
+            case ChoosePositionActivityRequestCode:
+                if (resultCode == ChooseCode) {
                     countyName = data.getStringExtra("countyName");
                     setCounty(countyName);
                     if (DEBUG)
                         Log.d(TAG, "onActivityResult: county_return: " + countyName);
-                    SharedPreferences.Editor editor = PreferenceManager
-                            .getDefaultSharedPreferences(WeatherActivity.this).edit();
                     editor.putString("countyName", countyName);
                     editor.putLong("countyName_last_update_time", System.currentTimeMillis());
                     editor.putBoolean("auto_locate", false);

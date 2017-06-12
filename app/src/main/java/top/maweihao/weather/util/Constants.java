@@ -19,8 +19,13 @@ public class Constants {
     public static final boolean DEBUG = true;
     public static final String STATUS_OK = "ok";
 
-
     public static final long SYSTEM_NOW_TIME = 0;
+
+    public static final int ChoosePositionActivityRequestCode =367;
+    public static final int SettingActivityRequestCode=864;
+    public static final int SettingCode = 320;
+    public static final int ChooseCode = 239;
+
 
     @IntDef({Through.THROUGH_IP, Through.THROUGH_CHOOSE_POSITION,
             Through.THROUGH_LOCATE, Through.THROUGH_COORDINATE})

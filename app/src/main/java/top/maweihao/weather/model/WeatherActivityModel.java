@@ -61,12 +61,13 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
     private LocationClient mLocationClient;
     private WeatherActivityContract.Presenter presenter;
     private Context context;
-    private static ExecutorService singleThreadPool = Executors.newSingleThreadExecutor();
+    private static ExecutorService singleThreadPool ;
 
     public WeatherActivityModel(Context context, WeatherActivityContract.Presenter presenter) {
         this.context = context;
         this.presenter = presenter;
 
+        singleThreadPool = Executors.newSingleThreadExecutor();
         mLocationClient = new LocationClient(context);
         mLocationClient.registerLocationListener(new MainLocationListener());
         initLocation();
@@ -80,13 +81,13 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
      */
     @Override
     public void refreshWeather(boolean forceAllRefresh, @Nullable String getCountyName) {
+        presenter.startSwipe();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         //读取配置
         boolean getAutoLocate = prefs.getBoolean("auto_locate", true);
         countyName = prefs.getString("countyName", null);
         if (!forceAllRefresh) {
-
             /*
              * 判断是否超过刷新间隔。
              * 如果需要刷新的城市和配置文件中的城市一样 或 传递进来的城市为空，则进行刷新间隔判断。
@@ -140,9 +141,8 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
         }
     }
 
-    @Override
-    public void beforeRequestWeather(@Constants.Through int requestCode) {
-        presenter.startSwipe();
+    private void beforeRequestWeather(@Constants.Through int requestCode) {
+
 //        locateMode.setVisibility(View.VISIBLE);
         switch (requestCode) {
             case THROUGH_IP:
@@ -194,6 +194,9 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
         mLocationClient.start();
     }
 
+    /**
+     * 停止百度定位
+     */
     @Override
     public void stopBdLocation() {
         if (mLocationClient.isStarted()) {
@@ -311,7 +314,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
      *
      * @param url 网址
      */
-//    @Override
     private void requestFullWeather(String url) {
         if (TextUtils.isEmpty(url)) {
             if (DEBUG)
@@ -346,7 +348,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
     /**
      * 网络请求现在的天气
      */
-//    @Override
     private void requestCurrentWeather(String url) {
 
         if (TextUtils.isEmpty(url)) {
@@ -635,6 +636,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
     @Override
     public void destroy() {
         context = null;
-//        singleThreadPool.shutdownNow();
+        presenter = null;
+        singleThreadPool.shutdownNow();
     }
 }

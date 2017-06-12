@@ -4,7 +4,6 @@ import android.support.annotation.Nullable;
 
 import top.maweihao.weather.bean.ForecastBean;
 import top.maweihao.weather.bean.RealTimeBean;
-import top.maweihao.weather.util.Constants;
 
 /**
  * Created by limuyang on 2017/5/31.
@@ -64,8 +63,6 @@ public interface WeatherActivityContract {
 
     interface Model {
         void refreshWeather(boolean forceRefresh, @Nullable String countyName);
-
-        void beforeRequestWeather(@Constants.Through int requestCode);
 
         void stopBdLocation();
 

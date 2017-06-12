@@ -34,6 +34,7 @@ import top.maweihao.weather.db.Province;
 import top.maweihao.weather.presenter.ChoosePositionActivityPresenter;
 import top.maweihao.weather.util.Utility;
 
+import static top.maweihao.weather.util.Constants.ChooseCode;
 import static top.maweihao.weather.util.Constants.DEBUG;
 
 public class ChoosePositionActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, ChoosePositionActivityContract.View {
@@ -153,7 +154,7 @@ public class ChoosePositionActivity extends AppCompatActivity implements SearchV
                             Log.i(TAG, "countyName = " + countyName);
                         Intent intent = new Intent();
                         intent.putExtra("countyName", countyName);
-                        setResult(RESULT_OK, intent);
+                        setResult(ChooseCode, intent);
                         Toast.makeText(ChoosePositionActivity.this, getResources().getString(R.string.auto_locate_disabled), Toast.LENGTH_SHORT).show();
                         finish();
                     }
