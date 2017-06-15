@@ -56,7 +56,7 @@ import static top.maweihao.weather.util.Constants.DEBUG;
 import static top.maweihao.weather.util.Constants.SettingActivityRequestCode;
 import static top.maweihao.weather.util.Constants.SettingCode;
 import static top.maweihao.weather.util.Utility.chooseWeatherIcon;
-import static top.maweihao.weather.util.Utility.chooseWeatherIconOnly;
+import static top.maweihao.weather.util.Utility.chooseWeatherSkycon;
 import static top.maweihao.weather.util.Utility.intRoundFloat;
 
 public class WeatherActivity extends AppCompatActivity implements WeatherActivityContract.View {
@@ -590,12 +590,13 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 //                        day[i].setDate(simpleDate[1] + '/' + simpleDate[2]);
                         day[i].setTemperature(Utility.stringRoundFloat(dailyBean.getTemperature().get(i).getMin()) + '/'
                                 + Utility.stringRoundFloat(dailyBean.getTemperature().get(i).getMax()) + "ºC");
-                        day[i].setIcon(chooseWeatherIconOnly(dailyBean.getSkycon().get(i).getValue(), dailyBean.getPrecipitation().get(i).getMax(), HOURLY_MODE));
+                        day[i].setIcon(chooseWeatherIcon(dailyBean.getSkycon().get(i).getValue(), dailyBean.getPrecipitation().get(i).getMax(), HOURLY_MODE));
                     }
                     day[0].setDate(getResources().getString(R.string.today));
                     day[1].setDate(getResources().getString(R.string.tomorrow));
                     String sunRise = dailyBean.getAstro().get(0).getSunrise().getTime();
                     String sunSet = dailyBean.getAstro().get(0).getSunrise().getTime();
+//                    Log.d(TAG, "HERE: " + sunRise + ' ' + sunSet);
                     sunrise_text.setText(sunRise);
                     sunset_text.setText(sunSet);
                     sunTimeView.setTime(sunRise, sunSet);
@@ -647,13 +648,12 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 AQICircle.setValue((int) aqi);
                 Float hum = humidity * 100;
                 hum_text.setText(hum.toString().substring(0, 2) + "%");
-                String weatherString = chooseWeatherIcon(skycon, intensity, MINUTELY_MODE);
-                if (weatherString != null) {
-                    String[] ws = weatherString.split("and");
-                    skyconText.setText(ws[1]);
+                String weatherString = chooseWeatherSkycon(getApplicationContext(), skycon, intensity, MINUTELY_MODE);
+                skyconText.setText(weatherString);
+
 //                    remoteViews.setImageViewResource(R.id.simple_widget_skycon, Integer.parseInt(ws[0]));
-//                    remoteViews.setTextViewText(R.id.simple_widget_info, countyName + " | " + ws[1] + ' ' + temperature + '°');
-                }
+//                    remoteViews.setTextViewText(R.id.simple_widget_info, countyName + " | " + weatherString + ' ' + temperature + '°');
+
 //                AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
 //                appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext(), SimpleWeatherWidget.class),
 //                        remoteViews);

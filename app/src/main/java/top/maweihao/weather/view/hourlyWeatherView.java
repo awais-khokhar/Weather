@@ -311,6 +311,6 @@ public class hourlyWeatherView extends View implements HScrollView.OnMyHScrollVi
         String skycon = mWeather.get(index);
         float precipitation = this.precipitation.get(index);
         return BitmapFactory.decodeResource(getResources(),
-                Utility.chooseWeatherIconOnly(skycon, precipitation, WeatherActivity.HOURLY_MODE));
+                Utility.chooseWeatherIcon(skycon, precipitation, WeatherActivity.HOURLY_MODE));
     }
 }

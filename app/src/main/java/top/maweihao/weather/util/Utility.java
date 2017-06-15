@@ -246,61 +246,102 @@ public class Utility {
     }
 
     /**
-     * 选择天气图标
-     *
-     * @param skycon        天气
+     * 获得天气 String
+     * @param context  context
+     * @param skycon        天气标识
      * @param precipitation 雨量
-     * @param mode          Mode 代表 precipitation 精度， 以确定雨量
-     * @return 图片（int） + ‘and’ + 描述（string）
+     * @param mode          Mode 代表 precipitation 的精度，分为小时级和分钟级， 以确定雨量
+     * @return 描述（string）
      */
-    public static String chooseWeatherIcon(String skycon, float precipitation, int mode) {
-        switch (skycon) {
-            case "CLEAR_DAY":
-                return R.mipmap.weather_clear + "and" + "晴";
-            case "CLEAR_NIGHT":
-                return R.mipmap.weather_clear_night + "and" + "晴";
-            case "PARTLY_CLOUDY_DAY":
-                return R.mipmap.weather_few_clouds + "and" + "多云";
-            case "PARTLY_CLOUDY_NIGHT":
-                return R.mipmap.weather_few_clouds_night + "and" + "多云";
-            case "CLOUDY":
-                return R.mipmap.weather_clouds + "and" + "阴";
-            case "RAIN":
-                switch (mode) {
-                    case MINUTELY_MODE:
-                        if (precipitation <= 0.25)
-                            return R.mipmap.weather_drizzle_day + "and" + "小雨";
-                        else if (precipitation <= 0.35)
-                            return R.mipmap.weather_rain_day + "and" + "中雨";
-                        else
-                            return R.mipmap.weather_showers_day + "and" + "大雨";
-                    case HOURLY_MODE:
-                        if (precipitation <= 0.9)
-                            return R.mipmap.weather_drizzle_day + "and" + "小雨";
-                        else if (precipitation <= 2.87)
-                            return R.mipmap.weather_rain_day + "and" + "中雨";
-                        else
-                            return R.mipmap.weather_showers_day + "and" + "大雨";
-                }
-            case "SNOW":
-                return R.mipmap.weather_snow + "and" + "雪";
-            case "WIND":
-                return R.mipmap.weather_wind + "and" + "多风";
-            case "FOG":
-                return R.mipmap.weather_fog + "and" + "雾";
-            default:
-                return null;
+    public static String chooseWeatherSkycon(Context context, String skycon, float precipitation, int mode) {
+        if (context != null) {
+            switch (skycon) {
+                case "CLEAR_DAY":
+                    return context.getResources().getString(R.string.CLEAR_DAY);
+                case "CLEAR_NIGHT":
+                    return context.getResources().getString(R.string.CLEAR_NIGHT);
+                case "PARTLY_CLOUDY_DAY":
+                    return context.getResources().getString(R.string.PARTLY_CLOUDY_DAY);
+                case "PARTLY_CLOUDY_NIGHT":
+                    return context.getResources().getString(R.string.PARTLY_CLOUDY_NIGHT);
+                case "CLOUDY":
+                    return context.getResources().getString(R.string.CLOUDY);
+                case "RAIN":
+                    switch (mode) {
+                        case MINUTELY_MODE:
+                            if (precipitation <= 0.25)
+                                return context.getResources().getString(R.string.LIGHT_RAIN);
+                            else if (precipitation <= 0.35)
+                                return context.getResources().getString(R.string.MODERATE_RAIN);
+                            else
+                                return context.getResources().getString(R.string.HEAVY_RAIN);
+                        case HOURLY_MODE:
+                            if (precipitation <= 0.9)
+                                return context.getResources().getString(R.string.LIGHT_RAIN);
+                            else if (precipitation <= 2.87)
+                                return context.getResources().getString(R.string.MODERATE_RAIN);
+                            else
+                                return context.getResources().getString(R.string.HEAVY_RAIN);
+                    }
+                case "SNOW":
+                    return context.getResources().getString(R.string.SNOW);
+                case "WIND":
+                    return context.getResources().getString(R.string.WIND);
+                case "FOG":
+                    return context.getResources().getString(R.string.FOG);
+                default:
+                    return null;
+            }
+        } else {
+            return null;
         }
     }
 
     /**
-     * 只返回天气图片
+     * 获得天气图标
+     * @param skycon    天气标识
+     * @param precipitation   雨量
+     * @param mode   Mode 代表 precipitation 的精度，分为小时级和分钟级， 以确定雨量
+     * @return 天气图片
      */
-    public static int chooseWeatherIconOnly(String skycon, float precipitation, int mode) {
-        String response = chooseWeatherIcon(skycon, precipitation, mode);
-        assert response != null;
-        String[] responses = response.split("and");
-        return Integer.parseInt(responses[0]);
+    public static int chooseWeatherIcon(String skycon, float precipitation, int mode) {
+        switch (skycon) {
+            case "CLEAR_DAY":
+                return R.mipmap.weather_clear;
+            case "CLEAR_NIGHT":
+                return R.mipmap.weather_clear_night;
+            case "PARTLY_CLOUDY_DAY":
+                return R.mipmap.weather_few_clouds;
+            case "PARTLY_CLOUDY_NIGHT":
+                return R.mipmap.weather_few_clouds_night;
+            case "CLOUDY":
+                return R.mipmap.weather_clouds;
+            case "RAIN":
+                switch (mode) {
+                    case MINUTELY_MODE:
+                        if (precipitation <= 0.25)
+                            return R.mipmap.weather_drizzle_day;
+                        else if (precipitation <= 0.35)
+                            return R.mipmap.weather_rain_day;
+                        else
+                            return R.mipmap.weather_showers_day;
+                    case HOURLY_MODE:
+                        if (precipitation <= 0.9)
+                            return R.mipmap.weather_drizzle_day;
+                        else if (precipitation <= 2.87)
+                            return R.mipmap.weather_rain_day;
+                        else
+                            return R.mipmap.weather_showers_day;
+                }
+            case "SNOW":
+                return R.mipmap.weather_snow;
+            case "WIND":
+                return R.mipmap.weather_wind;
+            case "FOG":
+                return R.mipmap.weather_fog;
+            default:
+                return -1;
+        }
     }
 
     public static boolean isChinese(Context context) {

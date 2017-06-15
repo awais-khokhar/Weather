@@ -90,29 +90,14 @@ public class TallWidgetUpdateService extends Service {
 
     private void updateWeather(String weatherNow, String countyName) {
         RemoteViews tallViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.tall_weather_widget);
-//        try {
         RealTimeBean bean = JSON.parseObject(weatherNow, RealTimeBean.class);
         int tem = Utility.intRoundFloat(bean.getResult().getTemperature());
         String skycon = bean.getResult().getSkycon();
         float intensity = bean.getResult().getPrecipitation().getLocal().getIntensity();
-        String icon = Utility.chooseWeatherIcon(skycon, intensity, WeatherActivity.MINUTELY_MODE);
-
-//            JSONObject jsonObject = new JSONObject(weatherNow);
-//            JSONObject result = jsonObject.getJSONObject("result");
-//            int tem = Utility.intRoundString(result.getString("temperature"));
-//            String skycon = result.getString("skycon");
-//            String intensity = result.getJSONObject("precipitation").getJSONObject("local").getString("intensity");
-//            String icon = Utility.chooseWeatherIcon(skycon, Float.parseFloat(intensity), WeatherActivity.MINUTELY_MODE);
-        if (icon != null) {
-            String[] ws = icon.split("and");
-            tallViews.setImageViewResource(R.id.tall_widget_skycon, Integer.parseInt(ws[0]));
-            tallViews.setTextViewText(R.id.tall_widget_info, countyName + " | " + ws[1] + ' ' + tem + '°');
-        }
-//        }
-//        catch (JSONException e) {
-//            e.printStackTrace();
-//            Log.e(TAG, "parseNowJson: error");
-//        }
+        String skyconString = Utility.chooseWeatherSkycon(getApplicationContext(), skycon, intensity, WeatherActivity.MINUTELY_MODE);
+        int icon = Utility.chooseWeatherIcon(skycon, intensity, WeatherActivity.MINUTELY_MODE);
+        tallViews.setImageViewResource(R.id.tall_widget_skycon, icon);
+        tallViews.setTextViewText(R.id.tall_widget_info, countyName + " | " + skyconString + ' ' + tem + '°');
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
         appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext(), TallWeatherWidget.class), tallViews);
         stopSelf();

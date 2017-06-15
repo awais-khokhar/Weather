@@ -59,9 +59,13 @@
     <string name="PARTLY_CLOUDY_NIGHT">Party Cloudy</string>
     <string name="CLOUDY">Cloudy</string>
     <string name="RAIN">Rain</string>
+    <string name="LIGHT_RAIN">Light Rain</string>
+    <string name="MODERATE_RAIN">Moderate Rain</string>
+    <string name="HEAVY_RAIN">Heavy Rain</string>
     <string name="SNOW">Snow</string>
     <string name="WIND">Wind</string>
     <string name="FOG">Fog</string>
+
     <string name="appearance_setting">Appearance</string>
     <string name="temperature">Temperature</string>
     <string name="notification_setting">Notification</string>

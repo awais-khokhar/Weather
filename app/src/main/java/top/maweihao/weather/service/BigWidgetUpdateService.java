@@ -100,19 +100,15 @@ public class BigWidgetUpdateService extends Service {
         int tem = Utility.intRoundFloat(bean.getResult().getHourly().getTemperature().get(0).getValue());
         String skycon = bean.getResult().getHourly().getSkycon().get(0).getValue();
         float intensity = bean.getResult().getHourly().getPrecipitation().get(0).getValue();
-        String icon = Utility.chooseWeatherIcon(skycon, intensity, WeatherActivity.MINUTELY_MODE);
+        String skyconString = Utility.chooseWeatherSkycon(getApplicationContext(), skycon, intensity, WeatherActivity.HOURLY_MODE);
+        int icon = Utility.chooseWeatherIcon(skycon, intensity, WeatherActivity.HOURLY_MODE);
 //            int tem = Utility.intRoundString(((JSONObject) (hourly.getJSONArray("temperature").get(0))).getString("value"));
 //            String skycon = ((JSONObject) (hourly.getJSONArray("skycon").get(0))).getString("value");
 //            String intensity = ((JSONObject) (hourly.getJSONArray("precipitation").get(0))).getString("value");
-//            String icon = Utility.chooseWeatherIcon(skycon, Float.parseFloat(intensity), WeatherActivity.MINUTELY_MODE);
-        if (icon != null) {
-            String[] ws = icon.split("and");
-            bigViews.setImageViewResource(R.id.big_widget_skycon, Integer.parseInt(ws[0]));
-            bigViews.setTextViewText(R.id.big_widget_info, countyName + "\n" + ws[1] + ' ' + tem + '°');
+//            String skyconString = Utility.chooseWeatherSkycon(skycon, Float.parseFloat(intensity), WeatherActivity.MINUTELY_MODE);
+        bigViews.setImageViewResource(R.id.big_widget_skycon, icon);
+        bigViews.setTextViewText(R.id.big_widget_info, countyName + "\n" + skyconString + ' ' + tem + '°');
             bigViews.setTextViewText(R.id.big_widget_refresh_time, Utility.parseTime());
-        } else {
-            Log.e(TAG, "updateWeather: icon == null");
-        }
         Log.d(TAG, "successful" + tem + skycon + intensity);
 //        }
 //        catch (JSONException e) {

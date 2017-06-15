@@ -81,7 +81,7 @@ public class ChoosePositionActivity extends AppCompatActivity implements SearchV
         setContentView(R.layout.activity_choose_position);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-        toolbar.setNavigationIcon(R.drawable.ic_back);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp);
 
         presenter = new ChoosePositionActivityPresenter(this);
 

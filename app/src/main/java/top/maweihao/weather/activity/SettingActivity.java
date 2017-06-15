@@ -47,8 +47,8 @@ public class SettingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_setting);
         ButterKnife.bind(this);
 
-        toolbar.setTitle("设置");
-        toolbar.setNavigationIcon(R.drawable.ic_back);
+        toolbar.setTitle(getResources().getString(R.string.setting));
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp);
         setSupportActionBar(toolbar);
 
         getFragmentManager().beginTransaction()

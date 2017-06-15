@@ -20,6 +20,9 @@
     <string name="PARTLY_CLOUDY_NIGHT">多云</string>
     <string name="CLOUDY">阴</string>
     <string name="RAIN">雨</string>
+    <string name="LIGHT_RAIN">小雨</string>
+    <string name="MODERATE_RAIN">中雨</string>
+    <string name="HEAVY_RAIN">大雨</string>
     <string name="SNOW">雪</string>
     <string name="WIND">多风</string>
     <string name="FOG">雾</string>
