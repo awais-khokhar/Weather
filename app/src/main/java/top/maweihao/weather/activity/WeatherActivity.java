@@ -595,7 +595,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                     day[0].setDate(getResources().getString(R.string.today));
                     day[1].setDate(getResources().getString(R.string.tomorrow));
                     String sunRise = dailyBean.getAstro().get(0).getSunrise().getTime();
-                    String sunSet = dailyBean.getAstro().get(0).getSunrise().getTime();
+                    String sunSet = dailyBean.getAstro().get(0).getSunset().getTime();
 //                    Log.d(TAG, "HERE: " + sunRise + ' ' + sunSet);
                     sunrise_text.setText(sunRise);
                     sunset_text.setText(sunSet);
