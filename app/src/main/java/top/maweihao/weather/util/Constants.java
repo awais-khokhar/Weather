@@ -25,6 +25,7 @@ public class Constants {
     public static final int SettingActivityRequestCode=864;
     public static final int SettingCode = 320;
     public static final int ChooseCode = 239;
+    public static boolean isSetResultIntent=false;
 
 
     @IntDef({Through.THROUGH_IP, Through.THROUGH_CHOOSE_POSITION,

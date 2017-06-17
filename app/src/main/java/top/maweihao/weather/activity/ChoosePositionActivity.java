@@ -36,6 +36,7 @@ import top.maweihao.weather.util.Utility;
 
 import static top.maweihao.weather.util.Constants.ChooseCode;
 import static top.maweihao.weather.util.Constants.DEBUG;
+import static top.maweihao.weather.util.Constants.isSetResultIntent;
 
 public class ChoosePositionActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, ChoosePositionActivityContract.View {
 
@@ -152,6 +153,7 @@ public class ChoosePositionActivity extends AppCompatActivity implements SearchV
                     } finally {
                         if (DEBUG)
                             Log.i(TAG, "countyName = " + countyName);
+                        isSetResultIntent=true;
                         Intent intent = new Intent();
                         intent.putExtra("countyName", countyName);
                         setResult(ChooseCode, intent);

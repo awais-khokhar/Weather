@@ -55,6 +55,7 @@ import static top.maweihao.weather.util.Constants.ChoosePositionActivityRequestC
 import static top.maweihao.weather.util.Constants.DEBUG;
 import static top.maweihao.weather.util.Constants.SettingActivityRequestCode;
 import static top.maweihao.weather.util.Constants.SettingCode;
+import static top.maweihao.weather.util.Constants.isSetResultIntent;
 import static top.maweihao.weather.util.Utility.chooseWeatherIcon;
 import static top.maweihao.weather.util.Utility.chooseWeatherSkycon;
 import static top.maweihao.weather.util.Utility.intRoundFloat;
@@ -215,7 +216,11 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     @Override
     protected void onStart() {
         super.onStart();
-        permission();
+        if (!isSetResultIntent)
+            permission();
+        else
+            isSetResultIntent = false;
+
     }
 
     @Override
@@ -378,6 +383,12 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         }
     }
 
+    @Override
+    public void onOptionsMenuClosed(Menu menu) {
+        Log.i(TAG, "onOptionsMenuClosed");
+        super.onOptionsMenuClosed(menu);
+    }
+
     //菜单打开时，暂停天气view绘制
     @Override
     public boolean onMenuOpened(int featureId, Menu menu) {
@@ -438,26 +449,21 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
         SharedPreferences per = PreferenceManager
                 .getDefaultSharedPreferences(WeatherActivity.this);
-        Log.d(TAG, "onActivityResult: SettingActivity:  requestCode"+requestCode);
         switch (requestCode) {
             case SettingActivityRequestCode:
                 if (resultCode == SettingCode) {
                     editor.putBoolean("auto_locate", data.getBooleanExtra("autoLocate", false));
                     if (DEBUG)
-                        Log.d(TAG, "onActivityResult: SettingActivity:  changeAutoLocate");
-                    String perCountyName=per.getString("countyName",null);
-                    if (perCountyName==null||perCountyName.equals(""))
-                    {
+                        Log.d(TAG, "onActivityResult: SettingActivity");
+                    String perCountyName = per.getString("countyName", null);
+                    if (perCountyName == null || perCountyName.equals("")) {
                         Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
                         startActivityForResult(intent, ChoosePositionActivityRequestCode);
+                    } else {
+                        presenter.refreshWeather(true, perCountyName);
                     }
-                    else {
-                        presenter.refreshWeather(true, countyName);
-                    }
-                }
-                if (resultCode == ChooseCode)
-                {
-                    onActivityResult(ChoosePositionActivityRequestCode,ChooseCode,data);
+                } else if (resultCode == ChooseCode) {
+                    onActivityResult(ChoosePositionActivityRequestCode, ChooseCode, data);
                 }
                 break;
             case ChoosePositionActivityRequestCode:
@@ -604,6 +610,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                     carWashing_text.setText(dailyBean.getCarWashing().get(0).getDesc());
                     dressing_text.setText(dailyBean.getDressing().get(0).getDesc());
                     if (isDone) {
+                        Log.i(TAG, "stopSwipe showDailyWeatherInfo");
                         stopSwipe();
                         isDone = false;
                     } else {
@@ -659,6 +666,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 //                        remoteViews);
                 dynamicWeatherView.setDrawerType(Utility.chooseBgImage(skycon));
 //                dynamicWeatherView.setDrawerType(BaseDrawer.Type.RAIN_D);
+                Log.i(TAG, "stopSwipe showCurrentWeatherInfo");
                 if (isDone) {
                     stopSwipe();
                     isDone = false;
@@ -693,6 +701,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
             @Override
             public void run() {
                 if (swipeRefreshLayout.isRefreshing()) {
+                    Log.i(TAG, "stopSwipe");
                     swipeRefreshLayout.setRefreshing(false);
                 }
             }
