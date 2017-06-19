@@ -29,6 +29,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -578,8 +579,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 @Override
                 public void run() {
                     for (int i = 0; i < 5; i++) {
-                        SimpleDateFormat oldsdf = new SimpleDateFormat("yyyy-MM-dd");
-                        SimpleDateFormat newsdf = new SimpleDateFormat("MM/dd");
+                        SimpleDateFormat oldsdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+                        SimpleDateFormat newsdf = new SimpleDateFormat("MM/dd", Locale.CHINA);
                         try {
                             Date date = oldsdf.parse(dailyBean.getSkycon().get(i).getDate());
                             day[i].setDate(newsdf.format(date));
