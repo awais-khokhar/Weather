@@ -158,6 +158,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                 break;
             case THROUGH_LOCATE:
                 presenter.setLocateModeImage(true);
+                Log.i(TAG,"THROUGH_LOCATE");
                 bdLocate();
                 break;
             case THROUGH_COORDINATE:

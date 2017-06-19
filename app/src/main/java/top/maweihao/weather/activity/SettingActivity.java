@@ -30,6 +30,7 @@ import top.maweihao.weather.service.SyncService;
 import static top.maweihao.weather.util.Constants.ChooseCode;
 import static top.maweihao.weather.util.Constants.DEBUG;
 import static top.maweihao.weather.util.Constants.SettingCode;
+import static top.maweihao.weather.util.Constants.isSetResultIntent;
 
 public class SettingActivity extends AppCompatActivity {
 
@@ -60,15 +61,26 @@ public class SettingActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            if (originalAutoLocate != changeAutolocate) {
-                Intent intent = new Intent();
-                intent.putExtra("autoLocate", changeAutolocate);
-                setResult(SettingCode, intent);
-            }
-            finish();
+            backListener();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        backListener();
+    }
+
+    private void backListener()
+    {
+        if (originalAutoLocate != changeAutolocate) {
+            isSetResultIntent=true;
+            Intent intent = new Intent();
+            intent.putExtra("autoLocate", changeAutolocate);
+            setResult(SettingCode, intent);
+        }
+        finish();
     }
 
     public static class PrefsFragment extends PreferenceFragment {

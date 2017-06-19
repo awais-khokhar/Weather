@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v7.app.NotificationCompat;
@@ -59,11 +58,12 @@ public class SyncService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate: SyncService created");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            isChinese = getResources().getConfiguration().getLocales().get(0).getDisplayLanguage().equals("中文");
-        } else {
-            isChinese = getResources().getConfiguration().locale.getDisplayLanguage().equals("zh-CN");
-        }
+        isChinese=Utility.isChinese(this);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//            isChinese = getResources().getConfiguration().getLocales().get(0).getDisplayLanguage().equals("中文");
+//        } else {
+//            isChinese = getResources().getConfiguration().locale.getDisplayLanguage().equals("zh-CN");
+//        }
     }
 
     @Override
