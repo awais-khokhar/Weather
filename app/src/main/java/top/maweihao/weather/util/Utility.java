@@ -2,6 +2,7 @@ package top.maweihao.weather.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.location.LocationManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -476,6 +477,12 @@ public class Utility {
     public static String ampm(String time) {
         int hour = Integer.parseInt(time);
         return (hour < 12) ? (hour + "am") : ((hour - 12) + "pm");
+    }
+
+    public static boolean GPSEnabled(Context context) {
+        LocationManager alm =
+                (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        return alm.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 }
 

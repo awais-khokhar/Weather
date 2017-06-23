@@ -43,6 +43,7 @@ import static top.maweihao.weather.util.Constants.Through.THROUGH_CHOOSE_POSITIO
 import static top.maweihao.weather.util.Constants.Through.THROUGH_COORDINATE;
 import static top.maweihao.weather.util.Constants.Through.THROUGH_IP;
 import static top.maweihao.weather.util.Constants.Through.THROUGH_LOCATE;
+import static top.maweihao.weather.util.Utility.GPSEnabled;
 
 /**
  * WeatherActivity 的 model 层
@@ -265,11 +266,18 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
         @Override
         public void onReceiveLocation(BDLocation bdLocation) {
             Log.d(TAG, "BAIDU: received" + (System.currentTimeMillis() - locateTime));
-            if (System.currentTimeMillis() - locateTime < 3 * 1000) {  //at most x second
+            if (System.currentTimeMillis() - locateTime < 2 * 1000) {  //at most x second
                 if (bdLocation.getLocType() != BDLocation.TypeGpsLocation) {
                     // do nothing
                     if (DEBUG) {
                         Log.d(TAG, "BAIDU onReceiveLocation: Locate type == " + bdLocation.getLocType());
+                    }
+                    if (MyLocation.locateSuccess(bdLocation.getLocType())) {
+                        if (!GPSEnabled(context)) {
+                            Log.d(TAG, "BAIDU onReceiveLocation: system GPS is off");
+                            mLocationClient.stop();
+                            bdLocateSuccess(simplifyBDLocation(bdLocation));
+                        }
                     }
                 } else {
                     mLocationClient.stop();

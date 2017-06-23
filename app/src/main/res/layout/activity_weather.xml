@@ -115,7 +115,6 @@
                     android:clickable="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     app:cardCornerRadius="4dp"
-                    app:cardElevation="5dp"
                     app:contentPaddingRight="5dp">
 
                     <include layout="@layout/few_days_content" />
