@@ -598,12 +598,12 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                         day[i].setTemperature(Utility.stringRoundFloat(dailyBean.getTemperature().get(i).getMin()) + '/'
                                 + Utility.stringRoundFloat(dailyBean.getTemperature().get(i).getMax()) + "ºC");
                         day[i].setIcon(chooseWeatherIcon(dailyBean.getSkycon().get(i).getValue(), dailyBean.getPrecipitation().get(i).getMax(), HOURLY_MODE));
+                        day[i].setSkycon(chooseWeatherSkycon(WeatherActivity.this, dailyBean.getSkycon().get(i).getValue(), dailyBean.getPrecipitation().get(i).getMax(), HOURLY_MODE));
                     }
                     day[0].setDate(getResources().getString(R.string.today));
                     day[1].setDate(getResources().getString(R.string.tomorrow));
                     String sunRise = dailyBean.getAstro().get(0).getSunrise().getTime();
                     String sunSet = dailyBean.getAstro().get(0).getSunset().getTime();
-//                    Log.d(TAG, "HERE: " + sunRise + ' ' + sunSet);
                     sunrise_text.setText(sunRise);
                     sunset_text.setText(sunSet);
                     sunTimeView.setTime(sunRise, sunSet);

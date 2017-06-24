@@ -7,14 +7,15 @@ package top.maweihao.weather.bean;
 
 public class MyLocation {
 
+    // 各种定位方式码
     public static final int TypeNone = 0;
-    public static final int TypeGpsLocation = 61;
+    public static final int TypeGpsLocation = 61;  //GPS 定位
     public static final int TypeCriteriaException = 62;
     public static final int TypeNetWorkException = 63;
     public static final int TypeOffLineLocation = 66;
     public static final int TypeOffLineLocationFail = 67;
     public static final int TypeOffLineLocationNetworkFail = 68;
-    public static final int TypeNetWorkLocation = 161;
+    public static final int TypeNetWorkLocation = 161;  //网络定位
     public static final int TypeCacheLocation = 65;
     public static final int TypeServerError = 167;
     public static final int TypeServerDecryptError = 162;

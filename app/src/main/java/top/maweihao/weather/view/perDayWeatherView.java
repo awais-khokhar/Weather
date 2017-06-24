@@ -2,6 +2,7 @@ package top.maweihao.weather.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
 import android.view.View;
@@ -20,6 +21,7 @@ public class perDayWeatherView extends ConstraintLayout {
     private TextView date;
     private ImageView icon;
     private TextView temperature;
+    private TextView skycon;  //String
 
     private int dateSize;
     private int temperatureSize;
@@ -29,6 +31,7 @@ public class perDayWeatherView extends ConstraintLayout {
         date = (TextView) findViewById(R.id.date_text);
         icon = (ImageView) findViewById(R.id.per_day_weather_icon);
         temperature = (TextView) findViewById(R.id.temperature_text);
+        skycon = (TextView) findViewById(R.id.per_day_weather_skycon);
     }
 
     public perDayWeatherView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -69,5 +72,9 @@ public class perDayWeatherView extends ConstraintLayout {
 
     public void setTemperature(String temperature) {
         this.temperature.setText(temperature);
+    }
+
+    public void setSkycon(@NonNull String skycon) {
+        this.skycon.setText(skycon);
     }
 }
