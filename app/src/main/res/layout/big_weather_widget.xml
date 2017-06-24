@@ -19,10 +19,19 @@
             <TextClock
                 android:id="@+id/big_widget_clock"
                 style="@style/widget_text_clock"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:fontFamily="sans-serif-light"
+                android:format12Hour="hh : mm"
+                android:format24Hour="HH : mm"
                 android:shadowColor="@color/colorTextDark"
                 android:shadowDx="1.0"
                 android:shadowDy="1.0"
-                android:shadowRadius="1.0" />
+                android:shadowRadius="1.0"
+                android:textColor="#fafafa"
+                android:textSize="56sp"
+                android:textStyle="normal" />
 
         </RelativeLayout>
 
@@ -32,13 +41,13 @@
 
             <ImageView
                 android:id="@+id/big_widget_skycon"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_centerInParent="true"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginBottom="14dp"
                 android:src="@mipmap/weather_few_clouds"
                 tools:ignore="ContentDescription" />
 
