@@ -3,6 +3,7 @@ package top.maweihao.weather.view.dynamicweather;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.PixelFormat;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -24,7 +25,9 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
 
     private BaseDrawer preDrawer, curDrawer;
     private float curDrawerAlpha = 0f;
-    private @Type int curType = Type.UNKNOWN_D;
+    private
+    @Type
+    int curType = Type.UNKNOWN_D;
     private int mWidth, mHeight;
 
     private void init(Context context) {
@@ -36,7 +39,7 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
         mDrawThread.start();
     }
 
-    private void setDrawer(BaseDrawer baseDrawer) {
+    private void setDrawer(@NonNull BaseDrawer baseDrawer) {
 //        if (baseDrawer == null) {
 //            return;
 //        }
@@ -68,38 +71,15 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
         // updateDrawerSize(w, h);
         mWidth = w;
         mHeight = h;
-        Log.i(TAG,"onSizeChanged : w "+w+"  h "+h);
+        Log.i(TAG, "onSizeChanged : w " + w + "  h " + h);
     }
 
-    // private void updateDrawerSize(int w, int h) {
-    // if (w == 0 || h == 0) {
-    // return;
-    // }// 这里必须加锁，因为在DrawThread.drawSurface的时候调用的是各种Drawer的绘制方法
-    // // 绘制的时候会遍历内部的各种holder
-    // // 然而那些个雨滴/星星的holder是在setSize的时候生成的
-    // if (this.curDrawer != null) {
-    // synchronized (curDrawer) {
-    // if (this.curDrawer != null) {
-    // curDrawer.setSize(w, h);
-    // }
-    // }
-    // }
-    // if (this.preDrawer != null) {
-    // synchronized (preDrawer) {
-    // if (this.preDrawer != null)
-    // {//简直我就震惊了synchronized之前不是null，synchronized之后就有可能是null!
-    // preDrawer.setSize(w, h);
-    // }
-    // }
-    // }
-    //
-    // }
 
-    private  void drawSurface(Canvas canvas) {
+    private void drawSurface(Canvas canvas) {
         final int w = mWidth;
         final int h = mHeight;
         if (w == 0 || h == 0) {
-            return ;
+            return;
         }
 //        boolean needDrawNextFrame = false;
         // Log.d(TAG, "curDrawerAlpha->" + curDrawerAlpha);
@@ -139,21 +119,21 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
     public void onPause() {
         // Make sure the drawing thread is not running while we are paused.
         if (mDrawThread.mRunning)
-            synchronized (OBJ_LOCK) {
+//            synchronized (OBJ_LOCK) {
                 mDrawThread.mRunning = false;
-                OBJ_LOCK.notify();
+//                OBJ_LOCK.notify();
                 Log.i(TAG, "onPause");
-            }
+//            }
 
     }
 
     public void onDestroy() {
         // Make sure the drawing thread goes away.
 //        mDrawThread.mQuit = true;
-        synchronized (OBJ_LOCK) {
+//        synchronized (OBJ_LOCK) {
             mDrawThread.mQuit = true;
-            OBJ_LOCK.notify();
-        }
+//            OBJ_LOCK.notify();
+//        }
         Log.i(TAG, "onDestroy");
     }
 
@@ -173,65 +153,46 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
+        Log.i(TAG, "surfaceDestroyed");
         // We need to tell the drawing thread to stop, and block until
         // it has done so.
-        synchronized (OBJ_LOCK) {
-            mDrawThread.mSurface = holder;
-            OBJ_LOCK.notify();
-            while (mDrawThread.mActive) {
-                try {
-                    OBJ_LOCK.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        mDrawThread.mSurface = holder;
+
+        mDrawThread.mRunning = false;
+
+
         holder.removeCallback(this);
-        Log.i(TAG, "surfaceDestroyed");
     }
 
     private class DrawThread extends Thread {
         // These are protected by the Thread's lock.
         SurfaceHolder mSurface;
         boolean mRunning;
-        boolean mActive;
         boolean mQuit;
 
         @Override
         public void run() {
             Canvas canvas;
             long startTime;
-            while (true) {
+            while (!mQuit) {
                 // Log.i(TAG, "DrawThread run..");
                 // Synchronize with activity: block until the activity is ready
                 // and we have a surface; report whether we are active or
                 // inactive
                 // at this point; exit thread when asked to quit.
                 synchronized (OBJ_LOCK) {
-                    while (mSurface == null || !mRunning) {
-                        Log.i(TAG,"while");
-                        if (mActive) {
-                            mActive = false;
-                            OBJ_LOCK.notify();
-                        }
-                        if (mQuit) {
-                            return;
-                        }
+                    if (mSurface == null || !mRunning) {
+                        Log.i(TAG, "wait()");
                         try {
                             OBJ_LOCK.wait();
                         } catch (InterruptedException e) {
                         }
-                    }
+                    } else {
 
-                    if (!mActive) {
-                        mActive = true;
-                        OBJ_LOCK.notify();
-                    }
-                    startTime = AnimationUtils.currentAnimationTimeMillis();
-                    //TimingLogger logger = new TimingLogger("DrawThread");
-                    // Lock the canvas for drawing.
-                    canvas = mSurface.lockCanvas();
-                    //logger.addSplit("lockCanvas");
+                        startTime = AnimationUtils.currentAnimationTimeMillis();
+
+                        // Lock the canvas for drawing.
+                        canvas = mSurface.lockCanvas();
 
 //                    if (canvas != null) {
 //						canvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
@@ -241,25 +202,18 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
                         //logger.addSplit("drawSurface");
                         // All done!
                         mSurface.unlockCanvasAndPost(canvas);
-                        //logger.addSplit("unlockCanvasAndPost");
-                        //logger.dumpToLog();
-//                    } else {
-//                        if (DEBUG)
-//                        {
-//                            Log.i(TAG, "Failure locking canvas");
-//                        }
-//                    }
-                    final long drawTime = AnimationUtils.currentAnimationTimeMillis() - startTime;
-                    final long needSleepTime = 37 - drawTime;
+
+                        final long drawTime = AnimationUtils.currentAnimationTimeMillis() - startTime;
+                        final long needSleepTime = 37 - drawTime;
 //                    Log.v(TAG, "drawSurface drawTime->" + drawTime + " needSleepTime->" + Math.max(0, needSleepTime));// needSleepTime);
-                    if (needSleepTime > 0) {
-                        try {
-                            Thread.sleep(needSleepTime);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                        if (needSleepTime > 0) {
+                            try {
+                                Thread.sleep(needSleepTime);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
-
                 }
             }
         }

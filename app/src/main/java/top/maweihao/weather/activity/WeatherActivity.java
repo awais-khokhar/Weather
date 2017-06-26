@@ -611,7 +611,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                     carWashing_text.setText(dailyBean.getCarWashing().get(0).getDesc());
                     dressing_text.setText(dailyBean.getDressing().get(0).getDesc());
                     if (isDone) {
-                        Log.i(TAG, "stopSwipe showDailyWeatherInfo");
                         stopSwipe();
                         isDone = false;
                     } else {
@@ -667,7 +666,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 //                        remoteViews);
                 dynamicWeatherView.setDrawerType(Utility.chooseBgImage(skycon));
 //                dynamicWeatherView.setDrawerType(BaseDrawer.Type.RAIN_D);
-                Log.i(TAG, "stopSwipe showCurrentWeatherInfo");
                 if (isDone) {
                     stopSwipe();
                     isDone = false;
@@ -702,7 +700,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
             @Override
             public void run() {
                 if (swipeRefreshLayout.isRefreshing()) {
-                    Log.i(TAG, "stopSwipe");
                     swipeRefreshLayout.setRefreshing(false);
                 }
             }
