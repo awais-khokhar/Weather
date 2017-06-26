@@ -2,7 +2,9 @@ package top.maweihao.weather.view.dynamicweather;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -195,7 +197,7 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
                         canvas = mSurface.lockCanvas();
 
 //                    if (canvas != null) {
-//						canvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
+						canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
                         // Update graphics.
 
                         drawSurface(canvas);
