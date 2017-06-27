@@ -2,13 +2,11 @@ package top.maweihao.weather.activity;
 
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -25,7 +23,9 @@ import java.util.GregorianCalendar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import top.maweihao.weather.R;
+import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.service.SyncService;
+import top.maweihao.weather.util.Utility;
 
 import static top.maweihao.weather.util.Constants.ChooseCode;
 import static top.maweihao.weather.util.Constants.DEBUG;
@@ -98,16 +98,20 @@ public class SettingActivity extends AppCompatActivity {
         private Preference notificationTime;
 
         String countyName;
-        SharedPreferences sharedPreferences;
+//        SharedPreferences sharedPreferences;
+        private PreferenceConfigContact configContact;
 
 
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.settingpreference);
-            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            countyName = sharedPreferences.getString("countyName", null);
-            changeAutolocate = originalAutoLocate = sharedPreferences.getBoolean("auto_locate", false);
+            configContact = Utility.creatSimpleConfig(getActivity()).create(PreferenceConfigContact.class);
+//            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+//            countyName = sharedPreferences.getString("countyName", null);
+            countyName=configContact.getCountyName();
+//            changeAutolocate = originalAutoLocate = sharedPreferences.getBoolean("auto_locate", false);
+            changeAutolocate = originalAutoLocate =configContact.getAutoLocate(false);
             initViews();
         }
 
@@ -137,7 +141,8 @@ public class SettingActivity extends AppCompatActivity {
 
             if (notification.isChecked()) {
                 notificationTime.setEnabled(true);
-                notificationTime.setSummary(sharedPreferences.getString("notification_time", "18 : 00"));
+//                notificationTime.setSummary(sharedPreferences.getString("notification_time", "18 : 00"));
+                notificationTime.setSummary(configContact.getNotificationTime("18 : 00"));
             } else
                 notificationTime.setEnabled(false);
 
@@ -187,7 +192,8 @@ public class SettingActivity extends AppCompatActivity {
                     Intent startIntent = new Intent(getActivity(), SyncService.class);
                     if (stringValue.equals("true")) {
                         notificationTime.setEnabled(true);
-                        notificationTime.setSummary(sharedPreferences.getString("notification_time", "18 : 00"));
+//                        notificationTime.setSummary(sharedPreferences.getString("notification_time", "18 : 00"));
+                        notificationTime.setSummary(configContact.getNotificationTime("18 : 00"));
                         SyncService.isStarSendNotification = false;
                         getActivity().startService(startIntent);
                         if (DEBUG)
@@ -256,9 +262,9 @@ public class SettingActivity extends AppCompatActivity {
                                 String formatMinute = df.format(minute);
                                 preference.setSummary(formatHour + ": " + formatMinute);
 
-                                SharedPreferences sp = preference.getSharedPreferences();
-//                                Log.d(TAG, "SettingActivity::notification_time " + sp.getString("notification_time",null));
-                                sp.edit().putString("notification_time", formatHour + TIME_SPLIT + formatMinute).apply();
+//                                SharedPreferences sp = preference.getSharedPreferences();
+//                                sp.edit().putString("notification_time", formatHour + TIME_SPLIT + formatMinute).apply();
+                                configContact.applyNotificationTime(formatHour + TIME_SPLIT + formatMinute);
                                 SyncService.isStarSendNotification = false;
                                 Intent startIntent = new Intent(getActivity(), SyncService.class);
                                 getActivity().startService(startIntent);

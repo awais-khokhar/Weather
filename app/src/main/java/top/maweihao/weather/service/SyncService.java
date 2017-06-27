@@ -7,11 +7,10 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.support.v7.app.NotificationCompat;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
@@ -27,6 +26,7 @@ import top.maweihao.weather.R;
 import top.maweihao.weather.activity.SettingActivity;
 import top.maweihao.weather.activity.WeatherActivity;
 import top.maweihao.weather.bean.ForecastBean;
+import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.util.Utility;
 
 import static top.maweihao.weather.util.Constants.DEBUG;
@@ -48,6 +48,8 @@ public class SyncService extends Service {
 
     private static String GET_MINUTE;
 
+    private PreferenceConfigContact configContact;
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -58,7 +60,7 @@ public class SyncService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate: SyncService created");
-        isChinese=Utility.isChinese(this);
+        isChinese = Utility.isChinese(this);
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 //            isChinese = getResources().getConfiguration().getLocales().get(0).getDisplayLanguage().equals("中文");
 //        } else {
@@ -69,6 +71,7 @@ public class SyncService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand: ");
+        configContact = Utility.creatSimpleConfig(getApplicationContext()).create(PreferenceConfigContact.class);
         if (isStarSendNotification) //标记是否发送通知
             fetchData();
         startAgain();
@@ -81,8 +84,9 @@ public class SyncService extends Service {
             @Override
             public void run() {
 
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                String fUrl = prefs.getString("furl", null);
+//                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//                String fUrl = prefs.getString("furl", null);
+                String fUrl = configContact.getFurl();
                 Log.i(TAG, "furl  " + fUrl);
                 if (fUrl != null) {
                     try {
@@ -109,10 +113,10 @@ public class SyncService extends Service {
     }
 
     private void startAgain() {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-//                                Log.d(TAG, "SettingActivity::notification_time " + sp.getString("notification_time",null));
-        String time = sp.getString("notification_time", null);
-        if (time != null) {
+//        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//        String time = sp.getString("notification_time", null);
+        String time = configContact.getNotificationTime(null);
+        if (!TextUtils.isEmpty(time)) {
             String[] splitTime = time.split(SettingActivity.TIME_SPLIT);
             GET_HOUR = splitTime[0];
             GET_MINUTE = splitTime[1];

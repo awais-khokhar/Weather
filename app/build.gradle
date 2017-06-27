@@ -49,4 +49,6 @@ dependencies {
     //https://github.com/yqritc/RecyclerView-FlexibleDivider  分割线
     compile 'com.yqritc:recyclerview-flexibledivider:1.4.0'
     compile 'com.alibaba:fastjson:1.1.58.android'
+    //https://github.com/BCsl/SimpleConfig
+    compile 'github.hellocsl:simpleconfig:1.0.0'
 }

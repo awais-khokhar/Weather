@@ -2,11 +2,9 @@ package top.maweihao.weather.model;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
@@ -32,6 +30,7 @@ import top.maweihao.weather.bean.BaiDu.BaiDuIPLocationBean;
 import top.maweihao.weather.bean.ForecastBean;
 import top.maweihao.weather.bean.MyLocation;
 import top.maweihao.weather.bean.RealTimeBean;
+import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.contract.WeatherActivityContract;
 import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.HttpUtil;
@@ -62,12 +61,14 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
     private LocationClient mLocationClient;
     private WeatherActivityContract.Presenter presenter;
     private Context context;
-    private static ExecutorService singleThreadPool ;
+    private static ExecutorService singleThreadPool;
+    private PreferenceConfigContact configContact;
 
     public WeatherActivityModel(Context context, WeatherActivityContract.Presenter presenter) {
         this.context = context;
         this.presenter = presenter;
 
+        configContact = Utility.creatSimpleConfig(context).create(PreferenceConfigContact.class);
         singleThreadPool = Executors.newSingleThreadExecutor();
         mLocationClient = new LocationClient(context);
         mLocationClient.registerLocationListener(new MainLocationListener());
@@ -83,29 +84,28 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
     @Override
     public void refreshWeather(boolean forceAllRefresh, @Nullable String getCountyName) {
         presenter.startSwipe();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         //读取配置
-        boolean getAutoLocate = prefs.getBoolean("auto_locate", true);
-        countyName = prefs.getString("countyName", null);
+        boolean getAutoLocate = configContact.getAutoLocate(false);
+        countyName = configContact.getCountyName();
         if (!forceAllRefresh) {
             /*
              * 判断是否超过刷新间隔。
              * 如果需要刷新的城市和配置文件中的城市一样 或 传递进来的城市为空，则进行刷新间隔判断。
              */
-            if ((getCountyName != null && countyName != null && countyName.equals(getCountyName)) || getCountyName == null) {
+            if ((getCountyName != null && !TextUtils.isEmpty(countyName) && countyName.equals(getCountyName)) || getCountyName == null) {
 
                  /*minInterval： 最低刷新间隔*/
-                int minInterval = prefs.getInt("refresh_interval", 10);
+                int minInterval = configContact.getRefreshInterval(10);
 //               现在的天气， 原始json
-                String weatherNow = prefs.getString("weather_now", null);
-                long weatherNowLastUpdateTime = prefs.getLong("weather_now_last_update_time", 0);
+                String weatherNow = configContact.getWeatherNow();
+                long weatherNowLastUpdateTime = configContact.getWeatherNowLastUpdateTime(0);
 //               未来的天气， 原始json
-                String weatherFull = prefs.getString("weather_full", null);
-                long weatherFullLastUpdateTime = prefs.getLong("weather_full_last_update_time", 0);
+                String weatherFull = configContact.getWeatherFull();
+                long weatherFullLastUpdateTime = configContact.getWeatherFullLastUpdateTime(0);
 //               若保存的天气刷新时间和现在相差小于 minInterval，则直接使用
-                if (weatherNow != null && System.currentTimeMillis() - weatherNowLastUpdateTime < minInterval * 60 * 1000
-                        && weatherFull != null && System.currentTimeMillis() - weatherFullLastUpdateTime < minInterval * 60 * 1000) {
+                if (!TextUtils.isEmpty(weatherNow) && System.currentTimeMillis() - weatherNowLastUpdateTime < minInterval * 60 * 1000
+                        && !TextUtils.isEmpty(weatherFull) && System.currentTimeMillis() - weatherFullLastUpdateTime < minInterval * 60 * 1000) {
                     if (DEBUG) {
                         Log.d(TAG, "readCache: last nowWeather synced: "
                                 + (System.currentTimeMillis() - weatherNowLastUpdateTime) / 1000 + "s ago");
@@ -124,7 +124,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                     String ip;
                     if (countyName != null)
                         presenter.setCounty(countyName);
-                    else if ((ip = prefs.getString("IP", null)) != null) {
+                    else if ((ip = configContact.getIp()) != null) {
                         presenter.setCounty(ip);
                     }
                 } else {
@@ -159,14 +159,14 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                 break;
             case THROUGH_LOCATE:
                 presenter.setLocateModeImage(true);
-                Log.i(TAG,"THROUGH_LOCATE");
+                Log.i(TAG, "THROUGH_LOCATE");
                 bdLocate();
                 break;
             case THROUGH_COORDINATE:
 //                locateModeImage.setVisibility(View.INVISIBLE);
 //                locateMode.setVisibility(View.INVISIBLE);
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-                locationCoordinates = prefs.getString("coordinate", null);
+
+                locationCoordinates = configContact.getCoordinate();
 //                initRequireUrl();
                 afterGetCoordinate();
                 break;
@@ -218,13 +218,18 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             Log.d(TAG, "locateSuccess: locationCoordinates == " + locationCoordinates);
             Log.d(TAG, "locateSuccess: location: " + countyName + location.getStreet());
         }
-        SharedPreferences.Editor editor = PreferenceManager
-                .getDefaultSharedPreferences(context).edit();
-        editor.putString("coordinate", locationCoordinates);
-        editor.putLong("coordinate_last_update", System.currentTimeMillis());
-        editor.putString("countyName", countyName);
-        editor.putLong("countyName_last_update_time", System.currentTimeMillis());
-        editor.apply();
+//        SharedPreferences.Editor editor = PreferenceManager
+//                .getDefaultSharedPreferences(context).edit();
+//        editor.putString("coordinate", locationCoordinates);
+//        editor.putLong("coordinate_last_update", System.currentTimeMillis());
+//        editor.putString("countyName", countyName);
+//        editor.putLong("countyName_last_update_time", System.currentTimeMillis());
+//        editor.apply();
+        configContact.applyCountyName(countyName);
+        configContact.applyCoordinate(locationCoordinates);
+        configContact.applyCountyNameLastUpdateTime(System.currentTimeMillis());
+        configContact.applyCoordinateLastUpdateTime(System.currentTimeMillis());
+
         presenter.setCounty(countyName);
         afterGetCoordinate();
     }
@@ -244,11 +249,13 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             locationCoordinates = String.valueOf(location.getLongitude()) + ',' + String.valueOf(location.getLatitude());
             if (DEBUG)
                 Log.d(TAG, "GetCoordinateByLocate: locationCoordinates = " + locationCoordinates);
-            SharedPreferences.Editor editor = PreferenceManager
-                    .getDefaultSharedPreferences(context).edit();
-            editor.putString("coordinate", locationCoordinates);
-            editor.putLong("coordinate_last_update", System.currentTimeMillis());
-            editor.apply();
+//            SharedPreferences.Editor editor = PreferenceManager
+//                    .getDefaultSharedPreferences(context).edit();
+//            editor.putString("coordinate", locationCoordinates);
+//            editor.putLong("coordinate_last_update", System.currentTimeMillis());
+//            editor.apply();
+            configContact.applyCoordinate(locationCoordinates);
+            configContact.applyCoordinateLastUpdateTime(System.currentTimeMillis());
 
             getCountyByCoordinate(locationCoordinates);
             afterGetCoordinate();
@@ -339,12 +346,14 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String responseText = response.body().string();
-                SharedPreferences.Editor editor = PreferenceManager
-                        .getDefaultSharedPreferences(context).edit();
-                editor.putString("weather_full", responseText);
-                editor.putLong("weather_full_last_update_time", System.currentTimeMillis());
-
-                editor.apply();
+//                SharedPreferences.Editor editor = PreferenceManager
+//                        .getDefaultSharedPreferences(context).edit();
+//                editor.putString("weather_full", responseText);
+//                editor.putLong("weather_full_last_update_time", System.currentTimeMillis());
+//
+//                editor.apply();
+                configContact.applyWeatherFull(responseText);
+                configContact.applyWeatherFullLastUpdateTime(System.currentTimeMillis());
 
 //                presenter.isUpdate(true);
                 presenter.setLastUpdateTime(SYSTEM_NOW_TIME);
@@ -380,12 +389,14 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                 RealTimeBean bean = JSON.parseObject(responseText, RealTimeBean.class);
 
                 if (bean != null) {
-                    SharedPreferences.Editor editor = PreferenceManager
-                            .getDefaultSharedPreferences(context).edit();
-                    editor.putString("weather_now", responseText);
-                    editor.putLong("weather_now_last_update_time", System.currentTimeMillis());
-
-                    editor.apply();
+//                    SharedPreferences.Editor editor = PreferenceManager
+//                            .getDefaultSharedPreferences(context).edit();
+//                    editor.putString("weather_now", responseText);
+//                    editor.putLong("weather_now_last_update_time", System.currentTimeMillis());
+//
+//                    editor.apply();
+                    configContact.applyWeatherNow(responseText);
+                    configContact.applyWeatherNowLastUpdateTime(System.currentTimeMillis());
                     presenter.setCurrentWeatherInfo(bean);
                     presenter.setLastUpdateTime(SYSTEM_NOW_TIME);
                 } else {
@@ -495,11 +506,14 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                 String countyName = bean.getResult().getAddressComponent().getDistrict();
                 if (DEBUG)
                     Log.d(TAG, "setCountyByCoordinate.onResponse: countyName: " + countyName);
-                SharedPreferences.Editor editor = PreferenceManager
-                        .getDefaultSharedPreferences(context).edit();
-                editor.putString("countyName", countyName);
-                editor.putLong("countyName_last_update_time", System.currentTimeMillis());
-                editor.apply();
+//                SharedPreferences.Editor editor = PreferenceManager
+//                        .getDefaultSharedPreferences(context).edit();
+//                editor.putString("countyName", countyName);
+//                editor.putLong("countyName_last_update_time", System.currentTimeMillis());
+//                editor.apply();
+                configContact.applyCountyName(countyName);
+                configContact.applyCountyNameLastUpdateTime(System.currentTimeMillis());
+
                 presenter.setCounty(countyName);
 
             }
@@ -539,11 +553,14 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                 BaiDuChoosePositionBean bean = JSON.parseObject(responseText, BaiDuChoosePositionBean.class);
 
                 locationCoordinates = bean.getResult().getLocation().getLng() + "," + bean.getResult().getLocation().getLat();
-                SharedPreferences.Editor editor = PreferenceManager
-                        .getDefaultSharedPreferences(context).edit();
-                editor.putString("coordinate", locationCoordinates);
-                editor.putLong("coordinate_last_update", System.currentTimeMillis());
-                editor.apply();
+//                SharedPreferences.Editor editor = PreferenceManager
+//                        .getDefaultSharedPreferences(context).edit();
+//                editor.putString("coordinate", locationCoordinates);
+//                editor.putLong("coordinate_last_update", System.currentTimeMillis());
+//                editor.apply();
+                configContact.applyCoordinate(locationCoordinates);
+                configContact.applyCoordinateLastUpdateTime(System.currentTimeMillis());
+
                 afterGetCoordinate();
             }
         });
@@ -571,23 +588,21 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                 BaiDuIPLocationBean bean = JSON.parseObject(responseText, BaiDuIPLocationBean.class);
                 locationCoordinates = bean.getContent().getPoint().getX() + "," + bean.getContent().getPoint().getY();
                 String countyName = bean.getContent().getAddress_detail().getCity() + " " + bean.getContent().getAddress_detail().getDistrict();
-//                try {
-//                    JSONObject allAttributes = new JSONObject(responseText);
-//                    JSONObject content = allAttributes.getJSONObject("content");
-//                    JSONObject address_detail = content.getJSONObject("address_detail");
-//                    String countyName = address_detail.getString("city") + " " + address_detail.getString("district");
-//                    JSONObject point = content.getJSONObject("point");
-//                    String x = point.getString("x");
-//                    String y = point.getString("y");
-//                    locationCoordinates = x + ',' + y;
-                SharedPreferences.Editor editor = PreferenceManager
-                        .getDefaultSharedPreferences(context).edit();
-                editor.putString("coordinate", locationCoordinates);
-                editor.putLong("coordinate_last_update", System.currentTimeMillis());
-                editor.putString("countyName", countyName);
-                editor.putLong("countyName_last_update_time", System.currentTimeMillis());
-                editor.putString("IP", Utility.getIP(context));
-                editor.apply();
+
+//                SharedPreferences.Editor editor = PreferenceManager
+//                        .getDefaultSharedPreferences(context).edit();
+//                editor.putString("coordinate", locationCoordinates);
+//                editor.putLong("coordinate_last_update", System.currentTimeMillis());
+//                editor.putString("countyName", countyName);
+//                editor.putLong("countyName_last_update_time", System.currentTimeMillis());
+//                editor.putString("IP", Utility.getIP(context));
+//                editor.apply();
+                long time=System.currentTimeMillis();
+                configContact.applyCoordinate(locationCoordinates);
+                configContact.applyCoordinateLastUpdateTime(time);
+                configContact.applyCountyName(countyName);
+                configContact.applyCountyNameLastUpdateTime(time);
+                configContact.applyIp(Utility.getIP(context));
                 if (DEBUG)
                     Log.d(TAG, "GetCoordinateByIp: locationCoordinates = " + locationCoordinates);
 //                } catch (JSONException e) {
@@ -611,11 +626,13 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             String cUrl = "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/" + locationCoordinates + "/realtime.json";
 //            即 full weather Url， 获取未来天气的url
             String fUrl = "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/" + locationCoordinates + "/forecast.json";
-            SharedPreferences.Editor editor = PreferenceManager
-                    .getDefaultSharedPreferences(context).edit();
-            editor.putString("curl", cUrl);
-            editor.putString("furl", fUrl);
-            editor.apply();
+//            SharedPreferences.Editor editor = PreferenceManager
+//                    .getDefaultSharedPreferences(context).edit();
+//            editor.putString("curl", cUrl);
+//            editor.putString("furl", fUrl);
+//            editor.apply();
+            configContact.applyCurl(cUrl);
+            configContact.applyFurl(fUrl);
 
             presenter.startSwipe();
 

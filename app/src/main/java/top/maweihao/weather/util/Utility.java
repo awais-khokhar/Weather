@@ -6,6 +6,7 @@ import android.location.LocationManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
@@ -24,6 +25,8 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Locale;
 
+import github.hellocsl.simpleconfig.Config;
+import github.hellocsl.simpleconfig.SimpleConfig;
 import top.maweihao.weather.R;
 import top.maweihao.weather.db.City;
 import top.maweihao.weather.db.County;
@@ -45,72 +48,20 @@ public class Utility {
     private static final String TAG = "Utility";
 
     /**
-     * 解析当前天气json
-     *
-     * @param url json
-     * @return WeatherData 类
+     * 创建自定义的配置文件读取方法
+     * @param context Context
+     * @return SimpleConfig
      */
-//    public static RealTimeBean handleCurrentWeatherResponse(String url) {
-////        WeatherData wd = null;
-////        try {
-////            JSONObject allAttributes = new JSONObject(url);
-////            String result = allAttributes.getString("result");
-////            JSONObject resultJSON = allAttributes.getJSONObject("result");
-////            JSONObject precipitationJSON = resultJSON.getJSONObject("precipitation");
-////            JSONObject localJSON = precipitationJSON.getJSONObject("local");
-////            Gson gson = new Gson();
-////            wd = gson.fromJson(result, WeatherData.class);
-////            String intensity = localJSON.getString("intensity");
-////            wd.setIntensity(intensity);
-////        } catch (JSONException e) {
-////            e.printStackTrace();
-////            Log.e(TAG, "handleCurrentWeatherResponse: parse weather json error");
-////        }
-//        return JSON.parseObject(url,RealTimeBean.class);
-//    }
+    public static SimpleConfig creatSimpleConfig(Context context)
+    {
+        return new SimpleConfig.Builder(context).configFactory(new Config.Factory() {
+            @Override
+            public Config newConfig(Context context, String name, int mode) {
+                return new PreferenceConfig(context);
+            }
+        }).build();
+    }
 
-//    /**
-//     * 大致解析json
-//     *
-//     * @return <JSONArray> list
-//     */
-//    public static ArrayList<JSONArray> handleFullWeatherResponse(String url) {
-//        ArrayList<JSONArray> jsonArrays = new ArrayList<>();
-//        try {
-//            JSONObject all = new JSONObject(url);
-//            JSONObject result = all.getJSONObject("result");
-//            JSONObject daily = result.getJSONObject("daily");
-//            JSONObject hourly = result.getJSONObject("hourly");
-//            JSONArray skycon = daily.getJSONArray("skycon");
-//            JSONArray humidity = daily.getJSONArray("humidity");
-//            JSONArray temperature = daily.getJSONArray("temperature");
-//            JSONArray precipitation = daily.getJSONArray("precipitation");
-//            JSONArray astro = daily.getJSONArray("astro");
-//            JSONArray uv = daily.getJSONArray("ultraviolet");
-//            JSONArray dressing = daily.getJSONArray("dressing");
-//            JSONArray carWashing = daily.getJSONArray("carWashing");
-//
-//            JSONArray hourly_skycon = hourly.getJSONArray("skycon");
-//            JSONArray hourly_temperature = hourly.getJSONArray("temperature");
-//            JSONArray hourly_precipitation = hourly.getJSONArray("precipitation");
-//            jsonArrays.add(0, skycon);
-//            jsonArrays.add(1, humidity);
-//            jsonArrays.add(2, temperature);
-//            jsonArrays.add(3, precipitation);
-//            jsonArrays.add(4, astro);
-//            jsonArrays.add(5, hourly_skycon);
-//            jsonArrays.add(6, hourly_temperature);
-//            jsonArrays.add(7, hourly_precipitation);
-//            jsonArrays.add(8, uv);
-//            jsonArrays.add(9, dressing);
-//            jsonArrays.add(10, carWashing);
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//            Log.e(TAG, "handleFewDaysWeatherResponse: parse weather json error");
-//        }
-//        return jsonArrays;
-//    }
 
     /**
      * choosePositionActivity 里用的方法，应该不用改
@@ -421,7 +372,7 @@ public class Utility {
      * @param context
      * @return 高度值
      */
-    public static int getStatusBarHeight(@Nullable Context context) {
+    public static int getStatusBarHeight(@NonNull Context context) {
         Class<?> c = null;
         Object obj = null;
         Field field = null;

@@ -4,9 +4,7 @@ import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -20,6 +18,7 @@ import okhttp3.Response;
 import top.maweihao.weather.R;
 import top.maweihao.weather.activity.WeatherActivity;
 import top.maweihao.weather.bean.RealTimeBean;
+import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.widget.SimpleWeatherWidget;
 
@@ -54,18 +53,25 @@ public class SimpleWidgetUpdateService extends Service {
 
     private void updateWidget() {
 
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        int minInterval = prefs.getInt("refresh_interval", 5);
-        String weatherNow = prefs.getString("weather_now", null);
-        long weatherNowLastUpdateTime = prefs.getLong("weather_now_last_update_time", 0);
-        final String countyName = prefs.getString("countyName", "error");
+//        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//        int minInterval = prefs.getInt("refresh_interval", 5);
+//        String weatherNow = prefs.getString("weather_now", null);
+//        long weatherNowLastUpdateTime = prefs.getLong("weather_now_last_update_time", 0);
+//        final String countyName = prefs.getString("countyName", "error");
+        PreferenceConfigContact configContact = Utility.creatSimpleConfig(getApplicationContext()).create(PreferenceConfigContact.class);
+        int minInterval = configContact.getRefreshInterval(5);
+        String weatherNow = configContact.getWeatherNow();
+        long weatherNowLastUpdateTime = configContact.getWeatherNowLastUpdateTime(0);
+        final String countyName = configContact.getCountyName() == null ? "error" : configContact.getCountyName();
+
         if (weatherNow != null && System.currentTimeMillis() - weatherNowLastUpdateTime < minInterval * 60 * 1000) {
             updateWeather(weatherNow, countyName);
         } else {
             if (DEBUG) {
                 Log.d(TAG, "updateWidget: weather data out of date");
             }
-            final String cUrl = prefs.getString("curl", null);
+//            final String cUrl = prefs.getString("curl", null);
+            final String cUrl = configContact.getCurl();
             new Thread(new Runnable() {
                 @Override
                 public void run() {

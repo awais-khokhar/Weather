@@ -2,7 +2,6 @@ package top.maweihao.weather.activity;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -36,6 +35,7 @@ import butterknife.ButterKnife;
 import top.maweihao.weather.R;
 import top.maweihao.weather.bean.ForecastBean;
 import top.maweihao.weather.bean.RealTimeBean;
+import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.contract.WeatherActivityContract;
 import top.maweihao.weather.presenter.WeatherActivityPresenter;
 import top.maweihao.weather.service.SyncService;
@@ -149,6 +149,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     private MessageHandler handler; //消息队列
     private WeatherActivityContract.Presenter presenter;
 
+    private PreferenceConfigContact configContact;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         PreferenceManager.setDefaultValues(this, R.xml.settingpreference, false);
@@ -156,6 +158,10 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather);
         ButterKnife.bind(this);
+
+        configContact = Utility.creatSimpleConfig(this).create(PreferenceConfigContact.class);
+//        configContact.applyCountyName("昆明");
+//        System.out.println("test gggggggggg"+configContact.getCountyName());
 
         int statusHeight = Utility.getStatusBarHeight(this);
         int navigationBarHeight = Utility.getNavigationBarHeight(this);
@@ -445,19 +451,22 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        SharedPreferences.Editor editor = PreferenceManager
-                .getDefaultSharedPreferences(WeatherActivity.this).edit();
-
-        SharedPreferences per = PreferenceManager
-                .getDefaultSharedPreferences(WeatherActivity.this);
+//        SharedPreferences.Editor editor = PreferenceManager
+//                .getDefaultSharedPreferences(WeatherActivity.this).edit();
+//
+//        SharedPreferences per = PreferenceManager
+//                .getDefaultSharedPreferences(WeatherActivity.this);
         switch (requestCode) {
             case SettingActivityRequestCode:
                 if (resultCode == SettingCode) {
-                    editor.putBoolean("auto_locate", data.getBooleanExtra("autoLocate", false));
+//                    editor.putBoolean("auto_locate", data.getBooleanExtra("autoLocate", false));
+                    configContact.applyAutoLocate(data.getBooleanExtra("autoLocate", false));
+
                     if (DEBUG)
                         Log.d(TAG, "onActivityResult: SettingActivity");
-                    String perCountyName = per.getString("countyName", null);
-                    if (perCountyName == null || perCountyName.equals("")) {
+//                    String perCountyName = per.getString("countyName", null);
+                    String perCountyName = configContact.getCountyName();
+                    if (TextUtils.isEmpty(perCountyName)) {
                         Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
                         startActivityForResult(intent, ChoosePositionActivityRequestCode);
                     } else {
@@ -473,10 +482,13 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                     setCounty(countyName);
                     if (DEBUG)
                         Log.d(TAG, "onActivityResult: county_return: " + countyName);
-                    editor.putString("countyName", countyName);
-                    editor.putLong("countyName_last_update_time", System.currentTimeMillis());
-                    editor.putBoolean("auto_locate", false);
-                    editor.apply();
+//                    editor.putString("countyName", countyName);
+//                    editor.putLong("countyName_last_update_time", System.currentTimeMillis());
+//                    editor.putBoolean("auto_locate", false);
+//                    editor.apply();
+                    configContact.applyCountyName(countyName);
+                    configContact.applyCountyNameLastUpdateTime(System.currentTimeMillis());
+                    configContact.applyAutoLocate(false);
                     presenter.refreshWeather(true, countyName);
                 }
                 break;
@@ -638,8 +650,9 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 float intensity = realTimeBean.getResult().getPrecipitation().getLocal().getIntensity();
                 float aqi = realTimeBean.getResult().getAqi();
 
-                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this);
-                String countyName = prefs.getString("countyName", null);
+//                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this);
+//                String countyName = prefs.getString("countyName", null);
+                String countyName =  configContact.getCountyName();
                 if (realTimeBean.getResult().getWind() != null) {
                     setWindDirection(realTimeBean.getResult().getWind().getDirection());
                     setWindLevel(realTimeBean.getResult().getWind().getSpeed());

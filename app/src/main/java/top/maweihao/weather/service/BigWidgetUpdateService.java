@@ -4,9 +4,7 @@ import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -20,6 +18,7 @@ import okhttp3.Response;
 import top.maweihao.weather.R;
 import top.maweihao.weather.activity.WeatherActivity;
 import top.maweihao.weather.bean.ForecastBean;
+import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.widget.BigWeatherWidget;
 
@@ -48,18 +47,24 @@ public class BigWidgetUpdateService extends Service {
 
     private void updateWidget() {
 
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        int minInterval = prefs.getInt("refresh_interval", 5);
-        String weatherFull = prefs.getString("weather_full", null);
-        long weatherFullLastUpdateTime = prefs.getLong("weather_full_last_update_time", 0);
-        final String countyName = prefs.getString("countyName", "error");
+//        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//        int minInterval = prefs.getInt("refresh_interval", 5);
+//        String weatherFull = prefs.getString("weather_full", null);
+//        long weatherFullLastUpdateTime = prefs.getLong("weather_full_last_update_time", 0);
+//        final String countyName = prefs.getString("countyName", "error");
+        PreferenceConfigContact configContact = Utility.creatSimpleConfig(getApplicationContext()).create(PreferenceConfigContact.class);
+        int minInterval = configContact.getRefreshInterval(5);
+        String weatherFull = configContact.getWeatherFull();
+        long weatherFullLastUpdateTime = configContact.getWeatherFullLastUpdateTime(0);
+        final String countyName = configContact.getCountyName() == null ? "error" : configContact.getCountyName();
         if (weatherFull != null && System.currentTimeMillis() - weatherFullLastUpdateTime < minInterval * 60 * 1000) {
             updateWeather(weatherFull, countyName);
         } else {
             if (DEBUG) {
                 Log.d(TAG, "updateWidget: weather data out of date");
             }
-            final String fUrl = prefs.getString("furl", null);
+//            final String fUrl = prefs.getString("furl", null);
+            final String fUrl = configContact.getFurl();
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -108,7 +113,7 @@ public class BigWidgetUpdateService extends Service {
 //            String skyconString = Utility.chooseWeatherSkycon(skycon, Float.parseFloat(intensity), WeatherActivity.MINUTELY_MODE);
         bigViews.setImageViewResource(R.id.big_widget_skycon, icon);
         bigViews.setTextViewText(R.id.big_widget_info, countyName + "\n" + skyconString + ' ' + tem + '°');
-            bigViews.setTextViewText(R.id.big_widget_refresh_time, Utility.parseTime());
+        bigViews.setTextViewText(R.id.big_widget_refresh_time, Utility.parseTime());
         Log.d(TAG, "successful" + tem + skycon + intensity);
 //        }
 //        catch (JSONException e) {
