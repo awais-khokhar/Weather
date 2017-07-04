@@ -104,15 +104,15 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                 String weatherFull = configContact.getWeatherFull();
                 long weatherFullLastUpdateTime = configContact.getWeatherFullLastUpdateTime(0);
 //               若保存的天气刷新时间和现在相差小于 minInterval，则直接使用
-                if (!TextUtils.isEmpty(weatherNow) && System.currentTimeMillis() - weatherNowLastUpdateTime < minInterval * 60 * 1000
-                        && !TextUtils.isEmpty(weatherFull) && System.currentTimeMillis() - weatherFullLastUpdateTime < minInterval * 60 * 1000) {
+                long nowTime = System.currentTimeMillis();
+                if (!TextUtils.isEmpty(weatherNow) && nowTime - weatherNowLastUpdateTime < minInterval * 60 * 1000
+                        && !TextUtils.isEmpty(weatherFull) && nowTime - weatherFullLastUpdateTime < minInterval * 60 * 1000) {
                     if (DEBUG) {
                         Log.d(TAG, "readCache: last nowWeather synced: "
-                                + (System.currentTimeMillis() - weatherNowLastUpdateTime) / 1000 + "s ago");
+                                + (nowTime - weatherNowLastUpdateTime) / 1000 + "s ago");
                         Log.d(TAG, "readCache: last fullWeather synced: "
-                                + (System.currentTimeMillis() - weatherFullLastUpdateTime) / 1000 + "s ago");
+                                + (nowTime - weatherFullLastUpdateTime) / 1000 + "s ago");
                     }
-//            lastUpdateTime.setText(Utility.getTime(context, weatherNowLastUpdateTime));
                     presenter.setLastUpdateTime(weatherNowLastUpdateTime);
 
                     RealTimeBean bean = JSON.parseObject(weatherNow, RealTimeBean.class);
@@ -218,13 +218,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             Log.d(TAG, "locateSuccess: locationCoordinates == " + locationCoordinates);
             Log.d(TAG, "locateSuccess: location: " + countyName + location.getStreet());
         }
-//        SharedPreferences.Editor editor = PreferenceManager
-//                .getDefaultSharedPreferences(context).edit();
-//        editor.putString("coordinate", locationCoordinates);
-//        editor.putLong("coordinate_last_update", System.currentTimeMillis());
-//        editor.putString("countyName", countyName);
-//        editor.putLong("countyName_last_update_time", System.currentTimeMillis());
-//        editor.apply();
+
         configContact.applyCountyName(countyName);
         configContact.applyCoordinate(locationCoordinates);
         configContact.applyCountyNameLastUpdateTime(System.currentTimeMillis());
@@ -302,7 +296,8 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                 if (MyLocation.locateSuccess(bdLocation.getLocType())) {
                     bdLocateSuccess(simplifyBDLocation(bdLocation));
                 } else {
-                    Log.d(TAG, "BAIDU onReceiveLocation: baidu locate failed, switch to LocationManager method");
+                    if (DEBUG)
+                        Log.d(TAG, "BAIDU onReceiveLocation: baidu locate failed, switch to LocationManager method");
                     bdLocateFail();
                 }
             }
@@ -388,19 +383,14 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
 //                final WeatherData weatherData = handleCurrentWeatherResponse(responseText);
                 RealTimeBean bean = JSON.parseObject(responseText, RealTimeBean.class);
 
-                if (bean != null) {
-//                    SharedPreferences.Editor editor = PreferenceManager
-//                            .getDefaultSharedPreferences(context).edit();
-//                    editor.putString("weather_now", responseText);
-//                    editor.putLong("weather_now_last_update_time", System.currentTimeMillis());
-//
-//                    editor.apply();
+                if (bean != null && bean.getStatus().equals(Constants.STATUS_OK)) {
+
                     configContact.applyWeatherNow(responseText);
                     configContact.applyWeatherNowLastUpdateTime(System.currentTimeMillis());
                     presenter.setCurrentWeatherInfo(bean);
                     presenter.setLastUpdateTime(SYSTEM_NOW_TIME);
                 } else {
-                    presenter.toastMessage("weatherDate = null");
+                    presenter.toastMessage("weatherDate = null OR weatherDate Status!=OK");
                 }
             }
         });
@@ -415,7 +405,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
     private void jsonFullWeatherData(String responseText) {
         //fastJson解析数据
         ForecastBean forecastBean = JSON.parseObject(responseText, ForecastBean.class);
-        if (forecastBean.getStatus().equals(Constants.STATUS_OK)) {
+        if (forecastBean != null && forecastBean.getStatus().equals(Constants.STATUS_OK)) {
             List list;
             //返回的json是48小时的预报，截取前24小时
             if ((list = forecastBean.getResult().getHourly().getSkycon()) != null)
@@ -503,18 +493,19 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             public void onResponse(Call call, Response response) throws IOException {
                 final String responseText = response.body().string();
                 BaiDuCoordinateBean bean = JSON.parseObject(responseText, BaiDuCoordinateBean.class);
-                String countyName = bean.getResult().getAddressComponent().getDistrict();
-                if (DEBUG)
-                    Log.d(TAG, "setCountyByCoordinate.onResponse: countyName: " + countyName);
-//                SharedPreferences.Editor editor = PreferenceManager
-//                        .getDefaultSharedPreferences(context).edit();
-//                editor.putString("countyName", countyName);
-//                editor.putLong("countyName_last_update_time", System.currentTimeMillis());
-//                editor.apply();
-                configContact.applyCountyName(countyName);
-                configContact.applyCountyNameLastUpdateTime(System.currentTimeMillis());
+                if (bean != null && bean.getStatus() == 0) {
+                    String countyName = bean.getResult().getAddressComponent().getDistrict();
+                    if (DEBUG)
+                        Log.d(TAG, "setCountyByCoordinate.onResponse: countyName: " + countyName);
 
-                presenter.setCounty(countyName);
+                    configContact.applyCountyName(countyName);
+                    configContact.applyCountyNameLastUpdateTime(System.currentTimeMillis());
+
+                    presenter.setCounty(countyName);
+                }
+                else {
+                    presenter.toastMessage("getCountyByCoordinate 根据坐标定位失败！");
+                }
 
             }
         });
@@ -551,20 +542,20 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             public void onResponse(Call call, Response response) throws IOException {
                 String responseText = response.body().string();
                 BaiDuChoosePositionBean bean = JSON.parseObject(responseText, BaiDuChoosePositionBean.class);
+                if (bean != null && bean.getStatus() == 0) {
 
-                locationCoordinates = bean.getResult().getLocation().getLng() + "," + bean.getResult().getLocation().getLat();
-//                SharedPreferences.Editor editor = PreferenceManager
-//                        .getDefaultSharedPreferences(context).edit();
-//                editor.putString("coordinate", locationCoordinates);
-//                editor.putLong("coordinate_last_update", System.currentTimeMillis());
-//                editor.apply();
-                configContact.applyCoordinate(locationCoordinates);
-                configContact.applyCoordinateLastUpdateTime(System.currentTimeMillis());
+                    locationCoordinates = bean.getResult().getLocation().getLng() + "," + bean.getResult().getLocation().getLat();
 
-                afterGetCoordinate();
+                    configContact.applyCoordinate(locationCoordinates);
+                    configContact.applyCoordinateLastUpdateTime(System.currentTimeMillis());
+
+                    afterGetCoordinate();
+                }
+                else {
+                    presenter.toastMessage("根据位置定位失败");
+                }
             }
         });
-//        }
     }
 
     /**
@@ -586,33 +577,23 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             public void onResponse(Call call, Response response) throws IOException {
                 final String responseText = response.body().string();
                 BaiDuIPLocationBean bean = JSON.parseObject(responseText, BaiDuIPLocationBean.class);
-                locationCoordinates = bean.getContent().getPoint().getX() + "," + bean.getContent().getPoint().getY();
-                String countyName = bean.getContent().getAddress_detail().getCity() + " " + bean.getContent().getAddress_detail().getDistrict();
+                if (bean != null && bean.getStatus() == 0) {
+                    locationCoordinates = bean.getContent().getPoint().getX() + "," + bean.getContent().getPoint().getY();
+                    String countyName = bean.getContent().getAddress_detail().getCity() + " " + bean.getContent().getAddress_detail().getDistrict();
 
-//                SharedPreferences.Editor editor = PreferenceManager
-//                        .getDefaultSharedPreferences(context).edit();
-//                editor.putString("coordinate", locationCoordinates);
-//                editor.putLong("coordinate_last_update", System.currentTimeMillis());
-//                editor.putString("countyName", countyName);
-//                editor.putLong("countyName_last_update_time", System.currentTimeMillis());
-//                editor.putString("IP", Utility.getIP(context));
-//                editor.apply();
-                long time=System.currentTimeMillis();
-                configContact.applyCoordinate(locationCoordinates);
-                configContact.applyCoordinateLastUpdateTime(time);
-                configContact.applyCountyName(countyName);
-                configContact.applyCountyNameLastUpdateTime(time);
-                configContact.applyIp(Utility.getIP(context));
-                if (DEBUG)
-                    Log.d(TAG, "GetCoordinateByIp: locationCoordinates = " + locationCoordinates);
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                    if (DEBUG) {
-//                        Log.e(TAG, "GetCoordinateByIp: parse IP address json error");
-//                        Log.d(TAG, "response: " + responseText);
-//                    }
-//                }
-                afterGetCoordinate();
+                    long time = System.currentTimeMillis();
+                    configContact.applyCoordinate(locationCoordinates);
+                    configContact.applyCoordinateLastUpdateTime(time);
+                    configContact.applyCountyName(countyName);
+                    configContact.applyCountyNameLastUpdateTime(time);
+                    configContact.applyIp(Utility.getIP(context));
+                    if (DEBUG)
+                        Log.d(TAG, "GetCoordinateByIp: locationCoordinates = " + locationCoordinates);
+                    afterGetCoordinate();
+                }
+               else {
+                    presenter.toastMessage("根据IP定位失败！");
+                }
             }
         });
     }
@@ -626,11 +607,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             String cUrl = "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/" + locationCoordinates + "/realtime.json";
 //            即 full weather Url， 获取未来天气的url
             String fUrl = "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/" + locationCoordinates + "/forecast.json";
-//            SharedPreferences.Editor editor = PreferenceManager
-//                    .getDefaultSharedPreferences(context).edit();
-//            editor.putString("curl", cUrl);
-//            editor.putString("furl", fUrl);
-//            editor.apply();
+
             configContact.applyCurl(cUrl);
             configContact.applyFurl(fUrl);
 
