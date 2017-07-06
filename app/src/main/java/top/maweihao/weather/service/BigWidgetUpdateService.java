@@ -52,7 +52,7 @@ public class BigWidgetUpdateService extends Service {
 //        String weatherFull = prefs.getString("weather_full", null);
 //        long weatherFullLastUpdateTime = prefs.getLong("weather_full_last_update_time", 0);
 //        final String countyName = prefs.getString("countyName", "error");
-        PreferenceConfigContact configContact = Utility.creatSimpleConfig(getApplicationContext()).create(PreferenceConfigContact.class);
+        PreferenceConfigContact configContact = Utility.createSimpleConfig(getApplicationContext()).create(PreferenceConfigContact.class);
         int minInterval = configContact.getRefreshInterval(5);
         String weatherFull = configContact.getWeatherFull();
         long weatherFullLastUpdateTime = configContact.getWeatherFullLastUpdateTime(0);

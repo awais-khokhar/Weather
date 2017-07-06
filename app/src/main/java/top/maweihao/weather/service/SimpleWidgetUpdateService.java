@@ -58,7 +58,7 @@ public class SimpleWidgetUpdateService extends Service {
 //        String weatherNow = prefs.getString("weather_now", null);
 //        long weatherNowLastUpdateTime = prefs.getLong("weather_now_last_update_time", 0);
 //        final String countyName = prefs.getString("countyName", "error");
-        PreferenceConfigContact configContact = Utility.creatSimpleConfig(getApplicationContext()).create(PreferenceConfigContact.class);
+        PreferenceConfigContact configContact = Utility.createSimpleConfig(getApplicationContext()).create(PreferenceConfigContact.class);
         int minInterval = configContact.getRefreshInterval(5);
         String weatherNow = configContact.getWeatherNow();
         long weatherNowLastUpdateTime = configContact.getWeatherNowLastUpdateTime(0);

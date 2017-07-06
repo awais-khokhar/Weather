@@ -52,7 +52,7 @@ public class Utility {
      * @param context Context
      * @return SimpleConfig
      */
-    public static SimpleConfig creatSimpleConfig(Context context)
+    public static SimpleConfig createSimpleConfig(Context context)
     {
         return new SimpleConfig.Builder(context).configFactory(new Config.Factory() {
             @Override

@@ -34,7 +34,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import top.maweihao.weather.R;
 import top.maweihao.weather.bean.ForecastBean;
-import top.maweihao.weather.bean.RealTimeBean;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.contract.WeatherActivityContract;
 import top.maweihao.weather.presenter.WeatherActivityPresenter;
@@ -159,9 +158,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         setContentView(R.layout.activity_weather);
         ButterKnife.bind(this);
 
-        configContact = Utility.creatSimpleConfig(this).create(PreferenceConfigContact.class);
-//        configContact.applyCountyName("昆明");
-//        System.out.println("test gggggggggg"+configContact.getCountyName());
+        configContact = Utility.createSimpleConfig(this).create(PreferenceConfigContact.class);
 
         int statusHeight = Utility.getStatusBarHeight(this);
         int navigationBarHeight = Utility.getNavigationBarHeight(this);
@@ -637,25 +634,24 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
      * 展示现在的天气
      */
     @Override
-    public void showCurrentWeatherInfo(final RealTimeBean realTimeBean) {
+    public void showCurrentWeatherInfo(final ForecastBean forecastBean) {
         handler.post(new Runnable() {
             @Override
             public void run() {
 //                final RemoteViews remoteViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.simple_weather_widget);
+                ForecastBean.ResultBean.HourlyBean hourlyBean = forecastBean.getResult().getHourly();
 
-                String temperature = Utility.stringRoundFloat(realTimeBean.getResult().getTemperature());
-                String skycon = realTimeBean.getResult().getSkycon();
-                float humidity = realTimeBean.getResult().getHumidity();
-                float PM25 = realTimeBean.getResult().getPm25();
-                float intensity = realTimeBean.getResult().getPrecipitation().getLocal().getIntensity();
-                float aqi = realTimeBean.getResult().getAqi();
+                String temperature = Utility.stringRoundFloat(hourlyBean.getTemperature().get(0).getValue());
+                String skycon = hourlyBean.getSkycon().get(0).getValue();
+                float humidity = hourlyBean.getHumidity().get(0).getValue();
+                float PM25 = hourlyBean.getPm25().get(0).getValue();
+                float intensity = hourlyBean.getPrecipitation().get(0).getValue();
+                float aqi = hourlyBean.getAqi().get(0).getValue();
 
-//                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this);
-//                String countyName = prefs.getString("countyName", null);
                 String countyName =  configContact.getCountyName();
-                if (realTimeBean.getResult().getWind() != null) {
-                    setWindDirection(realTimeBean.getResult().getWind().getDirection());
-                    setWindLevel(realTimeBean.getResult().getWind().getSpeed());
+                if (hourlyBean.getWind() != null) {
+                    setWindDirection(hourlyBean.getWind().get(0).getDirection());
+                    setWindLevel(hourlyBean.getWind().get(0).getSpeed());
                 }
                 if (!TextUtils.isEmpty(countyName)) {
                     setCounty(countyName);

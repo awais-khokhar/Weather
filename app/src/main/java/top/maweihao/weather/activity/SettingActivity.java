@@ -106,7 +106,7 @@ public class SettingActivity extends AppCompatActivity {
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.settingpreference);
-            configContact = Utility.creatSimpleConfig(getActivity()).create(PreferenceConfigContact.class);
+            configContact = Utility.createSimpleConfig(getActivity()).create(PreferenceConfigContact.class);
 //            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 //            countyName = sharedPreferences.getString("countyName", null);
             countyName=configContact.getCountyName();

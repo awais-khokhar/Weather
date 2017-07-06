@@ -338,14 +338,14 @@ public class ForecastBean {
                  * datetime : 2017-06-10 04:00
                  */
 
-                private double value;
+                private float value;
                 private String datetime;
 
-                public double getValue() {
+                public float getValue() {
                     return value;
                 }
 
-                public void setValue(double value) {
+                public void setValue(float value) {
                     this.value = value;
                 }
 
@@ -417,23 +417,23 @@ public class ForecastBean {
                  * datetime : 2017-06-10 04:00
                  */
 
-                private double direction;
-                private double speed;
+                private float direction;
+                private float speed;
                 private String datetime;
 
-                public double getDirection() {
+                public float getDirection() {
                     return direction;
                 }
 
-                public void setDirection(double direction) {
+                public void setDirection(float direction) {
                     this.direction = direction;
                 }
 
-                public double getSpeed() {
+                public float getSpeed() {
                     return speed;
                 }
 
-                public void setSpeed(double speed) {
+                public void setSpeed(float speed) {
                     this.speed = speed;
                 }
 

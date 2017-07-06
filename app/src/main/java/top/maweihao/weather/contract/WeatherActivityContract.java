@@ -3,7 +3,6 @@ package top.maweihao.weather.contract;
 import android.support.annotation.Nullable;
 
 import top.maweihao.weather.bean.ForecastBean;
-import top.maweihao.weather.bean.RealTimeBean;
 
 /**
  * Created by limuyang on 2017/5/31.
@@ -18,7 +17,7 @@ public interface WeatherActivityContract {
 
         void showHourlyWeatherInfo(final ForecastBean.ResultBean.HourlyBean hourlyBean);
 
-        void showCurrentWeatherInfo(RealTimeBean realTimeBean);
+        void showCurrentWeatherInfo(ForecastBean forecastBean);
 
         void setLastUpdateTime(long time);
 
@@ -46,7 +45,7 @@ public interface WeatherActivityContract {
 
         void setLocateModeImage(boolean isLocation);
 
-        void setCurrentWeatherInfo(RealTimeBean realTimeBean);
+        void setCurrentWeatherInfo(ForecastBean forecastBean);
 
         void setCounty(String countyStr);
 

@@ -68,7 +68,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
         this.context = context;
         this.presenter = presenter;
 
-        configContact = Utility.creatSimpleConfig(context).create(PreferenceConfigContact.class);
+        configContact = Utility.createSimpleConfig(context).create(PreferenceConfigContact.class);
         singleThreadPool = Executors.newSingleThreadExecutor();
         mLocationClient = new LocationClient(context);
         mLocationClient.registerLocationListener(new MainLocationListener());
@@ -95,27 +95,21 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
              */
             if ((getCountyName != null && !TextUtils.isEmpty(countyName) && countyName.equals(getCountyName)) || getCountyName == null) {
 
-                 /*minInterval： 最低刷新间隔*/
+//                最低刷新间隔
                 int minInterval = configContact.getRefreshInterval(10);
-//               现在的天气， 原始json
-                String weatherNow = configContact.getWeatherNow();
-                long weatherNowLastUpdateTime = configContact.getWeatherNowLastUpdateTime(0);
 //               未来的天气， 原始json
                 String weatherFull = configContact.getWeatherFull();
                 long weatherFullLastUpdateTime = configContact.getWeatherFullLastUpdateTime(0);
 //               若保存的天气刷新时间和现在相差小于 minInterval，则直接使用
                 long nowTime = System.currentTimeMillis();
-                if (!TextUtils.isEmpty(weatherNow) && nowTime - weatherNowLastUpdateTime < minInterval * 60 * 1000
-                        && !TextUtils.isEmpty(weatherFull) && nowTime - weatherFullLastUpdateTime < minInterval * 60 * 1000) {
+                if (!TextUtils.isEmpty(weatherFull) && nowTime - weatherFullLastUpdateTime < minInterval * 60 * 1000) {
                     if (DEBUG) {
-                        Log.d(TAG, "readCache: last nowWeather synced: "
-                                + (nowTime - weatherNowLastUpdateTime) / 1000 + "s ago");
                         Log.d(TAG, "readCache: last fullWeather synced: "
                                 + (nowTime - weatherFullLastUpdateTime) / 1000 + "s ago");
                     }
-                    presenter.setLastUpdateTime(weatherNowLastUpdateTime);
+                    presenter.setLastUpdateTime(weatherFullLastUpdateTime);
 
-                    RealTimeBean bean = JSON.parseObject(weatherNow, RealTimeBean.class);
+                    ForecastBean bean = JSON.parseObject(weatherFull, ForecastBean.class);
                     presenter.setCurrentWeatherInfo(bean);
                     jsonFullWeatherData(weatherFull);
 
@@ -341,17 +335,13 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 final String responseText = response.body().string();
-//                SharedPreferences.Editor editor = PreferenceManager
-//                        .getDefaultSharedPreferences(context).edit();
-//                editor.putString("weather_full", responseText);
-//                editor.putLong("weather_full_last_update_time", System.currentTimeMillis());
-//
-//                editor.apply();
                 configContact.applyWeatherFull(responseText);
                 configContact.applyWeatherFullLastUpdateTime(System.currentTimeMillis());
 
 //                presenter.isUpdate(true);
                 presenter.setLastUpdateTime(SYSTEM_NOW_TIME);
+                ForecastBean bean = JSON.parseObject(responseText, ForecastBean.class);
+                presenter.setCurrentWeatherInfo(bean);
                 jsonFullWeatherData(responseText);
             }
         });
@@ -360,6 +350,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
 
     /**
      * 网络请求现在的天气
+     * 此方法未使用，直接在 requestFullWeather() 中使用 Forecast 结果刷新当前天气
      */
     private void requestCurrentWeather(String url) {
 
@@ -387,10 +378,10 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
 
                     configContact.applyWeatherNow(responseText);
                     configContact.applyWeatherNowLastUpdateTime(System.currentTimeMillis());
-                    presenter.setCurrentWeatherInfo(bean);
+//                    presenter.setCurrentWeatherInfo(bean);
                     presenter.setLastUpdateTime(SYSTEM_NOW_TIME);
                 } else {
-                    presenter.toastMessage("weatherDate = null OR weatherDate Status!=OK");
+                    presenter.toastMessage("api source error");
                 }
             }
         });
@@ -613,7 +604,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
 
             presenter.startSwipe();
 
-            requestCurrentWeather(cUrl);
+//            requestCurrentWeather(cUrl);
             requestFullWeather(fUrl);
         } else {
             presenter.toastMessage("locationCoordinates = null");

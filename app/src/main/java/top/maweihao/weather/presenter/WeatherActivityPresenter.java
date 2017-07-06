@@ -67,8 +67,8 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
     }
 
     @Override
-    public void setCurrentWeatherInfo(RealTimeBean realTimeBean) {
-        weatherView.showCurrentWeatherInfo(realTimeBean);
+    public void setCurrentWeatherInfo(ForecastBean forecastBean) {
+        weatherView.showCurrentWeatherInfo(forecastBean);
     }
 
     @Override

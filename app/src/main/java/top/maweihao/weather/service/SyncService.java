@@ -71,7 +71,7 @@ public class SyncService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand: ");
-        configContact = Utility.creatSimpleConfig(getApplicationContext()).create(PreferenceConfigContact.class);
+        configContact = Utility.createSimpleConfig(getApplicationContext()).create(PreferenceConfigContact.class);
         if (isStarSendNotification) //标记是否发送通知
             fetchData();
         startAgain();
