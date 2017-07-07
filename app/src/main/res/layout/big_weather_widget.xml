@@ -124,7 +124,7 @@
                 android:shadowDy="1.0"
                 android:shadowRadius="1.0"
                 android:textColor="@color/colorTextLight"
-                android:textSize="15sp"
+                android:textSize="13sp"
                 tools:ignore="RtlHardcoded"
                 tools:text="未来两小时不会下雨，放心出门吧" />
 

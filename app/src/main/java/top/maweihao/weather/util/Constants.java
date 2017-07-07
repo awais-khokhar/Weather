@@ -16,7 +16,7 @@ import static top.maweihao.weather.util.Constants.CollapsingToolbarLayoutState.I
  */
 
 public class Constants {
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
     public static final String STATUS_OK = "ok";
 
     public static final long SYSTEM_NOW_TIME = 0;

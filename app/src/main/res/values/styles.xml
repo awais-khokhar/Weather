@@ -31,7 +31,7 @@
         <item name="android:format12Hour">hh:mm</item>
 
         <item name="android:textStyle">normal</item>
-        <item name="android:textSize">48sp</item>
+        <item name="android:textSize">46sp</item>
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:textColor">#fafafa</item>
         <item name="android:shadowColor">#9e9e9e</item>
