@@ -102,7 +102,7 @@ public class SimpleWidgetUpdateService extends Service {
         String skycon = bean.getResult().getSkycon();
         float intensity = bean.getResult().getPrecipitation().getLocal().getIntensity();
         String skyconString = Utility.chooseWeatherSkycon(getApplicationContext(), skycon, intensity, WeatherActivity.MINUTELY_MODE);
-        int icon = Utility.chooseWeatherIcon(skycon, intensity, WeatherActivity.MINUTELY_MODE);
+        int icon = Utility.chooseWeatherIcon(skycon, intensity, WeatherActivity.MINUTELY_MODE, false);
         simpleViews.setImageViewResource(R.id.simple_widget_skycon, icon);
         simpleViews.setTextViewText(R.id.simple_widget_info, countyName + " | " + skyconString + ' ' + tem + '°');
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());

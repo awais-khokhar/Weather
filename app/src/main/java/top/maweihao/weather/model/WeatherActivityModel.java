@@ -17,6 +17,7 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,6 +31,7 @@ import top.maweihao.weather.bean.BaiDu.BaiDuIPLocationBean;
 import top.maweihao.weather.bean.ForecastBean;
 import top.maweihao.weather.bean.MyLocation;
 import top.maweihao.weather.bean.RealTimeBean;
+import top.maweihao.weather.bean.SingleWeather;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.contract.WeatherActivityContract;
 import top.maweihao.weather.util.Constants;
@@ -63,6 +65,8 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
     private Context context;
     private static ExecutorService singleThreadPool;
     private PreferenceConfigContact configContact;
+    // 未来 24h 每小时的天气
+    private ArrayList<SingleWeather> singleWeatherArrayList;
 
     public WeatherActivityModel(Context context, WeatherActivityContract.Presenter presenter) {
         this.context = context;
@@ -73,6 +77,16 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
         mLocationClient = new LocationClient(context);
         mLocationClient.registerLocationListener(new MainLocationListener());
         initLocation();
+        singleWeatherArrayList = new ArrayList<>();
+    }
+
+    /**
+     * 返回 24h 天气的 list
+     * @return
+     */
+    @Override
+    public ArrayList<SingleWeather> getHourWeatherList() {
+        return singleWeatherArrayList;
     }
 
     /**
@@ -84,7 +98,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
     @Override
     public void refreshWeather(boolean forceAllRefresh, @Nullable String getCountyName) {
         presenter.startSwipe();
-
+        presenter.initHourlyView();
         //读取配置
         boolean getAutoLocate = configContact.getAutoLocate(false);
         countyName = configContact.getCountyName();
@@ -400,21 +414,21 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             List list;
             //返回的json是48小时的预报，截取前24小时
             if ((list = forecastBean.getResult().getHourly().getSkycon()) != null)
-                forecastBean.getResult().getHourly().setSkycon(list.subList(0, 23));
+                forecastBean.getResult().getHourly().setSkycon(list.subList(0, 24));
             if ((list = forecastBean.getResult().getHourly().getCloudrate()) != null)
-                forecastBean.getResult().getHourly().setCloudrate(list.subList(0, 23));
+                forecastBean.getResult().getHourly().setCloudrate(list.subList(0, 24));
             if ((list = forecastBean.getResult().getHourly().getAqi()) != null)
-                forecastBean.getResult().getHourly().setAqi(list.subList(0, 23));
+                forecastBean.getResult().getHourly().setAqi(list.subList(0, 24));
             if ((list = forecastBean.getResult().getHourly().getHumidity()) != null)
-                forecastBean.getResult().getHourly().setHumidity(list.subList(0, 23));
+                forecastBean.getResult().getHourly().setHumidity(list.subList(0, 24));
             if ((list = forecastBean.getResult().getHourly().getPm25()) != null)
-                forecastBean.getResult().getHourly().setPm25(list.subList(0, 23));
+                forecastBean.getResult().getHourly().setPm25(list.subList(0, 24));
             if ((list = forecastBean.getResult().getHourly().getPrecipitation()) != null)
-                forecastBean.getResult().getHourly().setPrecipitation(list.subList(0, 23));
+                forecastBean.getResult().getHourly().setPrecipitation(list.subList(0, 24));
             if ((list = forecastBean.getResult().getHourly().getWind()) != null)
-                forecastBean.getResult().getHourly().setWind(list.subList(0, 23));
+                forecastBean.getResult().getHourly().setWind(list.subList(0, 24));
             if ((list = forecastBean.getResult().getHourly().getTemperature()) != null)
-                forecastBean.getResult().getHourly().setTemperature(list.subList(0, 23));
+                forecastBean.getResult().getHourly().setTemperature(list.subList(0, 24));
             //截取前5天
             if ((list = forecastBean.getResult().getDaily().getColdRisk()) != null)
                 forecastBean.getResult().getDaily().setColdRisk(list.subList(0, 5));
@@ -450,7 +464,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             ForecastBean.ResultBean.DailyBean dailyBean = forecastBean.getResult().getDaily();
 
             presenter.setDailyWeatherInfo(dailyBean);
-            presenter.setHourlyWeatherInfo(hourlyBean);
+            presenter.setHourlyWeatherChart(hourlyBean);
             presenter.rainInfo(forecastBean.getResult().getMinutely().getDescription());
         }
     }

@@ -2,7 +2,11 @@ package top.maweihao.weather.contract;
 
 import android.support.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import top.maweihao.weather.bean.ForecastBean;
+import top.maweihao.weather.bean.SingleWeather;
 
 /**
  * Created by limuyang on 2017/5/31.
@@ -15,7 +19,7 @@ public interface WeatherActivityContract {
 
         void showDailyWeatherInfo(final ForecastBean.ResultBean.DailyBean dailyBean);
 
-        void showHourlyWeatherInfo(final ForecastBean.ResultBean.HourlyBean hourlyBean);
+//        void showHourlyWeatherInfo(final ForecastBean.ResultBean.HourlyBean hourlyBean);
 
         void showCurrentWeatherInfo(ForecastBean forecastBean);
 
@@ -30,6 +34,10 @@ public interface WeatherActivityContract {
         void stopSwipe();
 
         void setLocateModeImage(boolean isLocation);
+
+        void initRecyclerView(List<SingleWeather> singleWeatherList);
+
+        void updateRecyclerView();
     }
 
     interface Presenter {
@@ -37,7 +45,9 @@ public interface WeatherActivityContract {
 
         void setDailyWeatherInfo(final ForecastBean.ResultBean.DailyBean dailyBean);
 
-        void setHourlyWeatherInfo(final ForecastBean.ResultBean.HourlyBean hourlyBean);
+//        void setHourlyWeatherInfo(final ForecastBean.ResultBean.HourlyBean hourlyBean);
+
+        void setHourlyWeatherChart(final ForecastBean.ResultBean.HourlyBean hourlyBean);
 
         void setLastUpdateTime(long time);
 
@@ -58,9 +68,14 @@ public interface WeatherActivityContract {
         void stopBdLocation();
 
         void destroy();
+
+        void initHourlyView();
     }
 
     interface Model {
+
+        ArrayList<SingleWeather> getHourWeatherList();
+
         void refreshWeather(boolean forceRefresh, @Nullable String countyName);
 
         void stopBdLocation();

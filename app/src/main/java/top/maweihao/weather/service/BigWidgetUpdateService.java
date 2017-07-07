@@ -106,7 +106,7 @@ public class BigWidgetUpdateService extends Service {
         String skycon = bean.getResult().getHourly().getSkycon().get(0).getValue();
         float intensity = bean.getResult().getHourly().getPrecipitation().get(0).getValue();
         String skyconString = Utility.chooseWeatherSkycon(getApplicationContext(), skycon, intensity, WeatherActivity.HOURLY_MODE);
-        int icon = Utility.chooseWeatherIcon(skycon, intensity, WeatherActivity.HOURLY_MODE);
+        int icon = Utility.chooseWeatherIcon(skycon, intensity, WeatherActivity.HOURLY_MODE, false);
 //            int tem = Utility.intRoundString(((JSONObject) (hourly.getJSONArray("temperature").get(0))).getString("value"));
 //            String skycon = ((JSONObject) (hourly.getJSONArray("skycon").get(0))).getString("value");
 //            String intensity = ((JSONObject) (hourly.getJSONArray("precipitation").get(0))).getString("value");

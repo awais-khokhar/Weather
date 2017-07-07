@@ -186,7 +186,7 @@ public class SyncService extends Service {
             if (Math.max(a, b) >= 3) {
                 Calendar calendar = new GregorianCalendar();
                 int nextDay = calendar.get(Calendar.DAY_OF_WEEK) + 1;
-                String dayOfWeek = getResources().getStringArray(R.array.weekend)[nextDay == 7 ? 0 : nextDay];
+                String dayOfWeek = getResources().getStringArray(R.array.weekend)[nextDay % 7];
                 String tem = (maxDiff > 0 || minDiff > 0) ? getResources().getString(R.string.warmer) : getResources().getString(R.string.colder);
                 if (isChinese) {
                     Log.i(TAG, "Chinese");

@@ -42,19 +42,26 @@
 
                 <include layout="@layout/current_weather" />
 
-                <top.maweihao.weather.view.HScrollView
-                    android:id="@+id/HScrollView"
+                <!--<top.maweihao.weather.view.HScrollView-->
+                    <!--android:id="@+id/HScrollView"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="120dp"-->
+                    <!--android:fillViewport="true"-->
+                    <!--android:scrollbars="none">-->
+
+                    <!--<top.maweihao.weather.view.hourlyWeatherView-->
+                        <!--android:id="@+id/simpleLineChart"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="match_parent" />-->
+
+                <!--</top.maweihao.weather.view.HScrollView>-->
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/hourly_weather_rv"
                     android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:fillViewport="true"
-                    android:scrollbars="none">
-
-                    <top.maweihao.weather.view.hourlyWeatherView
-                        android:id="@+id/simpleLineChart"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-
-                </top.maweihao.weather.view.HScrollView>
+                    android:layout_height="90dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginBottom="10dp"/>
             </LinearLayout>
 
 

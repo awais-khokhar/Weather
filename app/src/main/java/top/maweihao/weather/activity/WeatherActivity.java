@@ -12,6 +12,8 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -26,14 +28,16 @@ import android.widget.Toast;
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import top.maweihao.weather.R;
 import top.maweihao.weather.bean.ForecastBean;
+import top.maweihao.weather.bean.SingleWeather;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.contract.WeatherActivityContract;
 import top.maweihao.weather.presenter.WeatherActivityPresenter;
@@ -41,11 +45,9 @@ import top.maweihao.weather.service.SyncService;
 import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.SimplePermissionUtils;
 import top.maweihao.weather.util.Utility;
-import top.maweihao.weather.view.HScrollView;
 import top.maweihao.weather.view.SemiCircleView;
 import top.maweihao.weather.view.SunTimeView;
 import top.maweihao.weather.view.dynamicweather.DynamicWeatherView;
-import top.maweihao.weather.view.hourlyWeatherView;
 import top.maweihao.weather.view.perDayWeatherView;
 
 import static top.maweihao.weather.R.id.skycon_text;
@@ -58,7 +60,6 @@ import static top.maweihao.weather.util.Constants.SettingCode;
 import static top.maweihao.weather.util.Constants.isSetResultIntent;
 import static top.maweihao.weather.util.Utility.chooseWeatherIcon;
 import static top.maweihao.weather.util.Utility.chooseWeatherSkycon;
-import static top.maweihao.weather.util.Utility.intRoundFloat;
 
 public class WeatherActivity extends AppCompatActivity implements WeatherActivityContract.View {
 
@@ -136,6 +137,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     AppBarLayout appBarLayout;
     @BindView(R.id.navigation_bar_view)
     View navigationBarView;
+    @BindView(R.id.hourly_weather_rv)
+    RecyclerView recyclerView;
 
     @Constants.CollapsingToolbarLayoutState
     private int state;
@@ -149,6 +152,9 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     private WeatherActivityContract.Presenter presenter;
 
     private PreferenceConfigContact configContact;
+
+    //24h recyclerView adapter
+    HourWeatherAdapter hourWeatherAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -541,48 +547,46 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
             locateModeImage.setImageResource(R.drawable.ic_location_off_black_24dp);
     }
 
-    /*
-     *刷新24小时内的天气的自定义 view
-     */
-    @Override
-    public void showHourlyWeatherInfo(final ForecastBean.ResultBean.HourlyBean hourlyBean) {
-
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                HScrollView hScrollView = (HScrollView) findViewById(R.id.HScrollView);
-                hourlyWeatherView mLineChartView = (hourlyWeatherView) findViewById(R.id.simpleLineChart);
-                ArrayList<String> xItemArray = new ArrayList<>();
-
-                //天气
-                ArrayList<String> weatherArray = new ArrayList<>();
-                for (ForecastBean.ResultBean.HourlyBean.SkyconBean hourlyWeather : hourlyBean.getSkycon()) {
-                    weatherArray.add(hourlyWeather.getValue());
-                    xItemArray.add(Utility.ampm(hourlyWeather.getDatetime().substring(11, 13)));
-                }
-                //温度
-                ArrayList<Integer> yItemArray = new ArrayList<>();
-//                StringBuilder stringBuilder = new StringBuilder();
-                for (ForecastBean.ResultBean.HourlyBean.TemperatureBean hourlyWeather : hourlyBean.getTemperature()) {
-                    yItemArray.add(intRoundFloat(hourlyWeather.getValue()));
-//                    stringBuilder.append(hourlyWeather.getTemperature()).append(" ");
-                }
-                //降水强度
-                ArrayList<Float> precipitation = new ArrayList<>();
-                for (ForecastBean.ResultBean.HourlyBean.PrecipitationBean hourlyWeather : hourlyBean.getPrecipitation()) {
-                    precipitation.add(hourlyWeather.getValue());
-                }
-
-                mLineChartView.setXItem(xItemArray);
-                mLineChartView.setYItem(yItemArray);
-                mLineChartView.setWeather(weatherArray);
-                mLineChartView.setPrecipitation(precipitation);
-                mLineChartView.setmHScrollView(hScrollView);
-                mLineChartView.applyChanges();
-            }
-        });
-
-    }
+//    /*
+//     *刷新24小时内的天气的自定义 view
+//     */
+//    @Override
+//    public void showHourlyWeatherInfo(final ForecastBean.ResultBean.HourlyBean hourlyBean) {
+//
+//        handler.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                HScrollView hScrollView = (HScrollView) findViewById(R.id.HScrollView);
+//                hourlyWeatherView mLineChartView = (hourlyWeatherView) findViewById(R.id.simpleLineChart);
+//                ArrayList<String> xItemArray = new ArrayList<>();
+//
+//                //天气
+//                ArrayList<String> weatherArray = new ArrayList<>();
+//                for (ForecastBean.ResultBean.HourlyBean.SkyconBean hourlyWeather : hourlyBean.getSkycon()) {
+//                    weatherArray.add(hourlyWeather.getValue());
+//                    xItemArray.add(Utility.ampm(hourlyWeather.getDatetime().substring(11, 13)));
+//                }
+//                //温度
+//                ArrayList<Integer> yItemArray = new ArrayList<>();
+//                for (ForecastBean.ResultBean.HourlyBean.TemperatureBean hourlyWeather : hourlyBean.getTemperature()) {
+//                    yItemArray.add(intRoundFloat(hourlyWeather.getValue()));
+//                }
+//                //降水强度
+//                ArrayList<Float> precipitation = new ArrayList<>();
+//                for (ForecastBean.ResultBean.HourlyBean.PrecipitationBean hourlyWeather : hourlyBean.getPrecipitation()) {
+//                    precipitation.add(hourlyWeather.getValue());
+//                }
+//
+//                mLineChartView.setXItem(xItemArray);
+//                mLineChartView.setYItem(yItemArray);
+//                mLineChartView.setWeather(weatherArray);
+//                mLineChartView.setPrecipitation(precipitation);
+//                mLineChartView.setmHScrollView(hScrollView);
+//                mLineChartView.applyChanges();
+//            }
+//        });
+//
+//    }
 
     /**
      * 展示未来5天的天气
@@ -606,11 +610,16 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 //                        day[i].setDate(simpleDate[1] + '/' + simpleDate[2]);
                         day[i].setTemperature(Utility.stringRoundFloat(dailyBean.getTemperature().get(i).getMin()) + '/'
                                 + Utility.stringRoundFloat(dailyBean.getTemperature().get(i).getMax()) + "ºC");
-                        day[i].setIcon(chooseWeatherIcon(dailyBean.getSkycon().get(i).getValue(), dailyBean.getPrecipitation().get(i).getMax(), HOURLY_MODE));
+                        day[i].setIcon(chooseWeatherIcon(dailyBean.getSkycon().get(i).getValue(), dailyBean.getPrecipitation().get(i).getMax(), HOURLY_MODE, false));
                         day[i].setSkycon(chooseWeatherSkycon(WeatherActivity.this, dailyBean.getSkycon().get(i).getValue(), dailyBean.getPrecipitation().get(i).getMax(), HOURLY_MODE));
                     }
+                    Calendar calendar = Calendar.getInstance();
+                    int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
                     day[0].setDate(getResources().getString(R.string.today));
                     day[1].setDate(getResources().getString(R.string.tomorrow));
+                    day[2].setDate(getResources().getStringArray(R.array.week)[(dayOfWeek + 1) % 7]);
+                    day[3].setDate(getResources().getStringArray(R.array.week)[(dayOfWeek + 2) % 7]);
+                    day[4].setDate(getResources().getStringArray(R.array.week)[(dayOfWeek + 3) % 7]);
                     String sunRise = dailyBean.getAstro().get(0).getSunrise().getTime();
                     String sunSet = dailyBean.getAstro().get(0).getSunset().getTime();
                     sunrise_text.setText(sunRise);
@@ -685,9 +694,36 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         });
     }
 
-    /*
-     *刷新环开始刷新
+    /**
+     * 初始化 RecyclerView()
      */
+    @Override
+    public void initRecyclerView(final List<SingleWeather> singleWeatherList) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(WeatherActivity.this);
+                linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+                recyclerView.setLayoutManager(linearLayoutManager);
+                hourWeatherAdapter = new HourWeatherAdapter(singleWeatherList);
+                recyclerView.setAdapter(hourWeatherAdapter);
+            }
+        });
+    }
+
+    @Override
+    public void updateRecyclerView() {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                hourWeatherAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
+    /*
+             *刷新环开始刷新
+             */
     @Override
     public void startSwipe() {
         runOnUiThread(new Runnable() {
