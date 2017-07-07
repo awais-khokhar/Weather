@@ -58,6 +58,7 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
         if (DEBUG)
             Log.d(TAG, "setHourlyWeatherChart: total " + length + " hour");
         ArrayList<SingleWeather> singleWeatherArrayList = weatherModel.getHourWeatherList();
+        singleWeatherArrayList.clear();
         for (int i = 0; i < length; i++) {
             String time = hourlyBean.getSkycon().get(i).getDatetime().substring(11, 16);
             int icon = Utility.chooseWeatherIcon(hourlyBean.getSkycon().get(i).getValue(),
