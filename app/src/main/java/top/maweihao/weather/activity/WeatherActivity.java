@@ -196,7 +196,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         swipeRefreshLayout.setOnRefreshListener((new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                presenter.refreshWeather(true, countyName);
+                presenter.refreshWeather(false, countyName);
             }
         }));
 
