@@ -13,20 +13,20 @@ public class RealTimeBean {
     /**
      * status : ok
      * lang : zh_CN
-     * server_time : 1497041225
+     * server_time : 1499510476
      * tzshift : 28800
      * location : [25.1552,121.6544]
      * unit : metric
-     * result : {"status":"ok","temperature":26,"skycon":"PARTLY_CLOUDY_NIGHT","cloudrate":0.46,"aqi":18,"humidity":0.89,"pm25":11,"precipitation":{"nearest":{"status":"ok","distance":178.47,"intensity":0.25},"local":{"status":"ok","intensity":0,"datasource":"radar"}},"wind":{"direction":233.09,"speed":6.54}}
+     * result : {"status":"ok","temperature":29.2,"skycon":"RAIN","cloudrate":1,"aqi":12,"humidity":0.76,"pres":99029.61,"pm25":6,"precipitation":{"nearest":{"status":"ok","distance":1.3,"intensity":0.4375},"local":{"status":"ok","intensity":0.2436,"datasource":"radar"}},"wind":{"direction":104.32,"speed":4.18}}
      */
 
     private String status;
     private String lang;
-    private int server_time;
+    private long server_time;
     private int tzshift;
     private String unit;
     private ResultBean result;
-    private List<Double> location;
+    private List<Float> location;
 
     public String getStatus() {
         return status;
@@ -44,11 +44,11 @@ public class RealTimeBean {
         this.lang = lang;
     }
 
-    public int getServer_time() {
+    public long getServer_time() {
         return server_time;
     }
 
-    public void setServer_time(int server_time) {
+    public void setServer_time(long server_time) {
         this.server_time = server_time;
     }
 
@@ -76,34 +76,36 @@ public class RealTimeBean {
         this.result = result;
     }
 
-    public List<Double> getLocation() {
+    public List<Float> getLocation() {
         return location;
     }
 
-    public void setLocation(List<Double> location) {
+    public void setLocation(List<Float> location) {
         this.location = location;
     }
 
     public static class ResultBean {
         /**
          * status : ok
-         * temperature : 26.0
-         * skycon : PARTLY_CLOUDY_NIGHT
-         * cloudrate : 0.46
-         * aqi : 18.0
-         * humidity : 0.89
-         * pm25 : 11.0
-         * precipitation : {"nearest":{"status":"ok","distance":178.47,"intensity":0.25},"local":{"status":"ok","intensity":0,"datasource":"radar"}}
-         * wind : {"direction":233.09,"speed":6.54}
+         * temperature : 29.2
+         * skycon : RAIN
+         * cloudrate : 1
+         * aqi : 12
+         * humidity : 0.76
+         * pres : 99029.61
+         * pm25 : 6
+         * precipitation : {"nearest":{"status":"ok","distance":1.3,"intensity":0.4375},"local":{"status":"ok","intensity":0.2436,"datasource":"radar"}}
+         * wind : {"direction":104.32,"speed":4.18}
          */
 
         private String status;
         private float temperature;
         private String skycon;
-        private float cloudrate;
-        private float aqi;
+        private int cloudrate;
+        private int aqi;
         private float humidity;
-        private float pm25;
+        private float pres;
+        private int pm25;
         private PrecipitationBean precipitation;
         private WindBean wind;
 
@@ -131,19 +133,19 @@ public class RealTimeBean {
             this.skycon = skycon;
         }
 
-        public float getCloudrate() {
+        public int getCloudrate() {
             return cloudrate;
         }
 
-        public void setCloudrate(float cloudrate) {
+        public void setCloudrate(int cloudrate) {
             this.cloudrate = cloudrate;
         }
 
-        public float getAqi() {
+        public int getAqi() {
             return aqi;
         }
 
-        public void setAqi(float aqi) {
+        public void setAqi(int aqi) {
             this.aqi = aqi;
         }
 
@@ -155,11 +157,19 @@ public class RealTimeBean {
             this.humidity = humidity;
         }
 
-        public float getPm25() {
+        public float getPres() {
+            return pres;
+        }
+
+        public void setPres(float pres) {
+            this.pres = pres;
+        }
+
+        public int getPm25() {
             return pm25;
         }
 
-        public void setPm25(float pm25) {
+        public void setPm25(int pm25) {
             this.pm25 = pm25;
         }
 
@@ -181,8 +191,8 @@ public class RealTimeBean {
 
         public static class PrecipitationBean {
             /**
-             * nearest : {"status":"ok","distance":178.47,"intensity":0.25}
-             * local : {"status":"ok","intensity":0,"datasource":"radar"}
+             * nearest : {"status":"ok","distance":1.3,"intensity":0.4375}
+             * local : {"status":"ok","intensity":0.2436,"datasource":"radar"}
              */
 
             private NearestBean nearest;
@@ -207,8 +217,8 @@ public class RealTimeBean {
             public static class NearestBean {
                 /**
                  * status : ok
-                 * distance : 178.47
-                 * intensity : 0.25
+                 * distance : 1.3
+                 * intensity : 0.4375
                  */
 
                 private String status;
@@ -243,7 +253,7 @@ public class RealTimeBean {
             public static class LocalBean {
                 /**
                  * status : ok
-                 * intensity : 0.0
+                 * intensity : 0.2436
                  * datasource : radar
                  */
 
@@ -279,8 +289,8 @@ public class RealTimeBean {
 
         public static class WindBean {
             /**
-             * direction : 233.09
-             * speed : 6.54
+             * direction : 104.32
+             * speed : 4.18
              */
 
             private float direction;
