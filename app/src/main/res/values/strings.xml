@@ -114,5 +114,7 @@
     <string name="Lunar">Lunar Date</string>
     <string name="notification_time">Notification Time</string>
     <string name="now">Now</string>
+    <string name="donate">Donate</string>
+    <string name="donate_info">Donate any amout to support developers, You will be honored some way in the future.  \nClick  \'OK\' to open Alipay.</string>
 
 </resources>

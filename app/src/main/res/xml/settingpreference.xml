@@ -52,8 +52,12 @@
         </Preference>
 
         <Preference
+            android:title="@string/donate"
+            android:key="donate" />
+
+        <Preference
             android:title="@string/feedback"
-            android:key="feedback"></Preference>
+            android:key="feedback" />
     </PreferenceCategory>
 
 

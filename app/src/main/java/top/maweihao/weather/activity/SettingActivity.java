@@ -1,14 +1,17 @@
 package top.maweihao.weather.activity;
 
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -40,7 +43,7 @@ public class SettingActivity extends AppCompatActivity {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    private static boolean originalAutoLocate, changeAutolocate;//记录原始配置和改变后的配置，判断自动定位是否发生改变；
+    private static boolean originalAutoLocate, changeAutoLocate;//记录原始配置和改变后的配置，判断自动定位是否发生改变；
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,12 +75,11 @@ public class SettingActivity extends AppCompatActivity {
         backListener();
     }
 
-    private void backListener()
-    {
-        if (originalAutoLocate != changeAutolocate) {
-            isSetResultIntent=true;
+    private void backListener() {
+        if (originalAutoLocate != changeAutoLocate) {
+            isSetResultIntent = true;
             Intent intent = new Intent();
-            intent.putExtra("autoLocate", changeAutolocate);
+            intent.putExtra("autoLocate", changeAutoLocate);
             setResult(SettingCode, intent);
         }
         finish();
@@ -93,12 +95,13 @@ public class SettingActivity extends AppCompatActivity {
 
         private Preference feedBack;
 
+        private Preference donate;
+
         private SwitchPreference autoUpdateSP;
         private SwitchPreference notification;
         private Preference notificationTime;
 
         String countyName;
-//        SharedPreferences sharedPreferences;
         private PreferenceConfigContact configContact;
 
 
@@ -107,11 +110,8 @@ public class SettingActivity extends AppCompatActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.settingpreference);
             configContact = Utility.createSimpleConfig(getActivity()).create(PreferenceConfigContact.class);
-//            sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-//            countyName = sharedPreferences.getString("countyName", null);
-            countyName=configContact.getCountyName();
-//            changeAutolocate = originalAutoLocate = sharedPreferences.getBoolean("auto_locate", false);
-            changeAutolocate = originalAutoLocate =configContact.getAutoLocate(false);
+            countyName = configContact.getCountyName();
+            changeAutoLocate = originalAutoLocate = configContact.getAutoLocate(false);
             initViews();
         }
 
@@ -125,6 +125,15 @@ public class SettingActivity extends AppCompatActivity {
             choosePositionPreference = findPreference("choose_position");
             feedBack = findPreference("feedback");
             feedBack.setOnPreferenceClickListener(enterActivityListener);
+
+            donate = findPreference("donate");
+            donate.setOnPreferenceClickListener(enterActivityListener);
+            donate.setEnabled(false);
+            donate.setShouldDisableView(true);
+            //暂时隐藏 donate
+            PreferenceScreen preferenceScreen = getPreferenceScreen();
+            preferenceScreen.removePreference(donate);
+
             choosePositionPreference.setOnPreferenceClickListener(enterActivityListener);
             autoUpdateSP = (SwitchPreference) findPreference("auto_locate");
             autoUpdateSP.setOnPreferenceChangeListener(changeListener);
@@ -175,12 +184,12 @@ public class SettingActivity extends AppCompatActivity {
                     return true;
                 } else if (preference.getKey().equals("auto_locate")) {
                     if (stringValue.equals("true")) {
-                        changeAutolocate = true;
+                        changeAutoLocate = true;
                         choosePositionPreference.setEnabled(false);
                         choosePositionPreference.setSummary(null);
                         choosePositionPreference.setSummary(getResources().getString(R.string.select_disabled));
                     } else {
-                        changeAutolocate = false;
+                        changeAutoLocate = false;
                         choosePositionPreference.setEnabled(true);
                         if (!TextUtils.isEmpty(countyName)) {
                             choosePositionPreference.setSummary(getResources().getString(R.string.selected_county)
@@ -231,6 +240,23 @@ public class SettingActivity extends AppCompatActivity {
                     email.putExtra(Intent.EXTRA_SUBJECT, "Feedback: Weather");
                     email.putExtra(Intent.EXTRA_TEXT, "Feedback: ");
                     startActivity(email);
+                } else if (preference.getKey().equals("donate")) {
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                    alertDialogBuilder.setTitle(getResources().getString(R.string.donate))
+                            .setMessage(getResources().getString(R.string.donate_info))
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                                    intent.setData(Uri.parse("alipayqr://platformapi/startapp?saId=10000007&qrcode=https://qr.alipay.com/a6x07374sqhbxyur624d77e"));
+                                    startActivity(intent);
+                                }
+                            });
+//                            .setNegativeButton("Cancel", null);
+                    Log.d(TAG, "onPreferenceClick: here");
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+
                 }
                 return true;
             }

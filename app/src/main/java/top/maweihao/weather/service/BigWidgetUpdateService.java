@@ -27,8 +27,10 @@ import static top.maweihao.weather.util.Constants.DEBUG;
 public class BigWidgetUpdateService extends Service {
 
     public static final String TAG = "bWidgetUpdateService";
+    PreferenceConfigContact configContact;
 
     public BigWidgetUpdateService() {
+        configContact = Utility.createSimpleConfig(getApplicationContext()).create(PreferenceConfigContact.class);
     }
 
     @Override
@@ -47,12 +49,6 @@ public class BigWidgetUpdateService extends Service {
 
     private void updateWidget() {
 
-//        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-//        int minInterval = prefs.getInt("refresh_interval", 5);
-//        String weatherFull = prefs.getString("weather_full", null);
-//        long weatherFullLastUpdateTime = prefs.getLong("weather_full_last_update_time", 0);
-//        final String countyName = prefs.getString("countyName", "error");
-        PreferenceConfigContact configContact = Utility.createSimpleConfig(getApplicationContext()).create(PreferenceConfigContact.class);
         int minInterval = configContact.getRefreshInterval(5);
         String weatherFull = configContact.getWeatherFull();
         long weatherFullLastUpdateTime = configContact.getWeatherFullLastUpdateTime(0);
@@ -90,17 +86,13 @@ public class BigWidgetUpdateService extends Service {
     }
 
     private void updateWeather(String weatherJson, String countyName) {
-        RemoteViews bigViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.big_weather_widget);
-//        try {
-        ForecastBean bean = JSON.parseObject(weatherJson, ForecastBean.class);
 
+        configContact.applyWeatherFull(weatherJson);
+        configContact.applyWeatherFullLastUpdateTime(System.currentTimeMillis());
+        RemoteViews bigViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.big_weather_widget);
+        ForecastBean bean = JSON.parseObject(weatherJson, ForecastBean.class);
         String description = bean.getResult().getMinutely().getDescription();
 
-//            JSONObject jsonObject = new JSONObject(weatherNow);
-//            JSONObject result = jsonObject.getJSONObject("result");
-//            JSONObject minutely = result.getJSONObject("minutely");
-//            JSONObject hourly = result.getJSONObject("hourly");
-//            String description = minutely.getString("description");
         bigViews.setTextViewText(R.id.big_widget_description, description);
         int tem = Utility.intRoundFloat(bean.getResult().getHourly().getTemperature().get(0).getValue());
         String skycon = bean.getResult().getHourly().getSkycon().get(0).getValue();
@@ -115,11 +107,6 @@ public class BigWidgetUpdateService extends Service {
         bigViews.setTextViewText(R.id.big_widget_info, countyName + "\n" + skyconString + ' ' + tem + '°');
         bigViews.setTextViewText(R.id.big_widget_refresh_time, Utility.parseTime());
         Log.d(TAG, "successful" + tem + skycon + intensity);
-//        }
-//        catch (JSONException e) {
-//            e.printStackTrace();
-//            Log.e(TAG, "parseNowJson: error");
-//        }
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
         appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext(), BigWeatherWidget.class), bigViews);
         stopSelf();

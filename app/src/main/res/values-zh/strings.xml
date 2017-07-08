@@ -103,5 +103,7 @@
     <string name="add_widget">添加桌面插件</string>
     <string name="notification_time">通知时间</string>
     <string name="now">现在</string>
+    <string name="donate">Donate</string>
+    <string name="donate_info">捐赠任意的金额以支持开发者的努力，您会在将来以一些形式获得 App 体验层面的回报。\n点击 “OK” 将跳转至支付宝。</string>
 
 </resources>

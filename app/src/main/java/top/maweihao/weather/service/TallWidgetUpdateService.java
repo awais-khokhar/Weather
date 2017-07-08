@@ -27,8 +27,10 @@ import static top.maweihao.weather.util.Constants.DEBUG;
 public class TallWidgetUpdateService extends Service {
 
     public static final String TAG = "tWidgetUpdateService";
+    PreferenceConfigContact configContact;
 
     public TallWidgetUpdateService() {
+        configContact = Utility.createSimpleConfig(getApplicationContext()).create(PreferenceConfigContact.class);
     }
 
     @Override
@@ -53,12 +55,6 @@ public class TallWidgetUpdateService extends Service {
 
     private void updateWidget() {
 
-//        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-//        int minInterval = prefs.getInt("refresh_interval", 5);
-//        String weatherNow = prefs.getString("weather_now", null);
-//        long weatherNowLastUpdateTime = prefs.getLong("weather_now_last_update_time", 0);
-//        final String countyName = prefs.getString("countyName", "error");
-        PreferenceConfigContact configContact = Utility.createSimpleConfig(getApplicationContext()).create(PreferenceConfigContact.class);
         int minInterval = configContact.getRefreshInterval(5);
         String weatherNow = configContact.getWeatherNow();
         long weatherNowLastUpdateTime = configContact.getWeatherNowLastUpdateTime(0);
@@ -95,6 +91,8 @@ public class TallWidgetUpdateService extends Service {
     }
 
     private void updateWeather(String weatherNow, String countyName) {
+        configContact.applyWeatherNow(weatherNow);
+        configContact.applyWeatherNowLastUpdateTime(System.currentTimeMillis());
         RemoteViews tallViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.tall_weather_widget);
         RealTimeBean bean = JSON.parseObject(weatherNow, RealTimeBean.class);
         int tem = Utility.intRoundFloat(bean.getResult().getTemperature());
