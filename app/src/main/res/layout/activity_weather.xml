@@ -117,14 +117,18 @@
 
                 <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
-                    android:layout_height="150dp"
+                    android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:clickable="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     app:cardCornerRadius="4dp"
                     app:contentPaddingRight="5dp">
 
-                    <include layout="@layout/few_days_content" />
+                    <!--<include layout="@layout/few_days_content" />-->
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/daily_weather_rv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
                 </android.support.v7.widget.CardView>
 

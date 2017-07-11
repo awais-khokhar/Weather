@@ -66,7 +66,9 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
     private static ExecutorService singleThreadPool;
     private PreferenceConfigContact configContact;
     // 未来 24h 每小时的天气
-    private ArrayList<SingleWeather> singleWeatherArrayList;
+    private ArrayList<SingleWeather> hourlyWeatherList;
+
+    private ArrayList<SingleWeather> dailyWeatherList;
 
     public WeatherActivityModel(Context context, WeatherActivityContract.Presenter presenter) {
         this.context = context;
@@ -77,16 +79,24 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
         mLocationClient = new LocationClient(context);
         mLocationClient.registerLocationListener(new MainLocationListener());
         initLocation();
-        singleWeatherArrayList = new ArrayList<>();
+        hourlyWeatherList = new ArrayList<>();
+        dailyWeatherList = new ArrayList<>();
     }
 
     /**
-     * 返回 24h 天气的 list
-     * @return
+     * @return 24h 天气数据的 list
      */
     @Override
     public ArrayList<SingleWeather> getHourWeatherList() {
-        return singleWeatherArrayList;
+        return hourlyWeatherList;
+    }
+
+    /**
+     * @return 5day 天气数据的 list
+     */
+    @Override
+    public ArrayList<SingleWeather> getDailyWeatherList() {
+        return dailyWeatherList;
     }
 
     /**
@@ -99,6 +109,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
     public void refreshWeather(boolean forceAllRefresh, @Nullable String getCountyName) {
         presenter.startSwipe();
         presenter.initHourlyView();
+        presenter.initDailyView();
         //读取配置
         boolean getAutoLocate = configContact.getAutoLocate(false);
         countyName = configContact.getCountyName();

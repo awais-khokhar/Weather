@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -131,8 +130,8 @@ public class SettingActivity extends AppCompatActivity {
             donate.setEnabled(false);
             donate.setShouldDisableView(true);
             //暂时隐藏 donate
-            PreferenceScreen preferenceScreen = getPreferenceScreen();
-            preferenceScreen.removePreference(donate);
+//            PreferenceScreen preferenceScreen = getPreferenceScreen();
+//            preferenceScreen.removePreference(donate);
 
             choosePositionPreference.setOnPreferenceClickListener(enterActivityListener);
             autoUpdateSP = (SwitchPreference) findPreference("auto_locate");

@@ -2,6 +2,7 @@ package top.maweihao.weather.bean;
 
 /**
  * 未来 24h 天气 RecyclerView 类
+ * 未来 5day 天气 RecyclerView 类
  * Created by ma on 17-7-7.
  */
 

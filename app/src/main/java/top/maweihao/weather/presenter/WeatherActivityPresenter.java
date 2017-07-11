@@ -5,8 +5,14 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
+import top.maweihao.weather.R;
 import top.maweihao.weather.bean.ForecastBean;
 import top.maweihao.weather.bean.SingleWeather;
 import top.maweihao.weather.contract.WeatherActivityContract;
@@ -44,7 +50,40 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
      */
     @Override
     public void setDailyWeatherInfo(final ForecastBean.ResultBean.DailyBean dailyBean) {
-        weatherView.showDailyWeatherInfo(dailyBean);
+        int length = dailyBean.getSkycon().size();
+        if (DEBUG)
+            Log.d(TAG, "setDailyWeatherInfo: all " + dailyBean.getSkycon().size() + " days");
+        ArrayList<SingleWeather> singleWeatherArrayList = weatherModel.getDailyWeatherList();
+        singleWeatherArrayList.clear();
+        Calendar calendar = Calendar.getInstance();
+        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        if (dailyBean.getStatus().equals("ok")) {
+            SimpleDateFormat oldsdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+            SimpleDateFormat newsdf = new SimpleDateFormat("MM/dd", Locale.CHINA);
+            for (int i = 0; i < length; i++) {
+                String time = "";
+                try {
+                    Date date = oldsdf.parse(dailyBean.getSkycon().get(i).getDate());
+                    time = newsdf.format(date) + " " + ((Activity) weatherView).getResources().getStringArray(R.array.week)[(dayOfWeek + i) % 7];
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                int icon = Utility.chooseWeatherIcon(dailyBean.getSkycon().get(i).getValue(),
+                        dailyBean.getPrecipitation().get(i).getMax(), HOURLY_MODE, false);
+                String skyconDesc = Utility.chooseWeatherSkycon((Activity) weatherView, dailyBean.getSkycon().get(i).getValue(),
+                        dailyBean.getPrecipitation().get(i).getMax(), HOURLY_MODE);
+                String temperature = stringRoundFloat(dailyBean.getTemperature().get(i).getMax()) + "° / "
+                        + stringRoundFloat(dailyBean.getTemperature().get(i).getMin()) + '°';
+                singleWeatherArrayList.add(new SingleWeather(time, icon, skyconDesc, temperature));
+            }
+            weatherView.updateDailyRecyclerView();
+        }
+        if (weatherView.isDone()) {
+            stopSwipe();
+            weatherView.setDone(false);
+        } else {
+            weatherView.setDone(true);
+        }
     }
 
 //    @Override
@@ -69,7 +108,7 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
             singleWeatherArrayList.add(new SingleWeather(time, icon, skyconDesc, temperature));
         }
         singleWeatherArrayList.get(0).setTime("现在");
-        weatherView.updateRecyclerView();
+        weatherView.updateHourlyRecyclerView();
     }
 
     /**
@@ -134,6 +173,13 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
 
     @Override
     public void initHourlyView() {
-        weatherView.initRecyclerView(weatherModel.getHourWeatherList());
+        weatherView.initHourlyRecyclerView(weatherModel.getHourWeatherList());
     }
+
+    @Override
+    public void initDailyView() {
+        weatherView.initDailyRecyclerView(weatherModel.getDailyWeatherList());
+    }
+
+
 }

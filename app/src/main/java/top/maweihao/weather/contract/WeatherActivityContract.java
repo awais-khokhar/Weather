@@ -15,9 +15,13 @@ import top.maweihao.weather.bean.SingleWeather;
 public interface WeatherActivityContract {
     interface View {
 
+        boolean isDone();
+
+        void setDone(boolean done);
+
         void setRainInfo(String str);
 
-        void showDailyWeatherInfo(final ForecastBean.ResultBean.DailyBean dailyBean);
+//        void showDailyWeatherInfo(final ForecastBean.ResultBean.DailyBean dailyBean);
 
 //        void showHourlyWeatherInfo(final ForecastBean.ResultBean.HourlyBean hourlyBean);
 
@@ -35,9 +39,13 @@ public interface WeatherActivityContract {
 
         void setLocateModeImage(boolean isLocation);
 
-        void initRecyclerView(List<SingleWeather> singleWeatherList);
+        void initHourlyRecyclerView(List<SingleWeather> singleWeatherList);
 
-        void updateRecyclerView();
+        void updateHourlyRecyclerView();
+
+        void initDailyRecyclerView(List<SingleWeather> singleWeatherList);
+
+        void updateDailyRecyclerView();
     }
 
     interface Presenter {
@@ -70,11 +78,15 @@ public interface WeatherActivityContract {
         void destroy();
 
         void initHourlyView();
+
+        void initDailyView();
     }
 
     interface Model {
 
         ArrayList<SingleWeather> getHourWeatherList();
+
+        ArrayList<SingleWeather> getDailyWeatherList();
 
         void refreshWeather(boolean forceRefresh, @Nullable String countyName);
 

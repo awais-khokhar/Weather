@@ -13,38 +13,22 @@ import top.maweihao.weather.R;
 import top.maweihao.weather.bean.SingleWeather;
 
 /**
- * recyclerView adapter for 24hour weather
- * Created by ma on 17-7-7.
+ * hourlyRecyclerView adapter for per day weather
+ * Created by ma on 17-7-11.
  */
 
-public class HourWeatherAdapter extends RecyclerView.Adapter<HourWeatherAdapter.ViewHolder> {
+class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapter.ViewHolder> {
 
     private List<SingleWeather> weatherList;
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
-
-        TextView time;
-        ImageView skyconImage;
-        TextView skyconDesc;
-        TextView temperature;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            time = (TextView) itemView.findViewById(R.id.few_hour_time_tv);
-            skyconImage = (ImageView) itemView.findViewById(R.id.few_hour_skycon_iv);
-            skyconDesc = (TextView) itemView.findViewById(R.id.few_hour_skycon_tv);
-            temperature = (TextView) itemView.findViewById(R.id.few_hour_tem_tv);
-        }
+    public DailyWeatherAdapter(List<SingleWeather> weatherList) {
+        this.weatherList = weatherList;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.few_hour_layout, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.per_day_recycler_layout, parent, false);
         return new ViewHolder(view);
-    }
-
-    public HourWeatherAdapter(List<SingleWeather> weatherList) {
-        this.weatherList = weatherList;
     }
 
     @Override
@@ -59,5 +43,21 @@ public class HourWeatherAdapter extends RecyclerView.Adapter<HourWeatherAdapter.
     @Override
     public int getItemCount() {
         return weatherList.size();
+    }
+
+    static class ViewHolder extends RecyclerView.ViewHolder {
+
+        TextView time;
+        ImageView skyconImage;
+        TextView skyconDesc;
+        TextView temperature;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            time = (TextView) itemView.findViewById(R.id.per_day_recycler_time_tv);
+            skyconImage = (ImageView) itemView.findViewById(R.id.per_day_recycler_skycon_iv);
+            skyconDesc = (TextView) itemView.findViewById(R.id.per_day_recycler_skycon_tv);
+            temperature = (TextView) itemView.findViewById(R.id.per_day_recycler_temperature_tv);
+        }
     }
 }

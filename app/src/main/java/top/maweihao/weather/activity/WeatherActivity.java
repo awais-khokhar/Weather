@@ -26,12 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,7 +43,6 @@ import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.view.SemiCircleView;
 import top.maweihao.weather.view.SunTimeView;
 import top.maweihao.weather.view.dynamicweather.DynamicWeatherView;
-import top.maweihao.weather.view.perDayWeatherView;
 
 import static top.maweihao.weather.R.id.skycon_text;
 import static top.maweihao.weather.R.id.temperature_text;
@@ -58,7 +52,6 @@ import static top.maweihao.weather.util.Constants.DEBUG;
 import static top.maweihao.weather.util.Constants.SettingActivityRequestCode;
 import static top.maweihao.weather.util.Constants.SettingCode;
 import static top.maweihao.weather.util.Constants.isSetResultIntent;
-import static top.maweihao.weather.util.Utility.chooseWeatherIcon;
 import static top.maweihao.weather.util.Utility.chooseWeatherSkycon;
 
 public class WeatherActivity extends AppCompatActivity implements WeatherActivityContract.View {
@@ -91,16 +84,16 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     LinearLayout toolBarLinearLayout;
     @BindView(R.id.dynamicWeatherView)
     DynamicWeatherView dynamicWeatherView;
-    @BindView(R.id.daily_weather_0)
-    perDayWeatherView dailyWeather0;
-    @BindView(R.id.daily_weather_1)
-    perDayWeatherView dailyWeather1;
-    @BindView(R.id.daily_weather_2)
-    perDayWeatherView dailyWeather2;
-    @BindView(R.id.daily_weather_3)
-    perDayWeatherView dailyWeather3;
-    @BindView(R.id.daily_weather_4)
-    perDayWeatherView dailyWeather4;
+    //    @BindView(R.id.daily_weather_0)
+//    perDayWeatherView dailyWeather0;
+//    @BindView(R.id.daily_weather_1)
+//    perDayWeatherView dailyWeather1;
+//    @BindView(R.id.daily_weather_2)
+//    perDayWeatherView dailyWeather2;
+//    @BindView(R.id.daily_weather_3)
+//    perDayWeatherView dailyWeather3;
+//    @BindView(R.id.daily_weather_4)
+//    perDayWeatherView dailyWeather4;
     @BindView(R.id.aqi_image)
     ImageView aqiImage;
     @BindView(R.id.uv_name)
@@ -138,7 +131,9 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     @BindView(R.id.navigation_bar_view)
     View navigationBarView;
     @BindView(R.id.hourly_weather_rv)
-    RecyclerView recyclerView;
+    RecyclerView hourlyRecyclerView;
+    @BindView(R.id.daily_weather_rv)
+    RecyclerView dailyRecyclerView;
 
     @Constants.CollapsingToolbarLayoutState
     private int state;
@@ -146,15 +141,18 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     private boolean isDone = false;
     public String countyName = null;
 
-    private perDayWeatherView[] day = new perDayWeatherView[5];
+//    private perDayWeatherView[] day = new perDayWeatherView[5];
 
     private MessageHandler handler; //消息队列
     private WeatherActivityContract.Presenter presenter;
 
     private PreferenceConfigContact configContact;
 
-    //24h recyclerView adapter
-    HourWeatherAdapter hourWeatherAdapter;
+    //24h hourlyRecyclerView adapter
+    HourlyWeatherAdapter hourWeatherAdapter;
+
+    //5day hourlyRecyclerView adapter
+    DailyWeatherAdapter dailyWeatherAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,11 +183,11 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         presenter = new WeatherActivityPresenter(this, this);
 
 //        未来五天的天气
-        day[0] = dailyWeather0;
-        day[1] = dailyWeather1;
-        day[2] = dailyWeather2;
-        day[3] = dailyWeather3;
-        day[4] = dailyWeather4;
+//        day[0] = dailyWeather0;
+//        day[1] = dailyWeather1;
+//        day[2] = dailyWeather2;
+//        day[3] = dailyWeather3;
+//        day[4] = dailyWeather4;
 
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         swipeRefreshLayout.setDistanceToTriggerSync(200);
@@ -547,97 +545,56 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
             locateModeImage.setImageResource(R.drawable.ic_location_off_black_24dp);
     }
 
-//    /*
-//     *刷新24小时内的天气的自定义 view
+//    /**
+//     * 展示未来5天的天气
 //     */
 //    @Override
-//    public void showHourlyWeatherInfo(final ForecastBean.ResultBean.HourlyBean hourlyBean) {
-//
-//        handler.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                HScrollView hScrollView = (HScrollView) findViewById(R.id.HScrollView);
-//                hourlyWeatherView mLineChartView = (hourlyWeatherView) findViewById(R.id.simpleLineChart);
-//                ArrayList<String> xItemArray = new ArrayList<>();
-//
-//                //天气
-//                ArrayList<String> weatherArray = new ArrayList<>();
-//                for (ForecastBean.ResultBean.HourlyBean.SkyconBean hourlyWeather : hourlyBean.getSkycon()) {
-//                    weatherArray.add(hourlyWeather.getValue());
-//                    xItemArray.add(Utility.ampm(hourlyWeather.getDatetime().substring(11, 13)));
+//    public void showDailyWeatherInfo(final ForecastBean.ResultBean.DailyBean dailyBean) {
+//        if (dailyBean.getStatus().equals("ok")) {
+//            handler.post(new Runnable() {
+//                @Override
+//                public void run() {
+//                    for (int i = 0; i < 5; i++) {
+//                        SimpleDateFormat oldsdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+//                        SimpleDateFormat newsdf = new SimpleDateFormat("MM/dd", Locale.CHINA);
+//                        try {
+//                            Date date = oldsdf.parse(dailyBean.getSkycon().get(i).getDate());
+//                            day[i].setDate(newsdf.format(date));
+//                        } catch (ParseException e) {
+//                            e.printStackTrace();
+//                        }
+////                        String[] simpleDate = weatherDatas.get(i).getDate().split("-");
+////                        day[i].setDate(simpleDate[1] + '/' + simpleDate[2]);
+//                        day[i].setTemperature(Utility.stringRoundFloat(dailyBean.getTemperature().get(i).getMin()) + '/'
+//                                + Utility.stringRoundFloat(dailyBean.getTemperature().get(i).getMax()) + "ºC");
+//                        day[i].setIcon(chooseWeatherIcon(dailyBean.getSkycon().get(i).getValue(), dailyBean.getPrecipitation().get(i).getMax(), HOURLY_MODE, false));
+//                        day[i].setSkycon(chooseWeatherSkycon(WeatherActivity.this, dailyBean.getSkycon().get(i).getValue(), dailyBean.getPrecipitation().get(i).getMax(), HOURLY_MODE));
+//                    }
+//                    Calendar calendar = Calendar.getInstance();
+//                    int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+//                    day[0].setDate(getResources().getString(R.string.today));
+//                    day[1].setDate(getResources().getString(R.string.tomorrow));
+//                    day[2].setDate(getResources().getStringArray(R.array.week)[(dayOfWeek + 1) % 7]);
+//                    day[3].setDate(getResources().getStringArray(R.array.week)[(dayOfWeek + 2) % 7]);
+//                    day[4].setDate(getResources().getStringArray(R.array.week)[(dayOfWeek + 3) % 7]);
+//                    String sunRise = dailyBean.getAstro().get(0).getSunrise().getTime();
+//                    String sunSet = dailyBean.getAstro().get(0).getSunset().getTime();
+//                    sunrise_text.setText(sunRise);
+//                    sunset_text.setText(sunSet);
+//                    sunTimeView.setTime(sunRise, sunSet);
+//                    uv_text.setText(dailyBean.getUltraviolet().get(0).getDesc());
+//                    carWashing_text.setText(dailyBean.getCarWashing().get(0).getDesc());
+//                    dressing_text.setText(dailyBean.getDressing().get(0).getDesc());
+//                    if (isDone) {
+//                        stopSwipe();
+//                        isDone = false;
+//                    } else {
+//                        isDone = true;
+//                    }
 //                }
-//                //温度
-//                ArrayList<Integer> yItemArray = new ArrayList<>();
-//                for (ForecastBean.ResultBean.HourlyBean.TemperatureBean hourlyWeather : hourlyBean.getTemperature()) {
-//                    yItemArray.add(intRoundFloat(hourlyWeather.getValue()));
-//                }
-//                //降水强度
-//                ArrayList<Float> precipitation = new ArrayList<>();
-//                for (ForecastBean.ResultBean.HourlyBean.PrecipitationBean hourlyWeather : hourlyBean.getPrecipitation()) {
-//                    precipitation.add(hourlyWeather.getValue());
-//                }
-//
-//                mLineChartView.setXItem(xItemArray);
-//                mLineChartView.setYItem(yItemArray);
-//                mLineChartView.setWeather(weatherArray);
-//                mLineChartView.setPrecipitation(precipitation);
-//                mLineChartView.setmHScrollView(hScrollView);
-//                mLineChartView.applyChanges();
-//            }
-//        });
-//
+//            });
+//        }
 //    }
-
-    /**
-     * 展示未来5天的天气
-     */
-    @Override
-    public void showDailyWeatherInfo(final ForecastBean.ResultBean.DailyBean dailyBean) {
-        if (dailyBean.getStatus().equals("ok")) {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    for (int i = 0; i < 5; i++) {
-                        SimpleDateFormat oldsdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
-                        SimpleDateFormat newsdf = new SimpleDateFormat("MM/dd", Locale.CHINA);
-                        try {
-                            Date date = oldsdf.parse(dailyBean.getSkycon().get(i).getDate());
-                            day[i].setDate(newsdf.format(date));
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-//                        String[] simpleDate = weatherDatas.get(i).getDate().split("-");
-//                        day[i].setDate(simpleDate[1] + '/' + simpleDate[2]);
-                        day[i].setTemperature(Utility.stringRoundFloat(dailyBean.getTemperature().get(i).getMin()) + '/'
-                                + Utility.stringRoundFloat(dailyBean.getTemperature().get(i).getMax()) + "ºC");
-                        day[i].setIcon(chooseWeatherIcon(dailyBean.getSkycon().get(i).getValue(), dailyBean.getPrecipitation().get(i).getMax(), HOURLY_MODE, false));
-                        day[i].setSkycon(chooseWeatherSkycon(WeatherActivity.this, dailyBean.getSkycon().get(i).getValue(), dailyBean.getPrecipitation().get(i).getMax(), HOURLY_MODE));
-                    }
-                    Calendar calendar = Calendar.getInstance();
-                    int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-                    day[0].setDate(getResources().getString(R.string.today));
-                    day[1].setDate(getResources().getString(R.string.tomorrow));
-                    day[2].setDate(getResources().getStringArray(R.array.week)[(dayOfWeek + 1) % 7]);
-                    day[3].setDate(getResources().getStringArray(R.array.week)[(dayOfWeek + 2) % 7]);
-                    day[4].setDate(getResources().getStringArray(R.array.week)[(dayOfWeek + 3) % 7]);
-                    String sunRise = dailyBean.getAstro().get(0).getSunrise().getTime();
-                    String sunSet = dailyBean.getAstro().get(0).getSunset().getTime();
-                    sunrise_text.setText(sunRise);
-                    sunset_text.setText(sunSet);
-                    sunTimeView.setTime(sunRise, sunSet);
-                    uv_text.setText(dailyBean.getUltraviolet().get(0).getDesc());
-                    carWashing_text.setText(dailyBean.getCarWashing().get(0).getDesc());
-                    dressing_text.setText(dailyBean.getDressing().get(0).getDesc());
-                    if (isDone) {
-                        stopSwipe();
-                        isDone = false;
-                    } else {
-                        isDone = true;
-                    }
-                }
-            });
-        }
-    }
 
     /**
      * 展示现在的天气
@@ -684,6 +641,17 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 //                        remoteViews);
                 dynamicWeatherView.setDrawerType(Utility.chooseBgImage(skycon));
 //                dynamicWeatherView.setDrawerType(BaseDrawer.Type.RAIN_D);
+
+                ForecastBean.ResultBean.DailyBean dailyBean = forecastBean.getResult().getDaily();
+                String sunRise = dailyBean.getAstro().get(0).getSunrise().getTime();
+                String sunSet = dailyBean.getAstro().get(0).getSunset().getTime();
+                sunrise_text.setText(sunRise);
+                sunset_text.setText(sunSet);
+                sunTimeView.setTime(sunRise, sunSet);
+                uv_text.setText(dailyBean.getUltraviolet().get(0).getDesc());
+                carWashing_text.setText(dailyBean.getCarWashing().get(0).getDesc());
+                dressing_text.setText(dailyBean.getDressing().get(0).getDesc());
+
                 if (isDone) {
                     stopSwipe();
                     isDone = false;
@@ -694,25 +662,35 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         });
     }
 
+    @Override
+    public boolean isDone() {
+        return isDone;
+    }
+
+    @Override
+    public void setDone(boolean done) {
+        isDone = done;
+    }
+
     /**
      * 初始化 RecyclerView()
      */
     @Override
-    public void initRecyclerView(final List<SingleWeather> singleWeatherList) {
+    public void initHourlyRecyclerView(final List<SingleWeather> singleWeatherList) {
         handler.post(new Runnable() {
             @Override
             public void run() {
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(WeatherActivity.this);
                 linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
-                recyclerView.setLayoutManager(linearLayoutManager);
-                hourWeatherAdapter = new HourWeatherAdapter(singleWeatherList);
-                recyclerView.setAdapter(hourWeatherAdapter);
+                hourlyRecyclerView.setLayoutManager(linearLayoutManager);
+                hourWeatherAdapter = new HourlyWeatherAdapter(singleWeatherList);
+                hourlyRecyclerView.setAdapter(hourWeatherAdapter);
             }
         });
     }
 
     @Override
-    public void updateRecyclerView() {
+    public void updateHourlyRecyclerView() {
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -721,9 +699,33 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         });
     }
 
+    @Override
+    public void initDailyRecyclerView(final List<SingleWeather> singleWeatherList) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(WeatherActivity.this);
+                linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                dailyRecyclerView.setLayoutManager(linearLayoutManager);
+                dailyWeatherAdapter = new DailyWeatherAdapter(singleWeatherList);
+                dailyRecyclerView.setAdapter(dailyWeatherAdapter);
+            }
+        });
+    }
+
+    @Override
+    public void updateDailyRecyclerView() {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                dailyWeatherAdapter.notifyDataSetChanged();
+            }
+        });
+    }
+
     /*
-             *刷新环开始刷新
-             */
+                 *刷新环开始刷新
+                 */
     @Override
     public void startSwipe() {
         runOnUiThread(new Runnable() {
