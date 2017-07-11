@@ -107,7 +107,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
              * 判断是否超过刷新间隔。
              * 如果需要刷新的城市和配置文件中的城市一样 或 传递进来的城市为空，则进行刷新间隔判断。
              */
-            if ((getCountyName != null && !TextUtils.isEmpty(countyName) && countyName.equals(getCountyName)) || getCountyName == null) {
+            if ((!TextUtils.isEmpty(getCountyName) && !TextUtils.isEmpty(countyName) && countyName.equals(getCountyName)) || TextUtils.isEmpty(getCountyName)) {
 
 //                最低刷新间隔
                 int minInterval = configContact.getRefreshInterval(10);
@@ -144,7 +144,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             }
         } else {
 //            全量刷新
-            if (getCountyName != null)
+            if (!TextUtils.isEmpty(getCountyName))
                 countyName = getCountyName;
             beforeRequestWeather(getAutoLocate ? THROUGH_LOCATE : THROUGH_CHOOSE_POSITION);
         }
@@ -456,8 +456,8 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                 forecastBean.getResult().getDaily().setPrecipitation(list.subList(0, 5));
             if ((list = forecastBean.getResult().getDaily().getWind()) != null)
                 forecastBean.getResult().getDaily().setWind(list.subList(0, 5));
-            if ((list = forecastBean.getResult().getDaily().getDesc()) != null)
-                forecastBean.getResult().getDaily().setDesc(list.subList(0, 5));
+//            if ((list = forecastBean.getResult().getDaily().getDesc()) != null)
+//                forecastBean.getResult().getDaily().setDesc(list.subList(0, 5));
 
 
             ForecastBean.ResultBean.HourlyBean hourlyBean = forecastBean.getResult().getHourly();
@@ -507,8 +507,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                     configContact.applyCountyNameLastUpdateTime(System.currentTimeMillis());
 
                     presenter.setCounty(countyName);
-                }
-                else {
+                } else {
                     presenter.toastMessage("getCountyByCoordinate 根据坐标定位失败！");
                 }
 
@@ -555,8 +554,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                     configContact.applyCoordinateLastUpdateTime(System.currentTimeMillis());
 
                     afterGetCoordinate();
-                }
-                else {
+                } else {
                     presenter.toastMessage("根据位置定位失败");
                 }
             }
@@ -595,8 +593,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                     if (DEBUG)
                         Log.d(TAG, "GetCoordinateByIp: locationCoordinates = " + locationCoordinates);
                     afterGetCoordinate();
-                }
-               else {
+                } else {
                     presenter.toastMessage("根据IP定位失败！");
                 }
             }
