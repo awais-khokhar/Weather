@@ -99,8 +99,8 @@ public class SyncService extends Service {
                         ForecastBean.ResultBean.DailyBean.TemperatureBeanX temp = forecastBean.getResult().getDaily().getTemperature().get(0);
                         ForecastBean.ResultBean.DailyBean.TemperatureBeanX temp2 = forecastBean.getResult().getDaily().getTemperature().get(1);
 //                        parseJSON(responseData);
-                        calTemDiff(Utility.intRoundFloat(temp.getMax()), Utility.intRoundFloat(temp.getMin()),
-                                Utility.intRoundFloat(temp2.getMax()), Utility.intRoundFloat(temp2.getMin()));
+                        calTemDiff(Utility.intRoundDouble(temp.getMax()), Utility.intRoundDouble(temp.getMin()),
+                                Utility.intRoundDouble(temp2.getMax()), Utility.intRoundDouble(temp2.getMin()));
                     } catch (IOException e) {
                         e.printStackTrace();
                         Log.e(TAG, "onStartCommand: okhttp error");

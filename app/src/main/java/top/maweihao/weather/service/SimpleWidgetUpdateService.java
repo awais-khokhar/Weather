@@ -30,7 +30,7 @@ public class SimpleWidgetUpdateService extends Service {
     PreferenceConfigContact configContact;
 
     public SimpleWidgetUpdateService() {
-        configContact = Utility.createSimpleConfig(getApplicationContext()).create(PreferenceConfigContact.class);
+        configContact = Utility.createSimpleConfig(SimpleWidgetUpdateService.this).create(PreferenceConfigContact.class);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class SimpleWidgetUpdateService extends Service {
         RemoteViews simpleViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.simple_weather_widget);
 
         RealTimeBean bean = JSON.parseObject(weatherNow, RealTimeBean.class);
-        int tem = Utility.intRoundFloat(bean.getResult().getTemperature());
+        int tem = Utility.intRoundDouble(bean.getResult().getTemperature());
         String skycon = bean.getResult().getSkycon();
         float intensity = bean.getResult().getPrecipitation().getLocal().getIntensity();
         String skyconString = Utility.chooseWeatherSkycon(getApplicationContext(), skycon, intensity, WeatherActivity.MINUTELY_MODE);

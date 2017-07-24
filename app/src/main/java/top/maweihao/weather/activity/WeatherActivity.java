@@ -31,6 +31,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import top.maweihao.weather.R;
+import top.maweihao.weather.adapter.DailyWeatherAdapter;
+import top.maweihao.weather.adapter.HourlyWeatherAdapter;
 import top.maweihao.weather.bean.ForecastBean;
 import top.maweihao.weather.bean.SingleWeather;
 import top.maweihao.weather.contract.PreferenceConfigContact;
@@ -76,7 +78,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     TextView rainInfoTv;
     @BindView(R.id.lacate_mode_image)
     ImageView locateModeImage;
-    @BindView(R.id.locate_mode)
+    @BindView(R.id.location_tv)
     TextView locateMode;
     @BindView(R.id.last_update_time)
     TextView lastUpdateTime;
@@ -84,16 +86,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     LinearLayout toolBarLinearLayout;
     @BindView(R.id.dynamicWeatherView)
     DynamicWeatherView dynamicWeatherView;
-    //    @BindView(R.id.daily_weather_0)
-//    perDayWeatherView dailyWeather0;
-//    @BindView(R.id.daily_weather_1)
-//    perDayWeatherView dailyWeather1;
-//    @BindView(R.id.daily_weather_2)
-//    perDayWeatherView dailyWeather2;
-//    @BindView(R.id.daily_weather_3)
-//    perDayWeatherView dailyWeather3;
-//    @BindView(R.id.daily_weather_4)
-//    perDayWeatherView dailyWeather4;
     @BindView(R.id.aqi_image)
     ImageView aqiImage;
     @BindView(R.id.uv_name)
@@ -181,13 +173,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
         handler = new MessageHandler(this);
         presenter = new WeatherActivityPresenter(this, this);
-
-//        未来五天的天气
-//        day[0] = dailyWeather0;
-//        day[1] = dailyWeather1;
-//        day[2] = dailyWeather2;
-//        day[3] = dailyWeather3;
-//        day[4] = dailyWeather4;
 
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         swipeRefreshLayout.setDistanceToTriggerSync(200);
@@ -545,57 +530,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
             locateModeImage.setImageResource(R.drawable.ic_location_off_black_24dp);
     }
 
-//    /**
-//     * 展示未来5天的天气
-//     */
-//    @Override
-//    public void showDailyWeatherInfo(final ForecastBean.ResultBean.DailyBean dailyBean) {
-//        if (dailyBean.getStatus().equals("ok")) {
-//            handler.post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    for (int i = 0; i < 5; i++) {
-//                        SimpleDateFormat oldsdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
-//                        SimpleDateFormat newsdf = new SimpleDateFormat("MM/dd", Locale.CHINA);
-//                        try {
-//                            Date date = oldsdf.parse(dailyBean.getSkycon().get(i).getDate());
-//                            day[i].setDate(newsdf.format(date));
-//                        } catch (ParseException e) {
-//                            e.printStackTrace();
-//                        }
-////                        String[] simpleDate = weatherDatas.get(i).getDate().split("-");
-////                        day[i].setDate(simpleDate[1] + '/' + simpleDate[2]);
-//                        day[i].setTemperature(Utility.stringRoundFloat(dailyBean.getTemperature().get(i).getMin()) + '/'
-//                                + Utility.stringRoundFloat(dailyBean.getTemperature().get(i).getMax()) + "ºC");
-//                        day[i].setIcon(chooseWeatherIcon(dailyBean.getSkycon().get(i).getValue(), dailyBean.getPrecipitation().get(i).getMax(), HOURLY_MODE, false));
-//                        day[i].setSkycon(chooseWeatherSkycon(WeatherActivity.this, dailyBean.getSkycon().get(i).getValue(), dailyBean.getPrecipitation().get(i).getMax(), HOURLY_MODE));
-//                    }
-//                    Calendar calendar = Calendar.getInstance();
-//                    int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
-//                    day[0].setDate(getResources().getString(R.string.today));
-//                    day[1].setDate(getResources().getString(R.string.tomorrow));
-//                    day[2].setDate(getResources().getStringArray(R.array.week)[(dayOfWeek + 1) % 7]);
-//                    day[3].setDate(getResources().getStringArray(R.array.week)[(dayOfWeek + 2) % 7]);
-//                    day[4].setDate(getResources().getStringArray(R.array.week)[(dayOfWeek + 3) % 7]);
-//                    String sunRise = dailyBean.getAstro().get(0).getSunrise().getTime();
-//                    String sunSet = dailyBean.getAstro().get(0).getSunset().getTime();
-//                    sunrise_text.setText(sunRise);
-//                    sunset_text.setText(sunSet);
-//                    sunTimeView.setTime(sunRise, sunSet);
-//                    uv_text.setText(dailyBean.getUltraviolet().get(0).getDesc());
-//                    carWashing_text.setText(dailyBean.getCarWashing().get(0).getDesc());
-//                    dressing_text.setText(dailyBean.getDressing().get(0).getDesc());
-//                    if (isDone) {
-//                        stopSwipe();
-//                        isDone = false;
-//                    } else {
-//                        isDone = true;
-//                    }
-//                }
-//            });
-//        }
-//    }
-
     /**
      * 展示现在的天气
      */
@@ -607,12 +541,12 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 //                final RemoteViews remoteViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.simple_weather_widget);
                 ForecastBean.ResultBean.HourlyBean hourlyBean = forecastBean.getResult().getHourly();
 
-                String temperature = Utility.stringRoundFloat(hourlyBean.getTemperature().get(0).getValue());
+                String temperature = Utility.stringRoundDouble(hourlyBean.getTemperature().get(0).getValue());
                 String skycon = hourlyBean.getSkycon().get(0).getValue();
-                float humidity = hourlyBean.getHumidity().get(0).getValue();
-                float PM25 = hourlyBean.getPm25().get(0).getValue();
-                float intensity = hourlyBean.getPrecipitation().get(0).getValue();
-                float aqi = hourlyBean.getAqi().get(0).getValue();
+                double humidity = hourlyBean.getHumidity().get(0).getValue();
+                double PM25 = hourlyBean.getPm25().get(0).getValue();
+                double intensity = hourlyBean.getPrecipitation().get(0).getValue();
+                double aqi = hourlyBean.getAqi().get(0).getValue();
 
                 String countyName =  configContact.getCountyName();
                 if (hourlyBean.getWind() != null) {
@@ -628,8 +562,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 PMCircle.setValue((int) PM25);
                 temperatureText.setText(temperature);
                 AQICircle.setValue((int) aqi);
-                Float hum = humidity * 100;
-                hum_text.setText(hum.toString().substring(0, 2) + "%");
+                double hum = humidity * 100;
+                hum_text.setText(String.valueOf(hum).substring(0, 2) + "%");
                 String weatherString = chooseWeatherSkycon(getApplicationContext(), skycon, intensity, MINUTELY_MODE);
                 skyconText.setText(weatherString);
 
@@ -756,7 +690,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     /**
      * 显示风向
      */
-    private void setWindDirection(float direction) {
+    private void setWindDirection(double direction) {
         String dir;
         if (direction <= 22.5 || direction >= 337.5) {
             dir = getResources().getString(R.string.north);
@@ -781,7 +715,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     /**
      * 显示风力
      */
-    private void setWindLevel(float speed) {
+    private void setWindLevel(double speed) {
         int level;
         String info;
         if (speed <= 0.72) {

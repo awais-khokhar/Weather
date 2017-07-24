@@ -1,4 +1,4 @@
-package top.maweihao.weather.activity;
+package top.maweihao.weather.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,7 +17,7 @@ import top.maweihao.weather.bean.SingleWeather;
  * Created by ma on 17-7-7.
  */
 
-class HourlyWeatherAdapter extends RecyclerView.Adapter<HourlyWeatherAdapter.ViewHolder> {
+public class HourlyWeatherAdapter extends RecyclerView.Adapter<HourlyWeatherAdapter.ViewHolder> {
 
     private List<SingleWeather> weatherList;
 

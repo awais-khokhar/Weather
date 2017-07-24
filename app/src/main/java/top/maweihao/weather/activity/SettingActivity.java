@@ -1,6 +1,7 @@
 package top.maweihao.weather.activity;
 
 import android.app.TimePickerDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -17,6 +18,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import java.text.DecimalFormat;
 import java.util.Calendar;
@@ -127,8 +129,6 @@ public class SettingActivity extends AppCompatActivity {
 
             donate = findPreference("donate");
             donate.setOnPreferenceClickListener(enterActivityListener);
-            donate.setEnabled(false);
-            donate.setShouldDisableView(true);
             //暂时隐藏 donate
 //            PreferenceScreen preferenceScreen = getPreferenceScreen();
 //            preferenceScreen.removePreference(donate);
@@ -229,29 +229,38 @@ public class SettingActivity extends AppCompatActivity {
                 if (preference.getKey().equals("about")) {
                     Intent intent = new Intent(getActivity(), AboutActivity.class);
                     startActivity(intent);
-//                    return true;
                 } else if (preference.getKey().equals("choose_position")) {
                     Intent intent = new Intent(getActivity(), ChoosePositionActivity.class);
                     startActivityForResult(intent, 1);
                 } else if (preference.getKey().equals("feedback")) {
-                    Intent email = new Intent(Intent.ACTION_SENDTO);
-                    email.setData(Uri.parse("mailto:hellowello1996@outlook.com"));
-                    email.putExtra(Intent.EXTRA_SUBJECT, "Feedback: Weather");
-                    email.putExtra(Intent.EXTRA_TEXT, "Feedback: ");
-                    startActivity(email);
+                    try {
+                        Intent email = new Intent(Intent.ACTION_SENDTO);
+                        email.setData(Uri.parse("mailto:hellowello1996@outlook.com"));
+                        email.putExtra(Intent.EXTRA_SUBJECT, "Feedback: Weather");
+                        email.putExtra(Intent.EXTRA_TEXT, "Feedback: ");
+                        startActivity(email);
+                    } catch (ActivityNotFoundException e) {
+                        Toast.makeText(getActivity(), getResources().getString(R.string.email_needed), Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    }
                 } else if (preference.getKey().equals("donate")) {
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
                     alertDialogBuilder.setTitle(getResources().getString(R.string.donate))
                             .setMessage(getResources().getString(R.string.donate_info))
+                            .setNegativeButton("Cancel", null)
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                                    intent.setData(Uri.parse("alipayqr://platformapi/startapp?saId=10000007&qrcode=https://qr.alipay.com/a6x07374sqhbxyur624d77e"));
-                                    startActivity(intent);
+                                    try {
+                                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                                        intent.setData(Uri.parse("alipayqr://platformapi/startapp?saId=10000007&qrcode=https://qr.alipay.com/a6x07374sqhbxyur624d77e"));
+                                        startActivity(intent);
+                                    } catch (ActivityNotFoundException e) {
+                                        Toast.makeText(getActivity(), getResources().getString(R.string.alipay_needed), Toast.LENGTH_LONG).show();
+                                        e.printStackTrace();
+                                    }
                                 }
                             });
-//                            .setNegativeButton("Cancel", null);
                     Log.d(TAG, "onPreferenceClick: here");
                     AlertDialog alertDialog = alertDialogBuilder.create();
                     alertDialog.show();
@@ -286,9 +295,6 @@ public class SettingActivity extends AppCompatActivity {
                                 String formatHour = df.format(hourOfDay);
                                 String formatMinute = df.format(minute);
                                 preference.setSummary(formatHour + ": " + formatMinute);
-
-//                                SharedPreferences sp = preference.getSharedPreferences();
-//                                sp.edit().putString("notification_time", formatHour + TIME_SPLIT + formatMinute).apply();
                                 configContact.applyNotificationTime(formatHour + TIME_SPLIT + formatMinute);
                                 SyncService.isStarSendNotification = false;
                                 Intent startIntent = new Intent(getActivity(), SyncService.class);

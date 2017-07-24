@@ -30,7 +30,7 @@ public class TallWidgetUpdateService extends Service {
     PreferenceConfigContact configContact;
 
     public TallWidgetUpdateService() {
-        configContact = Utility.createSimpleConfig(getApplicationContext()).create(PreferenceConfigContact.class);
+        configContact = Utility.createSimpleConfig(TallWidgetUpdateService.this).create(PreferenceConfigContact.class);
     }
 
     @Override
@@ -95,7 +95,7 @@ public class TallWidgetUpdateService extends Service {
         configContact.applyWeatherNowLastUpdateTime(System.currentTimeMillis());
         RemoteViews tallViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.tall_weather_widget);
         RealTimeBean bean = JSON.parseObject(weatherNow, RealTimeBean.class);
-        int tem = Utility.intRoundFloat(bean.getResult().getTemperature());
+        int tem = Utility.intRoundDouble(bean.getResult().getTemperature());
         String skycon = bean.getResult().getSkycon();
         float intensity = bean.getResult().getPrecipitation().getLocal().getIntensity();
         String skyconString = Utility.chooseWeatherSkycon(getApplicationContext(), skycon, intensity, WeatherActivity.MINUTELY_MODE);

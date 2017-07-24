@@ -116,5 +116,7 @@
     <string name="now">Now</string>
     <string name="donate">Donate</string>
     <string name="donate_info">Donate any amout to support developers, You will be honored some way in the future.  \nClick  \'OK\' to open Alipay.</string>
+    <string name="email_needed">You need to install any email app</string>
+    <string name="alipay_needed">You have to install \'Alipay\' first from App Store</string>
 
 </resources>

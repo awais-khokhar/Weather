@@ -1,4 +1,4 @@
-package top.maweihao.weather.activity;
+package top.maweihao.weather.adapter;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;

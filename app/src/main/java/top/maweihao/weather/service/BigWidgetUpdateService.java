@@ -30,7 +30,7 @@ public class BigWidgetUpdateService extends Service {
     PreferenceConfigContact configContact;
 
     public BigWidgetUpdateService() {
-        configContact = Utility.createSimpleConfig(getApplicationContext()).create(PreferenceConfigContact.class);
+        configContact = Utility.createSimpleConfig(BigWidgetUpdateService.this).create(PreferenceConfigContact.class);
     }
 
     @Override
@@ -94,9 +94,9 @@ public class BigWidgetUpdateService extends Service {
         String description = bean.getResult().getMinutely().getDescription();
 
         bigViews.setTextViewText(R.id.big_widget_description, description);
-        int tem = Utility.intRoundFloat(bean.getResult().getHourly().getTemperature().get(0).getValue());
+        int tem = Utility.intRoundDouble(bean.getResult().getHourly().getTemperature().get(0).getValue());
         String skycon = bean.getResult().getHourly().getSkycon().get(0).getValue();
-        float intensity = bean.getResult().getHourly().getPrecipitation().get(0).getValue();
+        double intensity = bean.getResult().getHourly().getPrecipitation().get(0).getValue();
         String skyconString = Utility.chooseWeatherSkycon(getApplicationContext(), skycon, intensity, WeatherActivity.HOURLY_MODE);
         int icon = Utility.chooseWeatherIcon(skycon, intensity, WeatherActivity.HOURLY_MODE, false);
 //            int tem = Utility.intRoundString(((JSONObject) (hourly.getJSONArray("temperature").get(0))).getString("value"));

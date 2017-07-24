@@ -141,7 +141,7 @@ public class Utility {
     /**
      * 把 float  四舍五入再返回 String，用来处理温度的
      */
-    public static String stringRoundFloat(float f) {
+    public static String stringRoundDouble(double f) {
         return String.valueOf(Math.round(f));
     }
 
@@ -149,8 +149,8 @@ public class Utility {
     /**
      * 把  float 四舍五入再返回 int，用来处理温度的
      */
-    public static int intRoundFloat(float s) {
-        return Math.round(s);
+    public static int intRoundDouble(double s) {
+        return (int)Math.round(s);
     }
 
     /**
@@ -205,7 +205,7 @@ public class Utility {
      * @param mode          Mode 代表 precipitation 的精度，分为小时级和分钟级， 以确定雨量
      * @return 描述（string）
      */
-    public static String chooseWeatherSkycon(Context context, String skycon, float precipitation, int mode) {
+    public static String chooseWeatherSkycon(Context context, String skycon, double precipitation, int mode) {
         if (context != null) {
             switch (skycon) {
                 case "CLEAR_DAY":
@@ -257,7 +257,7 @@ public class Utility {
      * @param simpleIcon 是否返回简单黑白风格的 icon
      * @return 天气图片 id
      */
-    public static int chooseWeatherIcon(String skycon, float precipitation, int mode, boolean simpleIcon) {
+    public static int chooseWeatherIcon(String skycon, double precipitation, int mode, boolean simpleIcon) {
         switch (skycon) {
             case "CLEAR_DAY":
                 return simpleIcon ? R.mipmap.simple_clear_day_gray : R.mipmap.weather_clear;
@@ -435,6 +435,15 @@ public class Utility {
         LocationManager alm =
                 (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         return alm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
+    /**
+     * 根据
+     * @return
+     */
+    public static int chooseAlertIcon() {
+        // to finish
+        return 0;
     }
 }
 

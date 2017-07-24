@@ -21,7 +21,7 @@ import top.maweihao.weather.util.Utility;
 
 import static top.maweihao.weather.activity.WeatherActivity.HOURLY_MODE;
 import static top.maweihao.weather.util.Constants.DEBUG;
-import static top.maweihao.weather.util.Utility.stringRoundFloat;
+import static top.maweihao.weather.util.Utility.stringRoundDouble;
 
 /**
  * 接口对接，数据传递
@@ -64,16 +64,22 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
                 String time = "";
                 try {
                     Date date = oldsdf.parse(dailyBean.getSkycon().get(i).getDate());
-                    time = newsdf.format(date) + " " + ((Activity) weatherView).getResources().getStringArray(R.array.week)[(dayOfWeek + i) % 7];
+                    time = newsdf.format(date) + " " + ((Activity) weatherView).getResources().getStringArray(R.array.week)[(dayOfWeek + i - 1) % 7];
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
                 int icon = Utility.chooseWeatherIcon(dailyBean.getSkycon().get(i).getValue(),
                         dailyBean.getPrecipitation().get(i).getMax(), HOURLY_MODE, false);
-                String skyconDesc = Utility.chooseWeatherSkycon((Activity) weatherView, dailyBean.getSkycon().get(i).getValue(),
-                        dailyBean.getPrecipitation().get(i).getMax(), HOURLY_MODE);
-                String temperature = stringRoundFloat(dailyBean.getTemperature().get(i).getMax()) + "° / "
-                        + stringRoundFloat(dailyBean.getTemperature().get(i).getMin()) + '°';
+                String skyconDesc;
+                // 在有 desc 时优先显示　desc　的内容
+                if (dailyBean.getDesc() == null) {
+                    skyconDesc = Utility.chooseWeatherSkycon((Activity) weatherView, dailyBean.getSkycon().get(i).getValue(),
+                            dailyBean.getPrecipitation().get(i).getMax(), HOURLY_MODE);
+                } else {
+                    skyconDesc = dailyBean.getDesc().get(i).getValue();
+                }
+                String temperature = stringRoundDouble(dailyBean.getTemperature().get(i).getMax()) + "° / "
+                        + stringRoundDouble(dailyBean.getTemperature().get(i).getMin()) + '°';
                 singleWeatherArrayList.add(new SingleWeather(time, icon, skyconDesc, temperature));
             }
             weatherView.updateDailyRecyclerView();
@@ -104,7 +110,7 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
                     hourlyBean.getPrecipitation().get(i).getValue(), HOURLY_MODE, true);
             String skyconDesc = Utility.chooseWeatherSkycon((Activity)weatherView, hourlyBean.getSkycon().get(i).getValue(),
                     hourlyBean.getPrecipitation().get(i).getValue(), HOURLY_MODE);
-            String temperature = stringRoundFloat(hourlyBean.getTemperature().get(i).getValue()) + '°';
+            String temperature = stringRoundDouble(hourlyBean.getTemperature().get(i).getValue()) + '°';
             singleWeatherArrayList.add(new SingleWeather(time, icon, skyconDesc, temperature));
         }
         singleWeatherArrayList.get(0).setTime("现在");

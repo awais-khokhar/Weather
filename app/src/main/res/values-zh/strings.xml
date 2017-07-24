@@ -105,5 +105,7 @@
     <string name="now">现在</string>
     <string name="donate">Donate</string>
     <string name="donate_info">捐赠任意的金额以支持开发者的努力，您会在将来以一些形式获得 App 体验层面的回报。\n点击 “OK” 将跳转至支付宝。</string>
+    <string name="email_needed">未找到任何邮件客户端</string>
+    <string name="alipay_needed">暂时只支持支付宝</string>
 
 </resources>

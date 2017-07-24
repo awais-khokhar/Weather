@@ -2,24 +2,18 @@ package top.maweihao.weather.bean;
 
 import java.util.List;
 
-/**
- * 天气预报bean
- * 对应json数据格式，自动生成
- * Created by limuyang on 2017/6/10.
- */
-
 public class ForecastBean {
 
     /**
      * status : ok
      * lang : zh_CN
-     * result : {"hourly":{"status":"ok","description":"小雨，今天晚间21点钟后转多云，其后阴","skycon":[{"value":"RAIN","datetime":"2017-07-08 18:00"},{"value":"RAIN","datetime":"2017-07-08 19:00"},{"value":"RAIN","datetime":"2017-07-08 20:00"},{"value":"CLOUDY","datetime":"2017-07-08 21:00"},{"value":"CLOUDY","datetime":"2017-07-08 22:00"},{"value":"CLOUDY","datetime":"2017-07-08 23:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-09 00:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-09 01:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-09 02:00"},{"value":"CLOUDY","datetime":"2017-07-09 03:00"},{"value":"CLOUDY","datetime":"2017-07-09 04:00"},{"value":"CLOUDY","datetime":"2017-07-09 05:00"},{"value":"CLOUDY","datetime":"2017-07-09 06:00"},{"value":"CLOUDY","datetime":"2017-07-09 07:00"},{"value":"CLOUDY","datetime":"2017-07-09 08:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-09 09:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-09 10:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-09 11:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-09 12:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-09 13:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-09 14:00"},{"value":"CLOUDY","datetime":"2017-07-09 15:00"},{"value":"CLOUDY","datetime":"2017-07-09 16:00"},{"value":"CLOUDY","datetime":"2017-07-09 17:00"},{"value":"RAIN","datetime":"2017-07-09 18:00"},{"value":"RAIN","datetime":"2017-07-09 19:00"},{"value":"CLOUDY","datetime":"2017-07-09 20:00"},{"value":"CLOUDY","datetime":"2017-07-09 21:00"},{"value":"CLOUDY","datetime":"2017-07-09 22:00"},{"value":"CLOUDY","datetime":"2017-07-09 23:00"},{"value":"CLOUDY","datetime":"2017-07-10 00:00"},{"value":"CLOUDY","datetime":"2017-07-10 01:00"},{"value":"CLOUDY","datetime":"2017-07-10 02:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-10 03:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-10 04:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 05:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 06:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 07:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 08:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 09:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 10:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 11:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 12:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 13:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 14:00"},{"value":"RAIN","datetime":"2017-07-10 15:00"},{"value":"RAIN","datetime":"2017-07-10 16:00"},{"value":"RAIN","datetime":"2017-07-10 17:00"}],"cloudrate":[{"value":1,"datetime":"2017-07-08 18:00"},{"value":1,"datetime":"2017-07-08 19:00"},{"value":0.99,"datetime":"2017-07-08 20:00"},{"value":0.94,"datetime":"2017-07-08 21:00"},{"value":0.88,"datetime":"2017-07-08 22:00"},{"value":0.81,"datetime":"2017-07-08 23:00"},{"value":0.75,"datetime":"2017-07-09 00:00"},{"value":0.72,"datetime":"2017-07-09 01:00"},{"value":0.73,"datetime":"2017-07-09 02:00"},{"value":0.81,"datetime":"2017-07-09 03:00"},{"value":0.9,"datetime":"2017-07-09 04:00"},{"value":0.96,"datetime":"2017-07-09 05:00"},{"value":0.96,"datetime":"2017-07-09 06:00"},{"value":0.91,"datetime":"2017-07-09 07:00"},{"value":0.85,"datetime":"2017-07-09 08:00"},{"value":0.79,"datetime":"2017-07-09 09:00"},{"value":0.75,"datetime":"2017-07-09 10:00"},{"value":0.73,"datetime":"2017-07-09 11:00"},{"value":0.72,"datetime":"2017-07-09 12:00"},{"value":0.74,"datetime":"2017-07-09 13:00"},{"value":0.78,"datetime":"2017-07-09 14:00"},{"value":0.84,"datetime":"2017-07-09 15:00"},{"value":0.9,"datetime":"2017-07-09 16:00"},{"value":0.95,"datetime":"2017-07-09 17:00"},{"value":0.96,"datetime":"2017-07-09 18:00"},{"value":0.95,"datetime":"2017-07-09 19:00"},{"value":0.94,"datetime":"2017-07-09 20:00"},{"value":0.92,"datetime":"2017-07-09 21:00"},{"value":0.92,"datetime":"2017-07-09 22:00"},{"value":0.92,"datetime":"2017-07-09 23:00"},{"value":0.91,"datetime":"2017-07-10 00:00"},{"value":0.9,"datetime":"2017-07-10 01:00"},{"value":0.87,"datetime":"2017-07-10 02:00"},{"value":0.8,"datetime":"2017-07-10 03:00"},{"value":0.73,"datetime":"2017-07-10 04:00"},{"value":0.69,"datetime":"2017-07-10 05:00"},{"value":0.68,"datetime":"2017-07-10 06:00"},{"value":0.7,"datetime":"2017-07-10 07:00"},{"value":0.73,"datetime":"2017-07-10 08:00"},{"value":0.74,"datetime":"2017-07-10 09:00"},{"value":0.75,"datetime":"2017-07-10 10:00"},{"value":0.74,"datetime":"2017-07-10 11:00"},{"value":0.74,"datetime":"2017-07-10 12:00"},{"value":0.75,"datetime":"2017-07-10 13:00"},{"value":0.77,"datetime":"2017-07-10 14:00"},{"value":0.82,"datetime":"2017-07-10 15:00"},{"value":0.87,"datetime":"2017-07-10 16:00"},{"value":0.91,"datetime":"2017-07-10 17:00"}],"aqi":[{"value":12,"datetime":"2017-07-08 18:00"},{"value":11,"datetime":"2017-07-08 19:00"},{"value":11,"datetime":"2017-07-08 20:00"},{"value":12,"datetime":"2017-07-08 21:00"},{"value":14,"datetime":"2017-07-08 22:00"},{"value":14,"datetime":"2017-07-08 23:00"},{"value":15,"datetime":"2017-07-09 00:00"},{"value":15,"datetime":"2017-07-09 01:00"},{"value":15,"datetime":"2017-07-09 02:00"},{"value":15,"datetime":"2017-07-09 03:00"},{"value":16,"datetime":"2017-07-09 04:00"},{"value":16,"datetime":"2017-07-09 05:00"},{"value":16,"datetime":"2017-07-09 06:00"},{"value":18,"datetime":"2017-07-09 07:00"},{"value":19,"datetime":"2017-07-09 08:00"},{"value":20,"datetime":"2017-07-09 09:00"},{"value":20,"datetime":"2017-07-09 10:00"},{"value":20,"datetime":"2017-07-09 11:00"},{"value":20,"datetime":"2017-07-09 12:00"},{"value":22,"datetime":"2017-07-09 13:00"},{"value":22,"datetime":"2017-07-09 14:00"},{"value":22,"datetime":"2017-07-09 15:00"},{"value":22,"datetime":"2017-07-09 16:00"},{"value":20,"datetime":"2017-07-09 17:00"},{"value":20,"datetime":"2017-07-09 18:00"},{"value":20,"datetime":"2017-07-09 19:00"},{"value":20,"datetime":"2017-07-09 20:00"},{"value":20,"datetime":"2017-07-09 21:00"},{"value":20,"datetime":"2017-07-09 22:00"},{"value":19,"datetime":"2017-07-09 23:00"},{"value":19,"datetime":"2017-07-10 00:00"},{"value":19,"datetime":"2017-07-10 01:00"},{"value":19,"datetime":"2017-07-10 02:00"},{"value":20,"datetime":"2017-07-10 03:00"},{"value":20,"datetime":"2017-07-10 04:00"},{"value":22,"datetime":"2017-07-10 05:00"},{"value":22,"datetime":"2017-07-10 06:00"},{"value":23,"datetime":"2017-07-10 07:00"},{"value":23,"datetime":"2017-07-10 08:00"},{"value":24,"datetime":"2017-07-10 09:00"},{"value":24,"datetime":"2017-07-10 10:00"},{"value":26,"datetime":"2017-07-10 11:00"},{"value":27,"datetime":"2017-07-10 12:00"},{"value":27,"datetime":"2017-07-10 13:00"},{"value":29,"datetime":"2017-07-10 14:00"},{"value":29,"datetime":"2017-07-10 15:00"},{"value":29,"datetime":"2017-07-10 16:00"},{"value":29,"datetime":"2017-07-10 17:00"}],"humidity":[{"value":0.76,"datetime":"2017-07-08 18:00"},{"value":0.77,"datetime":"2017-07-08 19:00"},{"value":0.78,"datetime":"2017-07-08 20:00"},{"value":0.79,"datetime":"2017-07-08 21:00"},{"value":0.79,"datetime":"2017-07-08 22:00"},{"value":0.8,"datetime":"2017-07-08 23:00"},{"value":0.81,"datetime":"2017-07-09 00:00"},{"value":0.82,"datetime":"2017-07-09 01:00"},{"value":0.82,"datetime":"2017-07-09 02:00"},{"value":0.83,"datetime":"2017-07-09 03:00"},{"value":0.83,"datetime":"2017-07-09 04:00"},{"value":0.83,"datetime":"2017-07-09 05:00"},{"value":0.81,"datetime":"2017-07-09 06:00"},{"value":0.79,"datetime":"2017-07-09 07:00"},{"value":0.76,"datetime":"2017-07-09 08:00"},{"value":0.73,"datetime":"2017-07-09 09:00"},{"value":0.7,"datetime":"2017-07-09 10:00"},{"value":0.68,"datetime":"2017-07-09 11:00"},{"value":0.67,"datetime":"2017-07-09 12:00"},{"value":0.68,"datetime":"2017-07-09 13:00"},{"value":0.69,"datetime":"2017-07-09 14:00"},{"value":0.72,"datetime":"2017-07-09 15:00"},{"value":0.74,"datetime":"2017-07-09 16:00"},{"value":0.77,"datetime":"2017-07-09 17:00"},{"value":0.78,"datetime":"2017-07-09 18:00"},{"value":0.79,"datetime":"2017-07-09 19:00"},{"value":0.8,"datetime":"2017-07-09 20:00"},{"value":0.81,"datetime":"2017-07-09 21:00"},{"value":0.81,"datetime":"2017-07-09 22:00"},{"value":0.82,"datetime":"2017-07-09 23:00"},{"value":0.82,"datetime":"2017-07-10 00:00"},{"value":0.83,"datetime":"2017-07-10 01:00"},{"value":0.84,"datetime":"2017-07-10 02:00"},{"value":0.85,"datetime":"2017-07-10 03:00"},{"value":0.85,"datetime":"2017-07-10 04:00"},{"value":0.85,"datetime":"2017-07-10 05:00"},{"value":0.84,"datetime":"2017-07-10 06:00"},{"value":0.83,"datetime":"2017-07-10 07:00"},{"value":0.8,"datetime":"2017-07-10 08:00"},{"value":0.77,"datetime":"2017-07-10 09:00"},{"value":0.74,"datetime":"2017-07-10 10:00"},{"value":0.72,"datetime":"2017-07-10 11:00"},{"value":0.7,"datetime":"2017-07-10 12:00"},{"value":0.69,"datetime":"2017-07-10 13:00"},{"value":0.69,"datetime":"2017-07-10 14:00"},{"value":0.71,"datetime":"2017-07-10 15:00"},{"value":0.74,"datetime":"2017-07-10 16:00"},{"value":0.76,"datetime":"2017-07-10 17:00"}],"pres":[{"value":98246.7615368365,"datetime":"2017-07-08 18:00"},{"value":98248.0766940549,"datetime":"2017-07-08 19:00"},{"value":98256.0458191215,"datetime":"2017-07-08 20:00"},{"value":98281.4485588495,"datetime":"2017-07-08 21:00"},{"value":98310.7906809261,"datetime":"2017-07-08 22:00"},{"value":98324.5094832569,"datetime":"2017-07-08 23:00"},{"value":98308.7754571279,"datetime":"2017-07-09 00:00"},{"value":98272.6918673465,"datetime":"2017-07-09 01:00"},{"value":98231.0951721006,"datetime":"2017-07-09 02:00"},{"value":98196.9157645531,"datetime":"2017-07-09 03:00"},{"value":98175.4597777664,"datetime":"2017-07-09 04:00"},{"value":98170.1272797777,"datetime":"2017-07-09 05:00"},{"value":98181.7495545232,"datetime":"2017-07-09 06:00"},{"value":98200.8827495329,"datetime":"2017-07-09 07:00"},{"value":98215.5142282352,"datetime":"2017-07-09 08:00"},{"value":98216.2407452333,"datetime":"2017-07-09 09:00"},{"value":98204.0966198285,"datetime":"2017-07-09 10:00"},{"value":98182.7255624965,"datetime":"2017-07-09 11:00"},{"value":98155.0171160804,"datetime":"2017-07-09 12:00"},{"value":98120.8441528924,"datetime":"2017-07-09 13:00"},{"value":98079.325377612,"datetime":"2017-07-09 14:00"},{"value":98031.5637508994,"datetime":"2017-07-09 15:00"},{"value":97986.5992573368,"datetime":"2017-07-09 16:00"},{"value":97955.4561374871,"datetime":"2017-07-09 17:00"},{"value":97946.2865239683,"datetime":"2017-07-09 18:00"},{"value":97955.7541176185,"datetime":"2017-07-09 19:00"},{"value":97977.6505113308,"datetime":"2017-07-09 20:00"},{"value":98004.3668029205,"datetime":"2017-07-09 21:00"},{"value":98022.6921098902,"datetime":"2017-07-09 22:00"},{"value":98018.0150546651,"datetime":"2017-07-09 23:00"},{"value":97982.40183186,"datetime":"2017-07-10 00:00"},{"value":97934.6289248492,"datetime":"2017-07-10 01:00"},{"value":97900.1503891972,"datetime":"2017-07-10 02:00"},{"value":97897.9828590703,"datetime":"2017-07-10 03:00"},{"value":97921.3932830418,"datetime":"2017-07-10 04:00"},{"value":97957.2111882872,"datetime":"2017-07-10 05:00"},{"value":97995.113320888,"datetime":"2017-07-10 06:00"},{"value":98036.1653025511,"datetime":"2017-07-10 07:00"},{"value":98084.2799738894,"datetime":"2017-07-10 08:00"},{"value":98140.7011091255,"datetime":"2017-07-10 09:00"},{"value":98195.9962169206,"datetime":"2017-07-10 10:00"},{"value":98238.0637395456,"datetime":"2017-07-10 11:00"},{"value":98257.6452895099,"datetime":"2017-07-10 12:00"},{"value":98256.8551602764,"datetime":"2017-07-10 13:00"},{"value":98240.6508155466,"datetime":"2017-07-10 14:00"},{"value":98215.3321733754,"datetime":"2017-07-10 15:00"},{"value":98192.5689692304,"datetime":"2017-07-10 16:00"},{"value":98185.373392933,"datetime":"2017-07-10 17:00"}],"pm25":[{"value":6,"datetime":"2017-07-08 18:00"},{"value":6,"datetime":"2017-07-08 19:00"},{"value":6,"datetime":"2017-07-08 20:00"},{"value":7,"datetime":"2017-07-08 21:00"},{"value":8,"datetime":"2017-07-08 22:00"},{"value":8,"datetime":"2017-07-08 23:00"},{"value":9,"datetime":"2017-07-09 00:00"},{"value":9,"datetime":"2017-07-09 01:00"},{"value":9,"datetime":"2017-07-09 02:00"},{"value":9,"datetime":"2017-07-09 03:00"},{"value":10,"datetime":"2017-07-09 04:00"},{"value":10,"datetime":"2017-07-09 05:00"},{"value":10,"datetime":"2017-07-09 06:00"},{"value":11,"datetime":"2017-07-09 07:00"},{"value":12,"datetime":"2017-07-09 08:00"},{"value":13,"datetime":"2017-07-09 09:00"},{"value":13,"datetime":"2017-07-09 10:00"},{"value":13,"datetime":"2017-07-09 11:00"},{"value":13,"datetime":"2017-07-09 12:00"},{"value":14,"datetime":"2017-07-09 13:00"},{"value":14,"datetime":"2017-07-09 14:00"},{"value":14,"datetime":"2017-07-09 15:00"},{"value":14,"datetime":"2017-07-09 16:00"},{"value":13,"datetime":"2017-07-09 17:00"},{"value":13,"datetime":"2017-07-09 18:00"},{"value":13,"datetime":"2017-07-09 19:00"},{"value":13,"datetime":"2017-07-09 20:00"},{"value":13,"datetime":"2017-07-09 21:00"},{"value":13,"datetime":"2017-07-09 22:00"},{"value":12,"datetime":"2017-07-09 23:00"},{"value":12,"datetime":"2017-07-10 00:00"},{"value":12,"datetime":"2017-07-10 01:00"},{"value":12,"datetime":"2017-07-10 02:00"},{"value":13,"datetime":"2017-07-10 03:00"},{"value":13,"datetime":"2017-07-10 04:00"},{"value":14,"datetime":"2017-07-10 05:00"},{"value":14,"datetime":"2017-07-10 06:00"},{"value":15,"datetime":"2017-07-10 07:00"},{"value":15,"datetime":"2017-07-10 08:00"},{"value":16,"datetime":"2017-07-10 09:00"},{"value":16,"datetime":"2017-07-10 10:00"},{"value":17,"datetime":"2017-07-10 11:00"},{"value":18,"datetime":"2017-07-10 12:00"},{"value":18,"datetime":"2017-07-10 13:00"},{"value":19,"datetime":"2017-07-10 14:00"},{"value":19,"datetime":"2017-07-10 15:00"},{"value":19,"datetime":"2017-07-10 16:00"},{"value":19,"datetime":"2017-07-10 17:00"}],"precipitation":[{"value":0.2782,"datetime":"2017-07-08 18:00"},{"value":7.2052,"datetime":"2017-07-08 19:00"},{"value":4.6179,"datetime":"2017-07-08 20:00"},{"value":0,"datetime":"2017-07-08 21:00"},{"value":0,"datetime":"2017-07-08 22:00"},{"value":0,"datetime":"2017-07-08 23:00"},{"value":0,"datetime":"2017-07-09 00:00"},{"value":0,"datetime":"2017-07-09 01:00"},{"value":0,"datetime":"2017-07-09 02:00"},{"value":0,"datetime":"2017-07-09 03:00"},{"value":0,"datetime":"2017-07-09 04:00"},{"value":0,"datetime":"2017-07-09 05:00"},{"value":0,"datetime":"2017-07-09 06:00"},{"value":0,"datetime":"2017-07-09 07:00"},{"value":0,"datetime":"2017-07-09 08:00"},{"value":0,"datetime":"2017-07-09 09:00"},{"value":0,"datetime":"2017-07-09 10:00"},{"value":0,"datetime":"2017-07-09 11:00"},{"value":0,"datetime":"2017-07-09 12:00"},{"value":0,"datetime":"2017-07-09 13:00"},{"value":0,"datetime":"2017-07-09 14:00"},{"value":0,"datetime":"2017-07-09 15:00"},{"value":0.0468,"datetime":"2017-07-09 16:00"},{"value":0.0604,"datetime":"2017-07-09 17:00"},{"value":0.0651,"datetime":"2017-07-09 18:00"},{"value":0.0616,"datetime":"2017-07-09 19:00"},{"value":0.0523,"datetime":"2017-07-09 20:00"},{"value":0,"datetime":"2017-07-09 21:00"},{"value":0,"datetime":"2017-07-09 22:00"},{"value":0,"datetime":"2017-07-09 23:00"},{"value":0,"datetime":"2017-07-10 00:00"},{"value":0,"datetime":"2017-07-10 01:00"},{"value":0,"datetime":"2017-07-10 02:00"},{"value":0,"datetime":"2017-07-10 03:00"},{"value":0,"datetime":"2017-07-10 04:00"},{"value":0,"datetime":"2017-07-10 05:00"},{"value":0,"datetime":"2017-07-10 06:00"},{"value":0,"datetime":"2017-07-10 07:00"},{"value":0,"datetime":"2017-07-10 08:00"},{"value":0,"datetime":"2017-07-10 09:00"},{"value":0,"datetime":"2017-07-10 10:00"},{"value":0,"datetime":"2017-07-10 11:00"},{"value":0,"datetime":"2017-07-10 12:00"},{"value":0,"datetime":"2017-07-10 13:00"},{"value":0,"datetime":"2017-07-10 14:00"},{"value":0.2023,"datetime":"2017-07-10 15:00"},{"value":0.4119,"datetime":"2017-07-10 16:00"},{"value":0.5604,"datetime":"2017-07-10 17:00"}],"wind":[{"direction":104.32,"speed":4.18,"datetime":"2017-07-08 18:00"},{"direction":126.3,"speed":3.65,"datetime":"2017-07-08 19:00"},{"direction":153.06,"speed":3.34,"datetime":"2017-07-08 20:00"},{"direction":178.93,"speed":3.44,"datetime":"2017-07-08 21:00"},{"direction":198.48,"speed":3.88,"datetime":"2017-07-08 22:00"},{"direction":210.11,"speed":4.43,"datetime":"2017-07-08 23:00"},{"direction":214.73,"speed":4.9,"datetime":"2017-07-09 00:00"},{"direction":214.3,"speed":5.12,"datetime":"2017-07-09 01:00"},{"direction":209.51,"speed":5.03,"datetime":"2017-07-09 02:00"},{"direction":200.23,"speed":4.71,"datetime":"2017-07-09 03:00"},{"direction":189.88,"speed":4.44,"datetime":"2017-07-09 04:00"},{"direction":185.22,"speed":4.28,"datetime":"2017-07-09 05:00"},{"direction":191.35,"speed":4.18,"datetime":"2017-07-09 06:00"},{"direction":202.24,"speed":4.12,"datetime":"2017-07-09 07:00"},{"direction":209.61,"speed":3.84,"datetime":"2017-07-09 08:00"},{"direction":207.56,"speed":2.93,"datetime":"2017-07-09 09:00"},{"direction":192.19,"speed":1.58,"datetime":"2017-07-09 10:00"},{"direction":105.88,"speed":0.56,"datetime":"2017-07-09 11:00"},{"direction":27.13,"speed":1.7,"datetime":"2017-07-09 12:00"},{"direction":8.89,"speed":3.08,"datetime":"2017-07-09 13:00"},{"direction":358.2,"speed":3.91,"datetime":"2017-07-09 14:00"},{"direction":347.91,"speed":3.86,"datetime":"2017-07-09 15:00"},{"direction":332.8,"speed":3.25,"datetime":"2017-07-09 16:00"},{"direction":308.84,"speed":2.69,"datetime":"2017-07-09 17:00"},{"direction":280.6,"speed":2.61,"datetime":"2017-07-09 18:00"},{"direction":255.89,"speed":2.97,"datetime":"2017-07-09 19:00"},{"direction":236.16,"speed":3.62,"datetime":"2017-07-09 20:00"},{"direction":220.8,"speed":4.52,"datetime":"2017-07-09 21:00"},{"direction":211.1,"speed":5.51,"datetime":"2017-07-09 22:00"},{"direction":206.81,"speed":6.3,"datetime":"2017-07-09 23:00"},{"direction":207.07,"speed":6.66,"datetime":"2017-07-10 00:00"},{"direction":209.4,"speed":6.57,"datetime":"2017-07-10 01:00"},{"direction":211.58,"speed":6.05,"datetime":"2017-07-10 02:00"},{"direction":211.99,"speed":5.14,"datetime":"2017-07-10 03:00"},{"direction":213.16,"speed":4.19,"datetime":"2017-07-10 04:00"},{"direction":221.16,"speed":3.62,"datetime":"2017-07-10 05:00"},{"direction":237.09,"speed":3.94,"datetime":"2017-07-10 06:00"},{"direction":248.6,"speed":4.84,"datetime":"2017-07-10 07:00"},{"direction":252.95,"speed":5.48,"datetime":"2017-07-10 08:00"},{"direction":252.14,"speed":5.19,"datetime":"2017-07-10 09:00"},{"direction":250.05,"speed":4.24,"datetime":"2017-07-10 10:00"},{"direction":254.23,"speed":3.05,"datetime":"2017-07-10 11:00"},{"direction":280.07,"speed":2.32,"datetime":"2017-07-10 12:00"},{"direction":307.92,"speed":2.7,"datetime":"2017-07-10 13:00"},{"direction":310.85,"speed":3.26,"datetime":"2017-07-10 14:00"},{"direction":291.87,"speed":3.46,"datetime":"2017-07-10 15:00"},{"direction":264.03,"speed":3.93,"datetime":"2017-07-10 16:00"},{"direction":240.61,"speed":4.59,"datetime":"2017-07-10 17:00"}],"temperature":[{"value":27.8,"datetime":"2017-07-08 18:00"},{"value":27,"datetime":"2017-07-08 19:00"},{"value":26.8,"datetime":"2017-07-08 20:00"},{"value":26.6,"datetime":"2017-07-08 21:00"},{"value":26.2,"datetime":"2017-07-08 22:00"},{"value":26.1,"datetime":"2017-07-08 23:00"},{"value":26,"datetime":"2017-07-09 00:00"},{"value":26.1,"datetime":"2017-07-09 01:00"},{"value":26.7,"datetime":"2017-07-09 02:00"},{"value":27.3,"datetime":"2017-07-09 03:00"},{"value":27.9,"datetime":"2017-07-09 04:00"},{"value":28.5,"datetime":"2017-07-09 05:00"},{"value":29.1,"datetime":"2017-07-09 06:00"},{"value":29.8,"datetime":"2017-07-09 07:00"},{"value":30.4,"datetime":"2017-07-09 08:00"},{"value":31.1,"datetime":"2017-07-09 09:00"},{"value":31.8,"datetime":"2017-07-09 10:00"},{"value":32,"datetime":"2017-07-09 11:00"},{"value":31.9,"datetime":"2017-07-09 12:00"},{"value":31.8,"datetime":"2017-07-09 13:00"},{"value":31.7,"datetime":"2017-07-09 14:00"},{"value":31.2,"datetime":"2017-07-09 15:00"},{"value":31,"datetime":"2017-07-09 16:00"},{"value":30.2,"datetime":"2017-07-09 17:00"},{"value":29.9,"datetime":"2017-07-09 18:00"},{"value":29.34,"datetime":"2017-07-09 19:00"},{"value":28.61,"datetime":"2017-07-09 20:00"},{"value":27.95,"datetime":"2017-07-09 21:00"},{"value":27.61,"datetime":"2017-07-09 22:00"},{"value":27.28,"datetime":"2017-07-09 23:00"},{"value":26.98,"datetime":"2017-07-10 00:00"},{"value":26.71,"datetime":"2017-07-10 01:00"},{"value":26.47,"datetime":"2017-07-10 02:00"},{"value":26.28,"datetime":"2017-07-10 03:00"},{"value":26.6,"datetime":"2017-07-10 04:00"},{"value":26,"datetime":"2017-07-10 05:00"},{"value":27.52,"datetime":"2017-07-10 06:00"},{"value":28.06,"datetime":"2017-07-10 07:00"},{"value":28.56,"datetime":"2017-07-10 08:00"},{"value":29.03,"datetime":"2017-07-10 09:00"},{"value":29.5,"datetime":"2017-07-10 10:00"},{"value":29.98,"datetime":"2017-07-10 11:00"},{"value":30.51,"datetime":"2017-07-10 12:00"},{"value":32,"datetime":"2017-07-10 13:00"},{"value":31.4,"datetime":"2017-07-10 14:00"},{"value":31.64,"datetime":"2017-07-10 15:00"},{"value":31.34,"datetime":"2017-07-10 16:00"},{"value":30.96,"datetime":"2017-07-10 17:00"}]},"minutely":{"status":"ok","description":"雨渐大，35分钟后转为大雨，不过一个半小时后雨会再次变小","probability":[0.8228367567,0.9411128163,0.9276605248,0.9082266092],"datasource":"radar","precipitation_2h":[0.1508,0.1756,0.1988,0.2195,0.2368,0.25,0.2585,0.2627,0.2633,0.2609,0.2562,0.25,0.2427,0.2343,0.2247,0.2138,0.2014,0.1875,0.1721,0.1566,0.1426,0.1316,0.1252,0.125,0.1321,0.1454,0.1634,0.1844,0.2068,0.2292,0.2503,0.271,0.2925,0.3162,0.3432,0.375,0.4119,0.4513,0.4895,0.5231,0.5487,0.5625,0.5624,0.551,0.532,0.5095,0.4871,0.4688,0.4574,0.4526,0.4527,0.4564,0.4622,0.4688,0.4748,0.4802,0.4853,0.4901,0.495,0.5,0.5052,0.5097,0.5124,0.5125,0.5087,0.5,0.486,0.4684,0.4493,0.4311,0.416,0.4063,0.4033,0.4059,0.4117,0.4186,0.4244,0.4271,0.4249,0.4186,0.4093,0.3981,0.3863,0.375,0.3652,0.3572,0.351,0.3466,0.3442,0.3438,0.345,0.3463,0.3457,0.3412,0.3308,0.3125,0.2853,0.2518,0.2155,0.1799,0.1486,0.125,0.112,0.1095,0.1166,0.1326,0.1565,0.1875,0.2244,0.2639,0.3024,0.3361,0.3616,0.375,0.3741,0.362,0.3432,0.3222,0.3035,0.2917],"precipitation":[0.1508,0.1756,0.1988,0.2195,0.2368,0.25,0.2585,0.2627,0.2633,0.2609,0.2562,0.25,0.2427,0.2343,0.2247,0.2138,0.2014,0.1875,0.1721,0.1566,0.1426,0.1316,0.1252,0.125,0.1321,0.1454,0.1634,0.1844,0.2068,0.2292,0.2503,0.271,0.2925,0.3162,0.3432,0.375,0.4119,0.4513,0.4895,0.5231,0.5487,0.5625,0.5624,0.551,0.532,0.5095,0.4871,0.4688,0.4574,0.4526,0.4527,0.4564,0.4622,0.4688,0.4748,0.4802,0.4853,0.4901,0.495,0.5]},"daily":{"status":"ok","coldRisk":[{"index":"3","desc":"易发","datetime":"2017-07-08"},{"index":"3","desc":"易发","datetime":"2017-07-09"},{"index":"3","desc":"易发","datetime":"2017-07-10"},{"index":"3","desc":"易发","datetime":"2017-07-11"},{"index":"3","desc":"易发","datetime":"2017-07-12"}],"temperature":[{"date":"2017-07-08","max":30,"avg":26.75,"min":26.1},{"date":"2017-07-09","max":32,"avg":29.38,"min":26},{"date":"2017-07-10","max":32,"avg":28.91,"min":26},{"date":"2017-07-11","max":32,"avg":28.93,"min":26},{"date":"2017-07-12","max":32,"avg":29.08,"min":26}],"skycon":[{"date":"2017-07-08","value":"RAIN"},{"date":"2017-07-09","value":"CLOUDY"},{"date":"2017-07-10","value":"RAIN"},{"date":"2017-07-11","value":"PARTLY_CLOUDY_DAY"},{"date":"2017-07-12","value":"PARTLY_CLOUDY_DAY"}],"cloudrate":[{"date":"2017-07-08","max":1,"avg":0.94,"min":0.69},{"date":"2017-07-09","max":0.96,"avg":0.85,"min":0.72},{"date":"2017-07-10","max":0.93,"avg":0.78,"min":0.54},{"date":"2017-07-11","max":0.93,"avg":0.65,"min":0.44},{"date":"2017-07-12","max":0.93,"avg":0.66,"min":0.4}],"aqi":[{"date":"2017-07-08","max":14,"avg":12.33,"min":0},{"date":"2017-07-09","max":22,"avg":18.83,"min":15},{"date":"2017-07-10","max":30,"avg":25.25,"min":19},{"date":"2017-07-11","max":35,"avg":31.5,"min":29},{"date":"2017-07-12","max":31,"avg":30.46,"min":29}],"humidity":[{"date":"2017-07-08","max":0.81,"avg":0.78,"min":0.68},{"date":"2017-07-09","max":0.83,"avg":0.77,"min":0.67},{"date":"2017-07-10","max":0.85,"avg":0.78,"min":0.69},{"date":"2017-07-11","max":0.86,"avg":0.78,"min":0.71},{"date":"2017-07-12","max":0.85,"avg":0.76,"min":0.66}],"astro":[{"date":"2017-07-08","sunset":{"time":"18:47"},"sunrise":{"time":"05:09"}},{"date":"2017-07-09","sunset":{"time":"18:47"},"sunrise":{"time":"05:09"}},{"date":"2017-07-10","sunset":{"time":"18:47"},"sunrise":{"time":"05:10"}},{"date":"2017-07-11","sunset":{"time":"18:46"},"sunrise":{"time":"05:10"}},{"date":"2017-07-12","sunset":{"time":"18:46"},"sunrise":{"time":"05:11"}}],"pres":[{"date":"2017-07-08","max":98355.27,"avg":98277.94,"min":98167.86},{"date":"2017-07-09","max":98308.78,"avg":98117.08,"min":97946.29},{"date":"2017-07-10","max":98366.92,"avg":98142.03,"min":97897.98},{"date":"2017-07-11","max":98498.7,"avg":98387.6,"min":98268.74},{"date":"2017-07-12","max":98598.62,"avg":98421.92,"min":98258.59}],"ultraviolet":[{"index":"1","desc":"最弱","datetime":"2017-07-08"},{"index":"2","desc":"弱","datetime":"2017-07-09"},{"index":"2","desc":"弱","datetime":"2017-07-10"},{"index":"2","desc":"弱","datetime":"2017-07-11"},{"index":"1","desc":"最弱","datetime":"2017-07-12"}],"pm25":[{"date":"2017-07-08","max":8,"avg":6.83,"min":1},{"date":"2017-07-09","max":14,"avg":11.96,"min":9},{"date":"2017-07-10","max":20,"avg":16.5,"min":12},{"date":"2017-07-11","max":24,"avg":21.17,"min":19},{"date":"2017-07-12","max":21,"avg":20.46,"min":19}],"dressing":[{"index":"2","desc":"很热","datetime":"2017-07-08"},{"index":"2","desc":"很热","datetime":"2017-07-09"},{"index":"2","desc":"很热","datetime":"2017-07-10"},{"index":"2","desc":"很热","datetime":"2017-07-11"},{"index":"2","desc":"很热","datetime":"2017-07-12"}],"carWashing":[{"index":"3","desc":"较不适宜","datetime":"2017-07-08"},{"index":"3","desc":"较不适宜","datetime":"2017-07-09"},{"index":"3","desc":"较不适宜","datetime":"2017-07-10"},{"index":"3","desc":"较不适宜","datetime":"2017-07-11"},{"index":"1","desc":"适宜","datetime":"2017-07-12"}],"precipitation":[{"date":"2017-07-08","max":7.2052,"avg":2.0169,"min":0},{"date":"2017-07-09","max":0.0651,"avg":0.0119,"min":0},{"date":"2017-07-10","max":0.5746,"avg":0.1188,"min":0},{"date":"2017-07-11","max":0.0739,"avg":0.0256,"min":0},{"date":"2017-07-12","max":0,"avg":0,"min":0}],"wind":[{"date":"2017-07-08","max":{"direction":170.9,"speed":5.36},"avg":{"direction":139.32,"speed":3.13},"min":{"direction":254.02,"speed":0.32}},{"date":"2017-07-09","max":{"direction":206.81,"speed":6.3},"avg":{"direction":222.24,"speed":3.74},"min":{"direction":105.88,"speed":0.56}},{"date":"2017-07-10","max":{"direction":207.07,"speed":6.66},"avg":{"direction":222.41,"speed":4.72},"min":{"direction":280.07,"speed":2.32}},{"date":"2017-07-11","max":{"direction":179.79,"speed":5.61},"avg":{"direction":169.08,"speed":4.78},"min":{"direction":286.34,"speed":3.21}},{"date":"2017-07-12","max":{"direction":151.61,"speed":9.78},"avg":{"direction":218.76,"speed":5.91},"min":{"direction":99.86,"speed":1.82}}]},"primary":0}
-     * server_time : 1499511556
+     * result : {"hourly":{"status":"ok","description":"多云转晴，明天上午10点钟后转多云","skycon":[{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-24 20:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-24 21:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-24 22:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-24 23:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-25 00:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-25 01:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-25 02:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-25 03:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-25 04:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-25 05:00"},{"value":"CLEAR_DAY","datetime":"2017-07-25 06:00"},{"value":"CLEAR_DAY","datetime":"2017-07-25 07:00"},{"value":"CLEAR_DAY","datetime":"2017-07-25 08:00"},{"value":"CLEAR_DAY","datetime":"2017-07-25 09:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 10:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 11:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 12:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 13:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 14:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 15:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 16:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 17:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 18:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-25 19:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-25 20:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-25 21:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-25 22:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-25 23:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-26 00:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-26 01:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-26 02:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-26 03:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-26 04:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-26 05:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-26 06:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-26 07:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-26 08:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-26 09:00"},{"value":"CLEAR_DAY","datetime":"2017-07-26 10:00"},{"value":"CLEAR_DAY","datetime":"2017-07-26 11:00"},{"value":"CLEAR_DAY","datetime":"2017-07-26 12:00"},{"value":"CLEAR_DAY","datetime":"2017-07-26 13:00"},{"value":"CLEAR_DAY","datetime":"2017-07-26 14:00"},{"value":"CLEAR_DAY","datetime":"2017-07-26 15:00"},{"value":"CLEAR_DAY","datetime":"2017-07-26 16:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-26 17:00"},{"value":"CLEAR_DAY","datetime":"2017-07-26 18:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-26 19:00"}],"cloudrate":[{"value":0.41,"datetime":"2017-07-24 20:00"},{"value":0.35,"datetime":"2017-07-24 21:00"},{"value":0.29,"datetime":"2017-07-24 22:00"},{"value":0.26,"datetime":"2017-07-24 23:00"},{"value":0.24,"datetime":"2017-07-25 00:00"},{"value":0.23,"datetime":"2017-07-25 01:00"},{"value":0.22,"datetime":"2017-07-25 02:00"},{"value":0.18,"datetime":"2017-07-25 03:00"},{"value":0.13,"datetime":"2017-07-25 04:00"},{"value":0.08,"datetime":"2017-07-25 05:00"},{"value":0.05,"datetime":"2017-07-25 06:00"},{"value":0.04,"datetime":"2017-07-25 07:00"},{"value":0.07,"datetime":"2017-07-25 08:00"},{"value":0.13,"datetime":"2017-07-25 09:00"},{"value":0.21,"datetime":"2017-07-25 10:00"},{"value":0.28,"datetime":"2017-07-25 11:00"},{"value":0.31,"datetime":"2017-07-25 12:00"},{"value":0.32,"datetime":"2017-07-25 13:00"},{"value":0.3,"datetime":"2017-07-25 14:00"},{"value":0.27,"datetime":"2017-07-25 15:00"},{"value":0.24,"datetime":"2017-07-25 16:00"},{"value":0.23,"datetime":"2017-07-25 17:00"},{"value":0.25,"datetime":"2017-07-25 18:00"},{"value":0.28,"datetime":"2017-07-25 19:00"},{"value":0.27,"datetime":"2017-07-25 20:00"},{"value":0.19,"datetime":"2017-07-25 21:00"},{"value":0.09,"datetime":"2017-07-25 22:00"},{"value":0,"datetime":"2017-07-25 23:00"},{"value":0,"datetime":"2017-07-26 00:00"},{"value":0,"datetime":"2017-07-26 01:00"},{"value":0.04,"datetime":"2017-07-26 02:00"},{"value":0.16,"datetime":"2017-07-26 03:00"},{"value":0.28,"datetime":"2017-07-26 04:00"},{"value":0.37,"datetime":"2017-07-26 05:00"},{"value":0.38,"datetime":"2017-07-26 06:00"},{"value":0.34,"datetime":"2017-07-26 07:00"},{"value":0.28,"datetime":"2017-07-26 08:00"},{"value":0.21,"datetime":"2017-07-26 09:00"},{"value":0.15,"datetime":"2017-07-26 10:00"},{"value":0.1,"datetime":"2017-07-26 11:00"},{"value":0.07,"datetime":"2017-07-26 12:00"},{"value":0.06,"datetime":"2017-07-26 13:00"},{"value":0.08,"datetime":"2017-07-26 14:00"},{"value":0.13,"datetime":"2017-07-26 15:00"},{"value":0.18,"datetime":"2017-07-26 16:00"},{"value":0.21,"datetime":"2017-07-26 17:00"},{"value":0.2,"datetime":"2017-07-26 18:00"},{"value":0.16,"datetime":"2017-07-26 19:00"}],"aqi":[{"value":95,"datetime":"2017-07-24 20:00"},{"value":56,"datetime":"2017-07-24 21:00"},{"value":58,"datetime":"2017-07-24 22:00"},{"value":61,"datetime":"2017-07-24 23:00"},{"value":63,"datetime":"2017-07-25 00:00"},{"value":64,"datetime":"2017-07-25 01:00"},{"value":66,"datetime":"2017-07-25 02:00"},{"value":67,"datetime":"2017-07-25 03:00"},{"value":67,"datetime":"2017-07-25 04:00"},{"value":68,"datetime":"2017-07-25 05:00"},{"value":71,"datetime":"2017-07-25 06:00"},{"value":72,"datetime":"2017-07-25 07:00"},{"value":72,"datetime":"2017-07-25 08:00"},{"value":71,"datetime":"2017-07-25 09:00"},{"value":68,"datetime":"2017-07-25 10:00"},{"value":64,"datetime":"2017-07-25 11:00"},{"value":59,"datetime":"2017-07-25 12:00"},{"value":57,"datetime":"2017-07-25 13:00"},{"value":53,"datetime":"2017-07-25 14:00"},{"value":50,"datetime":"2017-07-25 15:00"},{"value":49,"datetime":"2017-07-25 16:00"},{"value":50,"datetime":"2017-07-25 17:00"},{"value":52,"datetime":"2017-07-25 18:00"},{"value":56,"datetime":"2017-07-25 19:00"},{"value":59,"datetime":"2017-07-25 20:00"},{"value":62,"datetime":"2017-07-25 21:00"},{"value":63,"datetime":"2017-07-25 22:00"},{"value":64,"datetime":"2017-07-25 23:00"},{"value":66,"datetime":"2017-07-26 00:00"},{"value":66,"datetime":"2017-07-26 01:00"},{"value":64,"datetime":"2017-07-26 02:00"},{"value":63,"datetime":"2017-07-26 03:00"},{"value":61,"datetime":"2017-07-26 04:00"},{"value":58,"datetime":"2017-07-26 05:00"},{"value":58,"datetime":"2017-07-26 06:00"},{"value":58,"datetime":"2017-07-26 07:00"},{"value":59,"datetime":"2017-07-26 08:00"},{"value":59,"datetime":"2017-07-26 09:00"},{"value":58,"datetime":"2017-07-26 10:00"},{"value":57,"datetime":"2017-07-26 11:00"},{"value":56,"datetime":"2017-07-26 12:00"},{"value":55,"datetime":"2017-07-26 13:00"},{"value":55,"datetime":"2017-07-26 14:00"},{"value":53,"datetime":"2017-07-26 15:00"},{"value":53,"datetime":"2017-07-26 16:00"},{"value":53,"datetime":"2017-07-26 17:00"},{"value":55,"datetime":"2017-07-26 18:00"},{"value":57,"datetime":"2017-07-26 19:00"}],"humidity":[{"value":0.59,"datetime":"2017-07-24 20:00"},{"value":0.61,"datetime":"2017-07-24 21:00"},{"value":0.62,"datetime":"2017-07-24 22:00"},{"value":0.63,"datetime":"2017-07-24 23:00"},{"value":0.63,"datetime":"2017-07-25 00:00"},{"value":0.64,"datetime":"2017-07-25 01:00"},{"value":0.64,"datetime":"2017-07-25 02:00"},{"value":0.65,"datetime":"2017-07-25 03:00"},{"value":0.66,"datetime":"2017-07-25 04:00"},{"value":0.67,"datetime":"2017-07-25 05:00"},{"value":0.68,"datetime":"2017-07-25 06:00"},{"value":0.68,"datetime":"2017-07-25 07:00"},{"value":0.67,"datetime":"2017-07-25 08:00"},{"value":0.64,"datetime":"2017-07-25 09:00"},{"value":0.6,"datetime":"2017-07-25 10:00"},{"value":0.57,"datetime":"2017-07-25 11:00"},{"value":0.53,"datetime":"2017-07-25 12:00"},{"value":0.51,"datetime":"2017-07-25 13:00"},{"value":0.5,"datetime":"2017-07-25 14:00"},{"value":0.5,"datetime":"2017-07-25 15:00"},{"value":0.52,"datetime":"2017-07-25 16:00"},{"value":0.57,"datetime":"2017-07-25 17:00"},{"value":0.64,"datetime":"2017-07-25 18:00"},{"value":0.72,"datetime":"2017-07-25 19:00"},{"value":0.79,"datetime":"2017-07-25 20:00"},{"value":0.84,"datetime":"2017-07-25 21:00"},{"value":0.87,"datetime":"2017-07-25 22:00"},{"value":0.89,"datetime":"2017-07-25 23:00"},{"value":0.91,"datetime":"2017-07-26 00:00"},{"value":0.92,"datetime":"2017-07-26 01:00"},{"value":0.94,"datetime":"2017-07-26 02:00"},{"value":0.95,"datetime":"2017-07-26 03:00"},{"value":0.96,"datetime":"2017-07-26 04:00"},{"value":0.95,"datetime":"2017-07-26 05:00"},{"value":0.92,"datetime":"2017-07-26 06:00"},{"value":0.88,"datetime":"2017-07-26 07:00"},{"value":0.82,"datetime":"2017-07-26 08:00"},{"value":0.76,"datetime":"2017-07-26 09:00"},{"value":0.7,"datetime":"2017-07-26 10:00"},{"value":0.64,"datetime":"2017-07-26 11:00"},{"value":0.59,"datetime":"2017-07-26 12:00"},{"value":0.56,"datetime":"2017-07-26 13:00"},{"value":0.54,"datetime":"2017-07-26 14:00"},{"value":0.55,"datetime":"2017-07-26 15:00"},{"value":0.58,"datetime":"2017-07-26 16:00"},{"value":0.62,"datetime":"2017-07-26 17:00"},{"value":0.67,"datetime":"2017-07-26 18:00"},{"value":0.73,"datetime":"2017-07-26 19:00"}],"pm25":[{"value":37,"datetime":"2017-07-24 20:00"},{"value":39,"datetime":"2017-07-24 21:00"},{"value":41,"datetime":"2017-07-24 22:00"},{"value":43,"datetime":"2017-07-24 23:00"},{"value":45,"datetime":"2017-07-25 00:00"},{"value":46,"datetime":"2017-07-25 01:00"},{"value":47,"datetime":"2017-07-25 02:00"},{"value":48,"datetime":"2017-07-25 03:00"},{"value":48,"datetime":"2017-07-25 04:00"},{"value":49,"datetime":"2017-07-25 05:00"},{"value":51,"datetime":"2017-07-25 06:00"},{"value":52,"datetime":"2017-07-25 07:00"},{"value":52,"datetime":"2017-07-25 08:00"},{"value":51,"datetime":"2017-07-25 09:00"},{"value":49,"datetime":"2017-07-25 10:00"},{"value":46,"datetime":"2017-07-25 11:00"},{"value":42,"datetime":"2017-07-25 12:00"},{"value":40,"datetime":"2017-07-25 13:00"},{"value":37,"datetime":"2017-07-25 14:00"},{"value":35,"datetime":"2017-07-25 15:00"},{"value":34,"datetime":"2017-07-25 16:00"},{"value":35,"datetime":"2017-07-25 17:00"},{"value":36,"datetime":"2017-07-25 18:00"},{"value":39,"datetime":"2017-07-25 19:00"},{"value":42,"datetime":"2017-07-25 20:00"},{"value":44,"datetime":"2017-07-25 21:00"},{"value":45,"datetime":"2017-07-25 22:00"},{"value":46,"datetime":"2017-07-25 23:00"},{"value":47,"datetime":"2017-07-26 00:00"},{"value":47,"datetime":"2017-07-26 01:00"},{"value":46,"datetime":"2017-07-26 02:00"},{"value":45,"datetime":"2017-07-26 03:00"},{"value":43,"datetime":"2017-07-26 04:00"},{"value":41,"datetime":"2017-07-26 05:00"},{"value":41,"datetime":"2017-07-26 06:00"},{"value":41,"datetime":"2017-07-26 07:00"},{"value":42,"datetime":"2017-07-26 08:00"},{"value":42,"datetime":"2017-07-26 09:00"},{"value":41,"datetime":"2017-07-26 10:00"},{"value":40,"datetime":"2017-07-26 11:00"},{"value":39,"datetime":"2017-07-26 12:00"},{"value":38,"datetime":"2017-07-26 13:00"},{"value":38,"datetime":"2017-07-26 14:00"},{"value":37,"datetime":"2017-07-26 15:00"},{"value":37,"datetime":"2017-07-26 16:00"},{"value":37,"datetime":"2017-07-26 17:00"},{"value":38,"datetime":"2017-07-26 18:00"},{"value":40,"datetime":"2017-07-26 19:00"}],"precipitation":[{"value":0,"datetime":"2017-07-24 20:00"},{"value":0,"datetime":"2017-07-24 21:00"},{"value":0,"datetime":"2017-07-24 22:00"},{"value":0,"datetime":"2017-07-24 23:00"},{"value":0,"datetime":"2017-07-25 00:00"},{"value":0,"datetime":"2017-07-25 01:00"},{"value":0,"datetime":"2017-07-25 02:00"},{"value":0,"datetime":"2017-07-25 03:00"},{"value":0,"datetime":"2017-07-25 04:00"},{"value":0,"datetime":"2017-07-25 05:00"},{"value":0,"datetime":"2017-07-25 06:00"},{"value":0,"datetime":"2017-07-25 07:00"},{"value":0,"datetime":"2017-07-25 08:00"},{"value":0,"datetime":"2017-07-25 09:00"},{"value":0,"datetime":"2017-07-25 10:00"},{"value":0,"datetime":"2017-07-25 11:00"},{"value":0,"datetime":"2017-07-25 12:00"},{"value":0,"datetime":"2017-07-25 13:00"},{"value":0,"datetime":"2017-07-25 14:00"},{"value":0,"datetime":"2017-07-25 15:00"},{"value":0,"datetime":"2017-07-25 16:00"},{"value":0,"datetime":"2017-07-25 17:00"},{"value":0,"datetime":"2017-07-25 18:00"},{"value":0,"datetime":"2017-07-25 19:00"},{"value":0,"datetime":"2017-07-25 20:00"},{"value":0,"datetime":"2017-07-25 21:00"},{"value":0,"datetime":"2017-07-25 22:00"},{"value":0,"datetime":"2017-07-25 23:00"},{"value":0,"datetime":"2017-07-26 00:00"},{"value":0,"datetime":"2017-07-26 01:00"},{"value":0,"datetime":"2017-07-26 02:00"},{"value":0,"datetime":"2017-07-26 03:00"},{"value":0,"datetime":"2017-07-26 04:00"},{"value":0,"datetime":"2017-07-26 05:00"},{"value":0,"datetime":"2017-07-26 06:00"},{"value":0,"datetime":"2017-07-26 07:00"},{"value":0,"datetime":"2017-07-26 08:00"},{"value":0,"datetime":"2017-07-26 09:00"},{"value":0,"datetime":"2017-07-26 10:00"},{"value":0,"datetime":"2017-07-26 11:00"},{"value":0,"datetime":"2017-07-26 12:00"},{"value":0,"datetime":"2017-07-26 13:00"},{"value":0,"datetime":"2017-07-26 14:00"},{"value":0,"datetime":"2017-07-26 15:00"},{"value":0,"datetime":"2017-07-26 16:00"},{"value":0,"datetime":"2017-07-26 17:00"},{"value":0,"datetime":"2017-07-26 18:00"},{"value":0,"datetime":"2017-07-26 19:00"}],"wind":[{"direction":132.64,"speed":6.56,"datetime":"2017-07-24 20:00"},{"direction":143.28,"speed":6.98,"datetime":"2017-07-24 21:00"},{"direction":158.72,"speed":6.69,"datetime":"2017-07-24 22:00"},{"direction":175.65,"speed":6.73,"datetime":"2017-07-24 23:00"},{"direction":186.97,"speed":7.28,"datetime":"2017-07-25 00:00"},{"direction":194.43,"speed":7.68,"datetime":"2017-07-25 01:00"},{"direction":203.23,"speed":7.49,"datetime":"2017-07-25 02:00"},{"direction":218.99,"speed":6.75,"datetime":"2017-07-25 03:00"},{"direction":242.35,"speed":6.24,"datetime":"2017-07-25 04:00"},{"direction":266.86,"speed":6.41,"datetime":"2017-07-25 05:00"},{"direction":286.63,"speed":6.86,"datetime":"2017-07-25 06:00"},{"direction":302.91,"speed":7.37,"datetime":"2017-07-25 07:00"},{"direction":316.7,"speed":8.01,"datetime":"2017-07-25 08:00"},{"direction":327.76,"speed":8.82,"datetime":"2017-07-25 09:00"},{"direction":336,"speed":9.67,"datetime":"2017-07-25 10:00"},{"direction":341.74,"speed":10.37,"datetime":"2017-07-25 11:00"},{"direction":345.33,"speed":10.74,"datetime":"2017-07-25 12:00"},{"direction":346.99,"speed":10.68,"datetime":"2017-07-25 13:00"},{"direction":346.55,"speed":10.08,"datetime":"2017-07-25 14:00"},{"direction":344.54,"speed":8.95,"datetime":"2017-07-25 15:00"},{"direction":348.22,"speed":7.47,"datetime":"2017-07-25 16:00"},{"direction":12.59,"speed":6.61,"datetime":"2017-07-25 17:00"},{"direction":48.17,"speed":9.53,"datetime":"2017-07-25 18:00"},{"direction":64.41,"speed":15.02,"datetime":"2017-07-25 19:00"},{"direction":71.59,"speed":19.25,"datetime":"2017-07-25 20:00"},{"direction":76.73,"speed":19.98,"datetime":"2017-07-25 21:00"},{"direction":82.65,"speed":18.24,"datetime":"2017-07-25 22:00"},{"direction":90.43,"speed":15.94,"datetime":"2017-07-25 23:00"},{"direction":98.84,"speed":14.55,"datetime":"2017-07-26 00:00"},{"direction":104.91,"speed":13.85,"datetime":"2017-07-26 01:00"},{"direction":106.26,"speed":13.1,"datetime":"2017-07-26 02:00"},{"direction":101.46,"speed":11.95,"datetime":"2017-07-26 03:00"},{"direction":92.66,"speed":10.99,"datetime":"2017-07-26 04:00"},{"direction":85.52,"speed":10.74,"datetime":"2017-07-26 05:00"},{"direction":85.5,"speed":11.08,"datetime":"2017-07-26 06:00"},{"direction":90.69,"speed":11.45,"datetime":"2017-07-26 07:00"},{"direction":98.17,"speed":11.37,"datetime":"2017-07-26 08:00"},{"direction":106.93,"speed":10.44,"datetime":"2017-07-26 09:00"},{"direction":116.15,"speed":9.12,"datetime":"2017-07-26 10:00"},{"direction":122.34,"speed":7.86,"datetime":"2017-07-26 11:00"},{"direction":119.68,"speed":6.83,"datetime":"2017-07-26 12:00"},{"direction":108.2,"speed":6.32,"datetime":"2017-07-26 13:00"},{"direction":94.63,"speed":6.6,"datetime":"2017-07-26 14:00"},{"direction":86.45,"speed":7.54,"datetime":"2017-07-26 15:00"},{"direction":84.12,"speed":9.09,"datetime":"2017-07-26 16:00"},{"direction":85.7,"speed":11.48,"datetime":"2017-07-26 17:00"},{"direction":89.04,"speed":14.79,"datetime":"2017-07-26 18:00"},{"direction":92.96,"speed":18.06,"datetime":"2017-07-26 19:00"}],"temperature":[{"value":32,"datetime":"2017-07-24 20:00"},{"value":31.25,"datetime":"2017-07-24 21:00"},{"value":31.02,"datetime":"2017-07-24 22:00"},{"value":30.98,"datetime":"2017-07-24 23:00"},{"value":30.89,"datetime":"2017-07-25 00:00"},{"value":30.67,"datetime":"2017-07-25 01:00"},{"value":30.29,"datetime":"2017-07-25 02:00"},{"value":29.7,"datetime":"2017-07-25 03:00"},{"value":29.24,"datetime":"2017-07-25 04:00"},{"value":29.24,"datetime":"2017-07-25 05:00"},{"value":29.92,"datetime":"2017-07-25 06:00"},{"value":31.09,"datetime":"2017-07-25 07:00"},{"value":32.48,"datetime":"2017-07-25 08:00"},{"value":33.84,"datetime":"2017-07-25 09:00"},{"value":35.04,"datetime":"2017-07-25 10:00"},{"value":35.98,"datetime":"2017-07-25 11:00"},{"value":36.42,"datetime":"2017-07-25 12:00"},{"value":36.7,"datetime":"2017-07-25 13:00"},{"value":36.95,"datetime":"2017-07-25 14:00"},{"value":37.18,"datetime":"2017-07-25 15:00"},{"value":37.18,"datetime":"2017-07-25 16:00"},{"value":36.65,"datetime":"2017-07-25 17:00"},{"value":35.14,"datetime":"2017-07-25 18:00"},{"value":32.85,"datetime":"2017-07-25 19:00"},{"value":30.75,"datetime":"2017-07-25 20:00"},{"value":29.36,"datetime":"2017-07-25 21:00"},{"value":28.58,"datetime":"2017-07-25 22:00"},{"value":28.16,"datetime":"2017-07-25 23:00"},{"value":27.88,"datetime":"2017-07-26 00:00"},{"value":27.61,"datetime":"2017-07-26 01:00"},{"value":27.27,"datetime":"2017-07-26 02:00"},{"value":26.83,"datetime":"2017-07-26 03:00"},{"value":26.53,"datetime":"2017-07-26 04:00"},{"value":26.63,"datetime":"2017-07-26 05:00"},{"value":27.36,"datetime":"2017-07-26 06:00"},{"value":28.56,"datetime":"2017-07-26 07:00"},{"value":30.03,"datetime":"2017-07-26 08:00"},{"value":31.55,"datetime":"2017-07-26 09:00"},{"value":32.99,"datetime":"2017-07-26 10:00"},{"value":34.22,"datetime":"2017-07-26 11:00"},{"value":35.15,"datetime":"2017-07-26 12:00"},{"value":35.82,"datetime":"2017-07-26 13:00"},{"value":36.23,"datetime":"2017-07-26 14:00"},{"value":36.48,"datetime":"2017-07-26 15:00"},{"value":36.43,"datetime":"2017-07-26 16:00"},{"value":35.79,"datetime":"2017-07-26 17:00"},{"value":34.01,"datetime":"2017-07-26 18:00"},{"value":31.82,"datetime":"2017-07-26 19:00"}]},"alert":{"status":"ok","content":[{"province":"江苏","status":"预警中","code":"0703","description":"江都区气象台2017年07月24日08时14分变更高温红色预警信号为高温橙色预警信号。预计今天我区大部分地区最高气温将升至39℃以上，请注意防范。","alertId":"32101241600000_20170724081541","city":"扬州","pubtimestamp":1.500855395E9,"latlon":[32.426564,119.567481],"county":"江都","request_status":"ok","location":"江苏扬州江都","title":"江都区气象局发布高温橙色预警[II级/严重]","regionId":"101190605"}]},"minutely":{"status":"ok","description":"未来两小时不会下雨，放心出门吧","probability":[0,0,0,0],"datasource":"radar","precipitation_2h":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"precipitation":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},"daily":{"status":"ok","coldRisk":[{"index":"4","desc":"极易发","datetime":"2017-07-24"},{"index":"4","desc":"极易发","datetime":"2017-07-25"},{"index":"4","desc":"极易发","datetime":"2017-07-26"},{"index":"4","desc":"极易发","datetime":"2017-07-27"},{"index":"4","desc":"极易发","datetime":"2017-07-28"},{"index":"4","desc":"极易发","datetime":"2017-07-29"},{"index":"4","desc":"极易发","datetime":"2017-07-30"},{"index":"4","desc":"极易发","datetime":"2017-07-31"},{"index":"3","desc":"易发","datetime":"2017-08-01"},{"index":"3","desc":"易发","datetime":"2017-08-02"},{"index":"4","desc":"极易发","datetime":"2017-08-03"},{"index":"4","desc":"极易发","datetime":"2017-08-04"},{"index":"4","desc":"极易发","datetime":"2017-08-05"},{"index":"4","desc":"极易发","datetime":"2017-08-06"},{"index":"4","desc":"极易发","datetime":"2017-08-07"}],"temperature":[{"date":"2017-07-24","max":37.21,"avg":31.31,"min":28.13},{"date":"2017-07-25","max":37.18,"avg":32.68,"min":28.16},{"date":"2017-07-26","max":36.48,"avg":30.99,"min":26.53},{"date":"2017-07-27","max":36.04,"avg":30.59,"min":25.82},{"date":"2017-07-28","max":35.61,"avg":30.38,"min":26.2},{"date":"2017-07-29","max":34.33,"avg":29.37,"min":25.41},{"date":"2017-07-30","max":33.37,"avg":29.04,"min":25.78},{"date":"2017-07-31","max":34.56,"avg":29.13,"min":25.98},{"date":"2017-08-01","max":28.28,"avg":26.76,"min":25.6},{"date":"2017-08-02","max":30.03,"avg":27.34,"min":25.5},{"date":"2017-08-03","max":32.75,"avg":29.82,"min":25.66},{"date":"2017-08-04","max":32.91,"avg":29.15,"min":25.44},{"date":"2017-08-05","max":33.08,"avg":28.87,"min":25},{"date":"2017-08-06","max":32.27,"avg":26.38,"min":20.51},{"date":"2017-08-07","max":32.41,"avg":25.36,"min":18.33}],"skycon":[{"date":"2017-07-24","value":"PARTLY_CLOUDY_NIGHT"},{"date":"2017-07-25","value":"CLEAR_DAY"},{"date":"2017-07-26","value":"CLEAR_DAY"},{"date":"2017-07-27","value":"CLEAR_DAY"},{"date":"2017-07-28","value":"CLEAR_DAY"},{"date":"2017-07-29","value":"RAIN"},{"date":"2017-07-30","value":"RAIN"},{"date":"2017-07-31","value":"RAIN"},{"date":"2017-08-01","value":"RAIN"},{"date":"2017-08-02","value":"RAIN"},{"date":"2017-08-03","value":"RAIN"},{"date":"2017-08-04","value":"RAIN"},{"date":"2017-08-05","value":"RAIN"},{"date":"2017-08-06","value":"CLEAR_DAY"},{"date":"2017-08-07","value":"CLEAR_DAY"}],"cloudrate":[{"date":"2017-07-24","max":0.95,"avg":0.33,"min":0.15},{"date":"2017-07-25","max":0.32,"avg":0.19,"min":0},{"date":"2017-07-26","max":0.38,"avg":0.15,"min":0},{"date":"2017-07-27","max":0.2,"avg":0.08,"min":0},{"date":"2017-07-28","max":0.05,"avg":0.01,"min":0},{"date":"2017-07-29","max":0.9,"avg":0.27,"min":0},{"date":"2017-07-30","max":1,"avg":0.44,"min":0},{"date":"2017-07-31","max":1,"avg":0.73,"min":0.23},{"date":"2017-08-01","max":1,"avg":1,"min":0.99},{"date":"2017-08-02","max":1,"avg":0.65,"min":0},{"date":"2017-08-03","max":0.36,"avg":0.24,"min":0},{"date":"2017-08-04","max":0.53,"avg":0.49,"min":0.39},{"date":"2017-08-05","max":0.66,"avg":0.39,"min":0.08},{"date":"2017-08-06","max":0.11,"avg":0.03,"min":0},{"date":"2017-08-07","max":0.01,"avg":0,"min":0}],"aqi":[{"date":"2017-07-24","max":175,"avg":67.5,"min":56},{"date":"2017-07-25","max":72,"avg":61.96,"min":49},{"date":"2017-07-26","max":66,"avg":58.17,"min":53},{"date":"2017-07-27","max":61,"avg":54.5,"min":45},{"date":"2017-07-28","max":58,"avg":49.17,"min":39},{"date":"2017-07-29","max":50,"avg":41.12,"min":33},{"date":"2017-07-30","max":43,"avg":34.08,"min":27},{"date":"2017-07-31","max":35,"avg":29.38,"min":24},{"date":"2017-08-01","max":35,"avg":31.88,"min":26},{"date":"2017-08-02","max":35,"avg":30,"min":26},{"date":"2017-08-03","max":33,"avg":31.29,"min":30},{"date":"2017-08-04","max":67,"avg":52.83,"min":33},{"date":"2017-08-05","max":59,"avg":55.04,"min":52},{"date":"2017-08-06","max":80,"avg":63.21,"min":45},{"date":"2017-08-07","max":78,"avg":60.88,"min":45}],"humidity":[{"date":"2017-07-24","max":0.71,"avg":0.61,"min":0.46},{"date":"2017-07-25","max":0.89,"avg":0.65,"min":0.5},{"date":"2017-07-26","max":0.96,"avg":0.77,"min":0.54},{"date":"2017-07-27","max":0.9,"avg":0.74,"min":0.52},{"date":"2017-07-28","max":0.86,"avg":0.73,"min":0.53},{"date":"2017-07-29","max":0.95,"avg":0.8,"min":0.59},{"date":"2017-07-30","max":0.96,"avg":0.84,"min":0.64},{"date":"2017-07-31","max":0.91,"avg":0.8,"min":0.61},{"date":"2017-08-01","max":0.96,"avg":0.92,"min":0.88},{"date":"2017-08-02","max":0.95,"avg":0.89,"min":0.79},{"date":"2017-08-03","max":0.96,"avg":0.82,"min":0.73},{"date":"2017-08-04","max":1,"avg":0.87,"min":0.74},{"date":"2017-08-05","max":0.94,"avg":0.71,"min":0.46},{"date":"2017-08-06","max":0.89,"avg":0.64,"min":0.38},{"date":"2017-08-07","max":0.78,"avg":0.62,"min":0.46}],"astro":[{"date":"2017-07-24","sunset":{"time":"19:05"},"sunrise":{"time":"05:10"}},{"date":"2017-07-25","sunset":{"time":"19:04"},"sunrise":{"time":"05:10"}},{"date":"2017-07-26","sunset":{"time":"19:03"},"sunrise":{"time":"05:11"}},{"date":"2017-07-27","sunset":{"time":"19:03"},"sunrise":{"time":"05:12"}},{"date":"2017-07-28","sunset":{"time":"19:02"},"sunrise":{"time":"05:12"}},{"date":"2017-07-29","sunset":{"time":"19:01"},"sunrise":{"time":"05:13"}},{"date":"2017-07-30","sunset":{"time":"19:01"},"sunrise":{"time":"05:14"}},{"date":"2017-07-31","sunset":{"time":"19:00"},"sunrise":{"time":"05:14"}},{"date":"2017-08-01","sunset":{"time":"18:59"},"sunrise":{"time":"05:15"}},{"date":"2017-08-02","sunset":{"time":"18:58"},"sunrise":{"time":"05:16"}},{"date":"2017-08-03","sunset":{"time":"18:57"},"sunrise":{"time":"05:16"}},{"date":"2017-08-04","sunset":{"time":"18:56"},"sunrise":{"time":"05:17"}},{"date":"2017-08-05","sunset":{"time":"18:56"},"sunrise":{"time":"05:18"}},{"date":"2017-08-06","sunset":{"time":"18:55"},"sunrise":{"time":"05:18"}},{"date":"2017-08-07","sunset":{"time":"18:54"},"sunrise":{"time":"05:19"}}],"ultraviolet":[{"index":"4","desc":"强","datetime":"2017-07-24"},{"index":"4","desc":"强","datetime":"2017-07-25"},{"index":"4","desc":"强","datetime":"2017-07-26"},{"index":"4","desc":"强","datetime":"2017-07-27"},{"index":"4","desc":"强","datetime":"2017-07-28"},{"index":"4","desc":"强","datetime":"2017-07-29"},{"index":"4","desc":"强","datetime":"2017-07-30"},{"index":"3","desc":"中等","datetime":"2017-07-31"},{"index":"1","desc":"最弱","datetime":"2017-08-01"},{"index":"2","desc":"弱","datetime":"2017-08-02"},{"index":"4","desc":"强","datetime":"2017-08-03"},{"index":"3","desc":"中等","datetime":"2017-08-04"},{"index":"3","desc":"中等","datetime":"2017-08-05"},{"index":"4","desc":"强","datetime":"2017-08-06"},{"index":"4","desc":"强","datetime":"2017-08-07"}],"pm25":[{"date":"2017-07-24","max":80,"avg":40,"min":34},{"date":"2017-07-25","max":52,"avg":44.12,"min":34},{"date":"2017-07-26","max":47,"avg":41,"min":37},{"date":"2017-07-27","max":43,"avg":38.12,"min":31},{"date":"2017-07-28","max":41,"avg":34.17,"min":27},{"date":"2017-07-29","max":35,"avg":28.29,"min":22},{"date":"2017-07-30","max":30,"avg":23.04,"min":18},{"date":"2017-07-31","max":24,"avg":19.62,"min":16},{"date":"2017-08-01","max":24,"avg":21.42,"min":17},{"date":"2017-08-02","max":24,"avg":20.04,"min":17},{"date":"2017-08-03","max":22,"avg":20.96,"min":20},{"date":"2017-08-04","max":48,"avg":37.12,"min":22},{"date":"2017-08-05","max":42,"avg":38.42,"min":36},{"date":"2017-08-06","max":59,"avg":45.33,"min":31},{"date":"2017-08-07","max":57,"avg":43.25,"min":31}],"dressing":[{"index":"2","desc":"很热","datetime":"2017-07-24"},{"index":"1","desc":"极热","datetime":"2017-07-25"},{"index":"2","desc":"很热","datetime":"2017-07-26"},{"index":"2","desc":"很热","datetime":"2017-07-27"},{"index":"2","desc":"很热","datetime":"2017-07-28"},{"index":"3","desc":"热","datetime":"2017-07-29"},{"index":"3","desc":"热","datetime":"2017-07-30"},{"index":"3","desc":"热","datetime":"2017-07-31"},{"index":"2","desc":"很热","datetime":"2017-08-01"},{"index":"3","desc":"热","datetime":"2017-08-02"},{"index":"3","desc":"热","datetime":"2017-08-03"},{"index":"2","desc":"很热","datetime":"2017-08-04"},{"index":"2","desc":"很热","datetime":"2017-08-05"},{"index":"2","desc":"很热","datetime":"2017-08-06"},{"index":"3","desc":"热","datetime":"2017-08-07"}],"carWashing":[{"index":"1","desc":"适宜","datetime":"2017-07-24"},{"index":"1","desc":"适宜","datetime":"2017-07-25"},{"index":"1","desc":"适宜","datetime":"2017-07-26"},{"index":"1","desc":"适宜","datetime":"2017-07-27"},{"index":"1","desc":"适宜","datetime":"2017-07-28"},{"index":"3","desc":"较不适宜","datetime":"2017-07-29"},{"index":"3","desc":"较不适宜","datetime":"2017-07-30"},{"index":"3","desc":"较不适宜","datetime":"2017-07-31"},{"index":"3","desc":"较不适宜","datetime":"2017-08-01"},{"index":"3","desc":"较不适宜","datetime":"2017-08-02"},{"index":"3","desc":"较不适宜","datetime":"2017-08-03"},{"index":"3","desc":"较不适宜","datetime":"2017-08-04"},{"index":"3","desc":"较不适宜","datetime":"2017-08-05"},{"index":"1","desc":"适宜","datetime":"2017-08-06"},{"index":"1","desc":"适宜","datetime":"2017-08-07"}],"precipitation":[{"date":"2017-07-24","max":0,"avg":0,"min":0},{"date":"2017-07-25","max":0,"avg":0,"min":0},{"date":"2017-07-26","max":0,"avg":0,"min":0},{"date":"2017-07-27","max":0,"avg":0,"min":0},{"date":"2017-07-28","max":0,"avg":0,"min":0},{"date":"2017-07-29","max":0.9826,"avg":0.1967,"min":0},{"date":"2017-07-30","max":2.7369,"avg":0.6571,"min":0},{"date":"2017-07-31","max":1.7798,"avg":0.3455,"min":0},{"date":"2017-08-01","max":2.108,"avg":1.0671,"min":0.205},{"date":"2017-08-02","max":0.8963,"avg":0.2693,"min":0},{"date":"2017-08-03","max":0.5269,"avg":0.2642,"min":0},{"date":"2017-08-04","max":0.9411,"avg":0.5805,"min":0.26},{"date":"2017-08-05","max":0.6584,"avg":0.1291,"min":0},{"date":"2017-08-06","max":0,"avg":0,"min":0},{"date":"2017-08-07","max":0,"avg":0,"min":0}],"wind":[{"date":"2017-07-24","max":{"direction":248.5,"speed":7.78},"avg":{"direction":210.41,"speed":5.32},"min":{"direction":283.27,"speed":1.09}},{"date":"2017-07-25","max":{"direction":76.73,"speed":19.98},"avg":{"direction":19.33,"speed":10.23},"min":{"direction":242.35,"speed":6.24}},{"date":"2017-07-26","max":{"direction":104.27,"speed":20.16},"avg":{"direction":100.05,"speed":12.23},"min":{"direction":108.2,"speed":6.32}},{"date":"2017-07-27","max":{"direction":100.12,"speed":19.99},"avg":{"direction":106.34,"speed":12.74},"min":{"direction":116.26,"speed":9.86}},{"date":"2017-07-28","max":{"direction":95.35,"speed":21.59},"avg":{"direction":102.64,"speed":14.53},"min":{"direction":117.02,"speed":9.83}},{"date":"2017-07-29","max":{"direction":90.66,"speed":21.17},"avg":{"direction":92.95,"speed":16.6},"min":{"direction":84.56,"speed":10.49}},{"date":"2017-07-30","max":{"direction":95.39,"speed":21.54},"avg":{"direction":98.08,"speed":17.31},"min":{"direction":92.9,"speed":11.82}},{"date":"2017-07-31","max":{"direction":104.33,"speed":26.3},"avg":{"direction":107.29,"speed":21.99},"min":{"direction":103.09,"speed":14.77}},{"date":"2017-08-01","max":{"direction":116.83,"speed":19.53},"avg":{"direction":93.41,"speed":14.73},"min":{"direction":68.97,"speed":11.19}},{"date":"2017-08-02","max":{"direction":72.31,"speed":31.3},"avg":{"direction":73.16,"speed":22.02},"min":{"direction":75.24,"speed":11.62}},{"date":"2017-08-03","max":{"direction":6.36,"speed":20.54},"avg":{"direction":21.91,"speed":17.49},"min":{"direction":38.95,"speed":14.68}},{"date":"2017-08-04","max":{"direction":321.15,"speed":23.42},"avg":{"direction":340.79,"speed":13.34},"min":{"direction":58.13,"speed":4.91}},{"date":"2017-08-05","max":{"direction":322.63,"speed":18.98},"avg":{"direction":329.88,"speed":14.78},"min":{"direction":322.13,"speed":13.37}},{"date":"2017-08-06","max":{"direction":13.4,"speed":12.73},"avg":{"direction":13.63,"speed":8.85},"min":{"direction":17.03,"speed":5.4}},{"date":"2017-08-07","max":{"direction":64.7,"speed":13.1},"avg":{"direction":78.26,"speed":8.32},"min":{"direction":64.28,"speed":4.35}}]},"primary":0}
+     * server_time : 1500898189
      * api_status : active
      * tzshift : 28800
      * api_version : v2.2
      * unit : metric
-     * location : [25.1552,121.6544]
+     * location : [32.450265,119.704311]
      */
 
     private String status;
@@ -106,13 +100,15 @@ public class ForecastBean {
 
     public static class ResultBean {
         /**
-         * hourly : {"status":"ok","description":"小雨，今天晚间21点钟后转多云，其后阴","skycon":[{"value":"RAIN","datetime":"2017-07-08 18:00"},{"value":"RAIN","datetime":"2017-07-08 19:00"},{"value":"RAIN","datetime":"2017-07-08 20:00"},{"value":"CLOUDY","datetime":"2017-07-08 21:00"},{"value":"CLOUDY","datetime":"2017-07-08 22:00"},{"value":"CLOUDY","datetime":"2017-07-08 23:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-09 00:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-09 01:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-09 02:00"},{"value":"CLOUDY","datetime":"2017-07-09 03:00"},{"value":"CLOUDY","datetime":"2017-07-09 04:00"},{"value":"CLOUDY","datetime":"2017-07-09 05:00"},{"value":"CLOUDY","datetime":"2017-07-09 06:00"},{"value":"CLOUDY","datetime":"2017-07-09 07:00"},{"value":"CLOUDY","datetime":"2017-07-09 08:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-09 09:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-09 10:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-09 11:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-09 12:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-09 13:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-09 14:00"},{"value":"CLOUDY","datetime":"2017-07-09 15:00"},{"value":"CLOUDY","datetime":"2017-07-09 16:00"},{"value":"CLOUDY","datetime":"2017-07-09 17:00"},{"value":"RAIN","datetime":"2017-07-09 18:00"},{"value":"RAIN","datetime":"2017-07-09 19:00"},{"value":"CLOUDY","datetime":"2017-07-09 20:00"},{"value":"CLOUDY","datetime":"2017-07-09 21:00"},{"value":"CLOUDY","datetime":"2017-07-09 22:00"},{"value":"CLOUDY","datetime":"2017-07-09 23:00"},{"value":"CLOUDY","datetime":"2017-07-10 00:00"},{"value":"CLOUDY","datetime":"2017-07-10 01:00"},{"value":"CLOUDY","datetime":"2017-07-10 02:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-10 03:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-10 04:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 05:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 06:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 07:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 08:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 09:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 10:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 11:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 12:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 13:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 14:00"},{"value":"RAIN","datetime":"2017-07-10 15:00"},{"value":"RAIN","datetime":"2017-07-10 16:00"},{"value":"RAIN","datetime":"2017-07-10 17:00"}],"cloudrate":[{"value":1,"datetime":"2017-07-08 18:00"},{"value":1,"datetime":"2017-07-08 19:00"},{"value":0.99,"datetime":"2017-07-08 20:00"},{"value":0.94,"datetime":"2017-07-08 21:00"},{"value":0.88,"datetime":"2017-07-08 22:00"},{"value":0.81,"datetime":"2017-07-08 23:00"},{"value":0.75,"datetime":"2017-07-09 00:00"},{"value":0.72,"datetime":"2017-07-09 01:00"},{"value":0.73,"datetime":"2017-07-09 02:00"},{"value":0.81,"datetime":"2017-07-09 03:00"},{"value":0.9,"datetime":"2017-07-09 04:00"},{"value":0.96,"datetime":"2017-07-09 05:00"},{"value":0.96,"datetime":"2017-07-09 06:00"},{"value":0.91,"datetime":"2017-07-09 07:00"},{"value":0.85,"datetime":"2017-07-09 08:00"},{"value":0.79,"datetime":"2017-07-09 09:00"},{"value":0.75,"datetime":"2017-07-09 10:00"},{"value":0.73,"datetime":"2017-07-09 11:00"},{"value":0.72,"datetime":"2017-07-09 12:00"},{"value":0.74,"datetime":"2017-07-09 13:00"},{"value":0.78,"datetime":"2017-07-09 14:00"},{"value":0.84,"datetime":"2017-07-09 15:00"},{"value":0.9,"datetime":"2017-07-09 16:00"},{"value":0.95,"datetime":"2017-07-09 17:00"},{"value":0.96,"datetime":"2017-07-09 18:00"},{"value":0.95,"datetime":"2017-07-09 19:00"},{"value":0.94,"datetime":"2017-07-09 20:00"},{"value":0.92,"datetime":"2017-07-09 21:00"},{"value":0.92,"datetime":"2017-07-09 22:00"},{"value":0.92,"datetime":"2017-07-09 23:00"},{"value":0.91,"datetime":"2017-07-10 00:00"},{"value":0.9,"datetime":"2017-07-10 01:00"},{"value":0.87,"datetime":"2017-07-10 02:00"},{"value":0.8,"datetime":"2017-07-10 03:00"},{"value":0.73,"datetime":"2017-07-10 04:00"},{"value":0.69,"datetime":"2017-07-10 05:00"},{"value":0.68,"datetime":"2017-07-10 06:00"},{"value":0.7,"datetime":"2017-07-10 07:00"},{"value":0.73,"datetime":"2017-07-10 08:00"},{"value":0.74,"datetime":"2017-07-10 09:00"},{"value":0.75,"datetime":"2017-07-10 10:00"},{"value":0.74,"datetime":"2017-07-10 11:00"},{"value":0.74,"datetime":"2017-07-10 12:00"},{"value":0.75,"datetime":"2017-07-10 13:00"},{"value":0.77,"datetime":"2017-07-10 14:00"},{"value":0.82,"datetime":"2017-07-10 15:00"},{"value":0.87,"datetime":"2017-07-10 16:00"},{"value":0.91,"datetime":"2017-07-10 17:00"}],"aqi":[{"value":12,"datetime":"2017-07-08 18:00"},{"value":11,"datetime":"2017-07-08 19:00"},{"value":11,"datetime":"2017-07-08 20:00"},{"value":12,"datetime":"2017-07-08 21:00"},{"value":14,"datetime":"2017-07-08 22:00"},{"value":14,"datetime":"2017-07-08 23:00"},{"value":15,"datetime":"2017-07-09 00:00"},{"value":15,"datetime":"2017-07-09 01:00"},{"value":15,"datetime":"2017-07-09 02:00"},{"value":15,"datetime":"2017-07-09 03:00"},{"value":16,"datetime":"2017-07-09 04:00"},{"value":16,"datetime":"2017-07-09 05:00"},{"value":16,"datetime":"2017-07-09 06:00"},{"value":18,"datetime":"2017-07-09 07:00"},{"value":19,"datetime":"2017-07-09 08:00"},{"value":20,"datetime":"2017-07-09 09:00"},{"value":20,"datetime":"2017-07-09 10:00"},{"value":20,"datetime":"2017-07-09 11:00"},{"value":20,"datetime":"2017-07-09 12:00"},{"value":22,"datetime":"2017-07-09 13:00"},{"value":22,"datetime":"2017-07-09 14:00"},{"value":22,"datetime":"2017-07-09 15:00"},{"value":22,"datetime":"2017-07-09 16:00"},{"value":20,"datetime":"2017-07-09 17:00"},{"value":20,"datetime":"2017-07-09 18:00"},{"value":20,"datetime":"2017-07-09 19:00"},{"value":20,"datetime":"2017-07-09 20:00"},{"value":20,"datetime":"2017-07-09 21:00"},{"value":20,"datetime":"2017-07-09 22:00"},{"value":19,"datetime":"2017-07-09 23:00"},{"value":19,"datetime":"2017-07-10 00:00"},{"value":19,"datetime":"2017-07-10 01:00"},{"value":19,"datetime":"2017-07-10 02:00"},{"value":20,"datetime":"2017-07-10 03:00"},{"value":20,"datetime":"2017-07-10 04:00"},{"value":22,"datetime":"2017-07-10 05:00"},{"value":22,"datetime":"2017-07-10 06:00"},{"value":23,"datetime":"2017-07-10 07:00"},{"value":23,"datetime":"2017-07-10 08:00"},{"value":24,"datetime":"2017-07-10 09:00"},{"value":24,"datetime":"2017-07-10 10:00"},{"value":26,"datetime":"2017-07-10 11:00"},{"value":27,"datetime":"2017-07-10 12:00"},{"value":27,"datetime":"2017-07-10 13:00"},{"value":29,"datetime":"2017-07-10 14:00"},{"value":29,"datetime":"2017-07-10 15:00"},{"value":29,"datetime":"2017-07-10 16:00"},{"value":29,"datetime":"2017-07-10 17:00"}],"humidity":[{"value":0.76,"datetime":"2017-07-08 18:00"},{"value":0.77,"datetime":"2017-07-08 19:00"},{"value":0.78,"datetime":"2017-07-08 20:00"},{"value":0.79,"datetime":"2017-07-08 21:00"},{"value":0.79,"datetime":"2017-07-08 22:00"},{"value":0.8,"datetime":"2017-07-08 23:00"},{"value":0.81,"datetime":"2017-07-09 00:00"},{"value":0.82,"datetime":"2017-07-09 01:00"},{"value":0.82,"datetime":"2017-07-09 02:00"},{"value":0.83,"datetime":"2017-07-09 03:00"},{"value":0.83,"datetime":"2017-07-09 04:00"},{"value":0.83,"datetime":"2017-07-09 05:00"},{"value":0.81,"datetime":"2017-07-09 06:00"},{"value":0.79,"datetime":"2017-07-09 07:00"},{"value":0.76,"datetime":"2017-07-09 08:00"},{"value":0.73,"datetime":"2017-07-09 09:00"},{"value":0.7,"datetime":"2017-07-09 10:00"},{"value":0.68,"datetime":"2017-07-09 11:00"},{"value":0.67,"datetime":"2017-07-09 12:00"},{"value":0.68,"datetime":"2017-07-09 13:00"},{"value":0.69,"datetime":"2017-07-09 14:00"},{"value":0.72,"datetime":"2017-07-09 15:00"},{"value":0.74,"datetime":"2017-07-09 16:00"},{"value":0.77,"datetime":"2017-07-09 17:00"},{"value":0.78,"datetime":"2017-07-09 18:00"},{"value":0.79,"datetime":"2017-07-09 19:00"},{"value":0.8,"datetime":"2017-07-09 20:00"},{"value":0.81,"datetime":"2017-07-09 21:00"},{"value":0.81,"datetime":"2017-07-09 22:00"},{"value":0.82,"datetime":"2017-07-09 23:00"},{"value":0.82,"datetime":"2017-07-10 00:00"},{"value":0.83,"datetime":"2017-07-10 01:00"},{"value":0.84,"datetime":"2017-07-10 02:00"},{"value":0.85,"datetime":"2017-07-10 03:00"},{"value":0.85,"datetime":"2017-07-10 04:00"},{"value":0.85,"datetime":"2017-07-10 05:00"},{"value":0.84,"datetime":"2017-07-10 06:00"},{"value":0.83,"datetime":"2017-07-10 07:00"},{"value":0.8,"datetime":"2017-07-10 08:00"},{"value":0.77,"datetime":"2017-07-10 09:00"},{"value":0.74,"datetime":"2017-07-10 10:00"},{"value":0.72,"datetime":"2017-07-10 11:00"},{"value":0.7,"datetime":"2017-07-10 12:00"},{"value":0.69,"datetime":"2017-07-10 13:00"},{"value":0.69,"datetime":"2017-07-10 14:00"},{"value":0.71,"datetime":"2017-07-10 15:00"},{"value":0.74,"datetime":"2017-07-10 16:00"},{"value":0.76,"datetime":"2017-07-10 17:00"}],"pres":[{"value":98246.7615368365,"datetime":"2017-07-08 18:00"},{"value":98248.0766940549,"datetime":"2017-07-08 19:00"},{"value":98256.0458191215,"datetime":"2017-07-08 20:00"},{"value":98281.4485588495,"datetime":"2017-07-08 21:00"},{"value":98310.7906809261,"datetime":"2017-07-08 22:00"},{"value":98324.5094832569,"datetime":"2017-07-08 23:00"},{"value":98308.7754571279,"datetime":"2017-07-09 00:00"},{"value":98272.6918673465,"datetime":"2017-07-09 01:00"},{"value":98231.0951721006,"datetime":"2017-07-09 02:00"},{"value":98196.9157645531,"datetime":"2017-07-09 03:00"},{"value":98175.4597777664,"datetime":"2017-07-09 04:00"},{"value":98170.1272797777,"datetime":"2017-07-09 05:00"},{"value":98181.7495545232,"datetime":"2017-07-09 06:00"},{"value":98200.8827495329,"datetime":"2017-07-09 07:00"},{"value":98215.5142282352,"datetime":"2017-07-09 08:00"},{"value":98216.2407452333,"datetime":"2017-07-09 09:00"},{"value":98204.0966198285,"datetime":"2017-07-09 10:00"},{"value":98182.7255624965,"datetime":"2017-07-09 11:00"},{"value":98155.0171160804,"datetime":"2017-07-09 12:00"},{"value":98120.8441528924,"datetime":"2017-07-09 13:00"},{"value":98079.325377612,"datetime":"2017-07-09 14:00"},{"value":98031.5637508994,"datetime":"2017-07-09 15:00"},{"value":97986.5992573368,"datetime":"2017-07-09 16:00"},{"value":97955.4561374871,"datetime":"2017-07-09 17:00"},{"value":97946.2865239683,"datetime":"2017-07-09 18:00"},{"value":97955.7541176185,"datetime":"2017-07-09 19:00"},{"value":97977.6505113308,"datetime":"2017-07-09 20:00"},{"value":98004.3668029205,"datetime":"2017-07-09 21:00"},{"value":98022.6921098902,"datetime":"2017-07-09 22:00"},{"value":98018.0150546651,"datetime":"2017-07-09 23:00"},{"value":97982.40183186,"datetime":"2017-07-10 00:00"},{"value":97934.6289248492,"datetime":"2017-07-10 01:00"},{"value":97900.1503891972,"datetime":"2017-07-10 02:00"},{"value":97897.9828590703,"datetime":"2017-07-10 03:00"},{"value":97921.3932830418,"datetime":"2017-07-10 04:00"},{"value":97957.2111882872,"datetime":"2017-07-10 05:00"},{"value":97995.113320888,"datetime":"2017-07-10 06:00"},{"value":98036.1653025511,"datetime":"2017-07-10 07:00"},{"value":98084.2799738894,"datetime":"2017-07-10 08:00"},{"value":98140.7011091255,"datetime":"2017-07-10 09:00"},{"value":98195.9962169206,"datetime":"2017-07-10 10:00"},{"value":98238.0637395456,"datetime":"2017-07-10 11:00"},{"value":98257.6452895099,"datetime":"2017-07-10 12:00"},{"value":98256.8551602764,"datetime":"2017-07-10 13:00"},{"value":98240.6508155466,"datetime":"2017-07-10 14:00"},{"value":98215.3321733754,"datetime":"2017-07-10 15:00"},{"value":98192.5689692304,"datetime":"2017-07-10 16:00"},{"value":98185.373392933,"datetime":"2017-07-10 17:00"}],"pm25":[{"value":6,"datetime":"2017-07-08 18:00"},{"value":6,"datetime":"2017-07-08 19:00"},{"value":6,"datetime":"2017-07-08 20:00"},{"value":7,"datetime":"2017-07-08 21:00"},{"value":8,"datetime":"2017-07-08 22:00"},{"value":8,"datetime":"2017-07-08 23:00"},{"value":9,"datetime":"2017-07-09 00:00"},{"value":9,"datetime":"2017-07-09 01:00"},{"value":9,"datetime":"2017-07-09 02:00"},{"value":9,"datetime":"2017-07-09 03:00"},{"value":10,"datetime":"2017-07-09 04:00"},{"value":10,"datetime":"2017-07-09 05:00"},{"value":10,"datetime":"2017-07-09 06:00"},{"value":11,"datetime":"2017-07-09 07:00"},{"value":12,"datetime":"2017-07-09 08:00"},{"value":13,"datetime":"2017-07-09 09:00"},{"value":13,"datetime":"2017-07-09 10:00"},{"value":13,"datetime":"2017-07-09 11:00"},{"value":13,"datetime":"2017-07-09 12:00"},{"value":14,"datetime":"2017-07-09 13:00"},{"value":14,"datetime":"2017-07-09 14:00"},{"value":14,"datetime":"2017-07-09 15:00"},{"value":14,"datetime":"2017-07-09 16:00"},{"value":13,"datetime":"2017-07-09 17:00"},{"value":13,"datetime":"2017-07-09 18:00"},{"value":13,"datetime":"2017-07-09 19:00"},{"value":13,"datetime":"2017-07-09 20:00"},{"value":13,"datetime":"2017-07-09 21:00"},{"value":13,"datetime":"2017-07-09 22:00"},{"value":12,"datetime":"2017-07-09 23:00"},{"value":12,"datetime":"2017-07-10 00:00"},{"value":12,"datetime":"2017-07-10 01:00"},{"value":12,"datetime":"2017-07-10 02:00"},{"value":13,"datetime":"2017-07-10 03:00"},{"value":13,"datetime":"2017-07-10 04:00"},{"value":14,"datetime":"2017-07-10 05:00"},{"value":14,"datetime":"2017-07-10 06:00"},{"value":15,"datetime":"2017-07-10 07:00"},{"value":15,"datetime":"2017-07-10 08:00"},{"value":16,"datetime":"2017-07-10 09:00"},{"value":16,"datetime":"2017-07-10 10:00"},{"value":17,"datetime":"2017-07-10 11:00"},{"value":18,"datetime":"2017-07-10 12:00"},{"value":18,"datetime":"2017-07-10 13:00"},{"value":19,"datetime":"2017-07-10 14:00"},{"value":19,"datetime":"2017-07-10 15:00"},{"value":19,"datetime":"2017-07-10 16:00"},{"value":19,"datetime":"2017-07-10 17:00"}],"precipitation":[{"value":0.2782,"datetime":"2017-07-08 18:00"},{"value":7.2052,"datetime":"2017-07-08 19:00"},{"value":4.6179,"datetime":"2017-07-08 20:00"},{"value":0,"datetime":"2017-07-08 21:00"},{"value":0,"datetime":"2017-07-08 22:00"},{"value":0,"datetime":"2017-07-08 23:00"},{"value":0,"datetime":"2017-07-09 00:00"},{"value":0,"datetime":"2017-07-09 01:00"},{"value":0,"datetime":"2017-07-09 02:00"},{"value":0,"datetime":"2017-07-09 03:00"},{"value":0,"datetime":"2017-07-09 04:00"},{"value":0,"datetime":"2017-07-09 05:00"},{"value":0,"datetime":"2017-07-09 06:00"},{"value":0,"datetime":"2017-07-09 07:00"},{"value":0,"datetime":"2017-07-09 08:00"},{"value":0,"datetime":"2017-07-09 09:00"},{"value":0,"datetime":"2017-07-09 10:00"},{"value":0,"datetime":"2017-07-09 11:00"},{"value":0,"datetime":"2017-07-09 12:00"},{"value":0,"datetime":"2017-07-09 13:00"},{"value":0,"datetime":"2017-07-09 14:00"},{"value":0,"datetime":"2017-07-09 15:00"},{"value":0.0468,"datetime":"2017-07-09 16:00"},{"value":0.0604,"datetime":"2017-07-09 17:00"},{"value":0.0651,"datetime":"2017-07-09 18:00"},{"value":0.0616,"datetime":"2017-07-09 19:00"},{"value":0.0523,"datetime":"2017-07-09 20:00"},{"value":0,"datetime":"2017-07-09 21:00"},{"value":0,"datetime":"2017-07-09 22:00"},{"value":0,"datetime":"2017-07-09 23:00"},{"value":0,"datetime":"2017-07-10 00:00"},{"value":0,"datetime":"2017-07-10 01:00"},{"value":0,"datetime":"2017-07-10 02:00"},{"value":0,"datetime":"2017-07-10 03:00"},{"value":0,"datetime":"2017-07-10 04:00"},{"value":0,"datetime":"2017-07-10 05:00"},{"value":0,"datetime":"2017-07-10 06:00"},{"value":0,"datetime":"2017-07-10 07:00"},{"value":0,"datetime":"2017-07-10 08:00"},{"value":0,"datetime":"2017-07-10 09:00"},{"value":0,"datetime":"2017-07-10 10:00"},{"value":0,"datetime":"2017-07-10 11:00"},{"value":0,"datetime":"2017-07-10 12:00"},{"value":0,"datetime":"2017-07-10 13:00"},{"value":0,"datetime":"2017-07-10 14:00"},{"value":0.2023,"datetime":"2017-07-10 15:00"},{"value":0.4119,"datetime":"2017-07-10 16:00"},{"value":0.5604,"datetime":"2017-07-10 17:00"}],"wind":[{"direction":104.32,"speed":4.18,"datetime":"2017-07-08 18:00"},{"direction":126.3,"speed":3.65,"datetime":"2017-07-08 19:00"},{"direction":153.06,"speed":3.34,"datetime":"2017-07-08 20:00"},{"direction":178.93,"speed":3.44,"datetime":"2017-07-08 21:00"},{"direction":198.48,"speed":3.88,"datetime":"2017-07-08 22:00"},{"direction":210.11,"speed":4.43,"datetime":"2017-07-08 23:00"},{"direction":214.73,"speed":4.9,"datetime":"2017-07-09 00:00"},{"direction":214.3,"speed":5.12,"datetime":"2017-07-09 01:00"},{"direction":209.51,"speed":5.03,"datetime":"2017-07-09 02:00"},{"direction":200.23,"speed":4.71,"datetime":"2017-07-09 03:00"},{"direction":189.88,"speed":4.44,"datetime":"2017-07-09 04:00"},{"direction":185.22,"speed":4.28,"datetime":"2017-07-09 05:00"},{"direction":191.35,"speed":4.18,"datetime":"2017-07-09 06:00"},{"direction":202.24,"speed":4.12,"datetime":"2017-07-09 07:00"},{"direction":209.61,"speed":3.84,"datetime":"2017-07-09 08:00"},{"direction":207.56,"speed":2.93,"datetime":"2017-07-09 09:00"},{"direction":192.19,"speed":1.58,"datetime":"2017-07-09 10:00"},{"direction":105.88,"speed":0.56,"datetime":"2017-07-09 11:00"},{"direction":27.13,"speed":1.7,"datetime":"2017-07-09 12:00"},{"direction":8.89,"speed":3.08,"datetime":"2017-07-09 13:00"},{"direction":358.2,"speed":3.91,"datetime":"2017-07-09 14:00"},{"direction":347.91,"speed":3.86,"datetime":"2017-07-09 15:00"},{"direction":332.8,"speed":3.25,"datetime":"2017-07-09 16:00"},{"direction":308.84,"speed":2.69,"datetime":"2017-07-09 17:00"},{"direction":280.6,"speed":2.61,"datetime":"2017-07-09 18:00"},{"direction":255.89,"speed":2.97,"datetime":"2017-07-09 19:00"},{"direction":236.16,"speed":3.62,"datetime":"2017-07-09 20:00"},{"direction":220.8,"speed":4.52,"datetime":"2017-07-09 21:00"},{"direction":211.1,"speed":5.51,"datetime":"2017-07-09 22:00"},{"direction":206.81,"speed":6.3,"datetime":"2017-07-09 23:00"},{"direction":207.07,"speed":6.66,"datetime":"2017-07-10 00:00"},{"direction":209.4,"speed":6.57,"datetime":"2017-07-10 01:00"},{"direction":211.58,"speed":6.05,"datetime":"2017-07-10 02:00"},{"direction":211.99,"speed":5.14,"datetime":"2017-07-10 03:00"},{"direction":213.16,"speed":4.19,"datetime":"2017-07-10 04:00"},{"direction":221.16,"speed":3.62,"datetime":"2017-07-10 05:00"},{"direction":237.09,"speed":3.94,"datetime":"2017-07-10 06:00"},{"direction":248.6,"speed":4.84,"datetime":"2017-07-10 07:00"},{"direction":252.95,"speed":5.48,"datetime":"2017-07-10 08:00"},{"direction":252.14,"speed":5.19,"datetime":"2017-07-10 09:00"},{"direction":250.05,"speed":4.24,"datetime":"2017-07-10 10:00"},{"direction":254.23,"speed":3.05,"datetime":"2017-07-10 11:00"},{"direction":280.07,"speed":2.32,"datetime":"2017-07-10 12:00"},{"direction":307.92,"speed":2.7,"datetime":"2017-07-10 13:00"},{"direction":310.85,"speed":3.26,"datetime":"2017-07-10 14:00"},{"direction":291.87,"speed":3.46,"datetime":"2017-07-10 15:00"},{"direction":264.03,"speed":3.93,"datetime":"2017-07-10 16:00"},{"direction":240.61,"speed":4.59,"datetime":"2017-07-10 17:00"}],"temperature":[{"value":27.8,"datetime":"2017-07-08 18:00"},{"value":27,"datetime":"2017-07-08 19:00"},{"value":26.8,"datetime":"2017-07-08 20:00"},{"value":26.6,"datetime":"2017-07-08 21:00"},{"value":26.2,"datetime":"2017-07-08 22:00"},{"value":26.1,"datetime":"2017-07-08 23:00"},{"value":26,"datetime":"2017-07-09 00:00"},{"value":26.1,"datetime":"2017-07-09 01:00"},{"value":26.7,"datetime":"2017-07-09 02:00"},{"value":27.3,"datetime":"2017-07-09 03:00"},{"value":27.9,"datetime":"2017-07-09 04:00"},{"value":28.5,"datetime":"2017-07-09 05:00"},{"value":29.1,"datetime":"2017-07-09 06:00"},{"value":29.8,"datetime":"2017-07-09 07:00"},{"value":30.4,"datetime":"2017-07-09 08:00"},{"value":31.1,"datetime":"2017-07-09 09:00"},{"value":31.8,"datetime":"2017-07-09 10:00"},{"value":32,"datetime":"2017-07-09 11:00"},{"value":31.9,"datetime":"2017-07-09 12:00"},{"value":31.8,"datetime":"2017-07-09 13:00"},{"value":31.7,"datetime":"2017-07-09 14:00"},{"value":31.2,"datetime":"2017-07-09 15:00"},{"value":31,"datetime":"2017-07-09 16:00"},{"value":30.2,"datetime":"2017-07-09 17:00"},{"value":29.9,"datetime":"2017-07-09 18:00"},{"value":29.34,"datetime":"2017-07-09 19:00"},{"value":28.61,"datetime":"2017-07-09 20:00"},{"value":27.95,"datetime":"2017-07-09 21:00"},{"value":27.61,"datetime":"2017-07-09 22:00"},{"value":27.28,"datetime":"2017-07-09 23:00"},{"value":26.98,"datetime":"2017-07-10 00:00"},{"value":26.71,"datetime":"2017-07-10 01:00"},{"value":26.47,"datetime":"2017-07-10 02:00"},{"value":26.28,"datetime":"2017-07-10 03:00"},{"value":26.6,"datetime":"2017-07-10 04:00"},{"value":26,"datetime":"2017-07-10 05:00"},{"value":27.52,"datetime":"2017-07-10 06:00"},{"value":28.06,"datetime":"2017-07-10 07:00"},{"value":28.56,"datetime":"2017-07-10 08:00"},{"value":29.03,"datetime":"2017-07-10 09:00"},{"value":29.5,"datetime":"2017-07-10 10:00"},{"value":29.98,"datetime":"2017-07-10 11:00"},{"value":30.51,"datetime":"2017-07-10 12:00"},{"value":32,"datetime":"2017-07-10 13:00"},{"value":31.4,"datetime":"2017-07-10 14:00"},{"value":31.64,"datetime":"2017-07-10 15:00"},{"value":31.34,"datetime":"2017-07-10 16:00"},{"value":30.96,"datetime":"2017-07-10 17:00"}]}
-         * minutely : {"status":"ok","description":"雨渐大，35分钟后转为大雨，不过一个半小时后雨会再次变小","probability":[0.8228367567,0.9411128163,0.9276605248,0.9082266092],"datasource":"radar","precipitation_2h":[0.1508,0.1756,0.1988,0.2195,0.2368,0.25,0.2585,0.2627,0.2633,0.2609,0.2562,0.25,0.2427,0.2343,0.2247,0.2138,0.2014,0.1875,0.1721,0.1566,0.1426,0.1316,0.1252,0.125,0.1321,0.1454,0.1634,0.1844,0.2068,0.2292,0.2503,0.271,0.2925,0.3162,0.3432,0.375,0.4119,0.4513,0.4895,0.5231,0.5487,0.5625,0.5624,0.551,0.532,0.5095,0.4871,0.4688,0.4574,0.4526,0.4527,0.4564,0.4622,0.4688,0.4748,0.4802,0.4853,0.4901,0.495,0.5,0.5052,0.5097,0.5124,0.5125,0.5087,0.5,0.486,0.4684,0.4493,0.4311,0.416,0.4063,0.4033,0.4059,0.4117,0.4186,0.4244,0.4271,0.4249,0.4186,0.4093,0.3981,0.3863,0.375,0.3652,0.3572,0.351,0.3466,0.3442,0.3438,0.345,0.3463,0.3457,0.3412,0.3308,0.3125,0.2853,0.2518,0.2155,0.1799,0.1486,0.125,0.112,0.1095,0.1166,0.1326,0.1565,0.1875,0.2244,0.2639,0.3024,0.3361,0.3616,0.375,0.3741,0.362,0.3432,0.3222,0.3035,0.2917],"precipitation":[0.1508,0.1756,0.1988,0.2195,0.2368,0.25,0.2585,0.2627,0.2633,0.2609,0.2562,0.25,0.2427,0.2343,0.2247,0.2138,0.2014,0.1875,0.1721,0.1566,0.1426,0.1316,0.1252,0.125,0.1321,0.1454,0.1634,0.1844,0.2068,0.2292,0.2503,0.271,0.2925,0.3162,0.3432,0.375,0.4119,0.4513,0.4895,0.5231,0.5487,0.5625,0.5624,0.551,0.532,0.5095,0.4871,0.4688,0.4574,0.4526,0.4527,0.4564,0.4622,0.4688,0.4748,0.4802,0.4853,0.4901,0.495,0.5]}
-         * daily : {"status":"ok","coldRisk":[{"index":"3","desc":"易发","datetime":"2017-07-08"},{"index":"3","desc":"易发","datetime":"2017-07-09"},{"index":"3","desc":"易发","datetime":"2017-07-10"},{"index":"3","desc":"易发","datetime":"2017-07-11"},{"index":"3","desc":"易发","datetime":"2017-07-12"}],"temperature":[{"date":"2017-07-08","max":30,"avg":26.75,"min":26.1},{"date":"2017-07-09","max":32,"avg":29.38,"min":26},{"date":"2017-07-10","max":32,"avg":28.91,"min":26},{"date":"2017-07-11","max":32,"avg":28.93,"min":26},{"date":"2017-07-12","max":32,"avg":29.08,"min":26}],"skycon":[{"date":"2017-07-08","value":"RAIN"},{"date":"2017-07-09","value":"CLOUDY"},{"date":"2017-07-10","value":"RAIN"},{"date":"2017-07-11","value":"PARTLY_CLOUDY_DAY"},{"date":"2017-07-12","value":"PARTLY_CLOUDY_DAY"}],"cloudrate":[{"date":"2017-07-08","max":1,"avg":0.94,"min":0.69},{"date":"2017-07-09","max":0.96,"avg":0.85,"min":0.72},{"date":"2017-07-10","max":0.93,"avg":0.78,"min":0.54},{"date":"2017-07-11","max":0.93,"avg":0.65,"min":0.44},{"date":"2017-07-12","max":0.93,"avg":0.66,"min":0.4}],"aqi":[{"date":"2017-07-08","max":14,"avg":12.33,"min":0},{"date":"2017-07-09","max":22,"avg":18.83,"min":15},{"date":"2017-07-10","max":30,"avg":25.25,"min":19},{"date":"2017-07-11","max":35,"avg":31.5,"min":29},{"date":"2017-07-12","max":31,"avg":30.46,"min":29}],"humidity":[{"date":"2017-07-08","max":0.81,"avg":0.78,"min":0.68},{"date":"2017-07-09","max":0.83,"avg":0.77,"min":0.67},{"date":"2017-07-10","max":0.85,"avg":0.78,"min":0.69},{"date":"2017-07-11","max":0.86,"avg":0.78,"min":0.71},{"date":"2017-07-12","max":0.85,"avg":0.76,"min":0.66}],"astro":[{"date":"2017-07-08","sunset":{"time":"18:47"},"sunrise":{"time":"05:09"}},{"date":"2017-07-09","sunset":{"time":"18:47"},"sunrise":{"time":"05:09"}},{"date":"2017-07-10","sunset":{"time":"18:47"},"sunrise":{"time":"05:10"}},{"date":"2017-07-11","sunset":{"time":"18:46"},"sunrise":{"time":"05:10"}},{"date":"2017-07-12","sunset":{"time":"18:46"},"sunrise":{"time":"05:11"}}],"pres":[{"date":"2017-07-08","max":98355.27,"avg":98277.94,"min":98167.86},{"date":"2017-07-09","max":98308.78,"avg":98117.08,"min":97946.29},{"date":"2017-07-10","max":98366.92,"avg":98142.03,"min":97897.98},{"date":"2017-07-11","max":98498.7,"avg":98387.6,"min":98268.74},{"date":"2017-07-12","max":98598.62,"avg":98421.92,"min":98258.59}],"ultraviolet":[{"index":"1","desc":"最弱","datetime":"2017-07-08"},{"index":"2","desc":"弱","datetime":"2017-07-09"},{"index":"2","desc":"弱","datetime":"2017-07-10"},{"index":"2","desc":"弱","datetime":"2017-07-11"},{"index":"1","desc":"最弱","datetime":"2017-07-12"}],"pm25":[{"date":"2017-07-08","max":8,"avg":6.83,"min":1},{"date":"2017-07-09","max":14,"avg":11.96,"min":9},{"date":"2017-07-10","max":20,"avg":16.5,"min":12},{"date":"2017-07-11","max":24,"avg":21.17,"min":19},{"date":"2017-07-12","max":21,"avg":20.46,"min":19}],"dressing":[{"index":"2","desc":"很热","datetime":"2017-07-08"},{"index":"2","desc":"很热","datetime":"2017-07-09"},{"index":"2","desc":"很热","datetime":"2017-07-10"},{"index":"2","desc":"很热","datetime":"2017-07-11"},{"index":"2","desc":"很热","datetime":"2017-07-12"}],"carWashing":[{"index":"3","desc":"较不适宜","datetime":"2017-07-08"},{"index":"3","desc":"较不适宜","datetime":"2017-07-09"},{"index":"3","desc":"较不适宜","datetime":"2017-07-10"},{"index":"3","desc":"较不适宜","datetime":"2017-07-11"},{"index":"1","desc":"适宜","datetime":"2017-07-12"}],"precipitation":[{"date":"2017-07-08","max":7.2052,"avg":2.0169,"min":0},{"date":"2017-07-09","max":0.0651,"avg":0.0119,"min":0},{"date":"2017-07-10","max":0.5746,"avg":0.1188,"min":0},{"date":"2017-07-11","max":0.0739,"avg":0.0256,"min":0},{"date":"2017-07-12","max":0,"avg":0,"min":0}],"wind":[{"date":"2017-07-08","max":{"direction":170.9,"speed":5.36},"avg":{"direction":139.32,"speed":3.13},"min":{"direction":254.02,"speed":0.32}},{"date":"2017-07-09","max":{"direction":206.81,"speed":6.3},"avg":{"direction":222.24,"speed":3.74},"min":{"direction":105.88,"speed":0.56}},{"date":"2017-07-10","max":{"direction":207.07,"speed":6.66},"avg":{"direction":222.41,"speed":4.72},"min":{"direction":280.07,"speed":2.32}},{"date":"2017-07-11","max":{"direction":179.79,"speed":5.61},"avg":{"direction":169.08,"speed":4.78},"min":{"direction":286.34,"speed":3.21}},{"date":"2017-07-12","max":{"direction":151.61,"speed":9.78},"avg":{"direction":218.76,"speed":5.91},"min":{"direction":99.86,"speed":1.82}}]}
+         * hourly : {"status":"ok","description":"多云转晴，明天上午10点钟后转多云","skycon":[{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-24 20:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-24 21:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-24 22:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-24 23:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-25 00:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-25 01:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-25 02:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-25 03:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-25 04:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-25 05:00"},{"value":"CLEAR_DAY","datetime":"2017-07-25 06:00"},{"value":"CLEAR_DAY","datetime":"2017-07-25 07:00"},{"value":"CLEAR_DAY","datetime":"2017-07-25 08:00"},{"value":"CLEAR_DAY","datetime":"2017-07-25 09:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 10:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 11:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 12:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 13:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 14:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 15:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 16:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 17:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 18:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-25 19:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-25 20:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-25 21:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-25 22:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-25 23:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-26 00:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-26 01:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-26 02:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-26 03:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-26 04:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-26 05:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-26 06:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-26 07:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-26 08:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-26 09:00"},{"value":"CLEAR_DAY","datetime":"2017-07-26 10:00"},{"value":"CLEAR_DAY","datetime":"2017-07-26 11:00"},{"value":"CLEAR_DAY","datetime":"2017-07-26 12:00"},{"value":"CLEAR_DAY","datetime":"2017-07-26 13:00"},{"value":"CLEAR_DAY","datetime":"2017-07-26 14:00"},{"value":"CLEAR_DAY","datetime":"2017-07-26 15:00"},{"value":"CLEAR_DAY","datetime":"2017-07-26 16:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-26 17:00"},{"value":"CLEAR_DAY","datetime":"2017-07-26 18:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-26 19:00"}],"cloudrate":[{"value":0.41,"datetime":"2017-07-24 20:00"},{"value":0.35,"datetime":"2017-07-24 21:00"},{"value":0.29,"datetime":"2017-07-24 22:00"},{"value":0.26,"datetime":"2017-07-24 23:00"},{"value":0.24,"datetime":"2017-07-25 00:00"},{"value":0.23,"datetime":"2017-07-25 01:00"},{"value":0.22,"datetime":"2017-07-25 02:00"},{"value":0.18,"datetime":"2017-07-25 03:00"},{"value":0.13,"datetime":"2017-07-25 04:00"},{"value":0.08,"datetime":"2017-07-25 05:00"},{"value":0.05,"datetime":"2017-07-25 06:00"},{"value":0.04,"datetime":"2017-07-25 07:00"},{"value":0.07,"datetime":"2017-07-25 08:00"},{"value":0.13,"datetime":"2017-07-25 09:00"},{"value":0.21,"datetime":"2017-07-25 10:00"},{"value":0.28,"datetime":"2017-07-25 11:00"},{"value":0.31,"datetime":"2017-07-25 12:00"},{"value":0.32,"datetime":"2017-07-25 13:00"},{"value":0.3,"datetime":"2017-07-25 14:00"},{"value":0.27,"datetime":"2017-07-25 15:00"},{"value":0.24,"datetime":"2017-07-25 16:00"},{"value":0.23,"datetime":"2017-07-25 17:00"},{"value":0.25,"datetime":"2017-07-25 18:00"},{"value":0.28,"datetime":"2017-07-25 19:00"},{"value":0.27,"datetime":"2017-07-25 20:00"},{"value":0.19,"datetime":"2017-07-25 21:00"},{"value":0.09,"datetime":"2017-07-25 22:00"},{"value":0,"datetime":"2017-07-25 23:00"},{"value":0,"datetime":"2017-07-26 00:00"},{"value":0,"datetime":"2017-07-26 01:00"},{"value":0.04,"datetime":"2017-07-26 02:00"},{"value":0.16,"datetime":"2017-07-26 03:00"},{"value":0.28,"datetime":"2017-07-26 04:00"},{"value":0.37,"datetime":"2017-07-26 05:00"},{"value":0.38,"datetime":"2017-07-26 06:00"},{"value":0.34,"datetime":"2017-07-26 07:00"},{"value":0.28,"datetime":"2017-07-26 08:00"},{"value":0.21,"datetime":"2017-07-26 09:00"},{"value":0.15,"datetime":"2017-07-26 10:00"},{"value":0.1,"datetime":"2017-07-26 11:00"},{"value":0.07,"datetime":"2017-07-26 12:00"},{"value":0.06,"datetime":"2017-07-26 13:00"},{"value":0.08,"datetime":"2017-07-26 14:00"},{"value":0.13,"datetime":"2017-07-26 15:00"},{"value":0.18,"datetime":"2017-07-26 16:00"},{"value":0.21,"datetime":"2017-07-26 17:00"},{"value":0.2,"datetime":"2017-07-26 18:00"},{"value":0.16,"datetime":"2017-07-26 19:00"}],"aqi":[{"value":95,"datetime":"2017-07-24 20:00"},{"value":56,"datetime":"2017-07-24 21:00"},{"value":58,"datetime":"2017-07-24 22:00"},{"value":61,"datetime":"2017-07-24 23:00"},{"value":63,"datetime":"2017-07-25 00:00"},{"value":64,"datetime":"2017-07-25 01:00"},{"value":66,"datetime":"2017-07-25 02:00"},{"value":67,"datetime":"2017-07-25 03:00"},{"value":67,"datetime":"2017-07-25 04:00"},{"value":68,"datetime":"2017-07-25 05:00"},{"value":71,"datetime":"2017-07-25 06:00"},{"value":72,"datetime":"2017-07-25 07:00"},{"value":72,"datetime":"2017-07-25 08:00"},{"value":71,"datetime":"2017-07-25 09:00"},{"value":68,"datetime":"2017-07-25 10:00"},{"value":64,"datetime":"2017-07-25 11:00"},{"value":59,"datetime":"2017-07-25 12:00"},{"value":57,"datetime":"2017-07-25 13:00"},{"value":53,"datetime":"2017-07-25 14:00"},{"value":50,"datetime":"2017-07-25 15:00"},{"value":49,"datetime":"2017-07-25 16:00"},{"value":50,"datetime":"2017-07-25 17:00"},{"value":52,"datetime":"2017-07-25 18:00"},{"value":56,"datetime":"2017-07-25 19:00"},{"value":59,"datetime":"2017-07-25 20:00"},{"value":62,"datetime":"2017-07-25 21:00"},{"value":63,"datetime":"2017-07-25 22:00"},{"value":64,"datetime":"2017-07-25 23:00"},{"value":66,"datetime":"2017-07-26 00:00"},{"value":66,"datetime":"2017-07-26 01:00"},{"value":64,"datetime":"2017-07-26 02:00"},{"value":63,"datetime":"2017-07-26 03:00"},{"value":61,"datetime":"2017-07-26 04:00"},{"value":58,"datetime":"2017-07-26 05:00"},{"value":58,"datetime":"2017-07-26 06:00"},{"value":58,"datetime":"2017-07-26 07:00"},{"value":59,"datetime":"2017-07-26 08:00"},{"value":59,"datetime":"2017-07-26 09:00"},{"value":58,"datetime":"2017-07-26 10:00"},{"value":57,"datetime":"2017-07-26 11:00"},{"value":56,"datetime":"2017-07-26 12:00"},{"value":55,"datetime":"2017-07-26 13:00"},{"value":55,"datetime":"2017-07-26 14:00"},{"value":53,"datetime":"2017-07-26 15:00"},{"value":53,"datetime":"2017-07-26 16:00"},{"value":53,"datetime":"2017-07-26 17:00"},{"value":55,"datetime":"2017-07-26 18:00"},{"value":57,"datetime":"2017-07-26 19:00"}],"humidity":[{"value":0.59,"datetime":"2017-07-24 20:00"},{"value":0.61,"datetime":"2017-07-24 21:00"},{"value":0.62,"datetime":"2017-07-24 22:00"},{"value":0.63,"datetime":"2017-07-24 23:00"},{"value":0.63,"datetime":"2017-07-25 00:00"},{"value":0.64,"datetime":"2017-07-25 01:00"},{"value":0.64,"datetime":"2017-07-25 02:00"},{"value":0.65,"datetime":"2017-07-25 03:00"},{"value":0.66,"datetime":"2017-07-25 04:00"},{"value":0.67,"datetime":"2017-07-25 05:00"},{"value":0.68,"datetime":"2017-07-25 06:00"},{"value":0.68,"datetime":"2017-07-25 07:00"},{"value":0.67,"datetime":"2017-07-25 08:00"},{"value":0.64,"datetime":"2017-07-25 09:00"},{"value":0.6,"datetime":"2017-07-25 10:00"},{"value":0.57,"datetime":"2017-07-25 11:00"},{"value":0.53,"datetime":"2017-07-25 12:00"},{"value":0.51,"datetime":"2017-07-25 13:00"},{"value":0.5,"datetime":"2017-07-25 14:00"},{"value":0.5,"datetime":"2017-07-25 15:00"},{"value":0.52,"datetime":"2017-07-25 16:00"},{"value":0.57,"datetime":"2017-07-25 17:00"},{"value":0.64,"datetime":"2017-07-25 18:00"},{"value":0.72,"datetime":"2017-07-25 19:00"},{"value":0.79,"datetime":"2017-07-25 20:00"},{"value":0.84,"datetime":"2017-07-25 21:00"},{"value":0.87,"datetime":"2017-07-25 22:00"},{"value":0.89,"datetime":"2017-07-25 23:00"},{"value":0.91,"datetime":"2017-07-26 00:00"},{"value":0.92,"datetime":"2017-07-26 01:00"},{"value":0.94,"datetime":"2017-07-26 02:00"},{"value":0.95,"datetime":"2017-07-26 03:00"},{"value":0.96,"datetime":"2017-07-26 04:00"},{"value":0.95,"datetime":"2017-07-26 05:00"},{"value":0.92,"datetime":"2017-07-26 06:00"},{"value":0.88,"datetime":"2017-07-26 07:00"},{"value":0.82,"datetime":"2017-07-26 08:00"},{"value":0.76,"datetime":"2017-07-26 09:00"},{"value":0.7,"datetime":"2017-07-26 10:00"},{"value":0.64,"datetime":"2017-07-26 11:00"},{"value":0.59,"datetime":"2017-07-26 12:00"},{"value":0.56,"datetime":"2017-07-26 13:00"},{"value":0.54,"datetime":"2017-07-26 14:00"},{"value":0.55,"datetime":"2017-07-26 15:00"},{"value":0.58,"datetime":"2017-07-26 16:00"},{"value":0.62,"datetime":"2017-07-26 17:00"},{"value":0.67,"datetime":"2017-07-26 18:00"},{"value":0.73,"datetime":"2017-07-26 19:00"}],"pm25":[{"value":37,"datetime":"2017-07-24 20:00"},{"value":39,"datetime":"2017-07-24 21:00"},{"value":41,"datetime":"2017-07-24 22:00"},{"value":43,"datetime":"2017-07-24 23:00"},{"value":45,"datetime":"2017-07-25 00:00"},{"value":46,"datetime":"2017-07-25 01:00"},{"value":47,"datetime":"2017-07-25 02:00"},{"value":48,"datetime":"2017-07-25 03:00"},{"value":48,"datetime":"2017-07-25 04:00"},{"value":49,"datetime":"2017-07-25 05:00"},{"value":51,"datetime":"2017-07-25 06:00"},{"value":52,"datetime":"2017-07-25 07:00"},{"value":52,"datetime":"2017-07-25 08:00"},{"value":51,"datetime":"2017-07-25 09:00"},{"value":49,"datetime":"2017-07-25 10:00"},{"value":46,"datetime":"2017-07-25 11:00"},{"value":42,"datetime":"2017-07-25 12:00"},{"value":40,"datetime":"2017-07-25 13:00"},{"value":37,"datetime":"2017-07-25 14:00"},{"value":35,"datetime":"2017-07-25 15:00"},{"value":34,"datetime":"2017-07-25 16:00"},{"value":35,"datetime":"2017-07-25 17:00"},{"value":36,"datetime":"2017-07-25 18:00"},{"value":39,"datetime":"2017-07-25 19:00"},{"value":42,"datetime":"2017-07-25 20:00"},{"value":44,"datetime":"2017-07-25 21:00"},{"value":45,"datetime":"2017-07-25 22:00"},{"value":46,"datetime":"2017-07-25 23:00"},{"value":47,"datetime":"2017-07-26 00:00"},{"value":47,"datetime":"2017-07-26 01:00"},{"value":46,"datetime":"2017-07-26 02:00"},{"value":45,"datetime":"2017-07-26 03:00"},{"value":43,"datetime":"2017-07-26 04:00"},{"value":41,"datetime":"2017-07-26 05:00"},{"value":41,"datetime":"2017-07-26 06:00"},{"value":41,"datetime":"2017-07-26 07:00"},{"value":42,"datetime":"2017-07-26 08:00"},{"value":42,"datetime":"2017-07-26 09:00"},{"value":41,"datetime":"2017-07-26 10:00"},{"value":40,"datetime":"2017-07-26 11:00"},{"value":39,"datetime":"2017-07-26 12:00"},{"value":38,"datetime":"2017-07-26 13:00"},{"value":38,"datetime":"2017-07-26 14:00"},{"value":37,"datetime":"2017-07-26 15:00"},{"value":37,"datetime":"2017-07-26 16:00"},{"value":37,"datetime":"2017-07-26 17:00"},{"value":38,"datetime":"2017-07-26 18:00"},{"value":40,"datetime":"2017-07-26 19:00"}],"precipitation":[{"value":0,"datetime":"2017-07-24 20:00"},{"value":0,"datetime":"2017-07-24 21:00"},{"value":0,"datetime":"2017-07-24 22:00"},{"value":0,"datetime":"2017-07-24 23:00"},{"value":0,"datetime":"2017-07-25 00:00"},{"value":0,"datetime":"2017-07-25 01:00"},{"value":0,"datetime":"2017-07-25 02:00"},{"value":0,"datetime":"2017-07-25 03:00"},{"value":0,"datetime":"2017-07-25 04:00"},{"value":0,"datetime":"2017-07-25 05:00"},{"value":0,"datetime":"2017-07-25 06:00"},{"value":0,"datetime":"2017-07-25 07:00"},{"value":0,"datetime":"2017-07-25 08:00"},{"value":0,"datetime":"2017-07-25 09:00"},{"value":0,"datetime":"2017-07-25 10:00"},{"value":0,"datetime":"2017-07-25 11:00"},{"value":0,"datetime":"2017-07-25 12:00"},{"value":0,"datetime":"2017-07-25 13:00"},{"value":0,"datetime":"2017-07-25 14:00"},{"value":0,"datetime":"2017-07-25 15:00"},{"value":0,"datetime":"2017-07-25 16:00"},{"value":0,"datetime":"2017-07-25 17:00"},{"value":0,"datetime":"2017-07-25 18:00"},{"value":0,"datetime":"2017-07-25 19:00"},{"value":0,"datetime":"2017-07-25 20:00"},{"value":0,"datetime":"2017-07-25 21:00"},{"value":0,"datetime":"2017-07-25 22:00"},{"value":0,"datetime":"2017-07-25 23:00"},{"value":0,"datetime":"2017-07-26 00:00"},{"value":0,"datetime":"2017-07-26 01:00"},{"value":0,"datetime":"2017-07-26 02:00"},{"value":0,"datetime":"2017-07-26 03:00"},{"value":0,"datetime":"2017-07-26 04:00"},{"value":0,"datetime":"2017-07-26 05:00"},{"value":0,"datetime":"2017-07-26 06:00"},{"value":0,"datetime":"2017-07-26 07:00"},{"value":0,"datetime":"2017-07-26 08:00"},{"value":0,"datetime":"2017-07-26 09:00"},{"value":0,"datetime":"2017-07-26 10:00"},{"value":0,"datetime":"2017-07-26 11:00"},{"value":0,"datetime":"2017-07-26 12:00"},{"value":0,"datetime":"2017-07-26 13:00"},{"value":0,"datetime":"2017-07-26 14:00"},{"value":0,"datetime":"2017-07-26 15:00"},{"value":0,"datetime":"2017-07-26 16:00"},{"value":0,"datetime":"2017-07-26 17:00"},{"value":0,"datetime":"2017-07-26 18:00"},{"value":0,"datetime":"2017-07-26 19:00"}],"wind":[{"direction":132.64,"speed":6.56,"datetime":"2017-07-24 20:00"},{"direction":143.28,"speed":6.98,"datetime":"2017-07-24 21:00"},{"direction":158.72,"speed":6.69,"datetime":"2017-07-24 22:00"},{"direction":175.65,"speed":6.73,"datetime":"2017-07-24 23:00"},{"direction":186.97,"speed":7.28,"datetime":"2017-07-25 00:00"},{"direction":194.43,"speed":7.68,"datetime":"2017-07-25 01:00"},{"direction":203.23,"speed":7.49,"datetime":"2017-07-25 02:00"},{"direction":218.99,"speed":6.75,"datetime":"2017-07-25 03:00"},{"direction":242.35,"speed":6.24,"datetime":"2017-07-25 04:00"},{"direction":266.86,"speed":6.41,"datetime":"2017-07-25 05:00"},{"direction":286.63,"speed":6.86,"datetime":"2017-07-25 06:00"},{"direction":302.91,"speed":7.37,"datetime":"2017-07-25 07:00"},{"direction":316.7,"speed":8.01,"datetime":"2017-07-25 08:00"},{"direction":327.76,"speed":8.82,"datetime":"2017-07-25 09:00"},{"direction":336,"speed":9.67,"datetime":"2017-07-25 10:00"},{"direction":341.74,"speed":10.37,"datetime":"2017-07-25 11:00"},{"direction":345.33,"speed":10.74,"datetime":"2017-07-25 12:00"},{"direction":346.99,"speed":10.68,"datetime":"2017-07-25 13:00"},{"direction":346.55,"speed":10.08,"datetime":"2017-07-25 14:00"},{"direction":344.54,"speed":8.95,"datetime":"2017-07-25 15:00"},{"direction":348.22,"speed":7.47,"datetime":"2017-07-25 16:00"},{"direction":12.59,"speed":6.61,"datetime":"2017-07-25 17:00"},{"direction":48.17,"speed":9.53,"datetime":"2017-07-25 18:00"},{"direction":64.41,"speed":15.02,"datetime":"2017-07-25 19:00"},{"direction":71.59,"speed":19.25,"datetime":"2017-07-25 20:00"},{"direction":76.73,"speed":19.98,"datetime":"2017-07-25 21:00"},{"direction":82.65,"speed":18.24,"datetime":"2017-07-25 22:00"},{"direction":90.43,"speed":15.94,"datetime":"2017-07-25 23:00"},{"direction":98.84,"speed":14.55,"datetime":"2017-07-26 00:00"},{"direction":104.91,"speed":13.85,"datetime":"2017-07-26 01:00"},{"direction":106.26,"speed":13.1,"datetime":"2017-07-26 02:00"},{"direction":101.46,"speed":11.95,"datetime":"2017-07-26 03:00"},{"direction":92.66,"speed":10.99,"datetime":"2017-07-26 04:00"},{"direction":85.52,"speed":10.74,"datetime":"2017-07-26 05:00"},{"direction":85.5,"speed":11.08,"datetime":"2017-07-26 06:00"},{"direction":90.69,"speed":11.45,"datetime":"2017-07-26 07:00"},{"direction":98.17,"speed":11.37,"datetime":"2017-07-26 08:00"},{"direction":106.93,"speed":10.44,"datetime":"2017-07-26 09:00"},{"direction":116.15,"speed":9.12,"datetime":"2017-07-26 10:00"},{"direction":122.34,"speed":7.86,"datetime":"2017-07-26 11:00"},{"direction":119.68,"speed":6.83,"datetime":"2017-07-26 12:00"},{"direction":108.2,"speed":6.32,"datetime":"2017-07-26 13:00"},{"direction":94.63,"speed":6.6,"datetime":"2017-07-26 14:00"},{"direction":86.45,"speed":7.54,"datetime":"2017-07-26 15:00"},{"direction":84.12,"speed":9.09,"datetime":"2017-07-26 16:00"},{"direction":85.7,"speed":11.48,"datetime":"2017-07-26 17:00"},{"direction":89.04,"speed":14.79,"datetime":"2017-07-26 18:00"},{"direction":92.96,"speed":18.06,"datetime":"2017-07-26 19:00"}],"temperature":[{"value":32,"datetime":"2017-07-24 20:00"},{"value":31.25,"datetime":"2017-07-24 21:00"},{"value":31.02,"datetime":"2017-07-24 22:00"},{"value":30.98,"datetime":"2017-07-24 23:00"},{"value":30.89,"datetime":"2017-07-25 00:00"},{"value":30.67,"datetime":"2017-07-25 01:00"},{"value":30.29,"datetime":"2017-07-25 02:00"},{"value":29.7,"datetime":"2017-07-25 03:00"},{"value":29.24,"datetime":"2017-07-25 04:00"},{"value":29.24,"datetime":"2017-07-25 05:00"},{"value":29.92,"datetime":"2017-07-25 06:00"},{"value":31.09,"datetime":"2017-07-25 07:00"},{"value":32.48,"datetime":"2017-07-25 08:00"},{"value":33.84,"datetime":"2017-07-25 09:00"},{"value":35.04,"datetime":"2017-07-25 10:00"},{"value":35.98,"datetime":"2017-07-25 11:00"},{"value":36.42,"datetime":"2017-07-25 12:00"},{"value":36.7,"datetime":"2017-07-25 13:00"},{"value":36.95,"datetime":"2017-07-25 14:00"},{"value":37.18,"datetime":"2017-07-25 15:00"},{"value":37.18,"datetime":"2017-07-25 16:00"},{"value":36.65,"datetime":"2017-07-25 17:00"},{"value":35.14,"datetime":"2017-07-25 18:00"},{"value":32.85,"datetime":"2017-07-25 19:00"},{"value":30.75,"datetime":"2017-07-25 20:00"},{"value":29.36,"datetime":"2017-07-25 21:00"},{"value":28.58,"datetime":"2017-07-25 22:00"},{"value":28.16,"datetime":"2017-07-25 23:00"},{"value":27.88,"datetime":"2017-07-26 00:00"},{"value":27.61,"datetime":"2017-07-26 01:00"},{"value":27.27,"datetime":"2017-07-26 02:00"},{"value":26.83,"datetime":"2017-07-26 03:00"},{"value":26.53,"datetime":"2017-07-26 04:00"},{"value":26.63,"datetime":"2017-07-26 05:00"},{"value":27.36,"datetime":"2017-07-26 06:00"},{"value":28.56,"datetime":"2017-07-26 07:00"},{"value":30.03,"datetime":"2017-07-26 08:00"},{"value":31.55,"datetime":"2017-07-26 09:00"},{"value":32.99,"datetime":"2017-07-26 10:00"},{"value":34.22,"datetime":"2017-07-26 11:00"},{"value":35.15,"datetime":"2017-07-26 12:00"},{"value":35.82,"datetime":"2017-07-26 13:00"},{"value":36.23,"datetime":"2017-07-26 14:00"},{"value":36.48,"datetime":"2017-07-26 15:00"},{"value":36.43,"datetime":"2017-07-26 16:00"},{"value":35.79,"datetime":"2017-07-26 17:00"},{"value":34.01,"datetime":"2017-07-26 18:00"},{"value":31.82,"datetime":"2017-07-26 19:00"}]}
+         * alert : {"status":"ok","content":[{"province":"江苏","status":"预警中","code":"0703","description":"江都区气象台2017年07月24日08时14分变更高温红色预警信号为高温橙色预警信号。预计今天我区大部分地区最高气温将升至39℃以上，请注意防范。","alertId":"32101241600000_20170724081541","city":"扬州","pubtimestamp":1.500855395E9,"latlon":[32.426564,119.567481],"county":"江都","request_status":"ok","location":"江苏扬州江都","title":"江都区气象局发布高温橙色预警[II级/严重]","regionId":"101190605"}]}
+         * minutely : {"status":"ok","description":"未来两小时不会下雨，放心出门吧","probability":[0,0,0,0],"datasource":"radar","precipitation_2h":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"precipitation":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}
+         * daily : {"status":"ok","coldRisk":[{"index":"4","desc":"极易发","datetime":"2017-07-24"},{"index":"4","desc":"极易发","datetime":"2017-07-25"},{"index":"4","desc":"极易发","datetime":"2017-07-26"},{"index":"4","desc":"极易发","datetime":"2017-07-27"},{"index":"4","desc":"极易发","datetime":"2017-07-28"},{"index":"4","desc":"极易发","datetime":"2017-07-29"},{"index":"4","desc":"极易发","datetime":"2017-07-30"},{"index":"4","desc":"极易发","datetime":"2017-07-31"},{"index":"3","desc":"易发","datetime":"2017-08-01"},{"index":"3","desc":"易发","datetime":"2017-08-02"},{"index":"4","desc":"极易发","datetime":"2017-08-03"},{"index":"4","desc":"极易发","datetime":"2017-08-04"},{"index":"4","desc":"极易发","datetime":"2017-08-05"},{"index":"4","desc":"极易发","datetime":"2017-08-06"},{"index":"4","desc":"极易发","datetime":"2017-08-07"}],"temperature":[{"date":"2017-07-24","max":37.21,"avg":31.31,"min":28.13},{"date":"2017-07-25","max":37.18,"avg":32.68,"min":28.16},{"date":"2017-07-26","max":36.48,"avg":30.99,"min":26.53},{"date":"2017-07-27","max":36.04,"avg":30.59,"min":25.82},{"date":"2017-07-28","max":35.61,"avg":30.38,"min":26.2},{"date":"2017-07-29","max":34.33,"avg":29.37,"min":25.41},{"date":"2017-07-30","max":33.37,"avg":29.04,"min":25.78},{"date":"2017-07-31","max":34.56,"avg":29.13,"min":25.98},{"date":"2017-08-01","max":28.28,"avg":26.76,"min":25.6},{"date":"2017-08-02","max":30.03,"avg":27.34,"min":25.5},{"date":"2017-08-03","max":32.75,"avg":29.82,"min":25.66},{"date":"2017-08-04","max":32.91,"avg":29.15,"min":25.44},{"date":"2017-08-05","max":33.08,"avg":28.87,"min":25},{"date":"2017-08-06","max":32.27,"avg":26.38,"min":20.51},{"date":"2017-08-07","max":32.41,"avg":25.36,"min":18.33}],"skycon":[{"date":"2017-07-24","value":"PARTLY_CLOUDY_NIGHT"},{"date":"2017-07-25","value":"CLEAR_DAY"},{"date":"2017-07-26","value":"CLEAR_DAY"},{"date":"2017-07-27","value":"CLEAR_DAY"},{"date":"2017-07-28","value":"CLEAR_DAY"},{"date":"2017-07-29","value":"RAIN"},{"date":"2017-07-30","value":"RAIN"},{"date":"2017-07-31","value":"RAIN"},{"date":"2017-08-01","value":"RAIN"},{"date":"2017-08-02","value":"RAIN"},{"date":"2017-08-03","value":"RAIN"},{"date":"2017-08-04","value":"RAIN"},{"date":"2017-08-05","value":"RAIN"},{"date":"2017-08-06","value":"CLEAR_DAY"},{"date":"2017-08-07","value":"CLEAR_DAY"}],"cloudrate":[{"date":"2017-07-24","max":0.95,"avg":0.33,"min":0.15},{"date":"2017-07-25","max":0.32,"avg":0.19,"min":0},{"date":"2017-07-26","max":0.38,"avg":0.15,"min":0},{"date":"2017-07-27","max":0.2,"avg":0.08,"min":0},{"date":"2017-07-28","max":0.05,"avg":0.01,"min":0},{"date":"2017-07-29","max":0.9,"avg":0.27,"min":0},{"date":"2017-07-30","max":1,"avg":0.44,"min":0},{"date":"2017-07-31","max":1,"avg":0.73,"min":0.23},{"date":"2017-08-01","max":1,"avg":1,"min":0.99},{"date":"2017-08-02","max":1,"avg":0.65,"min":0},{"date":"2017-08-03","max":0.36,"avg":0.24,"min":0},{"date":"2017-08-04","max":0.53,"avg":0.49,"min":0.39},{"date":"2017-08-05","max":0.66,"avg":0.39,"min":0.08},{"date":"2017-08-06","max":0.11,"avg":0.03,"min":0},{"date":"2017-08-07","max":0.01,"avg":0,"min":0}],"aqi":[{"date":"2017-07-24","max":175,"avg":67.5,"min":56},{"date":"2017-07-25","max":72,"avg":61.96,"min":49},{"date":"2017-07-26","max":66,"avg":58.17,"min":53},{"date":"2017-07-27","max":61,"avg":54.5,"min":45},{"date":"2017-07-28","max":58,"avg":49.17,"min":39},{"date":"2017-07-29","max":50,"avg":41.12,"min":33},{"date":"2017-07-30","max":43,"avg":34.08,"min":27},{"date":"2017-07-31","max":35,"avg":29.38,"min":24},{"date":"2017-08-01","max":35,"avg":31.88,"min":26},{"date":"2017-08-02","max":35,"avg":30,"min":26},{"date":"2017-08-03","max":33,"avg":31.29,"min":30},{"date":"2017-08-04","max":67,"avg":52.83,"min":33},{"date":"2017-08-05","max":59,"avg":55.04,"min":52},{"date":"2017-08-06","max":80,"avg":63.21,"min":45},{"date":"2017-08-07","max":78,"avg":60.88,"min":45}],"humidity":[{"date":"2017-07-24","max":0.71,"avg":0.61,"min":0.46},{"date":"2017-07-25","max":0.89,"avg":0.65,"min":0.5},{"date":"2017-07-26","max":0.96,"avg":0.77,"min":0.54},{"date":"2017-07-27","max":0.9,"avg":0.74,"min":0.52},{"date":"2017-07-28","max":0.86,"avg":0.73,"min":0.53},{"date":"2017-07-29","max":0.95,"avg":0.8,"min":0.59},{"date":"2017-07-30","max":0.96,"avg":0.84,"min":0.64},{"date":"2017-07-31","max":0.91,"avg":0.8,"min":0.61},{"date":"2017-08-01","max":0.96,"avg":0.92,"min":0.88},{"date":"2017-08-02","max":0.95,"avg":0.89,"min":0.79},{"date":"2017-08-03","max":0.96,"avg":0.82,"min":0.73},{"date":"2017-08-04","max":1,"avg":0.87,"min":0.74},{"date":"2017-08-05","max":0.94,"avg":0.71,"min":0.46},{"date":"2017-08-06","max":0.89,"avg":0.64,"min":0.38},{"date":"2017-08-07","max":0.78,"avg":0.62,"min":0.46}],"astro":[{"date":"2017-07-24","sunset":{"time":"19:05"},"sunrise":{"time":"05:10"}},{"date":"2017-07-25","sunset":{"time":"19:04"},"sunrise":{"time":"05:10"}},{"date":"2017-07-26","sunset":{"time":"19:03"},"sunrise":{"time":"05:11"}},{"date":"2017-07-27","sunset":{"time":"19:03"},"sunrise":{"time":"05:12"}},{"date":"2017-07-28","sunset":{"time":"19:02"},"sunrise":{"time":"05:12"}},{"date":"2017-07-29","sunset":{"time":"19:01"},"sunrise":{"time":"05:13"}},{"date":"2017-07-30","sunset":{"time":"19:01"},"sunrise":{"time":"05:14"}},{"date":"2017-07-31","sunset":{"time":"19:00"},"sunrise":{"time":"05:14"}},{"date":"2017-08-01","sunset":{"time":"18:59"},"sunrise":{"time":"05:15"}},{"date":"2017-08-02","sunset":{"time":"18:58"},"sunrise":{"time":"05:16"}},{"date":"2017-08-03","sunset":{"time":"18:57"},"sunrise":{"time":"05:16"}},{"date":"2017-08-04","sunset":{"time":"18:56"},"sunrise":{"time":"05:17"}},{"date":"2017-08-05","sunset":{"time":"18:56"},"sunrise":{"time":"05:18"}},{"date":"2017-08-06","sunset":{"time":"18:55"},"sunrise":{"time":"05:18"}},{"date":"2017-08-07","sunset":{"time":"18:54"},"sunrise":{"time":"05:19"}}],"ultraviolet":[{"index":"4","desc":"强","datetime":"2017-07-24"},{"index":"4","desc":"强","datetime":"2017-07-25"},{"index":"4","desc":"强","datetime":"2017-07-26"},{"index":"4","desc":"强","datetime":"2017-07-27"},{"index":"4","desc":"强","datetime":"2017-07-28"},{"index":"4","desc":"强","datetime":"2017-07-29"},{"index":"4","desc":"强","datetime":"2017-07-30"},{"index":"3","desc":"中等","datetime":"2017-07-31"},{"index":"1","desc":"最弱","datetime":"2017-08-01"},{"index":"2","desc":"弱","datetime":"2017-08-02"},{"index":"4","desc":"强","datetime":"2017-08-03"},{"index":"3","desc":"中等","datetime":"2017-08-04"},{"index":"3","desc":"中等","datetime":"2017-08-05"},{"index":"4","desc":"强","datetime":"2017-08-06"},{"index":"4","desc":"强","datetime":"2017-08-07"}],"pm25":[{"date":"2017-07-24","max":80,"avg":40,"min":34},{"date":"2017-07-25","max":52,"avg":44.12,"min":34},{"date":"2017-07-26","max":47,"avg":41,"min":37},{"date":"2017-07-27","max":43,"avg":38.12,"min":31},{"date":"2017-07-28","max":41,"avg":34.17,"min":27},{"date":"2017-07-29","max":35,"avg":28.29,"min":22},{"date":"2017-07-30","max":30,"avg":23.04,"min":18},{"date":"2017-07-31","max":24,"avg":19.62,"min":16},{"date":"2017-08-01","max":24,"avg":21.42,"min":17},{"date":"2017-08-02","max":24,"avg":20.04,"min":17},{"date":"2017-08-03","max":22,"avg":20.96,"min":20},{"date":"2017-08-04","max":48,"avg":37.12,"min":22},{"date":"2017-08-05","max":42,"avg":38.42,"min":36},{"date":"2017-08-06","max":59,"avg":45.33,"min":31},{"date":"2017-08-07","max":57,"avg":43.25,"min":31}],"dressing":[{"index":"2","desc":"很热","datetime":"2017-07-24"},{"index":"1","desc":"极热","datetime":"2017-07-25"},{"index":"2","desc":"很热","datetime":"2017-07-26"},{"index":"2","desc":"很热","datetime":"2017-07-27"},{"index":"2","desc":"很热","datetime":"2017-07-28"},{"index":"3","desc":"热","datetime":"2017-07-29"},{"index":"3","desc":"热","datetime":"2017-07-30"},{"index":"3","desc":"热","datetime":"2017-07-31"},{"index":"2","desc":"很热","datetime":"2017-08-01"},{"index":"3","desc":"热","datetime":"2017-08-02"},{"index":"3","desc":"热","datetime":"2017-08-03"},{"index":"2","desc":"很热","datetime":"2017-08-04"},{"index":"2","desc":"很热","datetime":"2017-08-05"},{"index":"2","desc":"很热","datetime":"2017-08-06"},{"index":"3","desc":"热","datetime":"2017-08-07"}],"carWashing":[{"index":"1","desc":"适宜","datetime":"2017-07-24"},{"index":"1","desc":"适宜","datetime":"2017-07-25"},{"index":"1","desc":"适宜","datetime":"2017-07-26"},{"index":"1","desc":"适宜","datetime":"2017-07-27"},{"index":"1","desc":"适宜","datetime":"2017-07-28"},{"index":"3","desc":"较不适宜","datetime":"2017-07-29"},{"index":"3","desc":"较不适宜","datetime":"2017-07-30"},{"index":"3","desc":"较不适宜","datetime":"2017-07-31"},{"index":"3","desc":"较不适宜","datetime":"2017-08-01"},{"index":"3","desc":"较不适宜","datetime":"2017-08-02"},{"index":"3","desc":"较不适宜","datetime":"2017-08-03"},{"index":"3","desc":"较不适宜","datetime":"2017-08-04"},{"index":"3","desc":"较不适宜","datetime":"2017-08-05"},{"index":"1","desc":"适宜","datetime":"2017-08-06"},{"index":"1","desc":"适宜","datetime":"2017-08-07"}],"precipitation":[{"date":"2017-07-24","max":0,"avg":0,"min":0},{"date":"2017-07-25","max":0,"avg":0,"min":0},{"date":"2017-07-26","max":0,"avg":0,"min":0},{"date":"2017-07-27","max":0,"avg":0,"min":0},{"date":"2017-07-28","max":0,"avg":0,"min":0},{"date":"2017-07-29","max":0.9826,"avg":0.1967,"min":0},{"date":"2017-07-30","max":2.7369,"avg":0.6571,"min":0},{"date":"2017-07-31","max":1.7798,"avg":0.3455,"min":0},{"date":"2017-08-01","max":2.108,"avg":1.0671,"min":0.205},{"date":"2017-08-02","max":0.8963,"avg":0.2693,"min":0},{"date":"2017-08-03","max":0.5269,"avg":0.2642,"min":0},{"date":"2017-08-04","max":0.9411,"avg":0.5805,"min":0.26},{"date":"2017-08-05","max":0.6584,"avg":0.1291,"min":0},{"date":"2017-08-06","max":0,"avg":0,"min":0},{"date":"2017-08-07","max":0,"avg":0,"min":0}],"wind":[{"date":"2017-07-24","max":{"direction":248.5,"speed":7.78},"avg":{"direction":210.41,"speed":5.32},"min":{"direction":283.27,"speed":1.09}},{"date":"2017-07-25","max":{"direction":76.73,"speed":19.98},"avg":{"direction":19.33,"speed":10.23},"min":{"direction":242.35,"speed":6.24}},{"date":"2017-07-26","max":{"direction":104.27,"speed":20.16},"avg":{"direction":100.05,"speed":12.23},"min":{"direction":108.2,"speed":6.32}},{"date":"2017-07-27","max":{"direction":100.12,"speed":19.99},"avg":{"direction":106.34,"speed":12.74},"min":{"direction":116.26,"speed":9.86}},{"date":"2017-07-28","max":{"direction":95.35,"speed":21.59},"avg":{"direction":102.64,"speed":14.53},"min":{"direction":117.02,"speed":9.83}},{"date":"2017-07-29","max":{"direction":90.66,"speed":21.17},"avg":{"direction":92.95,"speed":16.6},"min":{"direction":84.56,"speed":10.49}},{"date":"2017-07-30","max":{"direction":95.39,"speed":21.54},"avg":{"direction":98.08,"speed":17.31},"min":{"direction":92.9,"speed":11.82}},{"date":"2017-07-31","max":{"direction":104.33,"speed":26.3},"avg":{"direction":107.29,"speed":21.99},"min":{"direction":103.09,"speed":14.77}},{"date":"2017-08-01","max":{"direction":116.83,"speed":19.53},"avg":{"direction":93.41,"speed":14.73},"min":{"direction":68.97,"speed":11.19}},{"date":"2017-08-02","max":{"direction":72.31,"speed":31.3},"avg":{"direction":73.16,"speed":22.02},"min":{"direction":75.24,"speed":11.62}},{"date":"2017-08-03","max":{"direction":6.36,"speed":20.54},"avg":{"direction":21.91,"speed":17.49},"min":{"direction":38.95,"speed":14.68}},{"date":"2017-08-04","max":{"direction":321.15,"speed":23.42},"avg":{"direction":340.79,"speed":13.34},"min":{"direction":58.13,"speed":4.91}},{"date":"2017-08-05","max":{"direction":322.63,"speed":18.98},"avg":{"direction":329.88,"speed":14.78},"min":{"direction":322.13,"speed":13.37}},{"date":"2017-08-06","max":{"direction":13.4,"speed":12.73},"avg":{"direction":13.63,"speed":8.85},"min":{"direction":17.03,"speed":5.4}},{"date":"2017-08-07","max":{"direction":64.7,"speed":13.1},"avg":{"direction":78.26,"speed":8.32},"min":{"direction":64.28,"speed":4.35}}]}
          * primary : 0
          */
 
         private HourlyBean hourly;
+        private AlertBean alert;
         private MinutelyBean minutely;
         private DailyBean daily;
         private int primary;
@@ -123,6 +119,14 @@ public class ForecastBean {
 
         public void setHourly(HourlyBean hourly) {
             this.hourly = hourly;
+        }
+
+        public AlertBean getAlert() {
+            return alert;
+        }
+
+        public void setAlert(AlertBean alert) {
+            this.alert = alert;
         }
 
         public MinutelyBean getMinutely() {
@@ -152,16 +156,15 @@ public class ForecastBean {
         public static class HourlyBean {
             /**
              * status : ok
-             * description : 小雨，今天晚间21点钟后转多云，其后阴
-             * skycon : [{"value":"RAIN","datetime":"2017-07-08 18:00"},{"value":"RAIN","datetime":"2017-07-08 19:00"},{"value":"RAIN","datetime":"2017-07-08 20:00"},{"value":"CLOUDY","datetime":"2017-07-08 21:00"},{"value":"CLOUDY","datetime":"2017-07-08 22:00"},{"value":"CLOUDY","datetime":"2017-07-08 23:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-09 00:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-09 01:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-09 02:00"},{"value":"CLOUDY","datetime":"2017-07-09 03:00"},{"value":"CLOUDY","datetime":"2017-07-09 04:00"},{"value":"CLOUDY","datetime":"2017-07-09 05:00"},{"value":"CLOUDY","datetime":"2017-07-09 06:00"},{"value":"CLOUDY","datetime":"2017-07-09 07:00"},{"value":"CLOUDY","datetime":"2017-07-09 08:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-09 09:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-09 10:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-09 11:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-09 12:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-09 13:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-09 14:00"},{"value":"CLOUDY","datetime":"2017-07-09 15:00"},{"value":"CLOUDY","datetime":"2017-07-09 16:00"},{"value":"CLOUDY","datetime":"2017-07-09 17:00"},{"value":"RAIN","datetime":"2017-07-09 18:00"},{"value":"RAIN","datetime":"2017-07-09 19:00"},{"value":"CLOUDY","datetime":"2017-07-09 20:00"},{"value":"CLOUDY","datetime":"2017-07-09 21:00"},{"value":"CLOUDY","datetime":"2017-07-09 22:00"},{"value":"CLOUDY","datetime":"2017-07-09 23:00"},{"value":"CLOUDY","datetime":"2017-07-10 00:00"},{"value":"CLOUDY","datetime":"2017-07-10 01:00"},{"value":"CLOUDY","datetime":"2017-07-10 02:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-10 03:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-10 04:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 05:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 06:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 07:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 08:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 09:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 10:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 11:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 12:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 13:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-10 14:00"},{"value":"RAIN","datetime":"2017-07-10 15:00"},{"value":"RAIN","datetime":"2017-07-10 16:00"},{"value":"RAIN","datetime":"2017-07-10 17:00"}]
-             * cloudrate : [{"value":1,"datetime":"2017-07-08 18:00"},{"value":1,"datetime":"2017-07-08 19:00"},{"value":0.99,"datetime":"2017-07-08 20:00"},{"value":0.94,"datetime":"2017-07-08 21:00"},{"value":0.88,"datetime":"2017-07-08 22:00"},{"value":0.81,"datetime":"2017-07-08 23:00"},{"value":0.75,"datetime":"2017-07-09 00:00"},{"value":0.72,"datetime":"2017-07-09 01:00"},{"value":0.73,"datetime":"2017-07-09 02:00"},{"value":0.81,"datetime":"2017-07-09 03:00"},{"value":0.9,"datetime":"2017-07-09 04:00"},{"value":0.96,"datetime":"2017-07-09 05:00"},{"value":0.96,"datetime":"2017-07-09 06:00"},{"value":0.91,"datetime":"2017-07-09 07:00"},{"value":0.85,"datetime":"2017-07-09 08:00"},{"value":0.79,"datetime":"2017-07-09 09:00"},{"value":0.75,"datetime":"2017-07-09 10:00"},{"value":0.73,"datetime":"2017-07-09 11:00"},{"value":0.72,"datetime":"2017-07-09 12:00"},{"value":0.74,"datetime":"2017-07-09 13:00"},{"value":0.78,"datetime":"2017-07-09 14:00"},{"value":0.84,"datetime":"2017-07-09 15:00"},{"value":0.9,"datetime":"2017-07-09 16:00"},{"value":0.95,"datetime":"2017-07-09 17:00"},{"value":0.96,"datetime":"2017-07-09 18:00"},{"value":0.95,"datetime":"2017-07-09 19:00"},{"value":0.94,"datetime":"2017-07-09 20:00"},{"value":0.92,"datetime":"2017-07-09 21:00"},{"value":0.92,"datetime":"2017-07-09 22:00"},{"value":0.92,"datetime":"2017-07-09 23:00"},{"value":0.91,"datetime":"2017-07-10 00:00"},{"value":0.9,"datetime":"2017-07-10 01:00"},{"value":0.87,"datetime":"2017-07-10 02:00"},{"value":0.8,"datetime":"2017-07-10 03:00"},{"value":0.73,"datetime":"2017-07-10 04:00"},{"value":0.69,"datetime":"2017-07-10 05:00"},{"value":0.68,"datetime":"2017-07-10 06:00"},{"value":0.7,"datetime":"2017-07-10 07:00"},{"value":0.73,"datetime":"2017-07-10 08:00"},{"value":0.74,"datetime":"2017-07-10 09:00"},{"value":0.75,"datetime":"2017-07-10 10:00"},{"value":0.74,"datetime":"2017-07-10 11:00"},{"value":0.74,"datetime":"2017-07-10 12:00"},{"value":0.75,"datetime":"2017-07-10 13:00"},{"value":0.77,"datetime":"2017-07-10 14:00"},{"value":0.82,"datetime":"2017-07-10 15:00"},{"value":0.87,"datetime":"2017-07-10 16:00"},{"value":0.91,"datetime":"2017-07-10 17:00"}]
-             * aqi : [{"value":12,"datetime":"2017-07-08 18:00"},{"value":11,"datetime":"2017-07-08 19:00"},{"value":11,"datetime":"2017-07-08 20:00"},{"value":12,"datetime":"2017-07-08 21:00"},{"value":14,"datetime":"2017-07-08 22:00"},{"value":14,"datetime":"2017-07-08 23:00"},{"value":15,"datetime":"2017-07-09 00:00"},{"value":15,"datetime":"2017-07-09 01:00"},{"value":15,"datetime":"2017-07-09 02:00"},{"value":15,"datetime":"2017-07-09 03:00"},{"value":16,"datetime":"2017-07-09 04:00"},{"value":16,"datetime":"2017-07-09 05:00"},{"value":16,"datetime":"2017-07-09 06:00"},{"value":18,"datetime":"2017-07-09 07:00"},{"value":19,"datetime":"2017-07-09 08:00"},{"value":20,"datetime":"2017-07-09 09:00"},{"value":20,"datetime":"2017-07-09 10:00"},{"value":20,"datetime":"2017-07-09 11:00"},{"value":20,"datetime":"2017-07-09 12:00"},{"value":22,"datetime":"2017-07-09 13:00"},{"value":22,"datetime":"2017-07-09 14:00"},{"value":22,"datetime":"2017-07-09 15:00"},{"value":22,"datetime":"2017-07-09 16:00"},{"value":20,"datetime":"2017-07-09 17:00"},{"value":20,"datetime":"2017-07-09 18:00"},{"value":20,"datetime":"2017-07-09 19:00"},{"value":20,"datetime":"2017-07-09 20:00"},{"value":20,"datetime":"2017-07-09 21:00"},{"value":20,"datetime":"2017-07-09 22:00"},{"value":19,"datetime":"2017-07-09 23:00"},{"value":19,"datetime":"2017-07-10 00:00"},{"value":19,"datetime":"2017-07-10 01:00"},{"value":19,"datetime":"2017-07-10 02:00"},{"value":20,"datetime":"2017-07-10 03:00"},{"value":20,"datetime":"2017-07-10 04:00"},{"value":22,"datetime":"2017-07-10 05:00"},{"value":22,"datetime":"2017-07-10 06:00"},{"value":23,"datetime":"2017-07-10 07:00"},{"value":23,"datetime":"2017-07-10 08:00"},{"value":24,"datetime":"2017-07-10 09:00"},{"value":24,"datetime":"2017-07-10 10:00"},{"value":26,"datetime":"2017-07-10 11:00"},{"value":27,"datetime":"2017-07-10 12:00"},{"value":27,"datetime":"2017-07-10 13:00"},{"value":29,"datetime":"2017-07-10 14:00"},{"value":29,"datetime":"2017-07-10 15:00"},{"value":29,"datetime":"2017-07-10 16:00"},{"value":29,"datetime":"2017-07-10 17:00"}]
-             * humidity : [{"value":0.76,"datetime":"2017-07-08 18:00"},{"value":0.77,"datetime":"2017-07-08 19:00"},{"value":0.78,"datetime":"2017-07-08 20:00"},{"value":0.79,"datetime":"2017-07-08 21:00"},{"value":0.79,"datetime":"2017-07-08 22:00"},{"value":0.8,"datetime":"2017-07-08 23:00"},{"value":0.81,"datetime":"2017-07-09 00:00"},{"value":0.82,"datetime":"2017-07-09 01:00"},{"value":0.82,"datetime":"2017-07-09 02:00"},{"value":0.83,"datetime":"2017-07-09 03:00"},{"value":0.83,"datetime":"2017-07-09 04:00"},{"value":0.83,"datetime":"2017-07-09 05:00"},{"value":0.81,"datetime":"2017-07-09 06:00"},{"value":0.79,"datetime":"2017-07-09 07:00"},{"value":0.76,"datetime":"2017-07-09 08:00"},{"value":0.73,"datetime":"2017-07-09 09:00"},{"value":0.7,"datetime":"2017-07-09 10:00"},{"value":0.68,"datetime":"2017-07-09 11:00"},{"value":0.67,"datetime":"2017-07-09 12:00"},{"value":0.68,"datetime":"2017-07-09 13:00"},{"value":0.69,"datetime":"2017-07-09 14:00"},{"value":0.72,"datetime":"2017-07-09 15:00"},{"value":0.74,"datetime":"2017-07-09 16:00"},{"value":0.77,"datetime":"2017-07-09 17:00"},{"value":0.78,"datetime":"2017-07-09 18:00"},{"value":0.79,"datetime":"2017-07-09 19:00"},{"value":0.8,"datetime":"2017-07-09 20:00"},{"value":0.81,"datetime":"2017-07-09 21:00"},{"value":0.81,"datetime":"2017-07-09 22:00"},{"value":0.82,"datetime":"2017-07-09 23:00"},{"value":0.82,"datetime":"2017-07-10 00:00"},{"value":0.83,"datetime":"2017-07-10 01:00"},{"value":0.84,"datetime":"2017-07-10 02:00"},{"value":0.85,"datetime":"2017-07-10 03:00"},{"value":0.85,"datetime":"2017-07-10 04:00"},{"value":0.85,"datetime":"2017-07-10 05:00"},{"value":0.84,"datetime":"2017-07-10 06:00"},{"value":0.83,"datetime":"2017-07-10 07:00"},{"value":0.8,"datetime":"2017-07-10 08:00"},{"value":0.77,"datetime":"2017-07-10 09:00"},{"value":0.74,"datetime":"2017-07-10 10:00"},{"value":0.72,"datetime":"2017-07-10 11:00"},{"value":0.7,"datetime":"2017-07-10 12:00"},{"value":0.69,"datetime":"2017-07-10 13:00"},{"value":0.69,"datetime":"2017-07-10 14:00"},{"value":0.71,"datetime":"2017-07-10 15:00"},{"value":0.74,"datetime":"2017-07-10 16:00"},{"value":0.76,"datetime":"2017-07-10 17:00"}]
-             * pres : [{"value":98246.7615368365,"datetime":"2017-07-08 18:00"},{"value":98248.0766940549,"datetime":"2017-07-08 19:00"},{"value":98256.0458191215,"datetime":"2017-07-08 20:00"},{"value":98281.4485588495,"datetime":"2017-07-08 21:00"},{"value":98310.7906809261,"datetime":"2017-07-08 22:00"},{"value":98324.5094832569,"datetime":"2017-07-08 23:00"},{"value":98308.7754571279,"datetime":"2017-07-09 00:00"},{"value":98272.6918673465,"datetime":"2017-07-09 01:00"},{"value":98231.0951721006,"datetime":"2017-07-09 02:00"},{"value":98196.9157645531,"datetime":"2017-07-09 03:00"},{"value":98175.4597777664,"datetime":"2017-07-09 04:00"},{"value":98170.1272797777,"datetime":"2017-07-09 05:00"},{"value":98181.7495545232,"datetime":"2017-07-09 06:00"},{"value":98200.8827495329,"datetime":"2017-07-09 07:00"},{"value":98215.5142282352,"datetime":"2017-07-09 08:00"},{"value":98216.2407452333,"datetime":"2017-07-09 09:00"},{"value":98204.0966198285,"datetime":"2017-07-09 10:00"},{"value":98182.7255624965,"datetime":"2017-07-09 11:00"},{"value":98155.0171160804,"datetime":"2017-07-09 12:00"},{"value":98120.8441528924,"datetime":"2017-07-09 13:00"},{"value":98079.325377612,"datetime":"2017-07-09 14:00"},{"value":98031.5637508994,"datetime":"2017-07-09 15:00"},{"value":97986.5992573368,"datetime":"2017-07-09 16:00"},{"value":97955.4561374871,"datetime":"2017-07-09 17:00"},{"value":97946.2865239683,"datetime":"2017-07-09 18:00"},{"value":97955.7541176185,"datetime":"2017-07-09 19:00"},{"value":97977.6505113308,"datetime":"2017-07-09 20:00"},{"value":98004.3668029205,"datetime":"2017-07-09 21:00"},{"value":98022.6921098902,"datetime":"2017-07-09 22:00"},{"value":98018.0150546651,"datetime":"2017-07-09 23:00"},{"value":97982.40183186,"datetime":"2017-07-10 00:00"},{"value":97934.6289248492,"datetime":"2017-07-10 01:00"},{"value":97900.1503891972,"datetime":"2017-07-10 02:00"},{"value":97897.9828590703,"datetime":"2017-07-10 03:00"},{"value":97921.3932830418,"datetime":"2017-07-10 04:00"},{"value":97957.2111882872,"datetime":"2017-07-10 05:00"},{"value":97995.113320888,"datetime":"2017-07-10 06:00"},{"value":98036.1653025511,"datetime":"2017-07-10 07:00"},{"value":98084.2799738894,"datetime":"2017-07-10 08:00"},{"value":98140.7011091255,"datetime":"2017-07-10 09:00"},{"value":98195.9962169206,"datetime":"2017-07-10 10:00"},{"value":98238.0637395456,"datetime":"2017-07-10 11:00"},{"value":98257.6452895099,"datetime":"2017-07-10 12:00"},{"value":98256.8551602764,"datetime":"2017-07-10 13:00"},{"value":98240.6508155466,"datetime":"2017-07-10 14:00"},{"value":98215.3321733754,"datetime":"2017-07-10 15:00"},{"value":98192.5689692304,"datetime":"2017-07-10 16:00"},{"value":98185.373392933,"datetime":"2017-07-10 17:00"}]
-             * pm25 : [{"value":6,"datetime":"2017-07-08 18:00"},{"value":6,"datetime":"2017-07-08 19:00"},{"value":6,"datetime":"2017-07-08 20:00"},{"value":7,"datetime":"2017-07-08 21:00"},{"value":8,"datetime":"2017-07-08 22:00"},{"value":8,"datetime":"2017-07-08 23:00"},{"value":9,"datetime":"2017-07-09 00:00"},{"value":9,"datetime":"2017-07-09 01:00"},{"value":9,"datetime":"2017-07-09 02:00"},{"value":9,"datetime":"2017-07-09 03:00"},{"value":10,"datetime":"2017-07-09 04:00"},{"value":10,"datetime":"2017-07-09 05:00"},{"value":10,"datetime":"2017-07-09 06:00"},{"value":11,"datetime":"2017-07-09 07:00"},{"value":12,"datetime":"2017-07-09 08:00"},{"value":13,"datetime":"2017-07-09 09:00"},{"value":13,"datetime":"2017-07-09 10:00"},{"value":13,"datetime":"2017-07-09 11:00"},{"value":13,"datetime":"2017-07-09 12:00"},{"value":14,"datetime":"2017-07-09 13:00"},{"value":14,"datetime":"2017-07-09 14:00"},{"value":14,"datetime":"2017-07-09 15:00"},{"value":14,"datetime":"2017-07-09 16:00"},{"value":13,"datetime":"2017-07-09 17:00"},{"value":13,"datetime":"2017-07-09 18:00"},{"value":13,"datetime":"2017-07-09 19:00"},{"value":13,"datetime":"2017-07-09 20:00"},{"value":13,"datetime":"2017-07-09 21:00"},{"value":13,"datetime":"2017-07-09 22:00"},{"value":12,"datetime":"2017-07-09 23:00"},{"value":12,"datetime":"2017-07-10 00:00"},{"value":12,"datetime":"2017-07-10 01:00"},{"value":12,"datetime":"2017-07-10 02:00"},{"value":13,"datetime":"2017-07-10 03:00"},{"value":13,"datetime":"2017-07-10 04:00"},{"value":14,"datetime":"2017-07-10 05:00"},{"value":14,"datetime":"2017-07-10 06:00"},{"value":15,"datetime":"2017-07-10 07:00"},{"value":15,"datetime":"2017-07-10 08:00"},{"value":16,"datetime":"2017-07-10 09:00"},{"value":16,"datetime":"2017-07-10 10:00"},{"value":17,"datetime":"2017-07-10 11:00"},{"value":18,"datetime":"2017-07-10 12:00"},{"value":18,"datetime":"2017-07-10 13:00"},{"value":19,"datetime":"2017-07-10 14:00"},{"value":19,"datetime":"2017-07-10 15:00"},{"value":19,"datetime":"2017-07-10 16:00"},{"value":19,"datetime":"2017-07-10 17:00"}]
-             * precipitation : [{"value":0.2782,"datetime":"2017-07-08 18:00"},{"value":7.2052,"datetime":"2017-07-08 19:00"},{"value":4.6179,"datetime":"2017-07-08 20:00"},{"value":0,"datetime":"2017-07-08 21:00"},{"value":0,"datetime":"2017-07-08 22:00"},{"value":0,"datetime":"2017-07-08 23:00"},{"value":0,"datetime":"2017-07-09 00:00"},{"value":0,"datetime":"2017-07-09 01:00"},{"value":0,"datetime":"2017-07-09 02:00"},{"value":0,"datetime":"2017-07-09 03:00"},{"value":0,"datetime":"2017-07-09 04:00"},{"value":0,"datetime":"2017-07-09 05:00"},{"value":0,"datetime":"2017-07-09 06:00"},{"value":0,"datetime":"2017-07-09 07:00"},{"value":0,"datetime":"2017-07-09 08:00"},{"value":0,"datetime":"2017-07-09 09:00"},{"value":0,"datetime":"2017-07-09 10:00"},{"value":0,"datetime":"2017-07-09 11:00"},{"value":0,"datetime":"2017-07-09 12:00"},{"value":0,"datetime":"2017-07-09 13:00"},{"value":0,"datetime":"2017-07-09 14:00"},{"value":0,"datetime":"2017-07-09 15:00"},{"value":0.0468,"datetime":"2017-07-09 16:00"},{"value":0.0604,"datetime":"2017-07-09 17:00"},{"value":0.0651,"datetime":"2017-07-09 18:00"},{"value":0.0616,"datetime":"2017-07-09 19:00"},{"value":0.0523,"datetime":"2017-07-09 20:00"},{"value":0,"datetime":"2017-07-09 21:00"},{"value":0,"datetime":"2017-07-09 22:00"},{"value":0,"datetime":"2017-07-09 23:00"},{"value":0,"datetime":"2017-07-10 00:00"},{"value":0,"datetime":"2017-07-10 01:00"},{"value":0,"datetime":"2017-07-10 02:00"},{"value":0,"datetime":"2017-07-10 03:00"},{"value":0,"datetime":"2017-07-10 04:00"},{"value":0,"datetime":"2017-07-10 05:00"},{"value":0,"datetime":"2017-07-10 06:00"},{"value":0,"datetime":"2017-07-10 07:00"},{"value":0,"datetime":"2017-07-10 08:00"},{"value":0,"datetime":"2017-07-10 09:00"},{"value":0,"datetime":"2017-07-10 10:00"},{"value":0,"datetime":"2017-07-10 11:00"},{"value":0,"datetime":"2017-07-10 12:00"},{"value":0,"datetime":"2017-07-10 13:00"},{"value":0,"datetime":"2017-07-10 14:00"},{"value":0.2023,"datetime":"2017-07-10 15:00"},{"value":0.4119,"datetime":"2017-07-10 16:00"},{"value":0.5604,"datetime":"2017-07-10 17:00"}]
-             * wind : [{"direction":104.32,"speed":4.18,"datetime":"2017-07-08 18:00"},{"direction":126.3,"speed":3.65,"datetime":"2017-07-08 19:00"},{"direction":153.06,"speed":3.34,"datetime":"2017-07-08 20:00"},{"direction":178.93,"speed":3.44,"datetime":"2017-07-08 21:00"},{"direction":198.48,"speed":3.88,"datetime":"2017-07-08 22:00"},{"direction":210.11,"speed":4.43,"datetime":"2017-07-08 23:00"},{"direction":214.73,"speed":4.9,"datetime":"2017-07-09 00:00"},{"direction":214.3,"speed":5.12,"datetime":"2017-07-09 01:00"},{"direction":209.51,"speed":5.03,"datetime":"2017-07-09 02:00"},{"direction":200.23,"speed":4.71,"datetime":"2017-07-09 03:00"},{"direction":189.88,"speed":4.44,"datetime":"2017-07-09 04:00"},{"direction":185.22,"speed":4.28,"datetime":"2017-07-09 05:00"},{"direction":191.35,"speed":4.18,"datetime":"2017-07-09 06:00"},{"direction":202.24,"speed":4.12,"datetime":"2017-07-09 07:00"},{"direction":209.61,"speed":3.84,"datetime":"2017-07-09 08:00"},{"direction":207.56,"speed":2.93,"datetime":"2017-07-09 09:00"},{"direction":192.19,"speed":1.58,"datetime":"2017-07-09 10:00"},{"direction":105.88,"speed":0.56,"datetime":"2017-07-09 11:00"},{"direction":27.13,"speed":1.7,"datetime":"2017-07-09 12:00"},{"direction":8.89,"speed":3.08,"datetime":"2017-07-09 13:00"},{"direction":358.2,"speed":3.91,"datetime":"2017-07-09 14:00"},{"direction":347.91,"speed":3.86,"datetime":"2017-07-09 15:00"},{"direction":332.8,"speed":3.25,"datetime":"2017-07-09 16:00"},{"direction":308.84,"speed":2.69,"datetime":"2017-07-09 17:00"},{"direction":280.6,"speed":2.61,"datetime":"2017-07-09 18:00"},{"direction":255.89,"speed":2.97,"datetime":"2017-07-09 19:00"},{"direction":236.16,"speed":3.62,"datetime":"2017-07-09 20:00"},{"direction":220.8,"speed":4.52,"datetime":"2017-07-09 21:00"},{"direction":211.1,"speed":5.51,"datetime":"2017-07-09 22:00"},{"direction":206.81,"speed":6.3,"datetime":"2017-07-09 23:00"},{"direction":207.07,"speed":6.66,"datetime":"2017-07-10 00:00"},{"direction":209.4,"speed":6.57,"datetime":"2017-07-10 01:00"},{"direction":211.58,"speed":6.05,"datetime":"2017-07-10 02:00"},{"direction":211.99,"speed":5.14,"datetime":"2017-07-10 03:00"},{"direction":213.16,"speed":4.19,"datetime":"2017-07-10 04:00"},{"direction":221.16,"speed":3.62,"datetime":"2017-07-10 05:00"},{"direction":237.09,"speed":3.94,"datetime":"2017-07-10 06:00"},{"direction":248.6,"speed":4.84,"datetime":"2017-07-10 07:00"},{"direction":252.95,"speed":5.48,"datetime":"2017-07-10 08:00"},{"direction":252.14,"speed":5.19,"datetime":"2017-07-10 09:00"},{"direction":250.05,"speed":4.24,"datetime":"2017-07-10 10:00"},{"direction":254.23,"speed":3.05,"datetime":"2017-07-10 11:00"},{"direction":280.07,"speed":2.32,"datetime":"2017-07-10 12:00"},{"direction":307.92,"speed":2.7,"datetime":"2017-07-10 13:00"},{"direction":310.85,"speed":3.26,"datetime":"2017-07-10 14:00"},{"direction":291.87,"speed":3.46,"datetime":"2017-07-10 15:00"},{"direction":264.03,"speed":3.93,"datetime":"2017-07-10 16:00"},{"direction":240.61,"speed":4.59,"datetime":"2017-07-10 17:00"}]
-             * temperature : [{"value":27.8,"datetime":"2017-07-08 18:00"},{"value":27,"datetime":"2017-07-08 19:00"},{"value":26.8,"datetime":"2017-07-08 20:00"},{"value":26.6,"datetime":"2017-07-08 21:00"},{"value":26.2,"datetime":"2017-07-08 22:00"},{"value":26.1,"datetime":"2017-07-08 23:00"},{"value":26,"datetime":"2017-07-09 00:00"},{"value":26.1,"datetime":"2017-07-09 01:00"},{"value":26.7,"datetime":"2017-07-09 02:00"},{"value":27.3,"datetime":"2017-07-09 03:00"},{"value":27.9,"datetime":"2017-07-09 04:00"},{"value":28.5,"datetime":"2017-07-09 05:00"},{"value":29.1,"datetime":"2017-07-09 06:00"},{"value":29.8,"datetime":"2017-07-09 07:00"},{"value":30.4,"datetime":"2017-07-09 08:00"},{"value":31.1,"datetime":"2017-07-09 09:00"},{"value":31.8,"datetime":"2017-07-09 10:00"},{"value":32,"datetime":"2017-07-09 11:00"},{"value":31.9,"datetime":"2017-07-09 12:00"},{"value":31.8,"datetime":"2017-07-09 13:00"},{"value":31.7,"datetime":"2017-07-09 14:00"},{"value":31.2,"datetime":"2017-07-09 15:00"},{"value":31,"datetime":"2017-07-09 16:00"},{"value":30.2,"datetime":"2017-07-09 17:00"},{"value":29.9,"datetime":"2017-07-09 18:00"},{"value":29.34,"datetime":"2017-07-09 19:00"},{"value":28.61,"datetime":"2017-07-09 20:00"},{"value":27.95,"datetime":"2017-07-09 21:00"},{"value":27.61,"datetime":"2017-07-09 22:00"},{"value":27.28,"datetime":"2017-07-09 23:00"},{"value":26.98,"datetime":"2017-07-10 00:00"},{"value":26.71,"datetime":"2017-07-10 01:00"},{"value":26.47,"datetime":"2017-07-10 02:00"},{"value":26.28,"datetime":"2017-07-10 03:00"},{"value":26.6,"datetime":"2017-07-10 04:00"},{"value":26,"datetime":"2017-07-10 05:00"},{"value":27.52,"datetime":"2017-07-10 06:00"},{"value":28.06,"datetime":"2017-07-10 07:00"},{"value":28.56,"datetime":"2017-07-10 08:00"},{"value":29.03,"datetime":"2017-07-10 09:00"},{"value":29.5,"datetime":"2017-07-10 10:00"},{"value":29.98,"datetime":"2017-07-10 11:00"},{"value":30.51,"datetime":"2017-07-10 12:00"},{"value":32,"datetime":"2017-07-10 13:00"},{"value":31.4,"datetime":"2017-07-10 14:00"},{"value":31.64,"datetime":"2017-07-10 15:00"},{"value":31.34,"datetime":"2017-07-10 16:00"},{"value":30.96,"datetime":"2017-07-10 17:00"}]
+             * description : 多云转晴，明天上午10点钟后转多云
+             * skycon : [{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-24 20:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-24 21:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-24 22:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-24 23:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-25 00:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-25 01:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-25 02:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-25 03:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-25 04:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-25 05:00"},{"value":"CLEAR_DAY","datetime":"2017-07-25 06:00"},{"value":"CLEAR_DAY","datetime":"2017-07-25 07:00"},{"value":"CLEAR_DAY","datetime":"2017-07-25 08:00"},{"value":"CLEAR_DAY","datetime":"2017-07-25 09:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 10:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 11:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 12:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 13:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 14:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 15:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 16:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 17:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-25 18:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-25 19:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-25 20:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-25 21:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-25 22:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-25 23:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-26 00:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-26 01:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-26 02:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-26 03:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-26 04:00"},{"value":"PARTLY_CLOUDY_NIGHT","datetime":"2017-07-26 05:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-26 06:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-26 07:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-26 08:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-26 09:00"},{"value":"CLEAR_DAY","datetime":"2017-07-26 10:00"},{"value":"CLEAR_DAY","datetime":"2017-07-26 11:00"},{"value":"CLEAR_DAY","datetime":"2017-07-26 12:00"},{"value":"CLEAR_DAY","datetime":"2017-07-26 13:00"},{"value":"CLEAR_DAY","datetime":"2017-07-26 14:00"},{"value":"CLEAR_DAY","datetime":"2017-07-26 15:00"},{"value":"CLEAR_DAY","datetime":"2017-07-26 16:00"},{"value":"PARTLY_CLOUDY_DAY","datetime":"2017-07-26 17:00"},{"value":"CLEAR_DAY","datetime":"2017-07-26 18:00"},{"value":"CLEAR_NIGHT","datetime":"2017-07-26 19:00"}]
+             * cloudrate : [{"value":0.41,"datetime":"2017-07-24 20:00"},{"value":0.35,"datetime":"2017-07-24 21:00"},{"value":0.29,"datetime":"2017-07-24 22:00"},{"value":0.26,"datetime":"2017-07-24 23:00"},{"value":0.24,"datetime":"2017-07-25 00:00"},{"value":0.23,"datetime":"2017-07-25 01:00"},{"value":0.22,"datetime":"2017-07-25 02:00"},{"value":0.18,"datetime":"2017-07-25 03:00"},{"value":0.13,"datetime":"2017-07-25 04:00"},{"value":0.08,"datetime":"2017-07-25 05:00"},{"value":0.05,"datetime":"2017-07-25 06:00"},{"value":0.04,"datetime":"2017-07-25 07:00"},{"value":0.07,"datetime":"2017-07-25 08:00"},{"value":0.13,"datetime":"2017-07-25 09:00"},{"value":0.21,"datetime":"2017-07-25 10:00"},{"value":0.28,"datetime":"2017-07-25 11:00"},{"value":0.31,"datetime":"2017-07-25 12:00"},{"value":0.32,"datetime":"2017-07-25 13:00"},{"value":0.3,"datetime":"2017-07-25 14:00"},{"value":0.27,"datetime":"2017-07-25 15:00"},{"value":0.24,"datetime":"2017-07-25 16:00"},{"value":0.23,"datetime":"2017-07-25 17:00"},{"value":0.25,"datetime":"2017-07-25 18:00"},{"value":0.28,"datetime":"2017-07-25 19:00"},{"value":0.27,"datetime":"2017-07-25 20:00"},{"value":0.19,"datetime":"2017-07-25 21:00"},{"value":0.09,"datetime":"2017-07-25 22:00"},{"value":0,"datetime":"2017-07-25 23:00"},{"value":0,"datetime":"2017-07-26 00:00"},{"value":0,"datetime":"2017-07-26 01:00"},{"value":0.04,"datetime":"2017-07-26 02:00"},{"value":0.16,"datetime":"2017-07-26 03:00"},{"value":0.28,"datetime":"2017-07-26 04:00"},{"value":0.37,"datetime":"2017-07-26 05:00"},{"value":0.38,"datetime":"2017-07-26 06:00"},{"value":0.34,"datetime":"2017-07-26 07:00"},{"value":0.28,"datetime":"2017-07-26 08:00"},{"value":0.21,"datetime":"2017-07-26 09:00"},{"value":0.15,"datetime":"2017-07-26 10:00"},{"value":0.1,"datetime":"2017-07-26 11:00"},{"value":0.07,"datetime":"2017-07-26 12:00"},{"value":0.06,"datetime":"2017-07-26 13:00"},{"value":0.08,"datetime":"2017-07-26 14:00"},{"value":0.13,"datetime":"2017-07-26 15:00"},{"value":0.18,"datetime":"2017-07-26 16:00"},{"value":0.21,"datetime":"2017-07-26 17:00"},{"value":0.2,"datetime":"2017-07-26 18:00"},{"value":0.16,"datetime":"2017-07-26 19:00"}]
+             * aqi : [{"value":95,"datetime":"2017-07-24 20:00"},{"value":56,"datetime":"2017-07-24 21:00"},{"value":58,"datetime":"2017-07-24 22:00"},{"value":61,"datetime":"2017-07-24 23:00"},{"value":63,"datetime":"2017-07-25 00:00"},{"value":64,"datetime":"2017-07-25 01:00"},{"value":66,"datetime":"2017-07-25 02:00"},{"value":67,"datetime":"2017-07-25 03:00"},{"value":67,"datetime":"2017-07-25 04:00"},{"value":68,"datetime":"2017-07-25 05:00"},{"value":71,"datetime":"2017-07-25 06:00"},{"value":72,"datetime":"2017-07-25 07:00"},{"value":72,"datetime":"2017-07-25 08:00"},{"value":71,"datetime":"2017-07-25 09:00"},{"value":68,"datetime":"2017-07-25 10:00"},{"value":64,"datetime":"2017-07-25 11:00"},{"value":59,"datetime":"2017-07-25 12:00"},{"value":57,"datetime":"2017-07-25 13:00"},{"value":53,"datetime":"2017-07-25 14:00"},{"value":50,"datetime":"2017-07-25 15:00"},{"value":49,"datetime":"2017-07-25 16:00"},{"value":50,"datetime":"2017-07-25 17:00"},{"value":52,"datetime":"2017-07-25 18:00"},{"value":56,"datetime":"2017-07-25 19:00"},{"value":59,"datetime":"2017-07-25 20:00"},{"value":62,"datetime":"2017-07-25 21:00"},{"value":63,"datetime":"2017-07-25 22:00"},{"value":64,"datetime":"2017-07-25 23:00"},{"value":66,"datetime":"2017-07-26 00:00"},{"value":66,"datetime":"2017-07-26 01:00"},{"value":64,"datetime":"2017-07-26 02:00"},{"value":63,"datetime":"2017-07-26 03:00"},{"value":61,"datetime":"2017-07-26 04:00"},{"value":58,"datetime":"2017-07-26 05:00"},{"value":58,"datetime":"2017-07-26 06:00"},{"value":58,"datetime":"2017-07-26 07:00"},{"value":59,"datetime":"2017-07-26 08:00"},{"value":59,"datetime":"2017-07-26 09:00"},{"value":58,"datetime":"2017-07-26 10:00"},{"value":57,"datetime":"2017-07-26 11:00"},{"value":56,"datetime":"2017-07-26 12:00"},{"value":55,"datetime":"2017-07-26 13:00"},{"value":55,"datetime":"2017-07-26 14:00"},{"value":53,"datetime":"2017-07-26 15:00"},{"value":53,"datetime":"2017-07-26 16:00"},{"value":53,"datetime":"2017-07-26 17:00"},{"value":55,"datetime":"2017-07-26 18:00"},{"value":57,"datetime":"2017-07-26 19:00"}]
+             * humidity : [{"value":0.59,"datetime":"2017-07-24 20:00"},{"value":0.61,"datetime":"2017-07-24 21:00"},{"value":0.62,"datetime":"2017-07-24 22:00"},{"value":0.63,"datetime":"2017-07-24 23:00"},{"value":0.63,"datetime":"2017-07-25 00:00"},{"value":0.64,"datetime":"2017-07-25 01:00"},{"value":0.64,"datetime":"2017-07-25 02:00"},{"value":0.65,"datetime":"2017-07-25 03:00"},{"value":0.66,"datetime":"2017-07-25 04:00"},{"value":0.67,"datetime":"2017-07-25 05:00"},{"value":0.68,"datetime":"2017-07-25 06:00"},{"value":0.68,"datetime":"2017-07-25 07:00"},{"value":0.67,"datetime":"2017-07-25 08:00"},{"value":0.64,"datetime":"2017-07-25 09:00"},{"value":0.6,"datetime":"2017-07-25 10:00"},{"value":0.57,"datetime":"2017-07-25 11:00"},{"value":0.53,"datetime":"2017-07-25 12:00"},{"value":0.51,"datetime":"2017-07-25 13:00"},{"value":0.5,"datetime":"2017-07-25 14:00"},{"value":0.5,"datetime":"2017-07-25 15:00"},{"value":0.52,"datetime":"2017-07-25 16:00"},{"value":0.57,"datetime":"2017-07-25 17:00"},{"value":0.64,"datetime":"2017-07-25 18:00"},{"value":0.72,"datetime":"2017-07-25 19:00"},{"value":0.79,"datetime":"2017-07-25 20:00"},{"value":0.84,"datetime":"2017-07-25 21:00"},{"value":0.87,"datetime":"2017-07-25 22:00"},{"value":0.89,"datetime":"2017-07-25 23:00"},{"value":0.91,"datetime":"2017-07-26 00:00"},{"value":0.92,"datetime":"2017-07-26 01:00"},{"value":0.94,"datetime":"2017-07-26 02:00"},{"value":0.95,"datetime":"2017-07-26 03:00"},{"value":0.96,"datetime":"2017-07-26 04:00"},{"value":0.95,"datetime":"2017-07-26 05:00"},{"value":0.92,"datetime":"2017-07-26 06:00"},{"value":0.88,"datetime":"2017-07-26 07:00"},{"value":0.82,"datetime":"2017-07-26 08:00"},{"value":0.76,"datetime":"2017-07-26 09:00"},{"value":0.7,"datetime":"2017-07-26 10:00"},{"value":0.64,"datetime":"2017-07-26 11:00"},{"value":0.59,"datetime":"2017-07-26 12:00"},{"value":0.56,"datetime":"2017-07-26 13:00"},{"value":0.54,"datetime":"2017-07-26 14:00"},{"value":0.55,"datetime":"2017-07-26 15:00"},{"value":0.58,"datetime":"2017-07-26 16:00"},{"value":0.62,"datetime":"2017-07-26 17:00"},{"value":0.67,"datetime":"2017-07-26 18:00"},{"value":0.73,"datetime":"2017-07-26 19:00"}]
+             * pm25 : [{"value":37,"datetime":"2017-07-24 20:00"},{"value":39,"datetime":"2017-07-24 21:00"},{"value":41,"datetime":"2017-07-24 22:00"},{"value":43,"datetime":"2017-07-24 23:00"},{"value":45,"datetime":"2017-07-25 00:00"},{"value":46,"datetime":"2017-07-25 01:00"},{"value":47,"datetime":"2017-07-25 02:00"},{"value":48,"datetime":"2017-07-25 03:00"},{"value":48,"datetime":"2017-07-25 04:00"},{"value":49,"datetime":"2017-07-25 05:00"},{"value":51,"datetime":"2017-07-25 06:00"},{"value":52,"datetime":"2017-07-25 07:00"},{"value":52,"datetime":"2017-07-25 08:00"},{"value":51,"datetime":"2017-07-25 09:00"},{"value":49,"datetime":"2017-07-25 10:00"},{"value":46,"datetime":"2017-07-25 11:00"},{"value":42,"datetime":"2017-07-25 12:00"},{"value":40,"datetime":"2017-07-25 13:00"},{"value":37,"datetime":"2017-07-25 14:00"},{"value":35,"datetime":"2017-07-25 15:00"},{"value":34,"datetime":"2017-07-25 16:00"},{"value":35,"datetime":"2017-07-25 17:00"},{"value":36,"datetime":"2017-07-25 18:00"},{"value":39,"datetime":"2017-07-25 19:00"},{"value":42,"datetime":"2017-07-25 20:00"},{"value":44,"datetime":"2017-07-25 21:00"},{"value":45,"datetime":"2017-07-25 22:00"},{"value":46,"datetime":"2017-07-25 23:00"},{"value":47,"datetime":"2017-07-26 00:00"},{"value":47,"datetime":"2017-07-26 01:00"},{"value":46,"datetime":"2017-07-26 02:00"},{"value":45,"datetime":"2017-07-26 03:00"},{"value":43,"datetime":"2017-07-26 04:00"},{"value":41,"datetime":"2017-07-26 05:00"},{"value":41,"datetime":"2017-07-26 06:00"},{"value":41,"datetime":"2017-07-26 07:00"},{"value":42,"datetime":"2017-07-26 08:00"},{"value":42,"datetime":"2017-07-26 09:00"},{"value":41,"datetime":"2017-07-26 10:00"},{"value":40,"datetime":"2017-07-26 11:00"},{"value":39,"datetime":"2017-07-26 12:00"},{"value":38,"datetime":"2017-07-26 13:00"},{"value":38,"datetime":"2017-07-26 14:00"},{"value":37,"datetime":"2017-07-26 15:00"},{"value":37,"datetime":"2017-07-26 16:00"},{"value":37,"datetime":"2017-07-26 17:00"},{"value":38,"datetime":"2017-07-26 18:00"},{"value":40,"datetime":"2017-07-26 19:00"}]
+             * precipitation : [{"value":0,"datetime":"2017-07-24 20:00"},{"value":0,"datetime":"2017-07-24 21:00"},{"value":0,"datetime":"2017-07-24 22:00"},{"value":0,"datetime":"2017-07-24 23:00"},{"value":0,"datetime":"2017-07-25 00:00"},{"value":0,"datetime":"2017-07-25 01:00"},{"value":0,"datetime":"2017-07-25 02:00"},{"value":0,"datetime":"2017-07-25 03:00"},{"value":0,"datetime":"2017-07-25 04:00"},{"value":0,"datetime":"2017-07-25 05:00"},{"value":0,"datetime":"2017-07-25 06:00"},{"value":0,"datetime":"2017-07-25 07:00"},{"value":0,"datetime":"2017-07-25 08:00"},{"value":0,"datetime":"2017-07-25 09:00"},{"value":0,"datetime":"2017-07-25 10:00"},{"value":0,"datetime":"2017-07-25 11:00"},{"value":0,"datetime":"2017-07-25 12:00"},{"value":0,"datetime":"2017-07-25 13:00"},{"value":0,"datetime":"2017-07-25 14:00"},{"value":0,"datetime":"2017-07-25 15:00"},{"value":0,"datetime":"2017-07-25 16:00"},{"value":0,"datetime":"2017-07-25 17:00"},{"value":0,"datetime":"2017-07-25 18:00"},{"value":0,"datetime":"2017-07-25 19:00"},{"value":0,"datetime":"2017-07-25 20:00"},{"value":0,"datetime":"2017-07-25 21:00"},{"value":0,"datetime":"2017-07-25 22:00"},{"value":0,"datetime":"2017-07-25 23:00"},{"value":0,"datetime":"2017-07-26 00:00"},{"value":0,"datetime":"2017-07-26 01:00"},{"value":0,"datetime":"2017-07-26 02:00"},{"value":0,"datetime":"2017-07-26 03:00"},{"value":0,"datetime":"2017-07-26 04:00"},{"value":0,"datetime":"2017-07-26 05:00"},{"value":0,"datetime":"2017-07-26 06:00"},{"value":0,"datetime":"2017-07-26 07:00"},{"value":0,"datetime":"2017-07-26 08:00"},{"value":0,"datetime":"2017-07-26 09:00"},{"value":0,"datetime":"2017-07-26 10:00"},{"value":0,"datetime":"2017-07-26 11:00"},{"value":0,"datetime":"2017-07-26 12:00"},{"value":0,"datetime":"2017-07-26 13:00"},{"value":0,"datetime":"2017-07-26 14:00"},{"value":0,"datetime":"2017-07-26 15:00"},{"value":0,"datetime":"2017-07-26 16:00"},{"value":0,"datetime":"2017-07-26 17:00"},{"value":0,"datetime":"2017-07-26 18:00"},{"value":0,"datetime":"2017-07-26 19:00"}]
+             * wind : [{"direction":132.64,"speed":6.56,"datetime":"2017-07-24 20:00"},{"direction":143.28,"speed":6.98,"datetime":"2017-07-24 21:00"},{"direction":158.72,"speed":6.69,"datetime":"2017-07-24 22:00"},{"direction":175.65,"speed":6.73,"datetime":"2017-07-24 23:00"},{"direction":186.97,"speed":7.28,"datetime":"2017-07-25 00:00"},{"direction":194.43,"speed":7.68,"datetime":"2017-07-25 01:00"},{"direction":203.23,"speed":7.49,"datetime":"2017-07-25 02:00"},{"direction":218.99,"speed":6.75,"datetime":"2017-07-25 03:00"},{"direction":242.35,"speed":6.24,"datetime":"2017-07-25 04:00"},{"direction":266.86,"speed":6.41,"datetime":"2017-07-25 05:00"},{"direction":286.63,"speed":6.86,"datetime":"2017-07-25 06:00"},{"direction":302.91,"speed":7.37,"datetime":"2017-07-25 07:00"},{"direction":316.7,"speed":8.01,"datetime":"2017-07-25 08:00"},{"direction":327.76,"speed":8.82,"datetime":"2017-07-25 09:00"},{"direction":336,"speed":9.67,"datetime":"2017-07-25 10:00"},{"direction":341.74,"speed":10.37,"datetime":"2017-07-25 11:00"},{"direction":345.33,"speed":10.74,"datetime":"2017-07-25 12:00"},{"direction":346.99,"speed":10.68,"datetime":"2017-07-25 13:00"},{"direction":346.55,"speed":10.08,"datetime":"2017-07-25 14:00"},{"direction":344.54,"speed":8.95,"datetime":"2017-07-25 15:00"},{"direction":348.22,"speed":7.47,"datetime":"2017-07-25 16:00"},{"direction":12.59,"speed":6.61,"datetime":"2017-07-25 17:00"},{"direction":48.17,"speed":9.53,"datetime":"2017-07-25 18:00"},{"direction":64.41,"speed":15.02,"datetime":"2017-07-25 19:00"},{"direction":71.59,"speed":19.25,"datetime":"2017-07-25 20:00"},{"direction":76.73,"speed":19.98,"datetime":"2017-07-25 21:00"},{"direction":82.65,"speed":18.24,"datetime":"2017-07-25 22:00"},{"direction":90.43,"speed":15.94,"datetime":"2017-07-25 23:00"},{"direction":98.84,"speed":14.55,"datetime":"2017-07-26 00:00"},{"direction":104.91,"speed":13.85,"datetime":"2017-07-26 01:00"},{"direction":106.26,"speed":13.1,"datetime":"2017-07-26 02:00"},{"direction":101.46,"speed":11.95,"datetime":"2017-07-26 03:00"},{"direction":92.66,"speed":10.99,"datetime":"2017-07-26 04:00"},{"direction":85.52,"speed":10.74,"datetime":"2017-07-26 05:00"},{"direction":85.5,"speed":11.08,"datetime":"2017-07-26 06:00"},{"direction":90.69,"speed":11.45,"datetime":"2017-07-26 07:00"},{"direction":98.17,"speed":11.37,"datetime":"2017-07-26 08:00"},{"direction":106.93,"speed":10.44,"datetime":"2017-07-26 09:00"},{"direction":116.15,"speed":9.12,"datetime":"2017-07-26 10:00"},{"direction":122.34,"speed":7.86,"datetime":"2017-07-26 11:00"},{"direction":119.68,"speed":6.83,"datetime":"2017-07-26 12:00"},{"direction":108.2,"speed":6.32,"datetime":"2017-07-26 13:00"},{"direction":94.63,"speed":6.6,"datetime":"2017-07-26 14:00"},{"direction":86.45,"speed":7.54,"datetime":"2017-07-26 15:00"},{"direction":84.12,"speed":9.09,"datetime":"2017-07-26 16:00"},{"direction":85.7,"speed":11.48,"datetime":"2017-07-26 17:00"},{"direction":89.04,"speed":14.79,"datetime":"2017-07-26 18:00"},{"direction":92.96,"speed":18.06,"datetime":"2017-07-26 19:00"}]
+             * temperature : [{"value":32,"datetime":"2017-07-24 20:00"},{"value":31.25,"datetime":"2017-07-24 21:00"},{"value":31.02,"datetime":"2017-07-24 22:00"},{"value":30.98,"datetime":"2017-07-24 23:00"},{"value":30.89,"datetime":"2017-07-25 00:00"},{"value":30.67,"datetime":"2017-07-25 01:00"},{"value":30.29,"datetime":"2017-07-25 02:00"},{"value":29.7,"datetime":"2017-07-25 03:00"},{"value":29.24,"datetime":"2017-07-25 04:00"},{"value":29.24,"datetime":"2017-07-25 05:00"},{"value":29.92,"datetime":"2017-07-25 06:00"},{"value":31.09,"datetime":"2017-07-25 07:00"},{"value":32.48,"datetime":"2017-07-25 08:00"},{"value":33.84,"datetime":"2017-07-25 09:00"},{"value":35.04,"datetime":"2017-07-25 10:00"},{"value":35.98,"datetime":"2017-07-25 11:00"},{"value":36.42,"datetime":"2017-07-25 12:00"},{"value":36.7,"datetime":"2017-07-25 13:00"},{"value":36.95,"datetime":"2017-07-25 14:00"},{"value":37.18,"datetime":"2017-07-25 15:00"},{"value":37.18,"datetime":"2017-07-25 16:00"},{"value":36.65,"datetime":"2017-07-25 17:00"},{"value":35.14,"datetime":"2017-07-25 18:00"},{"value":32.85,"datetime":"2017-07-25 19:00"},{"value":30.75,"datetime":"2017-07-25 20:00"},{"value":29.36,"datetime":"2017-07-25 21:00"},{"value":28.58,"datetime":"2017-07-25 22:00"},{"value":28.16,"datetime":"2017-07-25 23:00"},{"value":27.88,"datetime":"2017-07-26 00:00"},{"value":27.61,"datetime":"2017-07-26 01:00"},{"value":27.27,"datetime":"2017-07-26 02:00"},{"value":26.83,"datetime":"2017-07-26 03:00"},{"value":26.53,"datetime":"2017-07-26 04:00"},{"value":26.63,"datetime":"2017-07-26 05:00"},{"value":27.36,"datetime":"2017-07-26 06:00"},{"value":28.56,"datetime":"2017-07-26 07:00"},{"value":30.03,"datetime":"2017-07-26 08:00"},{"value":31.55,"datetime":"2017-07-26 09:00"},{"value":32.99,"datetime":"2017-07-26 10:00"},{"value":34.22,"datetime":"2017-07-26 11:00"},{"value":35.15,"datetime":"2017-07-26 12:00"},{"value":35.82,"datetime":"2017-07-26 13:00"},{"value":36.23,"datetime":"2017-07-26 14:00"},{"value":36.48,"datetime":"2017-07-26 15:00"},{"value":36.43,"datetime":"2017-07-26 16:00"},{"value":35.79,"datetime":"2017-07-26 17:00"},{"value":34.01,"datetime":"2017-07-26 18:00"},{"value":31.82,"datetime":"2017-07-26 19:00"}]
              */
 
             private String status;
@@ -170,7 +173,6 @@ public class ForecastBean {
             private List<CloudrateBean> cloudrate;
             private List<AqiBean> aqi;
             private List<HumidityBean> humidity;
-            private List<PresBean> pres;
             private List<Pm25Bean> pm25;
             private List<PrecipitationBean> precipitation;
             private List<WindBean> wind;
@@ -224,14 +226,6 @@ public class ForecastBean {
                 this.humidity = humidity;
             }
 
-            public List<PresBean> getPres() {
-                return pres;
-            }
-
-            public void setPres(List<PresBean> pres) {
-                this.pres = pres;
-            }
-
             public List<Pm25Bean> getPm25() {
                 return pm25;
             }
@@ -266,8 +260,8 @@ public class ForecastBean {
 
             public static class SkyconBean {
                 /**
-                 * value : RAIN
-                 * datetime : 2017-07-08 18:00
+                 * value : PARTLY_CLOUDY_NIGHT
+                 * datetime : 2017-07-24 20:00
                  */
 
                 private String value;
@@ -292,18 +286,18 @@ public class ForecastBean {
 
             public static class CloudrateBean {
                 /**
-                 * value : 1
-                 * datetime : 2017-07-08 18:00
+                 * value : 0.41
+                 * datetime : 2017-07-24 20:00
                  */
 
-                private int value;
+                private double value;
                 private String datetime;
 
-                public int getValue() {
+                public double getValue() {
                     return value;
                 }
 
-                public void setValue(int value) {
+                public void setValue(double value) {
                     this.value = value;
                 }
 
@@ -318,18 +312,18 @@ public class ForecastBean {
 
             public static class AqiBean {
                 /**
-                 * value : 12
-                 * datetime : 2017-07-08 18:00
+                 * value : 95.0
+                 * datetime : 2017-07-24 20:00
                  */
 
-                private int value;
+                private double value;
                 private String datetime;
 
-                public int getValue() {
+                public double getValue() {
                     return value;
                 }
 
-                public void setValue(int value) {
+                public void setValue(double value) {
                     this.value = value;
                 }
 
@@ -344,44 +338,18 @@ public class ForecastBean {
 
             public static class HumidityBean {
                 /**
-                 * value : 0.76
-                 * datetime : 2017-07-08 18:00
+                 * value : 0.59
+                 * datetime : 2017-07-24 20:00
                  */
 
-                private float value;
+                private double value;
                 private String datetime;
 
-                public float getValue() {
+                public double getValue() {
                     return value;
                 }
 
-                public void setValue(float value) {
-                    this.value = value;
-                }
-
-                public String getDatetime() {
-                    return datetime;
-                }
-
-                public void setDatetime(String datetime) {
-                    this.datetime = datetime;
-                }
-            }
-
-            public static class PresBean {
-                /**
-                 * value : 98246.7615368365
-                 * datetime : 2017-07-08 18:00
-                 */
-
-                private float value;
-                private String datetime;
-
-                public float getValue() {
-                    return value;
-                }
-
-                public void setValue(float value) {
+                public void setValue(double value) {
                     this.value = value;
                 }
 
@@ -396,18 +364,18 @@ public class ForecastBean {
 
             public static class Pm25Bean {
                 /**
-                 * value : 6
-                 * datetime : 2017-07-08 18:00
+                 * value : 37.0
+                 * datetime : 2017-07-24 20:00
                  */
 
-                private int value;
+                private double value;
                 private String datetime;
 
-                public int getValue() {
+                public double getValue() {
                     return value;
                 }
 
-                public void setValue(int value) {
+                public void setValue(double value) {
                     this.value = value;
                 }
 
@@ -422,18 +390,18 @@ public class ForecastBean {
 
             public static class PrecipitationBean {
                 /**
-                 * value : 0.2782
-                 * datetime : 2017-07-08 18:00
+                 * value : 0.0
+                 * datetime : 2017-07-24 20:00
                  */
 
-                private float value;
+                private double value;
                 private String datetime;
 
-                public float getValue() {
+                public double getValue() {
                     return value;
                 }
 
-                public void setValue(float value) {
+                public void setValue(double value) {
                     this.value = value;
                 }
 
@@ -448,28 +416,28 @@ public class ForecastBean {
 
             public static class WindBean {
                 /**
-                 * direction : 104.32
-                 * speed : 4.18
-                 * datetime : 2017-07-08 18:00
+                 * direction : 132.64
+                 * speed : 6.56
+                 * datetime : 2017-07-24 20:00
                  */
 
-                private float direction;
-                private float speed;
+                private double direction;
+                private double speed;
                 private String datetime;
 
-                public float getDirection() {
+                public double getDirection() {
                     return direction;
                 }
 
-                public void setDirection(float direction) {
+                public void setDirection(double direction) {
                     this.direction = direction;
                 }
 
-                public float getSpeed() {
+                public double getSpeed() {
                     return speed;
                 }
 
-                public void setSpeed(float speed) {
+                public void setSpeed(double speed) {
                     this.speed = speed;
                 }
 
@@ -484,18 +452,18 @@ public class ForecastBean {
 
             public static class TemperatureBean {
                 /**
-                 * value : 27.8
-                 * datetime : 2017-07-08 18:00
+                 * value : 32.0
+                 * datetime : 2017-07-24 20:00
                  */
 
-                private float value;
+                private double value;
                 private String datetime;
 
-                public float getValue() {
+                public double getValue() {
                     return value;
                 }
 
-                public void setValue(float value) {
+                public void setValue(double value) {
                     this.value = value;
                 }
 
@@ -509,14 +477,176 @@ public class ForecastBean {
             }
         }
 
+        public static class AlertBean {
+            /**
+             * status : ok
+             * content : [{"province":"江苏","status":"预警中","code":"0703","description":"江都区气象台2017年07月24日08时14分变更高温红色预警信号为高温橙色预警信号。预计今天我区大部分地区最高气温将升至39℃以上，请注意防范。","alertId":"32101241600000_20170724081541","city":"扬州","pubtimestamp":1.500855395E9,"latlon":[32.426564,119.567481],"county":"江都","request_status":"ok","location":"江苏扬州江都","title":"江都区气象局发布高温橙色预警[II级/严重]","regionId":"101190605"}]
+             */
+
+            private String status;
+            private List<ContentBean> content;
+
+            public String getStatus() {
+                return status;
+            }
+
+            public void setStatus(String status) {
+                this.status = status;
+            }
+
+            public List<ContentBean> getContent() {
+                return content;
+            }
+
+            public void setContent(List<ContentBean> content) {
+                this.content = content;
+            }
+
+            public static class ContentBean {
+                /**
+                 * province : 江苏
+                 * status : 预警中
+                 * code : 0703
+                 * description : 江都区气象台2017年07月24日08时14分变更高温红色预警信号为高温橙色预警信号。预计今天我区大部分地区最高气温将升至39℃以上，请注意防范。
+                 * alertId : 32101241600000_20170724081541
+                 * city : 扬州
+                 * pubtimestamp : 1.500855395E9
+                 * latlon : [32.426564,119.567481]
+                 * county : 江都
+                 * request_status : ok
+                 * location : 江苏扬州江都
+                 * title : 江都区气象局发布高温橙色预警[II级/严重]
+                 * regionId : 101190605
+                 */
+
+                private String province;
+                private String status;
+                private String code;
+                private String description;
+                private String alertId;
+                private String city;
+                private double pubtimestamp;
+                private String county;
+                private String request_status;
+                private String location;
+                private String title;
+                private String regionId;
+                private List<Double> latlon;
+
+                public String getProvince() {
+                    return province;
+                }
+
+                public void setProvince(String province) {
+                    this.province = province;
+                }
+
+                public String getStatus() {
+                    return status;
+                }
+
+                public void setStatus(String status) {
+                    this.status = status;
+                }
+
+                public String getCode() {
+                    return code;
+                }
+
+                public void setCode(String code) {
+                    this.code = code;
+                }
+
+                public String getDescription() {
+                    return description;
+                }
+
+                public void setDescription(String description) {
+                    this.description = description;
+                }
+
+                public String getAlertId() {
+                    return alertId;
+                }
+
+                public void setAlertId(String alertId) {
+                    this.alertId = alertId;
+                }
+
+                public String getCity() {
+                    return city;
+                }
+
+                public void setCity(String city) {
+                    this.city = city;
+                }
+
+                public double getPubtimestamp() {
+                    return pubtimestamp;
+                }
+
+                public void setPubtimestamp(double pubtimestamp) {
+                    this.pubtimestamp = pubtimestamp;
+                }
+
+                public String getCounty() {
+                    return county;
+                }
+
+                public void setCounty(String county) {
+                    this.county = county;
+                }
+
+                public String getRequest_status() {
+                    return request_status;
+                }
+
+                public void setRequest_status(String request_status) {
+                    this.request_status = request_status;
+                }
+
+                public String getLocation() {
+                    return location;
+                }
+
+                public void setLocation(String location) {
+                    this.location = location;
+                }
+
+                public String getTitle() {
+                    return title;
+                }
+
+                public void setTitle(String title) {
+                    this.title = title;
+                }
+
+                public String getRegionId() {
+                    return regionId;
+                }
+
+                public void setRegionId(String regionId) {
+                    this.regionId = regionId;
+                }
+
+                public List<Double> getLatlon() {
+                    return latlon;
+                }
+
+                public void setLatlon(List<Double> latlon) {
+                    this.latlon = latlon;
+                }
+            }
+        }
+
         public static class MinutelyBean {
             /**
              * status : ok
-             * description : 雨渐大，35分钟后转为大雨，不过一个半小时后雨会再次变小
-             * probability : [0.8228367567,0.9411128163,0.9276605248,0.9082266092]
+             * description : 未来两小时不会下雨，放心出门吧
+             * probability : [0,0,0,0]
              * datasource : radar
-             * precipitation_2h : [0.1508,0.1756,0.1988,0.2195,0.2368,0.25,0.2585,0.2627,0.2633,0.2609,0.2562,0.25,0.2427,0.2343,0.2247,0.2138,0.2014,0.1875,0.1721,0.1566,0.1426,0.1316,0.1252,0.125,0.1321,0.1454,0.1634,0.1844,0.2068,0.2292,0.2503,0.271,0.2925,0.3162,0.3432,0.375,0.4119,0.4513,0.4895,0.5231,0.5487,0.5625,0.5624,0.551,0.532,0.5095,0.4871,0.4688,0.4574,0.4526,0.4527,0.4564,0.4622,0.4688,0.4748,0.4802,0.4853,0.4901,0.495,0.5,0.5052,0.5097,0.5124,0.5125,0.5087,0.5,0.486,0.4684,0.4493,0.4311,0.416,0.4063,0.4033,0.4059,0.4117,0.4186,0.4244,0.4271,0.4249,0.4186,0.4093,0.3981,0.3863,0.375,0.3652,0.3572,0.351,0.3466,0.3442,0.3438,0.345,0.3463,0.3457,0.3412,0.3308,0.3125,0.2853,0.2518,0.2155,0.1799,0.1486,0.125,0.112,0.1095,0.1166,0.1326,0.1565,0.1875,0.2244,0.2639,0.3024,0.3361,0.3616,0.375,0.3741,0.362,0.3432,0.3222,0.3035,0.2917]
-             * precipitation : [0.1508,0.1756,0.1988,0.2195,0.2368,0.25,0.2585,0.2627,0.2633,0.2609,0.2562,0.25,0.2427,0.2343,0.2247,0.2138,0.2014,0.1875,0.1721,0.1566,0.1426,0.1316,0.1252,0.125,0.1321,0.1454,0.1634,0.1844,0.2068,0.2292,0.2503,0.271,0.2925,0.3162,0.3432,0.375,0.4119,0.4513,0.4895,0.5231,0.5487,0.5625,0.5624,0.551,0.532,0.5095,0.4871,0.4688,0.4574,0.4526,0.4527,0.4564,0.4622,0.4688,0.4748,0.4802,0.4853,0.4901,0.495,0.5]
+             * precipitation_2h : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+             * precipitation : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
              */
 
             private String status;
@@ -578,20 +708,19 @@ public class ForecastBean {
         public static class DailyBean {
             /**
              * status : ok
-             * coldRisk : [{"index":"3","desc":"易发","datetime":"2017-07-08"},{"index":"3","desc":"易发","datetime":"2017-07-09"},{"index":"3","desc":"易发","datetime":"2017-07-10"},{"index":"3","desc":"易发","datetime":"2017-07-11"},{"index":"3","desc":"易发","datetime":"2017-07-12"}]
-             * temperature : [{"date":"2017-07-08","max":30,"avg":26.75,"min":26.1},{"date":"2017-07-09","max":32,"avg":29.38,"min":26},{"date":"2017-07-10","max":32,"avg":28.91,"min":26},{"date":"2017-07-11","max":32,"avg":28.93,"min":26},{"date":"2017-07-12","max":32,"avg":29.08,"min":26}]
-             * skycon : [{"date":"2017-07-08","value":"RAIN"},{"date":"2017-07-09","value":"CLOUDY"},{"date":"2017-07-10","value":"RAIN"},{"date":"2017-07-11","value":"PARTLY_CLOUDY_DAY"},{"date":"2017-07-12","value":"PARTLY_CLOUDY_DAY"}]
-             * cloudrate : [{"date":"2017-07-08","max":1,"avg":0.94,"min":0.69},{"date":"2017-07-09","max":0.96,"avg":0.85,"min":0.72},{"date":"2017-07-10","max":0.93,"avg":0.78,"min":0.54},{"date":"2017-07-11","max":0.93,"avg":0.65,"min":0.44},{"date":"2017-07-12","max":0.93,"avg":0.66,"min":0.4}]
-             * aqi : [{"date":"2017-07-08","max":14,"avg":12.33,"min":0},{"date":"2017-07-09","max":22,"avg":18.83,"min":15},{"date":"2017-07-10","max":30,"avg":25.25,"min":19},{"date":"2017-07-11","max":35,"avg":31.5,"min":29},{"date":"2017-07-12","max":31,"avg":30.46,"min":29}]
-             * humidity : [{"date":"2017-07-08","max":0.81,"avg":0.78,"min":0.68},{"date":"2017-07-09","max":0.83,"avg":0.77,"min":0.67},{"date":"2017-07-10","max":0.85,"avg":0.78,"min":0.69},{"date":"2017-07-11","max":0.86,"avg":0.78,"min":0.71},{"date":"2017-07-12","max":0.85,"avg":0.76,"min":0.66}]
-             * astro : [{"date":"2017-07-08","sunset":{"time":"18:47"},"sunrise":{"time":"05:09"}},{"date":"2017-07-09","sunset":{"time":"18:47"},"sunrise":{"time":"05:09"}},{"date":"2017-07-10","sunset":{"time":"18:47"},"sunrise":{"time":"05:10"}},{"date":"2017-07-11","sunset":{"time":"18:46"},"sunrise":{"time":"05:10"}},{"date":"2017-07-12","sunset":{"time":"18:46"},"sunrise":{"time":"05:11"}}]
-             * pres : [{"date":"2017-07-08","max":98355.27,"avg":98277.94,"min":98167.86},{"date":"2017-07-09","max":98308.78,"avg":98117.08,"min":97946.29},{"date":"2017-07-10","max":98366.92,"avg":98142.03,"min":97897.98},{"date":"2017-07-11","max":98498.7,"avg":98387.6,"min":98268.74},{"date":"2017-07-12","max":98598.62,"avg":98421.92,"min":98258.59}]
-             * ultraviolet : [{"index":"1","desc":"最弱","datetime":"2017-07-08"},{"index":"2","desc":"弱","datetime":"2017-07-09"},{"index":"2","desc":"弱","datetime":"2017-07-10"},{"index":"2","desc":"弱","datetime":"2017-07-11"},{"index":"1","desc":"最弱","datetime":"2017-07-12"}]
-             * pm25 : [{"date":"2017-07-08","max":8,"avg":6.83,"min":1},{"date":"2017-07-09","max":14,"avg":11.96,"min":9},{"date":"2017-07-10","max":20,"avg":16.5,"min":12},{"date":"2017-07-11","max":24,"avg":21.17,"min":19},{"date":"2017-07-12","max":21,"avg":20.46,"min":19}]
-             * dressing : [{"index":"2","desc":"很热","datetime":"2017-07-08"},{"index":"2","desc":"很热","datetime":"2017-07-09"},{"index":"2","desc":"很热","datetime":"2017-07-10"},{"index":"2","desc":"很热","datetime":"2017-07-11"},{"index":"2","desc":"很热","datetime":"2017-07-12"}]
-             * carWashing : [{"index":"3","desc":"较不适宜","datetime":"2017-07-08"},{"index":"3","desc":"较不适宜","datetime":"2017-07-09"},{"index":"3","desc":"较不适宜","datetime":"2017-07-10"},{"index":"3","desc":"较不适宜","datetime":"2017-07-11"},{"index":"1","desc":"适宜","datetime":"2017-07-12"}]
-             * precipitation : [{"date":"2017-07-08","max":7.2052,"avg":2.0169,"min":0},{"date":"2017-07-09","max":0.0651,"avg":0.0119,"min":0},{"date":"2017-07-10","max":0.5746,"avg":0.1188,"min":0},{"date":"2017-07-11","max":0.0739,"avg":0.0256,"min":0},{"date":"2017-07-12","max":0,"avg":0,"min":0}]
-             * wind : [{"date":"2017-07-08","max":{"direction":170.9,"speed":5.36},"avg":{"direction":139.32,"speed":3.13},"min":{"direction":254.02,"speed":0.32}},{"date":"2017-07-09","max":{"direction":206.81,"speed":6.3},"avg":{"direction":222.24,"speed":3.74},"min":{"direction":105.88,"speed":0.56}},{"date":"2017-07-10","max":{"direction":207.07,"speed":6.66},"avg":{"direction":222.41,"speed":4.72},"min":{"direction":280.07,"speed":2.32}},{"date":"2017-07-11","max":{"direction":179.79,"speed":5.61},"avg":{"direction":169.08,"speed":4.78},"min":{"direction":286.34,"speed":3.21}},{"date":"2017-07-12","max":{"direction":151.61,"speed":9.78},"avg":{"direction":218.76,"speed":5.91},"min":{"direction":99.86,"speed":1.82}}]
+             * coldRisk : [{"index":"4","desc":"极易发","datetime":"2017-07-24"},{"index":"4","desc":"极易发","datetime":"2017-07-25"},{"index":"4","desc":"极易发","datetime":"2017-07-26"},{"index":"4","desc":"极易发","datetime":"2017-07-27"},{"index":"4","desc":"极易发","datetime":"2017-07-28"},{"index":"4","desc":"极易发","datetime":"2017-07-29"},{"index":"4","desc":"极易发","datetime":"2017-07-30"},{"index":"4","desc":"极易发","datetime":"2017-07-31"},{"index":"3","desc":"易发","datetime":"2017-08-01"},{"index":"3","desc":"易发","datetime":"2017-08-02"},{"index":"4","desc":"极易发","datetime":"2017-08-03"},{"index":"4","desc":"极易发","datetime":"2017-08-04"},{"index":"4","desc":"极易发","datetime":"2017-08-05"},{"index":"4","desc":"极易发","datetime":"2017-08-06"},{"index":"4","desc":"极易发","datetime":"2017-08-07"}]
+             * temperature : [{"date":"2017-07-24","max":37.21,"avg":31.31,"min":28.13},{"date":"2017-07-25","max":37.18,"avg":32.68,"min":28.16},{"date":"2017-07-26","max":36.48,"avg":30.99,"min":26.53},{"date":"2017-07-27","max":36.04,"avg":30.59,"min":25.82},{"date":"2017-07-28","max":35.61,"avg":30.38,"min":26.2},{"date":"2017-07-29","max":34.33,"avg":29.37,"min":25.41},{"date":"2017-07-30","max":33.37,"avg":29.04,"min":25.78},{"date":"2017-07-31","max":34.56,"avg":29.13,"min":25.98},{"date":"2017-08-01","max":28.28,"avg":26.76,"min":25.6},{"date":"2017-08-02","max":30.03,"avg":27.34,"min":25.5},{"date":"2017-08-03","max":32.75,"avg":29.82,"min":25.66},{"date":"2017-08-04","max":32.91,"avg":29.15,"min":25.44},{"date":"2017-08-05","max":33.08,"avg":28.87,"min":25},{"date":"2017-08-06","max":32.27,"avg":26.38,"min":20.51},{"date":"2017-08-07","max":32.41,"avg":25.36,"min":18.33}]
+             * skycon : [{"date":"2017-07-24","value":"PARTLY_CLOUDY_NIGHT"},{"date":"2017-07-25","value":"CLEAR_DAY"},{"date":"2017-07-26","value":"CLEAR_DAY"},{"date":"2017-07-27","value":"CLEAR_DAY"},{"date":"2017-07-28","value":"CLEAR_DAY"},{"date":"2017-07-29","value":"RAIN"},{"date":"2017-07-30","value":"RAIN"},{"date":"2017-07-31","value":"RAIN"},{"date":"2017-08-01","value":"RAIN"},{"date":"2017-08-02","value":"RAIN"},{"date":"2017-08-03","value":"RAIN"},{"date":"2017-08-04","value":"RAIN"},{"date":"2017-08-05","value":"RAIN"},{"date":"2017-08-06","value":"CLEAR_DAY"},{"date":"2017-08-07","value":"CLEAR_DAY"}]
+             * cloudrate : [{"date":"2017-07-24","max":0.95,"avg":0.33,"min":0.15},{"date":"2017-07-25","max":0.32,"avg":0.19,"min":0},{"date":"2017-07-26","max":0.38,"avg":0.15,"min":0},{"date":"2017-07-27","max":0.2,"avg":0.08,"min":0},{"date":"2017-07-28","max":0.05,"avg":0.01,"min":0},{"date":"2017-07-29","max":0.9,"avg":0.27,"min":0},{"date":"2017-07-30","max":1,"avg":0.44,"min":0},{"date":"2017-07-31","max":1,"avg":0.73,"min":0.23},{"date":"2017-08-01","max":1,"avg":1,"min":0.99},{"date":"2017-08-02","max":1,"avg":0.65,"min":0},{"date":"2017-08-03","max":0.36,"avg":0.24,"min":0},{"date":"2017-08-04","max":0.53,"avg":0.49,"min":0.39},{"date":"2017-08-05","max":0.66,"avg":0.39,"min":0.08},{"date":"2017-08-06","max":0.11,"avg":0.03,"min":0},{"date":"2017-08-07","max":0.01,"avg":0,"min":0}]
+             * aqi : [{"date":"2017-07-24","max":175,"avg":67.5,"min":56},{"date":"2017-07-25","max":72,"avg":61.96,"min":49},{"date":"2017-07-26","max":66,"avg":58.17,"min":53},{"date":"2017-07-27","max":61,"avg":54.5,"min":45},{"date":"2017-07-28","max":58,"avg":49.17,"min":39},{"date":"2017-07-29","max":50,"avg":41.12,"min":33},{"date":"2017-07-30","max":43,"avg":34.08,"min":27},{"date":"2017-07-31","max":35,"avg":29.38,"min":24},{"date":"2017-08-01","max":35,"avg":31.88,"min":26},{"date":"2017-08-02","max":35,"avg":30,"min":26},{"date":"2017-08-03","max":33,"avg":31.29,"min":30},{"date":"2017-08-04","max":67,"avg":52.83,"min":33},{"date":"2017-08-05","max":59,"avg":55.04,"min":52},{"date":"2017-08-06","max":80,"avg":63.21,"min":45},{"date":"2017-08-07","max":78,"avg":60.88,"min":45}]
+             * humidity : [{"date":"2017-07-24","max":0.71,"avg":0.61,"min":0.46},{"date":"2017-07-25","max":0.89,"avg":0.65,"min":0.5},{"date":"2017-07-26","max":0.96,"avg":0.77,"min":0.54},{"date":"2017-07-27","max":0.9,"avg":0.74,"min":0.52},{"date":"2017-07-28","max":0.86,"avg":0.73,"min":0.53},{"date":"2017-07-29","max":0.95,"avg":0.8,"min":0.59},{"date":"2017-07-30","max":0.96,"avg":0.84,"min":0.64},{"date":"2017-07-31","max":0.91,"avg":0.8,"min":0.61},{"date":"2017-08-01","max":0.96,"avg":0.92,"min":0.88},{"date":"2017-08-02","max":0.95,"avg":0.89,"min":0.79},{"date":"2017-08-03","max":0.96,"avg":0.82,"min":0.73},{"date":"2017-08-04","max":1,"avg":0.87,"min":0.74},{"date":"2017-08-05","max":0.94,"avg":0.71,"min":0.46},{"date":"2017-08-06","max":0.89,"avg":0.64,"min":0.38},{"date":"2017-08-07","max":0.78,"avg":0.62,"min":0.46}]
+             * astro : [{"date":"2017-07-24","sunset":{"time":"19:05"},"sunrise":{"time":"05:10"}},{"date":"2017-07-25","sunset":{"time":"19:04"},"sunrise":{"time":"05:10"}},{"date":"2017-07-26","sunset":{"time":"19:03"},"sunrise":{"time":"05:11"}},{"date":"2017-07-27","sunset":{"time":"19:03"},"sunrise":{"time":"05:12"}},{"date":"2017-07-28","sunset":{"time":"19:02"},"sunrise":{"time":"05:12"}},{"date":"2017-07-29","sunset":{"time":"19:01"},"sunrise":{"time":"05:13"}},{"date":"2017-07-30","sunset":{"time":"19:01"},"sunrise":{"time":"05:14"}},{"date":"2017-07-31","sunset":{"time":"19:00"},"sunrise":{"time":"05:14"}},{"date":"2017-08-01","sunset":{"time":"18:59"},"sunrise":{"time":"05:15"}},{"date":"2017-08-02","sunset":{"time":"18:58"},"sunrise":{"time":"05:16"}},{"date":"2017-08-03","sunset":{"time":"18:57"},"sunrise":{"time":"05:16"}},{"date":"2017-08-04","sunset":{"time":"18:56"},"sunrise":{"time":"05:17"}},{"date":"2017-08-05","sunset":{"time":"18:56"},"sunrise":{"time":"05:18"}},{"date":"2017-08-06","sunset":{"time":"18:55"},"sunrise":{"time":"05:18"}},{"date":"2017-08-07","sunset":{"time":"18:54"},"sunrise":{"time":"05:19"}}]
+             * ultraviolet : [{"index":"4","desc":"强","datetime":"2017-07-24"},{"index":"4","desc":"强","datetime":"2017-07-25"},{"index":"4","desc":"强","datetime":"2017-07-26"},{"index":"4","desc":"强","datetime":"2017-07-27"},{"index":"4","desc":"强","datetime":"2017-07-28"},{"index":"4","desc":"强","datetime":"2017-07-29"},{"index":"4","desc":"强","datetime":"2017-07-30"},{"index":"3","desc":"中等","datetime":"2017-07-31"},{"index":"1","desc":"最弱","datetime":"2017-08-01"},{"index":"2","desc":"弱","datetime":"2017-08-02"},{"index":"4","desc":"强","datetime":"2017-08-03"},{"index":"3","desc":"中等","datetime":"2017-08-04"},{"index":"3","desc":"中等","datetime":"2017-08-05"},{"index":"4","desc":"强","datetime":"2017-08-06"},{"index":"4","desc":"强","datetime":"2017-08-07"}]
+             * pm25 : [{"date":"2017-07-24","max":80,"avg":40,"min":34},{"date":"2017-07-25","max":52,"avg":44.12,"min":34},{"date":"2017-07-26","max":47,"avg":41,"min":37},{"date":"2017-07-27","max":43,"avg":38.12,"min":31},{"date":"2017-07-28","max":41,"avg":34.17,"min":27},{"date":"2017-07-29","max":35,"avg":28.29,"min":22},{"date":"2017-07-30","max":30,"avg":23.04,"min":18},{"date":"2017-07-31","max":24,"avg":19.62,"min":16},{"date":"2017-08-01","max":24,"avg":21.42,"min":17},{"date":"2017-08-02","max":24,"avg":20.04,"min":17},{"date":"2017-08-03","max":22,"avg":20.96,"min":20},{"date":"2017-08-04","max":48,"avg":37.12,"min":22},{"date":"2017-08-05","max":42,"avg":38.42,"min":36},{"date":"2017-08-06","max":59,"avg":45.33,"min":31},{"date":"2017-08-07","max":57,"avg":43.25,"min":31}]
+             * dressing : [{"index":"2","desc":"很热","datetime":"2017-07-24"},{"index":"1","desc":"极热","datetime":"2017-07-25"},{"index":"2","desc":"很热","datetime":"2017-07-26"},{"index":"2","desc":"很热","datetime":"2017-07-27"},{"index":"2","desc":"很热","datetime":"2017-07-28"},{"index":"3","desc":"热","datetime":"2017-07-29"},{"index":"3","desc":"热","datetime":"2017-07-30"},{"index":"3","desc":"热","datetime":"2017-07-31"},{"index":"2","desc":"很热","datetime":"2017-08-01"},{"index":"3","desc":"热","datetime":"2017-08-02"},{"index":"3","desc":"热","datetime":"2017-08-03"},{"index":"2","desc":"很热","datetime":"2017-08-04"},{"index":"2","desc":"很热","datetime":"2017-08-05"},{"index":"2","desc":"很热","datetime":"2017-08-06"},{"index":"3","desc":"热","datetime":"2017-08-07"}]
+             * carWashing : [{"index":"1","desc":"适宜","datetime":"2017-07-24"},{"index":"1","desc":"适宜","datetime":"2017-07-25"},{"index":"1","desc":"适宜","datetime":"2017-07-26"},{"index":"1","desc":"适宜","datetime":"2017-07-27"},{"index":"1","desc":"适宜","datetime":"2017-07-28"},{"index":"3","desc":"较不适宜","datetime":"2017-07-29"},{"index":"3","desc":"较不适宜","datetime":"2017-07-30"},{"index":"3","desc":"较不适宜","datetime":"2017-07-31"},{"index":"3","desc":"较不适宜","datetime":"2017-08-01"},{"index":"3","desc":"较不适宜","datetime":"2017-08-02"},{"index":"3","desc":"较不适宜","datetime":"2017-08-03"},{"index":"3","desc":"较不适宜","datetime":"2017-08-04"},{"index":"3","desc":"较不适宜","datetime":"2017-08-05"},{"index":"1","desc":"适宜","datetime":"2017-08-06"},{"index":"1","desc":"适宜","datetime":"2017-08-07"}]
+             * precipitation : [{"date":"2017-07-24","max":0,"avg":0,"min":0},{"date":"2017-07-25","max":0,"avg":0,"min":0},{"date":"2017-07-26","max":0,"avg":0,"min":0},{"date":"2017-07-27","max":0,"avg":0,"min":0},{"date":"2017-07-28","max":0,"avg":0,"min":0},{"date":"2017-07-29","max":0.9826,"avg":0.1967,"min":0},{"date":"2017-07-30","max":2.7369,"avg":0.6571,"min":0},{"date":"2017-07-31","max":1.7798,"avg":0.3455,"min":0},{"date":"2017-08-01","max":2.108,"avg":1.0671,"min":0.205},{"date":"2017-08-02","max":0.8963,"avg":0.2693,"min":0},{"date":"2017-08-03","max":0.5269,"avg":0.2642,"min":0},{"date":"2017-08-04","max":0.9411,"avg":0.5805,"min":0.26},{"date":"2017-08-05","max":0.6584,"avg":0.1291,"min":0},{"date":"2017-08-06","max":0,"avg":0,"min":0},{"date":"2017-08-07","max":0,"avg":0,"min":0}]
+             * wind : [{"date":"2017-07-24","max":{"direction":248.5,"speed":7.78},"avg":{"direction":210.41,"speed":5.32},"min":{"direction":283.27,"speed":1.09}},{"date":"2017-07-25","max":{"direction":76.73,"speed":19.98},"avg":{"direction":19.33,"speed":10.23},"min":{"direction":242.35,"speed":6.24}},{"date":"2017-07-26","max":{"direction":104.27,"speed":20.16},"avg":{"direction":100.05,"speed":12.23},"min":{"direction":108.2,"speed":6.32}},{"date":"2017-07-27","max":{"direction":100.12,"speed":19.99},"avg":{"direction":106.34,"speed":12.74},"min":{"direction":116.26,"speed":9.86}},{"date":"2017-07-28","max":{"direction":95.35,"speed":21.59},"avg":{"direction":102.64,"speed":14.53},"min":{"direction":117.02,"speed":9.83}},{"date":"2017-07-29","max":{"direction":90.66,"speed":21.17},"avg":{"direction":92.95,"speed":16.6},"min":{"direction":84.56,"speed":10.49}},{"date":"2017-07-30","max":{"direction":95.39,"speed":21.54},"avg":{"direction":98.08,"speed":17.31},"min":{"direction":92.9,"speed":11.82}},{"date":"2017-07-31","max":{"direction":104.33,"speed":26.3},"avg":{"direction":107.29,"speed":21.99},"min":{"direction":103.09,"speed":14.77}},{"date":"2017-08-01","max":{"direction":116.83,"speed":19.53},"avg":{"direction":93.41,"speed":14.73},"min":{"direction":68.97,"speed":11.19}},{"date":"2017-08-02","max":{"direction":72.31,"speed":31.3},"avg":{"direction":73.16,"speed":22.02},"min":{"direction":75.24,"speed":11.62}},{"date":"2017-08-03","max":{"direction":6.36,"speed":20.54},"avg":{"direction":21.91,"speed":17.49},"min":{"direction":38.95,"speed":14.68}},{"date":"2017-08-04","max":{"direction":321.15,"speed":23.42},"avg":{"direction":340.79,"speed":13.34},"min":{"direction":58.13,"speed":4.91}},{"date":"2017-08-05","max":{"direction":322.63,"speed":18.98},"avg":{"direction":329.88,"speed":14.78},"min":{"direction":322.13,"speed":13.37}},{"date":"2017-08-06","max":{"direction":13.4,"speed":12.73},"avg":{"direction":13.63,"speed":8.85},"min":{"direction":17.03,"speed":5.4}},{"date":"2017-08-07","max":{"direction":64.7,"speed":13.1},"avg":{"direction":78.26,"speed":8.32},"min":{"direction":64.28,"speed":4.35}}]
              */
 
             private String status;
@@ -602,13 +731,13 @@ public class ForecastBean {
             private List<AqiBeanX> aqi;
             private List<HumidityBeanX> humidity;
             private List<AstroBean> astro;
-            private List<PresBeanX> pres;
             private List<UltravioletBean> ultraviolet;
             private List<Pm25BeanX> pm25;
             private List<DressingBean> dressing;
             private List<CarWashingBean> carWashing;
             private List<PrecipitationBeanX> precipitation;
             private List<WindBeanX> wind;
+            private List<DescBean> desc;
 
             public String getStatus() {
                 return status;
@@ -674,14 +803,6 @@ public class ForecastBean {
                 this.astro = astro;
             }
 
-            public List<PresBeanX> getPres() {
-                return pres;
-            }
-
-            public void setPres(List<PresBeanX> pres) {
-                this.pres = pres;
-            }
-
             public List<UltravioletBean> getUltraviolet() {
                 return ultraviolet;
             }
@@ -730,11 +851,19 @@ public class ForecastBean {
                 this.wind = wind;
             }
 
+            public List<DescBean> getDesc() {
+                return desc;
+            };
+
+            public void setDesc(List<DescBean> desc) {
+                this.desc = desc;
+            };
+
             public static class ColdRiskBean {
                 /**
-                 * index : 3
-                 * desc : 易发
-                 * datetime : 2017-07-08
+                 * index : 4
+                 * desc : 极易发
+                 * datetime : 2017-07-24
                  */
 
                 private String index;
@@ -768,16 +897,16 @@ public class ForecastBean {
 
             public static class TemperatureBeanX {
                 /**
-                 * date : 2017-07-08
-                 * max : 30
-                 * avg : 26.75
-                 * min : 26.1
+                 * date : 2017-07-24
+                 * max : 37.21
+                 * avg : 31.31
+                 * min : 28.13
                  */
 
                 private String date;
-                private float max;
-                private float avg;
-                private float min;
+                private double max;
+                private double avg;
+                private double min;
 
                 public String getDate() {
                     return date;
@@ -787,35 +916,35 @@ public class ForecastBean {
                     this.date = date;
                 }
 
-                public float getMax() {
+                public double getMax() {
                     return max;
                 }
 
-                public void setMax(float max) {
+                public void setMax(double max) {
                     this.max = max;
                 }
 
-                public float getAvg() {
+                public double getAvg() {
                     return avg;
                 }
 
-                public void setAvg(float avg) {
+                public void setAvg(double avg) {
                     this.avg = avg;
                 }
 
-                public float getMin() {
+                public double getMin() {
                     return min;
                 }
 
-                public void setMin(float min) {
+                public void setMin(double min) {
                     this.min = min;
                 }
             }
 
             public static class SkyconBeanX {
                 /**
-                 * date : 2017-07-08
-                 * value : RAIN
+                 * date : 2017-07-24
+                 * value : PARTLY_CLOUDY_NIGHT
                  */
 
                 private String date;
@@ -840,16 +969,16 @@ public class ForecastBean {
 
             public static class CloudrateBeanX {
                 /**
-                 * date : 2017-07-08
-                 * max : 1
-                 * avg : 0.94
-                 * min : 0.69
+                 * date : 2017-07-24
+                 * max : 0.95
+                 * avg : 0.33
+                 * min : 0.15
                  */
 
                 private String date;
-                private int max;
-                private float avg;
-                private float min;
+                private double max;
+                private double avg;
+                private double min;
 
                 public String getDate() {
                     return date;
@@ -859,43 +988,43 @@ public class ForecastBean {
                     this.date = date;
                 }
 
-                public int getMax() {
+                public double getMax() {
                     return max;
                 }
 
-                public void setMax(int max) {
+                public void setMax(double max) {
                     this.max = max;
                 }
 
-                public float getAvg() {
+                public double getAvg() {
                     return avg;
                 }
 
-                public void setAvg(float avg) {
+                public void setAvg(double avg) {
                     this.avg = avg;
                 }
 
-                public float getMin() {
+                public double getMin() {
                     return min;
                 }
 
-                public void setMin(float min) {
+                public void setMin(double min) {
                     this.min = min;
                 }
             }
 
             public static class AqiBeanX {
                 /**
-                 * date : 2017-07-08
-                 * max : 14
-                 * avg : 12.33
-                 * min : 0
+                 * date : 2017-07-24
+                 * max : 175.0
+                 * avg : 67.5
+                 * min : 56.0
                  */
 
                 private String date;
-                private int max;
-                private float avg;
-                private int min;
+                private double max;
+                private double avg;
+                private double min;
 
                 public String getDate() {
                     return date;
@@ -905,43 +1034,43 @@ public class ForecastBean {
                     this.date = date;
                 }
 
-                public int getMax() {
+                public double getMax() {
                     return max;
                 }
 
-                public void setMax(int max) {
+                public void setMax(double max) {
                     this.max = max;
                 }
 
-                public float getAvg() {
+                public double getAvg() {
                     return avg;
                 }
 
-                public void setAvg(float avg) {
+                public void setAvg(double avg) {
                     this.avg = avg;
                 }
 
-                public int getMin() {
+                public double getMin() {
                     return min;
                 }
 
-                public void setMin(int min) {
+                public void setMin(double min) {
                     this.min = min;
                 }
             }
 
             public static class HumidityBeanX {
                 /**
-                 * date : 2017-07-08
-                 * max : 0.81
-                 * avg : 0.78
-                 * min : 0.68
+                 * date : 2017-07-24
+                 * max : 0.71
+                 * avg : 0.61
+                 * min : 0.46
                  */
 
                 private String date;
-                private float max;
-                private float avg;
-                private float min;
+                private double max;
+                private double avg;
+                private double min;
 
                 public String getDate() {
                     return date;
@@ -951,36 +1080,36 @@ public class ForecastBean {
                     this.date = date;
                 }
 
-                public float getMax() {
+                public double getMax() {
                     return max;
                 }
 
-                public void setMax(float max) {
+                public void setMax(double max) {
                     this.max = max;
                 }
 
-                public float getAvg() {
+                public double getAvg() {
                     return avg;
                 }
 
-                public void setAvg(float avg) {
+                public void setAvg(double avg) {
                     this.avg = avg;
                 }
 
-                public float getMin() {
+                public double getMin() {
                     return min;
                 }
 
-                public void setMin(float min) {
+                public void setMin(double min) {
                     this.min = min;
                 }
             }
 
             public static class AstroBean {
                 /**
-                 * date : 2017-07-08
-                 * sunset : {"time":"18:47"}
-                 * sunrise : {"time":"05:09"}
+                 * date : 2017-07-24
+                 * sunset : {"time":"19:05"}
+                 * sunrise : {"time":"05:10"}
                  */
 
                 private String date;
@@ -1013,7 +1142,7 @@ public class ForecastBean {
 
                 public static class SunsetBean {
                     /**
-                     * time : 18:47
+                     * time : 19:05
                      */
 
                     private String time;
@@ -1029,7 +1158,7 @@ public class ForecastBean {
 
                 public static class SunriseBean {
                     /**
-                     * time : 05:09
+                     * time : 05:10
                      */
 
                     private String time;
@@ -1044,57 +1173,11 @@ public class ForecastBean {
                 }
             }
 
-            public static class PresBeanX {
-                /**
-                 * date : 2017-07-08
-                 * max : 98355.27
-                 * avg : 98277.94
-                 * min : 98167.86
-                 */
-
-                private String date;
-                private float max;
-                private float avg;
-                private float min;
-
-                public String getDate() {
-                    return date;
-                }
-
-                public void setDate(String date) {
-                    this.date = date;
-                }
-
-                public float getMax() {
-                    return max;
-                }
-
-                public void setMax(float max) {
-                    this.max = max;
-                }
-
-                public float getAvg() {
-                    return avg;
-                }
-
-                public void setAvg(float avg) {
-                    this.avg = avg;
-                }
-
-                public float getMin() {
-                    return min;
-                }
-
-                public void setMin(float min) {
-                    this.min = min;
-                }
-            }
-
             public static class UltravioletBean {
                 /**
-                 * index : 1
-                 * desc : 最弱
-                 * datetime : 2017-07-08
+                 * index : 4
+                 * desc : 强
+                 * datetime : 2017-07-24
                  */
 
                 private String index;
@@ -1128,16 +1211,16 @@ public class ForecastBean {
 
             public static class Pm25BeanX {
                 /**
-                 * date : 2017-07-08
-                 * max : 8
-                 * avg : 6.83
-                 * min : 1
+                 * date : 2017-07-24
+                 * max : 80.0
+                 * avg : 40.0
+                 * min : 34.0
                  */
 
                 private String date;
-                private int max;
-                private float avg;
-                private int min;
+                private double max;
+                private double avg;
+                private double min;
 
                 public String getDate() {
                     return date;
@@ -1147,27 +1230,27 @@ public class ForecastBean {
                     this.date = date;
                 }
 
-                public int getMax() {
+                public double getMax() {
                     return max;
                 }
 
-                public void setMax(int max) {
+                public void setMax(double max) {
                     this.max = max;
                 }
 
-                public float getAvg() {
+                public double getAvg() {
                     return avg;
                 }
 
-                public void setAvg(float avg) {
+                public void setAvg(double avg) {
                     this.avg = avg;
                 }
 
-                public int getMin() {
+                public double getMin() {
                     return min;
                 }
 
-                public void setMin(int min) {
+                public void setMin(double min) {
                     this.min = min;
                 }
             }
@@ -1176,7 +1259,7 @@ public class ForecastBean {
                 /**
                  * index : 2
                  * desc : 很热
-                 * datetime : 2017-07-08
+                 * datetime : 2017-07-24
                  */
 
                 private String index;
@@ -1210,9 +1293,9 @@ public class ForecastBean {
 
             public static class CarWashingBean {
                 /**
-                 * index : 3
-                 * desc : 较不适宜
-                 * datetime : 2017-07-08
+                 * index : 1
+                 * desc : 适宜
+                 * datetime : 2017-07-24
                  */
 
                 private String index;
@@ -1246,16 +1329,16 @@ public class ForecastBean {
 
             public static class PrecipitationBeanX {
                 /**
-                 * date : 2017-07-08
-                 * max : 7.2052
-                 * avg : 2.0169
-                 * min : 0
+                 * date : 2017-07-24
+                 * max : 0.0
+                 * avg : 0.0
+                 * min : 0.0
                  */
 
                 private String date;
-                private float max;
-                private float avg;
-                private float min;
+                private double max;
+                private double avg;
+                private double min;
 
                 public String getDate() {
                     return date;
@@ -1265,37 +1348,37 @@ public class ForecastBean {
                     this.date = date;
                 }
 
-                public float getMax() {
+                public double getMax() {
                     return max;
                 }
 
-                public void setMax(float max) {
+                public void setMax(double max) {
                     this.max = max;
                 }
 
-                public float getAvg() {
+                public double getAvg() {
                     return avg;
                 }
 
-                public void setAvg(float avg) {
+                public void setAvg(double avg) {
                     this.avg = avg;
                 }
 
-                public float getMin() {
+                public double getMin() {
                     return min;
                 }
 
-                public void setMin(float min) {
+                public void setMin(double min) {
                     this.min = min;
                 }
             }
 
             public static class WindBeanX {
                 /**
-                 * date : 2017-07-08
-                 * max : {"direction":170.9,"speed":5.36}
-                 * avg : {"direction":139.32,"speed":3.13}
-                 * min : {"direction":254.02,"speed":0.32}
+                 * date : 2017-07-24
+                 * max : {"direction":248.5,"speed":7.78}
+                 * avg : {"direction":210.41,"speed":5.32}
+                 * min : {"direction":283.27,"speed":1.09}
                  */
 
                 private String date;
@@ -1337,82 +1420,108 @@ public class ForecastBean {
 
                 public static class MaxBean {
                     /**
-                     * direction : 170.9
-                     * speed : 5.36
+                     * direction : 248.5
+                     * speed : 7.78
                      */
 
-                    private float direction;
-                    private float speed;
+                    private double direction;
+                    private double speed;
 
-                    public float getDirection() {
+                    public double getDirection() {
                         return direction;
                     }
 
-                    public void setDirection(float direction) {
+                    public void setDirection(double direction) {
                         this.direction = direction;
                     }
 
-                    public float getSpeed() {
+                    public double getSpeed() {
                         return speed;
                     }
 
-                    public void setSpeed(float speed) {
+                    public void setSpeed(double speed) {
                         this.speed = speed;
                     }
                 }
 
                 public static class AvgBean {
                     /**
-                     * direction : 139.32
-                     * speed : 3.13
+                     * direction : 210.41
+                     * speed : 5.32
                      */
 
-                    private float direction;
-                    private float speed;
+                    private double direction;
+                    private double speed;
 
-                    public float getDirection() {
+                    public double getDirection() {
                         return direction;
                     }
 
-                    public void setDirection(float direction) {
+                    public void setDirection(double direction) {
                         this.direction = direction;
                     }
 
-                    public float getSpeed() {
+                    public double getSpeed() {
                         return speed;
                     }
 
-                    public void setSpeed(float speed) {
+                    public void setSpeed(double speed) {
                         this.speed = speed;
                     }
                 }
 
                 public static class MinBean {
                     /**
-                     * direction : 254.02
-                     * speed : 0.32
+                     * direction : 283.27
+                     * speed : 1.09
                      */
 
-                    private float direction;
-                    private float speed;
+                    private double direction;
+                    private double speed;
 
-                    public float getDirection() {
+                    public double getDirection() {
                         return direction;
                     }
 
-                    public void setDirection(float direction) {
+                    public void setDirection(double direction) {
                         this.direction = direction;
                     }
 
-                    public float getSpeed() {
+                    public double getSpeed() {
                         return speed;
                     }
 
-                    public void setSpeed(float speed) {
+                    public void setSpeed(double speed) {
                         this.speed = speed;
                     }
                 }
             }
+
+            public static class DescBean {
+                /**
+                 * date : 2017-07-21
+                 * value : 多云
+                 */
+
+                private String date;
+                private String value;
+
+                public String getDate() {
+                    return date;
+                }
+
+                public void setDate(String date) {
+                    this.date = date;
+                }
+
+                public String getValue() {
+                    return value;
+                }
+
+                public void setValue(String value) {
+                    this.value = value;
+                }
+            };
         }
     }
 }

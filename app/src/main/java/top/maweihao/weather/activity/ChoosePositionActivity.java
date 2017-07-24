@@ -27,6 +27,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import top.maweihao.weather.R;
+import top.maweihao.weather.adapter.ChoosePositionRecyclerViewAdapter;
 import top.maweihao.weather.contract.ChoosePositionActivityContract;
 import top.maweihao.weather.db.City;
 import top.maweihao.weather.db.County;
