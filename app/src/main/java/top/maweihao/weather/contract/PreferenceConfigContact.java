@@ -11,6 +11,7 @@ import github.hellocsl.simpleconfig.annotation.GET;
 
 public interface PreferenceConfigContact {
     String COUNTY_NAME = "countyName";
+    String LOCATION_DETAIL = "location_detail";
     String AUTO_LOCATE = "auto_locate";
     String COUNTY_NAME_LAST_UPDATE_TIME = "countyName_last_update_time";
     String REFRESH_INTERVAL = "refresh_interval";

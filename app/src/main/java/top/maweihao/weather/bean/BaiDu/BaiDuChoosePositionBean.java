@@ -10,7 +10,7 @@ public class BaiDuChoosePositionBean {
 
     /**
      * status : 0
-     * result : {"location":{"lng":103.91332638625914,"lat":25.3600574715727},"precise":0,"confidence":14,"level":"区县"}
+     * result : {"title":{"lng":103.91332638625914,"lat":25.3600574715727},"precise":0,"confidence":14,"level":"区县"}
      */
 
     private int status;
@@ -34,7 +34,7 @@ public class BaiDuChoosePositionBean {
 
     public static class ResultBean {
         /**
-         * location : {"lng":103.91332638625914,"lat":25.3600574715727}
+         * title : {"lng":103.91332638625914,"lat":25.3600574715727}
          * precise : 0
          * confidence : 14
          * level : 区县

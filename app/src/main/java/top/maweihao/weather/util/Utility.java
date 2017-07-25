@@ -437,13 +437,5 @@ public class Utility {
         return alm.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
-    /**
-     * 根据
-     * @return
-     */
-    public static int chooseAlertIcon() {
-        // to finish
-        return 0;
-    }
 }
 

@@ -154,7 +154,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                 beforeRequestWeather(getAutoLocate ? THROUGH_LOCATE : THROUGH_CHOOSE_POSITION);
             }
         } else {
-//            全量刷新
             if (!TextUtils.isEmpty(getCountyName))
                 countyName = getCountyName;
             beforeRequestWeather(getAutoLocate ? THROUGH_LOCATE : THROUGH_CHOOSE_POSITION);
@@ -184,7 +183,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             case THROUGH_COORDINATE:
 //                locateModeImage.setVisibility(View.INVISIBLE);
 //                locateMode.setVisibility(View.INVISIBLE);
-
                 locationCoordinates = configContact.getCoordinate();
 //                initRequireUrl();
                 afterGetCoordinate();
@@ -235,7 +233,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
         String countyName = location.getDistrict();
         if (DEBUG) {
             Log.d(TAG, "locateSuccess: locationCoordinates == " + locationCoordinates);
-            Log.d(TAG, "locateSuccess: location: " + countyName + location.getStreet());
+            Log.d(TAG, "locateSuccess: title: " + countyName + location.getStreet());
         }
 
         configContact.applyCountyName(countyName);
@@ -262,11 +260,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             locationCoordinates = String.valueOf(location.getLongitude()) + ',' + String.valueOf(location.getLatitude());
             if (DEBUG)
                 Log.d(TAG, "GetCoordinateByLocate: locationCoordinates = " + locationCoordinates);
-//            SharedPreferences.Editor editor = PreferenceManager
-//                    .getDefaultSharedPreferences(context).edit();
-//            editor.putString("coordinate", locationCoordinates);
-//            editor.putLong("coordinate_last_update", System.currentTimeMillis());
-//            editor.apply();
             configContact.applyCoordinate(locationCoordinates);
             configContact.applyCoordinateLastUpdateTime(System.currentTimeMillis());
 
@@ -274,7 +267,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             afterGetCoordinate();
         } else {
             if (DEBUG)
-                Log.d(TAG, "requestLocation: location == null, switch to IP method");
+                Log.d(TAG, "requestLocation: title == null, switch to IP method");
             beforeRequestWeather(THROUGH_IP);
         }
     }
@@ -354,7 +347,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
-                presenter.toastMessage("load full weather failed");
+                presenter.toastMessage("load weather forecast failed");
             }
 
             @Override
@@ -519,7 +512,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
 
                     presenter.setCounty(countyName);
                 } else {
-                    presenter.toastMessage("getCountyByCoordinate 根据坐标定位失败！");
+                    Log.e(TAG, "onResponse: getCountyByCoordinate 根据坐标定位失败！");
                 }
 
             }
@@ -577,7 +570,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
      */
     private void getCoordinateByIp() {
 //        百度 web api
-        String url = "http://api.map.baidu.com/location/ip?ak=eTTiuvV4YisaBbLwvj4p8drl7BGfl1eo&coor=bd09ll";
+        String url = "http://api.map.baidu.com/title/ip?ak=eTTiuvV4YisaBbLwvj4p8drl7BGfl1eo&coor=bd09ll";
         HttpUtil.sendOkHttpRequest(url, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -619,7 +612,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
 //            即 current weather Url， 获取当前天气的url
             String cUrl = "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/" + locationCoordinates + "/realtime.json";
 //            即 full weather Url， 获取未来天气的url
-            String fUrl = "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/" + locationCoordinates + "/forecast.json";
+            String fUrl = "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/" + locationCoordinates + "/forecast.json?alert=true";
 
             configContact.applyCurl(cUrl);
             configContact.applyFurl(fUrl);

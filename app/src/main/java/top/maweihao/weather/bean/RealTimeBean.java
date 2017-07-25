@@ -15,7 +15,7 @@ public class RealTimeBean {
      * lang : zh_CN
      * server_time : 1499510476
      * tzshift : 28800
-     * location : [25.1552,121.6544]
+     * title : [25.1552,121.6544]
      * unit : metric
      * result : {"status":"ok","temperature":29.2,"skycon":"RAIN","cloudrate":1,"aqi":12,"humidity":0.76,"pres":99029.61,"pm25":6,"precipitation":{"nearest":{"status":"ok","distance":1.3,"intensity":0.4375},"local":{"status":"ok","intensity":0.2436,"datasource":"radar"}},"wind":{"direction":104.32,"speed":4.18}}
      */

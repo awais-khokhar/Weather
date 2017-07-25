@@ -3,7 +3,7 @@ package top.maweihao.weather.bean.BaiDu;
 import java.util.List;
 
 /**
- * 根据坐标定位，百度返回的json Bean
+ * 根据坐标定位，百度返回的 json Bean
  * Created by limuyang on 2017/6/10.
  */
 
@@ -11,7 +11,7 @@ public class BaiDuCoordinateBean {
 
     /**
      * status : 0
-     * result : {"location":{"lng":116.32298699999993,"lat":39.98342407140365},"formatted_address":"北京市海淀区中关村大街27号1101-08室","business":"中关村,人民大学,苏州街","addressComponent":{"country":"中国","country_code":0,"province":"北京市","city":"北京市","district":"海淀区","adcode":"110108","street":"中关村大街","street_number":"27号1101-08室","direction":"附近","distance":"7"},"pois":[],"poiRegions":[],"sematic_description":"北京远景国际公寓(中关村店)内0米","cityCode":131}
+     * result : {"location":{"lng":119.70405179999993,"lat":32.45012298165853},"formatted_address":"江苏省扬州市江都区","business":"","addressComponent":{"country":"中国","country_code":0,"province":"江苏省","city":"扬州市","district":"江都区","adcode":"321088","street":"","street_number":"","direction":"","distance":""},"pois":[],"roads":[],"poiRegions":[],"sematic_description":"宜陵镇五一村北271米","cityCode":346}
      */
 
     private int status;
@@ -35,14 +35,15 @@ public class BaiDuCoordinateBean {
 
     public static class ResultBean {
         /**
-         * location : {"lng":116.32298699999993,"lat":39.98342407140365}
-         * formatted_address : 北京市海淀区中关村大街27号1101-08室
-         * business : 中关村,人民大学,苏州街
-         * addressComponent : {"country":"中国","country_code":0,"province":"北京市","city":"北京市","district":"海淀区","adcode":"110108","street":"中关村大街","street_number":"27号1101-08室","direction":"附近","distance":"7"}
+         * location : {"lng":119.70405179999993,"lat":32.45012298165853}
+         * formatted_address : 江苏省扬州市江都区
+         * business :
+         * addressComponent : {"country":"中国","country_code":0,"province":"江苏省","city":"扬州市","district":"江都区","adcode":"321088","street":"","street_number":"","direction":"","distance":""}
          * pois : []
+         * roads : []
          * poiRegions : []
-         * sematic_description : 北京远景国际公寓(中关村店)内0米
-         * cityCode : 131
+         * sematic_description : 宜陵镇五一村北271米
+         * cityCode : 346
          */
 
         private LocationBean location;
@@ -52,6 +53,7 @@ public class BaiDuCoordinateBean {
         private String sematic_description;
         private int cityCode;
         private List<?> pois;
+        private List<?> roads;
         private List<?> poiRegions;
 
         public LocationBean getLocation() {
@@ -110,6 +112,14 @@ public class BaiDuCoordinateBean {
             this.pois = pois;
         }
 
+        public List<?> getRoads() {
+            return roads;
+        }
+
+        public void setRoads(List<?> roads) {
+            this.roads = roads;
+        }
+
         public List<?> getPoiRegions() {
             return poiRegions;
         }
@@ -120,8 +130,8 @@ public class BaiDuCoordinateBean {
 
         public static class LocationBean {
             /**
-             * lng : 116.32298699999993
-             * lat : 39.98342407140365
+             * lng : 119.70405179999993
+             * lat : 32.45012298165853
              */
 
             private double lng;
@@ -148,14 +158,14 @@ public class BaiDuCoordinateBean {
             /**
              * country : 中国
              * country_code : 0
-             * province : 北京市
-             * city : 北京市
-             * district : 海淀区
-             * adcode : 110108
-             * street : 中关村大街
-             * street_number : 27号1101-08室
-             * direction : 附近
-             * distance : 7
+             * province : 江苏省
+             * city : 扬州市
+             * district : 江都区
+             * adcode : 321088
+             * street :
+             * street_number :
+             * direction :
+             * distance :
              */
 
             private String country;

@@ -120,4 +120,17 @@
         android:layout_marginEnd="40dp"
         app:layout_constraintVertical_bias="1.0"
         app:layout_constraintRight_toRightOf="parent" />
+
+    <ImageView
+        android:id="@+id/weather_alert_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/temperature_text"
+        app:layout_constraintLeft_toRightOf="@+id/temperature_text"
+        app:layout_constraintTop_toTopOf="@+id/temperature_text"
+        app:srcCompat="@drawable/ic_alert" />
 </android.support.constraint.ConstraintLayout>

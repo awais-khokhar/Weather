@@ -4,6 +4,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
 /**
+ * Http Utility
  * Created by ma on 17-3-5.
  */
 

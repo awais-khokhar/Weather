@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -33,6 +34,7 @@ import butterknife.ButterKnife;
 import top.maweihao.weather.R;
 import top.maweihao.weather.adapter.DailyWeatherAdapter;
 import top.maweihao.weather.adapter.HourlyWeatherAdapter;
+import top.maweihao.weather.bean.Alert;
 import top.maweihao.weather.bean.ForecastBean;
 import top.maweihao.weather.bean.SingleWeather;
 import top.maweihao.weather.contract.PreferenceConfigContact;
@@ -56,7 +58,7 @@ import static top.maweihao.weather.util.Constants.SettingCode;
 import static top.maweihao.weather.util.Constants.isSetResultIntent;
 import static top.maweihao.weather.util.Utility.chooseWeatherSkycon;
 
-public class WeatherActivity extends AppCompatActivity implements WeatherActivityContract.View {
+public class WeatherActivity extends AppCompatActivity implements WeatherActivityContract.View, View.OnClickListener {
 
     static final String TAG = "WeatherActivity";
 
@@ -65,8 +67,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
     static final int HANDLE_POSITION = 0;
     static final int HANDLE_TOAST = 1;
-//    static final int HANDLE_SWIPE_BEGIN = 2;
-//    static final int HANDLE_SWIPE_STOP = 3;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -126,6 +126,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     RecyclerView hourlyRecyclerView;
     @BindView(R.id.daily_weather_rv)
     RecyclerView dailyRecyclerView;
+    @BindView(R.id.weather_alert_icon)
+    ImageView alertImage;
 
     @Constants.CollapsingToolbarLayoutState
     private int state;
@@ -133,18 +135,18 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     private boolean isDone = false;
     public String countyName = null;
 
-//    private perDayWeatherView[] day = new perDayWeatherView[5];
-
     private MessageHandler handler; //消息队列
     private WeatherActivityContract.Presenter presenter;
 
     private PreferenceConfigContact configContact;
 
     //24h hourlyRecyclerView adapter
-    HourlyWeatherAdapter hourWeatherAdapter;
+    private HourlyWeatherAdapter hourWeatherAdapter;
 
     //5day hourlyRecyclerView adapter
-    DailyWeatherAdapter dailyWeatherAdapter;
+    private DailyWeatherAdapter dailyWeatherAdapter;
+
+    private ArrayList<Alert> alertArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,7 +181,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         swipeRefreshLayout.setOnRefreshListener((new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                presenter.refreshWeather(false, countyName);
+                presenter.refreshWeather(true, countyName);
             }
         }));
 
@@ -253,6 +255,23 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 ////        return true;
 //    }
 
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case -1:
+                finish();
+                break;
+            case R.id.weather_alert_icon:
+                if (alertArrayList != null && alertArrayList.size() > 0) {
+                    Intent intent = new Intent(WeatherActivity.this, AlertActivity.class);
+                    intent.putParcelableArrayListExtra(
+                            AlertActivity.KEY_ALERT_ACTIVITY_ALERT_LIST, alertArrayList);
+                    startActivity(intent);
+                }
+                break;
+        }
+    }
 
     @Override
     public void setRainInfo(final String str) {
@@ -437,20 +456,13 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        SharedPreferences.Editor editor = PreferenceManager
-//                .getDefaultSharedPreferences(WeatherActivity.this).edit();
-//
-//        SharedPreferences per = PreferenceManager
-//                .getDefaultSharedPreferences(WeatherActivity.this);
         switch (requestCode) {
             case SettingActivityRequestCode:
                 if (resultCode == SettingCode) {
-//                    editor.putBoolean("auto_locate", data.getBooleanExtra("autoLocate", false));
                     configContact.applyAutoLocate(data.getBooleanExtra("autoLocate", false));
 
                     if (DEBUG)
                         Log.d(TAG, "onActivityResult: SettingActivity");
-//                    String perCountyName = per.getString("countyName", null);
                     String perCountyName = configContact.getCountyName();
                     if (TextUtils.isEmpty(perCountyName)) {
                         Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
@@ -468,10 +480,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                     setCounty(countyName);
                     if (DEBUG)
                         Log.d(TAG, "onActivityResult: county_return: " + countyName);
-//                    editor.putString("countyName", countyName);
-//                    editor.putLong("countyName_last_update_time", System.currentTimeMillis());
-//                    editor.putBoolean("auto_locate", false);
-//                    editor.apply();
                     configContact.applyCountyName(countyName);
                     configContact.applyCountyNameLastUpdateTime(System.currentTimeMillis());
                     configContact.applyAutoLocate(false);
@@ -553,11 +561,27 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                     setWindDirection(hourlyBean.getWind().get(0).getDirection());
                     setWindLevel(hourlyBean.getWind().get(0).getSpeed());
                 }
+                // 是否隐藏天气预警图标
+                ForecastBean.ResultBean.AlertBean alertBean = forecastBean.getResult().getAlert();
+                if (alertBean.getContent().size() > 0) {
+                    if (DEBUG) {
+                        Log.d(TAG, "WeatherActivity-showCurrentWeatherInfo: alert.size == " + alertBean.getContent().size());
+                    }
+                    alertArrayList = new ArrayList<>();
+                    for (ForecastBean.ResultBean.AlertBean.ContentBean contentBean : alertBean.getContent()) {
+                        alertArrayList.add(new Alert(contentBean.getStatus(), Integer.parseInt(contentBean.getCode()),
+                                contentBean.getDescription(), contentBean.getAlertId(), contentBean.getCity() + contentBean.getCounty(), contentBean.getTitle()));
+                    }
+                    alertImage.setVisibility(View.VISIBLE);
+                } else {
+                    alertArrayList = null;
+                    alertImage.setVisibility(View.GONE);
+                }
                 if (!TextUtils.isEmpty(countyName)) {
                     setCounty(countyName);
                 } else {
                     if (DEBUG)
-                        Log.d(TAG, "showCurrentWeatherInfo: countyName == null");
+                        Log.d(TAG, "WeatherActivity-showCurrentWeatherInfo: countyName == null");
                 }
                 PMCircle.setValue((int) PM25);
                 temperatureText.setText(temperature);
@@ -658,8 +682,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     }
 
     /*
-                 *刷新环开始刷新
-                 */
+     *刷新环开始刷新
+     */
     @Override
     public void startSwipe() {
         runOnUiThread(new Runnable() {
