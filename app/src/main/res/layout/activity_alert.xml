@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
+        app:titleTextColor="@color/tool_bar_color"
         app:title="@string/action_alert" />
 
     <android.support.v7.widget.RecyclerView

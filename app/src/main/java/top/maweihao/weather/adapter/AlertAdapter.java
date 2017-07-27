@@ -16,7 +16,6 @@ import top.maweihao.weather.bean.Alert;
 
 /**
  * recyclerView adapter for AlertActivity
- * UNFINISHED!
  * Created by ma on 17-7-24.
  */
 
@@ -37,6 +36,7 @@ public class AlertAdapter extends RecyclerView.Adapter<AlertAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Alert alert = alertList.get(position);
+        holder.alertIconBg.setImageResource(alert.iconBgId);
         holder.alertIcon.setImageResource(alert.iconId);
         holder.title.setText(alert.title);
         holder.subtitle.setText(alert.subtitle);
@@ -45,11 +45,12 @@ public class AlertAdapter extends RecyclerView.Adapter<AlertAdapter.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return 0;
+        return alertList.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
+        ImageView alertIconBg;
         ImageView alertIcon;
         TextView title;
         TextView subtitle;
@@ -57,7 +58,8 @@ public class AlertAdapter extends RecyclerView.Adapter<AlertAdapter.ViewHolder> 
 
         public ViewHolder(View itemView) {
             super(itemView);
-            alertIcon = (ImageView) itemView.findViewById(R.id.alert_item_icon_bg);
+            alertIconBg = (ImageView) itemView.findViewById(R.id.alert_item_icon_bg);
+            alertIcon = (ImageView) itemView.findViewById(R.id.alert_item_icon);
             title = (TextView) itemView.findViewById(R.id.alert_item_title);
             subtitle = (TextView) itemView.findViewById(R.id.alert_item_subtitle);
             content = (TextView) itemView.findViewById(R.id.alert_item_content);

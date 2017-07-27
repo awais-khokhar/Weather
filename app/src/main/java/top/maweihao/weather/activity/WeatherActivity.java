@@ -186,6 +186,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         }));
 
         appBarLayout.addOnOffsetChangedListener(new AppBarOnOffsetChanged());
+
+        alertImage.setOnClickListener(this);
     }
 
 

@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.support.annotation.Nullable;
@@ -88,6 +89,8 @@ public class SettingActivity extends AppCompatActivity {
 
     public static class PrefsFragment extends PreferenceFragment {
 
+        private PreferenceCategory appearance;
+
         private ListPreference temLp;
 
         private Preference aboutPreference;
@@ -129,9 +132,10 @@ public class SettingActivity extends AppCompatActivity {
 
             donate = findPreference("donate");
             donate.setOnPreferenceClickListener(enterActivityListener);
-            //暂时隐藏 donate
+
+            //暂时隐藏 appearance
 //            PreferenceScreen preferenceScreen = getPreferenceScreen();
-//            preferenceScreen.removePreference(donate);
+//            preferenceScreen.removePreference(appearance);
 
             choosePositionPreference.setOnPreferenceClickListener(enterActivityListener);
             autoUpdateSP = (SwitchPreference) findPreference("auto_locate");
