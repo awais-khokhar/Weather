@@ -17,8 +17,8 @@ import top.maweihao.weather.service.SimpleWidgetUpdateService;
  */
 public class SimpleWeatherWidget extends AppWidgetProvider {
 
-    private static final int WEATHER_PENDING_INTENT_CODE = 121;
-    private static final int CLOCK_PENDING_INTENT_CODE = 221;
+    public static final int WEATHER_PENDING_INTENT_CODE = 121;
+    public static final int CLOCK_PENDING_INTENT_CODE = 221;
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {

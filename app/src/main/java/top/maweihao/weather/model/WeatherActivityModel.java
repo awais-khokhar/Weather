@@ -470,6 +470,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             presenter.setDailyWeatherInfo(dailyBean);
             presenter.setHourlyWeatherChart(hourlyBean);
             presenter.rainInfo(forecastBean.getResult().getMinutely().getDescription());
+            presenter.updateWidget(forecastBean);
         }
     }
 

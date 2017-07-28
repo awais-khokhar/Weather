@@ -18,6 +18,7 @@ import top.maweihao.weather.bean.SingleWeather;
 import top.maweihao.weather.contract.WeatherActivityContract;
 import top.maweihao.weather.model.WeatherActivityModel;
 import top.maweihao.weather.util.Utility;
+import top.maweihao.weather.util.remoteView.WidgetUtils;
 
 import static top.maweihao.weather.activity.WeatherActivity.HOURLY_MODE;
 import static top.maweihao.weather.util.Constants.DEBUG;
@@ -69,12 +70,12 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
                     e.printStackTrace();
                 }
                 int icon = Utility.chooseWeatherIcon(dailyBean.getSkycon().get(i).getValue(),
-                        dailyBean.getPrecipitation().get(i).getMax(), HOURLY_MODE, false);
+                        dailyBean.getPrecipitation().get(i).getAvg(), HOURLY_MODE, false);
                 String skyconDesc;
-                // 在有 desc 时优先显示　desc　的内容
+                // 在有 desc 时优先显示 desc 的内容
                 if (dailyBean.getDesc() == null) {
                     skyconDesc = Utility.chooseWeatherSkycon((Activity) weatherView, dailyBean.getSkycon().get(i).getValue(),
-                            dailyBean.getPrecipitation().get(i).getMax(), HOURLY_MODE);
+                            dailyBean.getPrecipitation().get(i).getAvg(), HOURLY_MODE);
                 } else {
                     skyconDesc = dailyBean.getDesc().get(i).getValue();
                 }
@@ -187,5 +188,8 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
         weatherView.initDailyRecyclerView(weatherModel.getDailyWeatherList());
     }
 
-
+    @Override
+    public void updateWidget(ForecastBean forecastBean) {
+        WidgetUtils.refreshWidget((Activity) weatherView, forecastBean);
+    }
 }

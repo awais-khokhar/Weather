@@ -28,9 +28,8 @@ public class SimpleWidgetUpdateService extends Service {
 
     public static final String TAG = "sWidgetUpdateService";
     PreferenceConfigContact configContact;
-
     public SimpleWidgetUpdateService() {
-        configContact = Utility.createSimpleConfig(SimpleWidgetUpdateService.this).create(PreferenceConfigContact.class);
+
     }
 
     @Override
@@ -41,6 +40,7 @@ public class SimpleWidgetUpdateService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        configContact = Utility.createSimpleConfig(SimpleWidgetUpdateService.this).create(PreferenceConfigContact.class);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class SimpleWidgetUpdateService extends Service {
         }
         updateWidget();
         stopSelf();
-        return super.onStartCommand(intent, flags, startId);
+        return START_NOT_STICKY;
     }
 
     private void updateWidget() {

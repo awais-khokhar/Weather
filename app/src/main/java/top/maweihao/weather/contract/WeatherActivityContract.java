@@ -80,6 +80,8 @@ public interface WeatherActivityContract {
         void initHourlyView();
 
         void initDailyView();
+
+        void updateWidget(ForecastBean forecastBean);
     }
 
     interface Model {
