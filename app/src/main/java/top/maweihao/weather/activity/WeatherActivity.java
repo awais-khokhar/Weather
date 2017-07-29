@@ -548,7 +548,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         handler.post(new Runnable() {
             @Override
             public void run() {
-//                final RemoteViews remoteViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.simple_weather_widget);
                 ForecastBean.ResultBean.HourlyBean hourlyBean = forecastBean.getResult().getHourly();
 
                 String temperature = Utility.stringRoundDouble(hourlyBean.getTemperature().get(0).getValue());
@@ -593,14 +592,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 String weatherString = chooseWeatherSkycon(getApplicationContext(), skycon, intensity, MINUTELY_MODE);
                 skyconText.setText(weatherString);
 
-//                    remoteViews.setImageViewResource(R.id.simple_widget_skycon, Integer.parseInt(ws[0]));
-//                    remoteViews.setTextViewText(R.id.simple_widget_info, countyName + " | " + weatherString + ' ' + temperature + '°');
-
-//                AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
-//                appWidgetManager.updateAppWidget(new ComponentName(getApplicationContext(), SimpleWeatherWidget.class),
-//                        remoteViews);
                 dynamicWeatherView.setDrawerType(Utility.chooseBgImage(skycon));
-//                dynamicWeatherView.setDrawerType(BaseDrawer.Type.RAIN_D);
 
                 ForecastBean.ResultBean.DailyBean dailyBean = forecastBean.getResult().getDaily();
                 String sunRise = dailyBean.getAstro().get(0).getSunrise().getTime();
