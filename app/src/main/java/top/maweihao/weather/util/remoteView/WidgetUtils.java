@@ -23,4 +23,14 @@ public class WidgetUtils {
             }
         }).start();
     }
+
+    public static boolean hasAnyWidget(Context context) {
+        return SimpleWidgetUtils.isEnable(context)
+                || TallWidgetUtils.isEnable(context)
+                || BigWidgetUtils.isEnable(context);
+    }
+
+    public static boolean hasBigWidget(Context context) {
+        return BigWidgetUtils.isEnable(context);
+    }
 }

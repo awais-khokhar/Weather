@@ -119,5 +119,8 @@
     <string name="email_needed">You need to install any email app</string>
     <string name="alipay_needed">You have to install \'Alipay\' first from App Store</string>
     <string name="action_alert">Weather Alert</string>
+    <string name="weather_15">Weather in 15 days</string>
+    <string name="Today">Today</string>
+    <string name="dark_background">Dark Background</string>
 
 </resources>

@@ -33,12 +33,11 @@ import static top.maweihao.weather.util.Constants.DEBUG;
 
 /**
  * 后台刷新service， 每晚提示第二天温差
- * 还有问题
  */
 
-public class SyncService extends Service {
+public class NotifyService extends Service {
 
-    static final String TAG = "SyncService";
+    private static final String TAG = NotifyService.class.getSimpleName();
 
     Boolean isChinese = false;
 
@@ -83,12 +82,9 @@ public class SyncService extends Service {
         new Thread(new Runnable() {
             @Override
             public void run() {
-
-//                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-//                String fUrl = prefs.getString("furl", null);
                 String fUrl = configContact.getFurl();
-                Log.i(TAG, "furl  " + fUrl);
                 if (fUrl != null) {
+                    Log.i(TAG, "furl  " + fUrl);
                     try {
                         Request request = new Request.Builder()
                                 .url(fUrl).build();
@@ -113,8 +109,6 @@ public class SyncService extends Service {
     }
 
     private void startAgain() {
-//        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-//        String time = sp.getString("notification_time", null);
         String time = configContact.getNotificationTime(null);
         if (!TextUtils.isEmpty(time)) {
             String[] splitTime = time.split(SettingActivity.TIME_SPLIT);
@@ -149,7 +143,7 @@ public class SyncService extends Service {
 //            Log.d(TAG, "startAgain: System.currentTimeMillis== " + System.currentTimeMillis());
 //        }
 
-        Intent intent = new Intent(this, SyncService.class);
+        Intent intent = new Intent(this, NotifyService.class);
         PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);

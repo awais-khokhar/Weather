@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="top.maweihao.weather">
 
-    <!--<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />-->
-    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
+    <!-- <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> -->
+    <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> -->
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -19,8 +19,8 @@
     <!-- <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" /> -->
     <application
         android:name="org.litepal.LitePalApplication"
-        android:hardwareAccelerated="true"
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -56,7 +56,7 @@
             android:enabled="true"
             android:process=":remote" />
         <service
-            android:name=".service.SyncService"
+            android:name=".service.NotifyService"
             android:enabled="true"
             android:exported="false" />
 
@@ -125,6 +125,13 @@
             android:name=".service.TallWidgetUpdateService"
             android:enabled="true"
             android:exported="false" />
+
+        <activity android:name=".activity.DetailActivity" />
+
+        <service
+            android:name=".service.WidgetSyncService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

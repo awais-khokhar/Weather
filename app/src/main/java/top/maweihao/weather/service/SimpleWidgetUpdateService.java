@@ -93,7 +93,7 @@ public class SimpleWidgetUpdateService extends Service {
     private void updateWeather(String weatherNow, String countyName) {
         configContact.applyWeatherNow(weatherNow);
         configContact.applyWeatherNowLastUpdateTime(System.currentTimeMillis());
-        RemoteViews simpleViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.simple_weather_widget);
+        RemoteViews simpleViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.widget_simple_weather);
 
         RealTimeBean bean = JSON.parseObject(weatherNow, RealTimeBean.class);
         int tem = Utility.intRoundDouble(bean.getResult().getTemperature());

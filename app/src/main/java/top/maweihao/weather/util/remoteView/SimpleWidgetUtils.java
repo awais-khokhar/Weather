@@ -25,6 +25,9 @@ import top.maweihao.weather.widget.SimpleWeatherWidget;
 
 public class SimpleWidgetUtils {
 
+    public static final int WEATHER_PENDING_INTENT_CODE = 121;
+    public static final int CLOCK_PENDING_INTENT_CODE = 221;
+
     public static boolean isEnable(Context context) {
         int[] widgetIds = AppWidgetManager.getInstance(context)
                 .getAppWidgetIds(new ComponentName(context, SimpleWeatherWidget.class));
@@ -66,15 +69,15 @@ public class SimpleWidgetUtils {
     }
 
     private static void updateWidgetView(Context context, int icon, String countyName, String skyconString, int tem) {
-        RemoteViews simpleViews = new RemoteViews(context.getPackageName(), R.layout.simple_weather_widget);
+        RemoteViews simpleViews = new RemoteViews(context.getPackageName(), R.layout.widget_simple_weather);
         simpleViews.setImageViewResource(R.id.simple_widget_skycon, icon);
         simpleViews.setTextViewText(R.id.simple_widget_info, countyName + " | " + skyconString + ' ' + tem + '°');
 
-        PendingIntent weatherPendingIntent = PendingIntent.getActivity(context, SimpleWeatherWidget.WEATHER_PENDING_INTENT_CODE,
+        PendingIntent weatherPendingIntent = PendingIntent.getActivity(context, WEATHER_PENDING_INTENT_CODE,
                 new Intent(context, WeatherActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
         Intent mClockIntent = new Intent(AlarmClock.ACTION_SHOW_ALARMS);
         mClockIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent clockPendingIntent = PendingIntent.getActivity(context, SimpleWeatherWidget.CLOCK_PENDING_INTENT_CODE, mClockIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent clockPendingIntent = PendingIntent.getActivity(context, CLOCK_PENDING_INTENT_CODE, mClockIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         simpleViews.setOnClickPendingIntent(R.id.simple_widget_left, clockPendingIntent);
         simpleViews.setOnClickPendingIntent(R.id.simple_widget_right, weatherPendingIntent);

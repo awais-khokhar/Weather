@@ -9,7 +9,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -40,7 +39,7 @@ import top.maweihao.weather.bean.SingleWeather;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.contract.WeatherActivityContract;
 import top.maweihao.weather.presenter.WeatherActivityPresenter;
-import top.maweihao.weather.service.SyncService;
+import top.maweihao.weather.service.NotifyService;
 import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.SimplePermissionUtils;
 import top.maweihao.weather.util.Utility;
@@ -116,23 +115,23 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.head_layout)
     ConstraintLayout headLayout;
-    @BindView(R.id.toolbar_layout)
-    CollapsingToolbarLayout toolbarLayout;
-    @BindView(R.id.app_bar_layout)
-    AppBarLayout appBarLayout;
-    @BindView(R.id.navigation_bar_view)
-    View navigationBarView;
+    //    @BindView(R.id.toolbar_layout)
+//    CollapsingToolbarLayout toolbarLayout;
+//    @BindView(R.id.app_bar_layout)
+//    AppBarLayout appBarLayout;
     @BindView(R.id.hourly_weather_rv)
     RecyclerView hourlyRecyclerView;
     @BindView(R.id.daily_weather_rv)
     RecyclerView dailyRecyclerView;
     @BindView(R.id.weather_alert_icon)
     ImageView alertImage;
+    @BindView(R.id.location_detail_tv)
+    TextView locationDetailTV;
 
     @Constants.CollapsingToolbarLayoutState
     private int state;
 
-    private boolean isDone = false;
+    private boolean isRefreshDone = false;
     public String countyName = null;
 
     private MessageHandler handler; //消息队列
@@ -159,17 +158,15 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         configContact = Utility.createSimpleConfig(this).create(PreferenceConfigContact.class);
 
         int statusHeight = Utility.getStatusBarHeight(this);
-        int navigationBarHeight = Utility.getNavigationBarHeight(this);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {   //not necessary
-        CollapsingToolbarLayout.LayoutParams lp = (CollapsingToolbarLayout.LayoutParams) toolbar.getLayoutParams();
+//        int navigationBarHeight = Utility.getNavigationBarHeight(this);
+//        CollapsingToolbarLayout.LayoutParams lp = (CollapsingToolbarLayout.LayoutParams) toolbar.getLayoutParams();
         LinearLayout.LayoutParams lp2 = (LinearLayout.LayoutParams) headLayout.getLayoutParams();
-        LinearLayout.LayoutParams lp3 = (LinearLayout.LayoutParams) navigationBarView.getLayoutParams();
-        lp.topMargin = lp2.topMargin = statusHeight;
-        lp3.topMargin = navigationBarHeight;
-        toolbar.setLayoutParams(lp);
-        headLayout.setLayoutParams(lp2);
-        navigationBarView.setLayoutParams(lp3);
-//        }
+//        LinearLayout.LayoutParams lp3 = (LinearLayout.LayoutParams) navigationBarView.getLayoutParams();
+//        lp.topMargin = lp2.topMargin = statusHeight;
+//        lp3.topMargin = navigationBarHeight;
+//        toolbar.setLayoutParams(lp);
+//        headLayout.setLayoutParams(lp2);
+//        navigationBarView.setLayoutParams(lp3);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
@@ -185,7 +182,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
             }
         }));
 
-        appBarLayout.addOnOffsetChangedListener(new AppBarOnOffsetChanged());
+//        appBarLayout.addOnOffsetChangedListener(new AppBarOnOffsetChanged());
 
         alertImage.setOnClickListener(this);
     }
@@ -194,7 +191,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     @Override
     protected void onResume() {
         super.onResume();
-        isItemSelected = false;
+//        isItemSelected = false;
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -336,20 +333,19 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
             if (verticalOffset == 0) {
                 if (state != Constants.CollapsingToolbarLayoutState.EXPANDED) {
                     state = Constants.CollapsingToolbarLayoutState.EXPANDED;//修改状态标记为展开
-                    toolbarLayout.setTitle(null);
+//                    toolbarLayout.setTitle(null);
                     toolBarLinearLayout.setVisibility(View.VISIBLE);
-
                 }
             } else if (Math.abs(verticalOffset) >= appBarLayout.getTotalScrollRange()) {
                 if (state != Constants.CollapsingToolbarLayoutState.COLLAPSED) {
-                    toolbarLayout.setTitle(countyName);//设置title
+//                    toolbarLayout.setTitle(countyName);//设置title
                     toolBarLinearLayout.setVisibility(View.INVISIBLE);
                     state = Constants.CollapsingToolbarLayoutState.COLLAPSED;//修改状态标记为折叠
                 }
             } else {
                 if (state != Constants.CollapsingToolbarLayoutState.INTERNEDIATE) {
                     if (state == Constants.CollapsingToolbarLayoutState.COLLAPSED) {
-                        toolbarLayout.setTitle(null);
+//                        toolbarLayout.setTitle(null);
                         if (toolBarLinearLayout.getVisibility() == View.INVISIBLE)
                             toolBarLinearLayout.setVisibility(View.VISIBLE);
                     }
@@ -403,30 +399,30 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         super.onOptionsMenuClosed(menu);
     }
 
-    //菜单打开时，暂停天气view绘制
-    @Override
-    public boolean onMenuOpened(int featureId, Menu menu) {
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                dynamicWeatherView.onPause();
-            }
-        }, 400);
-        return super.onMenuOpened(featureId, menu);
-    }
-
-    boolean isItemSelected = false;
-
-    //菜单关闭时，重启天气view绘制
-    @Override
-    public void onPanelClosed(int featureId, Menu menu) {
-        if (!isItemSelected) {
-//            Log.i(TAG,"onPanelClosed" + featureId);
-//            if (isMenuClose)
-            dynamicWeatherView.onResume();
-        }
-        super.onPanelClosed(featureId, menu);
-    }
+//    //菜单打开时，暂停天气view绘制
+//    @Override
+//    public boolean onMenuOpened(int featureId, Menu menu) {
+//        handler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                dynamicWeatherView.onPause();
+//            }
+//        }, 400);
+//        return super.onMenuOpened(featureId, menu);
+//    }
+//
+//    boolean isItemSelected = false;
+//
+//    //菜单关闭时，重启天气view绘制
+//    @Override
+//    public void onPanelClosed(int featureId, Menu menu) {
+//        if (!isItemSelected) {
+////            Log.i(TAG,"onPanelClosed" + featureId);
+////            if (isMenuClose)
+//            dynamicWeatherView.onResume();
+//        }
+//        super.onPanelClosed(featureId, menu);
+//    }
 
 
     @Override
@@ -437,14 +433,14 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        isItemSelected = true;
+//        isItemSelected = true;
         switch (item.getItemId()) {
             case R.id.change_position:
                 Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
                 startActivityForResult(intent, ChoosePositionActivityRequestCode);
                 break;
             case R.id.start_service:
-                Intent startIntent = new Intent(WeatherActivity.this, SyncService.class);
+                Intent startIntent = new Intent(WeatherActivity.this, NotifyService.class);
                 startService(startIntent);
                 break;
             case R.id.setting:
@@ -562,7 +558,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                     setWindDirection(hourlyBean.getWind().get(0).getDirection());
                     setWindLevel(hourlyBean.getWind().get(0).getSpeed());
                 }
-                // 是否隐藏天气预警图标
+                // 是否显示天气预警图标
                 ForecastBean.ResultBean.AlertBean alertBean = forecastBean.getResult().getAlert();
                 if (alertBean.getContent().size() > 0) {
                     if (DEBUG) {
@@ -582,7 +578,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                     setCounty(countyName);
                 } else {
                     if (DEBUG)
-                        Log.d(TAG, "WeatherActivity-showCurrentWeatherInfo: countyName == null");
+                        Log.d(TAG, "showCurrentWeatherInfo: countyName == null");
                 }
                 PMCircle.setValue((int) PM25);
                 temperatureText.setText(temperature);
@@ -604,24 +600,22 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 carWashing_text.setText(dailyBean.getCarWashing().get(0).getDesc());
                 dressing_text.setText(dailyBean.getDressing().get(0).getDesc());
 
-                if (isDone) {
+                if (isRefreshDone) {
                     stopSwipe();
-                    isDone = false;
+                    isRefreshDone = false;
                 } else {
-                    isDone = true;
+                    isRefreshDone = true;
                 }
             }
         });
     }
 
-    @Override
-    public boolean isDone() {
-        return isDone;
+    public boolean isRefreshDone() {
+        return isRefreshDone;
     }
 
-    @Override
-    public void setDone(boolean done) {
-        isDone = done;
+    public void setRefreshDone(boolean refreshDone) {
+        isRefreshDone = refreshDone;
     }
 
     /**

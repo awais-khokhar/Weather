@@ -23,6 +23,10 @@ import top.maweihao.weather.widget.BigWeatherWidget;
 
 public class BigWidgetUtils {
 
+    public static final int WEATHER_PENDING_INTENT_CODE = 123;
+    public static final int CLOCK_PENDING_INTENT_CODE = 223;
+    public static final int TALL_WIDGET_REFRESH_CODE = 323;
+
     public static boolean isEnable(Context context) {
         int[] widgetIds = AppWidgetManager.getInstance(context)
                 .getAppWidgetIds(new ComponentName(context, BigWeatherWidget.class));
@@ -34,7 +38,7 @@ public class BigWidgetUtils {
         PreferenceConfigContact configContact = Utility.createSimpleConfig(context).create(PreferenceConfigContact.class);
         String countyName = configContact.getCountyName() == null ? "error" : configContact.getCountyName();
 
-        RemoteViews bigViews = new RemoteViews(context.getPackageName(), R.layout.big_weather_widget);
+        RemoteViews bigViews = new RemoteViews(context.getPackageName(), R.layout.widget_big_weather);
 
         String description = forecastBean.getResult().getMinutely().getDescription();
         int tem = Utility.intRoundDouble(forecastBean.getResult().getHourly().getTemperature().get(0).getValue());
@@ -48,13 +52,13 @@ public class BigWidgetUtils {
         bigViews.setTextViewText(R.id.big_widget_info, countyName + "\n" + skyconString + ' ' + tem + '°');
         bigViews.setTextViewText(R.id.big_widget_refresh_time, Utility.parseTime());
 
-        PendingIntent weatherPendingIntent = PendingIntent.getActivity(context, BigWeatherWidget.WEATHER_PENDING_INTENT_CODE,
+        PendingIntent weatherPendingIntent = PendingIntent.getActivity(context, WEATHER_PENDING_INTENT_CODE,
                 new Intent(context, WeatherActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
         Intent mClockIntent = new Intent(AlarmClock.ACTION_SHOW_ALARMS);
         mClockIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent clockPendingIntent = PendingIntent.getActivity(context, BigWeatherWidget.CLOCK_PENDING_INTENT_CODE,
+        PendingIntent clockPendingIntent = PendingIntent.getActivity(context, CLOCK_PENDING_INTENT_CODE,
                 mClockIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        PendingIntent refreshPendingIntent = PendingIntent.getService(context, BigWeatherWidget.TALL_WIDGET_REFRESH_CODE,
+        PendingIntent refreshPendingIntent = PendingIntent.getService(context, TALL_WIDGET_REFRESH_CODE,
                 new Intent(context, BigWidgetUpdateService.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
         bigViews.setOnClickPendingIntent(R.id.big_widget_clock, clockPendingIntent);

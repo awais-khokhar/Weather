@@ -26,6 +26,7 @@
                 style="@style/widget_text_clock"
                 android:layout_centerHorizontal="true"
                 android:layout_marginLeft="24dp"
+                android:typeface="monospace"
                 android:shadowColor="@color/colorTextDark"
                 android:shadowDx="1.0"
                 android:shadowDy="1.0"

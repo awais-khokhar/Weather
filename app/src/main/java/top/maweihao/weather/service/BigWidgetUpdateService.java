@@ -59,7 +59,6 @@ public class BigWidgetUpdateService extends Service {
             if (DEBUG) {
                 Log.d(TAG, "updateWidget: weather data out of date");
             }
-//            final String fUrl = prefs.getString("furl", null);
             final String fUrl = configContact.getFurl();
             new Thread(new Runnable() {
                 @Override
@@ -89,7 +88,7 @@ public class BigWidgetUpdateService extends Service {
 
         configContact.applyWeatherFull(weatherJson);
         configContact.applyWeatherFullLastUpdateTime(System.currentTimeMillis());
-        RemoteViews bigViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.big_weather_widget);
+        RemoteViews bigViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.widget_big_weather);
         ForecastBean bean = JSON.parseObject(weatherJson, ForecastBean.class);
         String description = bean.getResult().getMinutely().getDescription();
 

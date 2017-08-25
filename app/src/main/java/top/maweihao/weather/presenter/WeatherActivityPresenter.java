@@ -16,6 +16,7 @@ import top.maweihao.weather.R;
 import top.maweihao.weather.bean.ForecastBean;
 import top.maweihao.weather.bean.SingleWeather;
 import top.maweihao.weather.contract.WeatherActivityContract;
+import top.maweihao.weather.helper.ServiceHelper;
 import top.maweihao.weather.model.WeatherActivityModel;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.util.remoteView.WidgetUtils;
@@ -85,11 +86,11 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
             }
             weatherView.updateDailyRecyclerView();
         }
-        if (weatherView.isDone()) {
+        if (weatherView.isRefreshDone()) {
             stopSwipe();
-            weatherView.setDone(false);
+            weatherView.setRefreshDone(false);
         } else {
-            weatherView.setDone(true);
+            weatherView.setRefreshDone(true);
         }
     }
 
@@ -120,7 +121,6 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
 
     /**
      * 更新成功后设置显示时间
-     *
      * @param time 更新时间
      */
     @Override
@@ -190,6 +190,9 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
 
     @Override
     public void updateWidget(ForecastBean forecastBean) {
-        WidgetUtils.refreshWidget((Activity) weatherView, forecastBean);
+        if (WidgetUtils.hasAnyWidget((Activity) weatherView)) {
+            ServiceHelper.startWidgetSyncService((Activity) weatherView, true);
+        }
     }
+
 }

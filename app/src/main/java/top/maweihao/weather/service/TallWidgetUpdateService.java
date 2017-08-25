@@ -93,7 +93,7 @@ public class TallWidgetUpdateService extends Service {
     private void updateWeather(String weatherNow, String countyName) {
         configContact.applyWeatherNow(weatherNow);
         configContact.applyWeatherNowLastUpdateTime(System.currentTimeMillis());
-        RemoteViews tallViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.tall_weather_widget);
+        RemoteViews tallViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.widget_tall_weather);
         RealTimeBean bean = JSON.parseObject(weatherNow, RealTimeBean.class);
         int tem = Utility.intRoundDouble(bean.getResult().getTemperature());
         String skycon = bean.getResult().getSkycon();

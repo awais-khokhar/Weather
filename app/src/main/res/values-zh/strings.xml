@@ -108,5 +108,8 @@
     <string name="email_needed">未找到任何邮件客户端</string>
     <string name="alipay_needed">暂时只支持支付宝</string>
     <string name="action_alert">天气预警</string>
+    <string name="weather_15">Weather in 15 days</string>
+    <string name="Today">Today</string>
+    <string name="dark_background">Dark Background</string>
 
 </resources>

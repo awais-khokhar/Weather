@@ -29,7 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import top.maweihao.weather.R;
 import top.maweihao.weather.contract.PreferenceConfigContact;
-import top.maweihao.weather.service.SyncService;
+import top.maweihao.weather.service.NotifyService;
 import top.maweihao.weather.util.Utility;
 
 import static top.maweihao.weather.util.Constants.ChooseCode;
@@ -153,7 +153,6 @@ public class SettingActivity extends AppCompatActivity {
 
             if (notification.isChecked()) {
                 notificationTime.setEnabled(true);
-//                notificationTime.setSummary(sharedPreferences.getString("notification_time", "18 : 00"));
                 notificationTime.setSummary(configContact.getNotificationTime("18 : 00"));
             } else
                 notificationTime.setEnabled(false);
@@ -201,12 +200,11 @@ public class SettingActivity extends AppCompatActivity {
                     }
                     return true;
                 } else if (preference.getKey().equals("notification")) {
-                    Intent startIntent = new Intent(getActivity(), SyncService.class);
+                    Intent startIntent = new Intent(getActivity(), NotifyService.class);
                     if (stringValue.equals("true")) {
                         notificationTime.setEnabled(true);
-//                        notificationTime.setSummary(sharedPreferences.getString("notification_time", "18 : 00"));
                         notificationTime.setSummary(configContact.getNotificationTime("18 : 00"));
-                        SyncService.isStarSendNotification = false;
+                        NotifyService.isStarSendNotification = false;
                         getActivity().startService(startIntent);
                         if (DEBUG)
                             Log.d(TAG, "onPreferenceChange: start SyncService");
@@ -217,7 +215,7 @@ public class SettingActivity extends AppCompatActivity {
                             Log.d(TAG, "onPreferenceChange: stop SyncService");
                     }
                     return true;
-                } else if (preference.getKey().equals("notificatn_time")) {
+                } else if (preference.getKey().equals("notification_time")) {
                     if (DEBUG)
                         Log.d(TAG, "onPreferenceChange: notification_time");
                     notificationTime.setSummary(preference.getKey());
@@ -300,8 +298,8 @@ public class SettingActivity extends AppCompatActivity {
                                 String formatMinute = df.format(minute);
                                 preference.setSummary(formatHour + ": " + formatMinute);
                                 configContact.applyNotificationTime(formatHour + TIME_SPLIT + formatMinute);
-                                SyncService.isStarSendNotification = false;
-                                Intent startIntent = new Intent(getActivity(), SyncService.class);
+                                NotifyService.isStarSendNotification = false;
+                                Intent startIntent = new Intent(getActivity(), NotifyService.class);
                                 getActivity().startService(startIntent);
                             }
                         }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);

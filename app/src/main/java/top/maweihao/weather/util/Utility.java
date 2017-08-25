@@ -3,6 +3,8 @@ package top.maweihao.weather.util;
 import android.app.Activity;
 import android.content.Context;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -386,7 +388,7 @@ public class Utility {
             return context.getResources().getDimensionPixelSize(x);
         } catch (Exception e1) {
             if (DEBUG)
-                Log.d(TAG, "get status bar height fail");
+                Log.e(TAG, "get status bar height failed");
             e1.printStackTrace();
             return 75;
         }
@@ -397,14 +399,14 @@ public class Utility {
      * @param context
      * @return 高度值
      */
-    public static int getNavigationBarHeight(@Nullable Context context) {
+    public static int getNavigationBarHeight(@NonNull Context context) {
         int result = 0;
-        int resourceId=0;
+        int resourceId = 0;
         int rid = context.getResources().getIdentifier("config_showNavigationBar", "bool", "android");
-        if (rid!=0){
+        if (rid != 0) {
             resourceId = context.getResources().getIdentifier("navigation_bar_height", "dimen", "android");
             return context.getResources().getDimensionPixelSize(resourceId);
-        }else
+        } else
             return 0;
     }
 
@@ -437,5 +439,26 @@ public class Utility {
         return alm.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
+    /**
+     * 网络连接是否可用
+     *
+     * @param context context
+     * @return boolean
+     */
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivity = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity != null) {
+            NetworkInfo info = connectivity.getActiveNetworkInfo();
+            if (info != null && info.isConnected()) {
+                // 当前网络是连接的
+                if (info.getState() == NetworkInfo.State.CONNECTED) {
+                    // 当前所连接的网络可用
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
 

@@ -15,9 +15,9 @@ import top.maweihao.weather.bean.SingleWeather;
 public interface WeatherActivityContract {
     interface View {
 
-        boolean isDone();
+        boolean isRefreshDone();
 
-        void setDone(boolean done);
+        void setRefreshDone(boolean refreshDone);
 
         void setRainInfo(String str);
 

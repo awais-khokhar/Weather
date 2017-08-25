@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.Switch;
 
 import top.maweihao.weather.R;
-import top.maweihao.weather.service.SimpleWidgetUpdateService;
+import top.maweihao.weather.helper.ServiceHelper;
 
 import static top.maweihao.weather.R.id.tall_widget_preview;
 
@@ -21,34 +21,40 @@ import static top.maweihao.weather.R.id.tall_widget_preview;
 public class TallWeatherWidgetConfigureActivity extends Activity {
 
     private static final String PREFS_NAME = "top.maweihao.weather.TallWeatherWidget";
-    private static final String PREF_PREFIX_KEY = "appwidget_";
+    private static final String PREF_LUNAR_PREFIX_KEY = "appwidget_lunar";
+    private static final String PREF_CARD_PREFIX_KEY = "appwidget_card";
 
     public static final String TAG = "TWConfigureActivity";
+
 
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     View.OnClickListener mOnClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             final Context context = TallWeatherWidgetConfigureActivity.this;
-            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
 
             switch (v.getId()) {
                 case R.id.add_button:
-                    TallWeatherWidget.updateAppWidget(context, appWidgetManager, mAppWidgetId);
                     Intent resultValue = new Intent();
                     resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                     setResult(RESULT_OK, resultValue);
-                    context.startService(new Intent(context, SimpleWidgetUpdateService.class));
+                    ServiceHelper.startWidgetSyncService(context, true);
                     finish();
                     break;
                 case R.id.tall_lunar_switch:
                     if (((Switch)v).isChecked()) {
                         ((ImageView)findViewById(tall_widget_preview)).setImageResource(R.drawable.tall_widget_lunar_on);
-                        saveTitlePref(context, mAppWidgetId, true);
+                        saveLunarPref(context, true);
                     } else {
                         ((ImageView)findViewById(tall_widget_preview)).setImageResource(R.drawable.tall_widget_lunar_off);
-                        saveTitlePref(context, mAppWidgetId, false);
+                        saveLunarPref(context, false);
                     }
                     break;
+                case R.id.tall_card_switch:
+                    if (((Switch) v).isChecked()) {
+                        saveCardPref(context, true);
+                    } else {
+                        saveCardPref(context, false);
+                    }
             }
         }
     };
@@ -66,6 +72,7 @@ public class TallWeatherWidgetConfigureActivity extends Activity {
         setContentView(R.layout.tall_weather_widget_configure);
         findViewById(R.id.tall_lunar_switch).setOnClickListener(mOnClickListener);
         findViewById(R.id.add_button).setOnClickListener(mOnClickListener);
+        findViewById(R.id.tall_card_switch).setOnClickListener(mOnClickListener);
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -81,22 +88,34 @@ public class TallWeatherWidgetConfigureActivity extends Activity {
     }
 
     // Write the prefix to the SharedPreferences object for this widget
-    static void saveTitlePref(Context context, int appWidgetId, Boolean visible) {
+    public static void saveLunarPref(Context context, Boolean visible) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
-        prefs.putBoolean(PREF_PREFIX_KEY + appWidgetId, visible);
+        prefs.putBoolean(PREF_LUNAR_PREFIX_KEY, visible);
         prefs.apply();
     }
 
     // Read the prefix from the SharedPreferences object for this widget.
     // If there is no preference saved, get the default from a resource
-    static Boolean loadTitlePref(Context context, int appWidgetId) {
+    public static Boolean loadLunarPref(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-        return prefs.getBoolean(PREF_PREFIX_KEY + appWidgetId, false);
+        return prefs.getBoolean(PREF_LUNAR_PREFIX_KEY, false);
     }
 
-    static void deleteTitlePref(Context context, int appWidgetId) {
+    public static void saveCardPref(Context context, Boolean visible) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
-        prefs.remove(PREF_PREFIX_KEY + appWidgetId);
+        prefs.putBoolean(PREF_CARD_PREFIX_KEY, visible);
+        prefs.apply();
+    }
+
+    public static Boolean loadCardPref(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
+        return prefs.getBoolean(PREF_CARD_PREFIX_KEY, false);
+    }
+
+    public static void deleteAllPref(Context context) {
+        SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
+        prefs.remove(PREF_LUNAR_PREFIX_KEY);
+        prefs.remove(PREF_CARD_PREFIX_KEY);
         prefs.apply();
     }
 }

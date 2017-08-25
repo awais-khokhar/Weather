@@ -46,7 +46,7 @@ public class SemiCircleView extends View {
         negativeColor = typedArray.getColor(R.styleable.SemiCircleView_negativeColor, Color.parseColor("#BDBDBD"));
         isAQI = typedArray.getBoolean(R.styleable.SemiCircleView_aqi, true);
         maxValue = isAQI ? 500 : 150;
-        info = isAQI ? "AQI" : "PM 2.5";
+        info = isAQI ? "AQI" : "PM2.5";
         typedArray.recycle();
         initPaint();
     }

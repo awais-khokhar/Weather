@@ -1,15 +1,29 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/transparent"
+
     android:orientation="vertical"
     android:padding="@dimen/widget_margin"
     tools:background="#FF424242">
 
+    <ImageView
+        android:id="@+id/widget_tall_card"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/widget_card"
+        android:visibility="gone"
+        tools:ignore="ContentDescription" />
+
 
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@android:color/transparent">
+
+        <LinearLayout
         android:id="@+id/tall_widget_clock"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -25,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:fontFamily="sans-serif-light"
+            android:fontFamily="monospace"
             android:format12Hour="hh"
             android:format24Hour="HH"
             android:shadowColor="@color/colorTextDark"
@@ -43,10 +57,11 @@
 
         <TextClock
             android:id="@+id/tall_widget_minute"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
             android:layout_centerInParent="true"
-            android:fontFamily="sans-serif-light"
+            android:fontFamily="monospace"
             android:format12Hour="mm"
             android:format24Hour="mm"
             android:shadowColor="@color/colorTextDark"
@@ -138,4 +153,5 @@
         </RelativeLayout>
 
     </RelativeLayout>
-</LinearLayout>
+    </LinearLayout>
+</RelativeLayout>
