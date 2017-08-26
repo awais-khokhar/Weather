@@ -16,7 +16,7 @@ import static top.maweihao.weather.util.Constants.CollapsingToolbarLayoutState.I
  */
 
 public class Constants {
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
     public static final String STATUS_OK = "ok";
 
     public static final long SYSTEM_NOW_TIME = 0;
@@ -25,7 +25,7 @@ public class Constants {
     public static final int SettingActivityRequestCode = 864;
     public static final int SettingCode = 320;
     public static final int ChooseCode = 239;
-    public static final int WidgetSyncServiceRequestCode = 166;
+    public static final int WidgetSyncServiceRequestCode = 66;
     public static boolean isSetResultIntent = false;
 
 

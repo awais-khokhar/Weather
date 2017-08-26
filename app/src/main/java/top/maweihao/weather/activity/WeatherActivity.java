@@ -7,8 +7,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.AppBarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,8 +17,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +38,6 @@ import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.contract.WeatherActivityContract;
 import top.maweihao.weather.presenter.WeatherActivityPresenter;
 import top.maweihao.weather.service.NotifyService;
-import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.SimplePermissionUtils;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.view.SemiCircleView;
@@ -66,6 +63,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
     static final int HANDLE_POSITION = 0;
     static final int HANDLE_TOAST = 1;
+    static final int HANDLE_EXACT_LOCATION = 2;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -75,14 +73,16 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     TextView skyconText;
     @BindView(R.id.rain_info_tv)
     TextView rainInfoTv;
-    @BindView(R.id.lacate_mode_image)
+    @BindView(R.id.locate_mode_image)
     ImageView locateModeImage;
     @BindView(R.id.location_tv)
     TextView locateMode;
     @BindView(R.id.last_update_time)
     TextView lastUpdateTime;
-    @BindView(R.id.toolbar_LinearLayout)
-    LinearLayout toolBarLinearLayout;
+    @BindView(R.id.now_card_desc)
+    TextView todayDesc;
+    //    @BindView(R.id.toolbar_LinearLayout)
+//    LinearLayout toolBarLinearLayout;
     @BindView(R.id.dynamicWeatherView)
     DynamicWeatherView dynamicWeatherView;
     @BindView(R.id.aqi_image)
@@ -113,9 +113,11 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     TextView sunset_text;
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout swipeRefreshLayout;
-    @BindView(R.id.head_layout)
-    ConstraintLayout headLayout;
-    //    @BindView(R.id.toolbar_layout)
+    @BindView(R.id.more_days_weather)
+    ImageButton imageButton;
+    //    @BindView(R.id.head_layout)
+//    ConstraintLayout headLayout;
+//    @BindView(R.id.toolbar_layout)
 //    CollapsingToolbarLayout toolbarLayout;
 //    @BindView(R.id.app_bar_layout)
 //    AppBarLayout appBarLayout;
@@ -125,14 +127,15 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     RecyclerView dailyRecyclerView;
     @BindView(R.id.weather_alert_icon)
     ImageView alertImage;
-    @BindView(R.id.location_detail_tv)
-    TextView locationDetailTV;
+//    @BindView(R.id.location_detail_tv)
+//    TextView locationDetailTV;
 
-    @Constants.CollapsingToolbarLayoutState
-    private int state;
+//    @Constants.CollapsingToolbarLayoutState
+//    private int state;
 
     private boolean isRefreshDone = false;
     public String countyName = null;
+    public String locationDetail;
 
     private MessageHandler handler; //消息队列
     private WeatherActivityContract.Presenter presenter;
@@ -152,22 +155,22 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         PreferenceManager.setDefaultValues(this, R.xml.settingpreference, false);
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_weather);
+        setContentView(R.layout.activity_weather_new);
         ButterKnife.bind(this);
 
         configContact = Utility.createSimpleConfig(this).create(PreferenceConfigContact.class);
 
-        int statusHeight = Utility.getStatusBarHeight(this);
+//        int statusHeight = Utility.getStatusBarHeight(this);
 //        int navigationBarHeight = Utility.getNavigationBarHeight(this);
 //        CollapsingToolbarLayout.LayoutParams lp = (CollapsingToolbarLayout.LayoutParams) toolbar.getLayoutParams();
-        LinearLayout.LayoutParams lp2 = (LinearLayout.LayoutParams) headLayout.getLayoutParams();
+//        LinearLayout.LayoutParams lp2 = (LinearLayout.LayoutParams) headLayout.getLayoutParams();
 //        LinearLayout.LayoutParams lp3 = (LinearLayout.LayoutParams) navigationBarView.getLayoutParams();
 //        lp.topMargin = lp2.topMargin = statusHeight;
 //        lp3.topMargin = navigationBarHeight;
 //        toolbar.setLayoutParams(lp);
 //        headLayout.setLayoutParams(lp2);
 //        navigationBarView.setLayoutParams(lp3);
-        toolbar.setTitle("");
+        toolbar.setTitle(getResources().getString(R.string.app_name));
         setSupportActionBar(toolbar);
 
         handler = new MessageHandler(this);
@@ -185,8 +188,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 //        appBarLayout.addOnOffsetChangedListener(new AppBarOnOffsetChanged());
 
         alertImage.setOnClickListener(this);
+        imageButton.setOnClickListener(this);
     }
-
 
     @Override
     protected void onResume() {
@@ -214,7 +217,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
             permission();
         else
             isSetResultIntent = false;
-
     }
 
     @Override
@@ -231,30 +233,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         presenter = null;
     }
 
-//    @Override
-//    public boolean dispatchTouchEvent(MotionEvent ev) {
-//        Log.i(TAG, "dispatchTouchEvent");
-//        int action = ev.getAction();
-////        switch (action) {
-//////            case MotionEvent.ACTION_DOWN://按下
-//////                Log.i(TAG, "ACTION_DOWN");
-//////                dynamicWeatherView.onPause();
-//////                break;
-////            case MotionEvent.ACTION_MOVE://移动
-////                Log.i(TAG, "ACTION_MOVE");
-////                dynamicWeatherView.onPause();
-////                break;
-////            case MotionEvent.ACTION_UP://松开
-////                Log.i(TAG, "ACTION_UP");
-////
-////                dynamicWeatherView.onResume();
-////                break;
-////        }
-//        return super.dispatchTouchEvent(ev);
-////        return true;
-//    }
-
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -269,15 +247,19 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                     startActivity(intent);
                 }
                 break;
+            case R.id.more_days_weather:
+                Intent intent = new Intent(WeatherActivity.this, DetailActivity.class);
+                startActivity(intent);
         }
     }
 
     @Override
-    public void setRainInfo(final String str) {
+    public void setRainInfo(final String now, final String today) {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                rainInfoTv.setText(str);
+                rainInfoTv.setText(now);
+                todayDesc.setText(today);
             }
         });
     }
@@ -313,7 +295,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
     /**
      * 设置城市
-     *
      * @param countyStr 城市名
      */
     @Override
@@ -324,37 +305,45 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         handler.sendMessage(message);
     }
 
+    @Override
+    public void setLocationDetail(String locationDetail) {
+        Message message = handler.obtainMessage();
+        message.what = HANDLE_EXACT_LOCATION;
+        message.obj = locationDetail;
+        handler.sendMessage(message);
+    }
+
     /**
      * CollapsingToolbarLayout滑动改变监听
      */
-    private class AppBarOnOffsetChanged implements AppBarLayout.OnOffsetChangedListener {
-        @Override
-        public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-            if (verticalOffset == 0) {
-                if (state != Constants.CollapsingToolbarLayoutState.EXPANDED) {
-                    state = Constants.CollapsingToolbarLayoutState.EXPANDED;//修改状态标记为展开
-//                    toolbarLayout.setTitle(null);
-                    toolBarLinearLayout.setVisibility(View.VISIBLE);
-                }
-            } else if (Math.abs(verticalOffset) >= appBarLayout.getTotalScrollRange()) {
-                if (state != Constants.CollapsingToolbarLayoutState.COLLAPSED) {
-//                    toolbarLayout.setTitle(countyName);//设置title
-                    toolBarLinearLayout.setVisibility(View.INVISIBLE);
-                    state = Constants.CollapsingToolbarLayoutState.COLLAPSED;//修改状态标记为折叠
-                }
-            } else {
-                if (state != Constants.CollapsingToolbarLayoutState.INTERNEDIATE) {
-                    if (state == Constants.CollapsingToolbarLayoutState.COLLAPSED) {
-//                        toolbarLayout.setTitle(null);
-                        if (toolBarLinearLayout.getVisibility() == View.INVISIBLE)
-                            toolBarLinearLayout.setVisibility(View.VISIBLE);
-                    }
-                    state = Constants.CollapsingToolbarLayoutState.INTERNEDIATE;//修改状态标记为中间
-
-                }
-            }
-        }
-    }
+//    private class AppBarOnOffsetChanged implements AppBarLayout.OnOffsetChangedListener {
+//        @Override
+//        public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+//            if (verticalOffset == 0) {
+//                if (state != Constants.CollapsingToolbarLayoutState.EXPANDED) {
+//                    state = Constants.CollapsingToolbarLayoutState.EXPANDED;//修改状态标记为展开
+////                    toolbarLayout.setTitle(null);
+//                    toolBarLinearLayout.setVisibility(View.VISIBLE);
+//                }
+//            } else if (Math.abs(verticalOffset) >= appBarLayout.getTotalScrollRange()) {
+//                if (state != Constants.CollapsingToolbarLayoutState.COLLAPSED) {
+////                    toolbarLayout.setTitle(countyName);//设置title
+//                    toolBarLinearLayout.setVisibility(View.INVISIBLE);
+//                    state = Constants.CollapsingToolbarLayoutState.COLLAPSED;//修改状态标记为折叠
+//                }
+//            } else {
+//                if (state != Constants.CollapsingToolbarLayoutState.INTERNEDIATE) {
+//                    if (state == Constants.CollapsingToolbarLayoutState.COLLAPSED) {
+////                        toolbarLayout.setTitle(null);
+//                        if (toolBarLinearLayout.getVisibility() == View.INVISIBLE)
+//                            toolBarLinearLayout.setVisibility(View.VISIBLE);
+//                    }
+//                    state = Constants.CollapsingToolbarLayoutState.INTERNEDIATE;//修改状态标记为中间
+//
+//                }
+//            }
+//        }
+//    }
 
     /**
      * 创建"弱引用"的Handler,而不是强引用
@@ -375,8 +364,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                     case HANDLE_POSITION:
                         if (msg.obj instanceof String) {
                             activity.countyName = (String) msg.obj;
-                            activity.locateMode.setText((String) msg.obj);
-
+//                            activity.locateMode.setText((String) msg.obj);
+                            activity.toolbar.setTitle((String) msg.obj);
                         } else {
                             Log.e(TAG, "handleMessage: HANDLE_POSITION obj == " + msg.obj.getClass());
                         }
@@ -388,6 +377,14 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                             Log.e(TAG, "handleMessage: HANDLE_TOAST obj == " + msg.obj.getClass());
                         }
                         break;
+                    case HANDLE_EXACT_LOCATION:
+                        if (msg.obj instanceof String) {
+                            activity.locationDetail = (String) msg.obj;
+                            activity.locateMode.setText((String) msg.obj);
+                        } else {
+                            Log.e(TAG, "handleMessage: HANDLE_EXACT_LOCATION obj == " + msg.obj.getClass());
+                        }
+
                 }
             }
         }
@@ -405,6 +402,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 //        handler.postDelayed(new Runnable() {
 //            @Override
 //            public void run() {
+//                dynamicWeatherView.onPause();
 //                dynamicWeatherView.onPause();
 //            }
 //        }, 400);
@@ -475,10 +473,13 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
             case ChoosePositionActivityRequestCode:
                 if (resultCode == ChooseCode) {
                     countyName = data.getStringExtra("countyName");
+                    locationDetail = countyName;
                     setCounty(countyName);
+                    setLocationDetail(locationDetail);
                     if (DEBUG)
                         Log.d(TAG, "onActivityResult: county_return: " + countyName);
                     configContact.applyCountyName(countyName);
+                    configContact.applyLocationDetail(locationDetail);
                     configContact.applyCountyNameLastUpdateTime(System.currentTimeMillis());
                     configContact.applyAutoLocate(false);
                     presenter.refreshWeather(true, countyName);
@@ -554,6 +555,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 double aqi = hourlyBean.getAqi().get(0).getValue();
 
                 String countyName =  configContact.getCountyName();
+                String locationDetail = configContact.getLocationDetail("");
                 if (hourlyBean.getWind() != null) {
                     setWindDirection(hourlyBean.getWind().get(0).getDirection());
                     setWindLevel(hourlyBean.getWind().get(0).getSpeed());
@@ -562,7 +564,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 ForecastBean.ResultBean.AlertBean alertBean = forecastBean.getResult().getAlert();
                 if (alertBean.getContent().size() > 0) {
                     if (DEBUG) {
-                        Log.d(TAG, "WeatherActivity-showCurrentWeatherInfo: alert.size == " + alertBean.getContent().size());
+                        Log.d(TAG, "showCurrentWeatherInfo: alert.size == " + alertBean.getContent().size());
                     }
                     alertArrayList = new ArrayList<>();
                     for (ForecastBean.ResultBean.AlertBean.ContentBean contentBean : alertBean.getContent()) {
@@ -576,9 +578,10 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 }
                 if (!TextUtils.isEmpty(countyName)) {
                     setCounty(countyName);
+                    setLocationDetail(locationDetail);
                 } else {
                     if (DEBUG)
-                        Log.d(TAG, "showCurrentWeatherInfo: countyName == null");
+                        Log.e(TAG, "showCurrentWeatherInfo: countyName == null");
                 }
                 PMCircle.setValue((int) PM25);
                 temperatureText.setText(temperature);

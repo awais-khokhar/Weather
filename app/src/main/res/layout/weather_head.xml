@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="70dp"
-    tools:background="#FF424242">
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent">
 
 
     <ImageView
-        android:id="@+id/lacate_mode_image"
+        android:id="@+id/locate_mode_image"
         android:layout_width="18dp"
         android:layout_height="18dp"
         android:layout_marginLeft="8dp"
@@ -31,11 +31,11 @@
         android:textColor="#E0E0E0"
         android:textSize="14sp"
         tools:text="GPS"
-        app:layout_constraintTop_toTopOf="@+id/lacate_mode_image"
+        app:layout_constraintTop_toTopOf="@+id/locate_mode_image"
         android:layout_marginTop="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/lacate_mode_image"
+        app:layout_constraintBottom_toBottomOf="@+id/locate_mode_image"
         android:layout_marginBottom="0dp"
-        app:layout_constraintLeft_toRightOf="@+id/lacate_mode_image"
+        app:layout_constraintLeft_toRightOf="@+id/locate_mode_image"
         android:layout_marginLeft="4dp"
         app:layout_constraintVertical_bias="1.0" />
 
@@ -55,7 +55,7 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lacate_mode_image"
+        app:layout_constraintTop_toBottomOf="@+id/locate_mode_image"
         tools:text="亚东新城区文苑路" />
 
     <TextView

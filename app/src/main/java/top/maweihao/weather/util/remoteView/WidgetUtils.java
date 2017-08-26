@@ -24,6 +24,20 @@ public class WidgetUtils {
         }).start();
     }
 
+
+    public static void refreshWidget(final Context context, final ForecastBean forecastBean, final int minute) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (SimpleWidgetUtils.isEnable(context))
+                    SimpleWidgetUtils.refreshWidgetView(context, forecastBean);
+                if (TallWidgetUtils.isEnable(context))
+                    TallWidgetUtils.refreshWidgetView(context, forecastBean);
+                if (BigWidgetUtils.isEnable(context))
+                    BigWidgetUtils.refreshWidgetView(context, forecastBean, minute);
+            }
+        }).start();
+    }
     public static boolean hasAnyWidget(Context context) {
         return SimpleWidgetUtils.isEnable(context)
                 || TallWidgetUtils.isEnable(context)

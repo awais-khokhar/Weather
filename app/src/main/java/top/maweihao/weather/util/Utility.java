@@ -2,6 +2,7 @@ package top.maweihao.weather.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -394,9 +395,14 @@ public class Utility {
         }
     }
 
+    public static int getStatusBarHeight(Resources r) {
+        int resourceId = r.getIdentifier("status_bar_height", "dimen", "android");
+        return r.getDimensionPixelSize(resourceId);
+    }
+
     /**
      * 获取导航栏高度
-     * @param context
+     * @param context context
      * @return 高度值
      */
     public static int getNavigationBarHeight(@NonNull Context context) {
@@ -424,7 +430,14 @@ public class Utility {
 
     public static String parseTime() {
         Date date = new Date();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.CHINA);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm", Locale.CHINA);
+        return simpleDateFormat.format(date);
+    }
+
+    public static String parseTime(int minute) {
+        Date date = new Date();
+        date.setTime(System.currentTimeMillis() + minute * 60 * 1000);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm", Locale.CHINA);
         return simpleDateFormat.format(date);
     }
 

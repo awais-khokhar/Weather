@@ -19,6 +19,7 @@ import top.maweihao.weather.bean.ForecastBean;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.Utility;
+import top.maweihao.weather.util.remoteView.BigWidgetUtils;
 import top.maweihao.weather.util.remoteView.WidgetUtils;
 
 import static top.maweihao.weather.util.Constants.DEBUG;
@@ -53,10 +54,12 @@ public class WidgetSyncService extends Service {
         int refreshInterval = (int) ((System.currentTimeMillis() - lastRefreshTime)
                 / (60 * 1000));
         if (hasWidget && refreshInterval >= interval - 5 || forceRefresh) {
+            startAgain(interval);
             saveInterval();
             fetchData();
+        } else {
+            startAgain(15);
         }
-        startAgain(interval);
         return START_STICKY;
     }
 
@@ -76,12 +79,13 @@ public class WidgetSyncService extends Service {
     }
 
     private void startAgain(int interval) {
+        Log.d(TAG, "startAgain: interval ==" + interval);
         Intent intent = new Intent(this, WidgetSyncService.class);
         PendingIntent pendingIntent = PendingIntent.getService(this, Constants.WidgetSyncServiceRequestCode,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+        alarmManager.set(AlarmManager.ELAPSED_REALTIME,
                 SystemClock.elapsedRealtime() + interval * 60 * 1000, pendingIntent);
     }
 
@@ -92,10 +96,11 @@ public class WidgetSyncService extends Service {
 
     private void fetchData() {
         int minInterval = configContact.getRefreshInterval(5);
+//        int minInterval = 0;
         String weatherFull = configContact.getWeatherFull();
         long weatherFullLastUpdateTime = configContact.getWeatherFullLastUpdateTime(0);
         if (weatherFull != null && System.currentTimeMillis() - weatherFullLastUpdateTime < minInterval * 60 * 1000) {
-            WidgetUtils.refreshWidget(this, JSON.parseObject(weatherFull, ForecastBean.class));
+            WidgetUtils.refreshWidget(this, JSON.parseObject(weatherFull, ForecastBean.class), interval);
         } else {
             if (DEBUG) {
                 Log.d(TAG, " weather data out of date");
@@ -111,12 +116,16 @@ public class WidgetSyncService extends Service {
                                     .url(fUrl).build();
                             Response response = client.newCall(request).execute();
                             WidgetUtils.refreshWidget(WidgetSyncService.this, JSON.parseObject(response.body().string(),
-                                    ForecastBean.class));
+                                    ForecastBean.class), interval);
                         } catch (IOException e) {
                             e.printStackTrace();
+                            startAgain(15);
+                            BigWidgetUtils.refreshTime(WidgetSyncService.this, 15);
                             Log.e(TAG, "run: network error");
                         }
                     } else {
+                        startAgain(15);
+                        BigWidgetUtils.refreshTime(WidgetSyncService.this, 15);
                         Log.e(TAG, "run: fUrl == null");
                     }
                 }

@@ -43,8 +43,8 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
     }
 
     @Override
-    public void rainInfo(String str) {
-        weatherView.setRainInfo(str);
+    public void rainInfo(String now, String today) {
+        weatherView.setRainInfo(now, today);
     }
 
     /**
@@ -152,6 +152,11 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
     @Override
     public void setCounty(String countyStr) {
         weatherView.setCounty(countyStr);
+    }
+
+    @Override
+    public void setLocationDetail(String locationDetail) {
+        weatherView.setLocationDetail(locationDetail);
     }
 
     @Override

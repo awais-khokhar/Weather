@@ -102,7 +102,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
 
     /**
      * 刷新天气
-     *
      * @param forceAllRefresh 是否强制全量刷新
      * @param getCountyName   需要刷新的城市名
      */
@@ -112,17 +111,19 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
         presenter.initHourlyView();
         presenter.initDailyView();
         //读取配置
-        boolean getAutoLocate = configContact.getAutoLocate(false);
+        boolean autoLocate = configContact.getAutoLocate(false);
         countyName = configContact.getCountyName();
+        locationDetail = configContact.getLocationDetail("");
         if (!forceAllRefresh) {
             /*
              * 判断是否超过刷新间隔。
              * 如果需要刷新的城市和配置文件中的城市一样 或 传递进来的城市为空，则进行刷新间隔判断。
              */
-            if ((!TextUtils.isEmpty(getCountyName) && !TextUtils.isEmpty(countyName) && countyName.equals(getCountyName)) || TextUtils.isEmpty(getCountyName)) {
+            if ((!TextUtils.isEmpty(getCountyName) && !TextUtils.isEmpty(countyName) && countyName.equals(getCountyName))
+                    || TextUtils.isEmpty(getCountyName)) {
 
 //                最低刷新间隔
-                int minInterval = configContact.getRefreshInterval(10);
+                int minInterval = configContact.getRefreshInterval(5);
 //               未来的天气， 原始json
                 String weatherFull = configContact.getWeatherFull();
                 long weatherFullLastUpdateTime = configContact.getWeatherFullLastUpdateTime(0);
@@ -139,31 +140,32 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                     presenter.setCurrentWeatherInfo(bean);
                     jsonFullWeatherData(weatherFull);
 
-                    presenter.setLocateModeImage(getAutoLocate);
+                    presenter.setLocateModeImage(autoLocate);
 
                     String ip;
-                    if (countyName != null)
+                    if (countyName != null) {
                         presenter.setCounty(countyName);
+                        presenter.setLocationDetail(locationDetail);
+                    }
                     else if ((ip = configContact.getIp()) != null) {
-                        presenter.setCounty(ip);
+                        presenter.setLocationDetail(ip);
                     }
                 } else {
 //            全量刷新
-                    beforeRequestWeather(getAutoLocate ? THROUGH_LOCATE : THROUGH_CHOOSE_POSITION);
+                    beforeRequestWeather(autoLocate ? THROUGH_LOCATE : THROUGH_CHOOSE_POSITION);
                 }
             } else {
-                beforeRequestWeather(getAutoLocate ? THROUGH_LOCATE : THROUGH_CHOOSE_POSITION);
+                beforeRequestWeather(autoLocate ? THROUGH_LOCATE : THROUGH_CHOOSE_POSITION);
             }
         } else {
             if (!TextUtils.isEmpty(getCountyName))
                 countyName = getCountyName;
-            beforeRequestWeather(getAutoLocate ? THROUGH_LOCATE : THROUGH_CHOOSE_POSITION);
+            beforeRequestWeather(autoLocate ? THROUGH_LOCATE : THROUGH_CHOOSE_POSITION);
         }
     }
 
     private void beforeRequestWeather(@Constants.Through int requestCode) {
 
-//        locateMode.setVisibility(View.VISIBLE);
         switch (requestCode) {
             case THROUGH_IP:
 //                主界面显示当前为 ip 定位
@@ -182,10 +184,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                 bdLocate();
                 break;
             case THROUGH_COORDINATE:
-//                locateModeImage.setVisibility(View.INVISIBLE);
-//                locateMode.setVisibility(View.INVISIBLE);
                 locationCoordinates = configContact.getCoordinate();
-//                initRequireUrl();
                 afterGetCoordinate();
                 break;
         }
@@ -232,17 +231,23 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
     private void bdLocateSuccess(MyLocation location) {
         locationCoordinates = location.getCoordinate();
         String countyName = location.getDistrict();
+        String locationDetail = location.getStreet();
         if (DEBUG) {
             Log.d(TAG, "locateSuccess: locationCoordinates == " + locationCoordinates);
             Log.d(TAG, "locateSuccess: title: " + countyName + location.getStreet());
         }
+        if (TextUtils.isEmpty(locationDetail)) {
+            locationDetail = countyName;
+        }
 
         configContact.applyCountyName(countyName);
+        configContact.applyLocationDetail(locationDetail);
         configContact.applyCoordinate(locationCoordinates);
         configContact.applyCountyNameLastUpdateTime(System.currentTimeMillis());
         configContact.applyCoordinateLastUpdateTime(System.currentTimeMillis());
 
         presenter.setCounty(countyName);
+        presenter.setLocationDetail(locationDetail);
         afterGetCoordinate();
     }
 
@@ -348,7 +353,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
-                presenter.toastMessage("load weather forecast failed");
+                presenter.toastMessage("Load weather failed");
             }
 
             @Override
@@ -371,6 +376,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
      * 网络请求现在的天气
      * 此方法未使用，直接在 requestFullWeather() 中使用 Forecast 结果刷新当前天气
      */
+    @Deprecated
     private void requestCurrentWeather(String url) {
 
         if (TextUtils.isEmpty(url)) {
@@ -465,12 +471,14 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
 //                forecastBean.getResult().getDaily().setDesc(list.subList(0, 5));
 
 
+            ForecastBean.ResultBean.MinutelyBean minutelyBean = forecastBean.getResult().getMinutely();
             ForecastBean.ResultBean.HourlyBean hourlyBean = forecastBean.getResult().getHourly();
             ForecastBean.ResultBean.DailyBean dailyBean = forecastBean.getResult().getDaily();
 
             presenter.setDailyWeatherInfo(dailyBean);
             presenter.setHourlyWeatherChart(hourlyBean);
-            presenter.rainInfo(forecastBean.getResult().getMinutely().getDescription());
+            presenter.rainInfo(minutelyBean.getDescription(), hourlyBean.getDescription());
+            Log.d(TAG, "jsonFullWeatherData: " + hourlyBean.getDescription());
             presenter.updateWidget(forecastBean);
         }
     }
@@ -480,7 +488,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
 
     /**
      * 通过获取的坐标获得位置描述， 使用 baidu web api
-     *
      * @param coordinate 坐标
      */
     private void getCountyByCoordinate(String coordinate) {
@@ -506,13 +513,16 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                 BaiDuCoordinateBean bean = JSON.parseObject(responseText, BaiDuCoordinateBean.class);
                 if (bean != null && bean.getStatus() == 0) {
                     String countyName = bean.getResult().getAddressComponent().getDistrict();
+                    String locationDetail = bean.getResult().getAddressComponent().getStreet() +
+                            bean.getResult().getAddressComponent().getStreet_number();
                     if (DEBUG)
                         Log.d(TAG, "setCountyByCoordinate.onResponse: countyName: " + countyName);
-
                     configContact.applyCountyName(countyName);
+                    configContact.applyLocationDetail(locationDetail);
                     configContact.applyCountyNameLastUpdateTime(System.currentTimeMillis());
 
                     presenter.setCounty(countyName);
+                    presenter.setLocationDetail(locationDetail);
                 } else {
                     Log.e(TAG, "onResponse: getCountyByCoordinate 根据坐标定位失败！");
                 }
@@ -578,7 +588,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             public void onFailure(Call call, IOException e) {
                 if (DEBUG)
                     Log.e(TAG, "onFailure: fetch locationCoordinates by IP failed");
-                presenter.toastMessage("onFailure: fetch locationCoordinates by IP failed");
+                presenter.toastMessage("Refresh failed");
                 presenter.stopSwipe();
             }
 
@@ -588,14 +598,18 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                 BaiDuIPLocationBean bean = JSON.parseObject(responseText, BaiDuIPLocationBean.class);
                 if (bean != null && bean.getStatus() == 0) {
                     locationCoordinates = bean.getContent().getPoint().getX() + "," + bean.getContent().getPoint().getY();
-                    String countyName = bean.getContent().getAddress_detail().getCity() + " " + bean.getContent().getAddress_detail().getDistrict();
-
+                    String city = bean.getContent().getAddress_detail().getCity();
+                    String district = bean.getContent().getAddress_detail().getDistrict();
+                    countyName = TextUtils.isEmpty(district) ? city : district;
                     long time = System.currentTimeMillis();
+                    String ip = Utility.getIP(context);
+
                     configContact.applyCoordinate(locationCoordinates);
                     configContact.applyCoordinateLastUpdateTime(time);
                     configContact.applyCountyName(countyName);
                     configContact.applyCountyNameLastUpdateTime(time);
-                    configContact.applyIp(Utility.getIP(context));
+                    configContact.applyIp(ip);
+                    configContact.applyLocationDetail(ip);
                     if (DEBUG)
                         Log.d(TAG, "GetCoordinateByIp: locationCoordinates = " + locationCoordinates);
                     afterGetCoordinate();
@@ -614,7 +628,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
 //            即 current weather Url， 获取当前天气的url
             String cUrl = "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/" + locationCoordinates + "/realtime.json";
 //            即 full weather Url， 获取未来天气的url
-            String fUrl = "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/" + locationCoordinates + "/forecast.json?alert=true";
+            String fUrl = "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/" + locationCoordinates + "/forecast.json?alert=true&dailysteps=15";
 
             configContact.applyCurl(cUrl);
             configContact.applyFurl(fUrl);
@@ -624,7 +638,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
 //            requestCurrentWeather(cUrl);
             requestFullWeather(fUrl);
         } else {
-            presenter.toastMessage("locationCoordinates = null");
             if (DEBUG)
                 Log.e(TAG, "initRequireUrl: locationCoordinates = null");
         }

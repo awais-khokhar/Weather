@@ -19,7 +19,11 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="WeatherActivityTheme" parent="AppTheme">
+    <style name="WeatherActivityTheme" parent="AppTheme" />
+
+    <style name="ThemeToolbar" parent="AppTheme.NoActionBar">
+        <item name="android:colorControlNormal">@color/colorTextLight2nd</item>
+        <item name="android:textColorSecondary">@color/colorTextLight2nd</item>
     </style>
 
     <!-- clock -->
@@ -44,6 +48,40 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@color/colorTextDark2nd</item>
+    </style>
+
+    <style name="small_rain_info_text">
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:layout_marginRight">8dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:shadowColor">@color/colorTextDark</item>
+        <item name="android:shadowDx">1.0</item>
+        <item name="android:shadowDy">1.0</item>
+        <item name="android:shadowRadius">2.0</item>
+        <item name="android:text">@string/na</item>
+        <item name="android:textColor">@color/colorTextLight2nd</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <!-- text. -->
+    <style name="large_title_text">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:shadowColor">@color/colorTextDark</item>
+        <item name="android:shadowDx">1.0</item>
+        <item name="android:shadowDy">1.0</item>
+        <item name="android:shadowRadius">2.0</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/colorTextLight2nd</item>
+    </style>
+
+    <style name="card_view_style">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+        <item name="cardCornerRadius">3dp</item>
     </style>
 
 </resources>

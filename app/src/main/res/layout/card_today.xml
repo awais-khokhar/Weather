@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="150dp">
+    android:layout_height="130dp">
 
 
     <android.support.constraint.Guideline
@@ -21,6 +21,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/Today"
         android:textSize="18sp"
+        android:visibility="invisible"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -46,27 +47,27 @@
 
     <top.maweihao.weather.view.SunTimeView
         android:id="@+id/stv"
+        android:layout_width="120dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
         app:darkColor="#1A237E"
         app:dayColor="#FFB300"
-        android:layout_width="130dp"
-        android:layout_height="80dp"
-        android:layout_marginLeft="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.428"
         app:layout_constraintLeft_toLeftOf="@+id/guideline7"
-        android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintVertical_bias="1.0"
-        app:layout_constraintHorizontal_bias="0.428" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/now_card_sunrise_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/sunrise"
         android:textColor="@color/colorTextDark2nd"
         app:layout_constraintLeft_toLeftOf="@+id/guideline7"
@@ -77,7 +78,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:text="@string/sunset"
         android:textColor="@color/colorTextDark2nd"
         app:layout_constraintRight_toRightOf="parent"
@@ -88,7 +89,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="0dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="0dp"
         android:gravity="left"
         android:text="@string/na"
         android:textColor="@color/colorTextDark"
@@ -102,7 +103,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="0dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="0dp"
         android:gravity="right"
         android:text="@string/na"
         android:textColor="@color/colorTextDark"

@@ -9,4 +9,6 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="recyclerView_divider_height">1dp</dimen>
     <dimen name="recyclerView_divider_leftmargin">10dp</dimen>
     <dimen name="recyclerView_divider_rightmargin">10dp</dimen>
+    <dimen name="little_margin">8dp</dimen>
+    <dimen name="normal_margin">16dp</dimen>
 </resources>

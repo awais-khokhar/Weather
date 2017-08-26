@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_now"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:orientation="vertical"
+    tools:background="@android:color/black">
+
+    <TextView
+        android:id="@+id/rain_info_tv"
+        style="@style/small_rain_info_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="start"
+        android:textAlignment="textStart"
+        tools:text="这里不会有雨，不过您西边25公里正下着中雨呢" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/rain_info_tv"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="@dimen/little_margin"
+        tools:ignore="RtlHardcoded">
+
+        <TextView
+            android:id="@+id/temperature_text"
+            style="@style/large_title_text"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/normal_margin"
+            android:textSize="48sp"
+            tools:ignore="RelativeOverlap,RtlHardcoded"
+            tools:text="30°" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/little_margin"
+            android:layout_toRightOf="@id/temperature_text"
+            android:orientation="vertical"
+            tools:ignore="RtlHardcoded">
+
+            <TextView
+                android:id="@+id/skycon_text"
+                style="@style/large_title_text"
+                android:layout_marginBottom="2dp"
+                android:maxLines="1"
+                android:textSize="18sp"
+                tools:ignore="RelativeOverlap,RtlHardcoded"
+                tools:text="晴" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/locate_mode_image"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:visibility="invisible"
+                    app:srcCompat="@drawable/ic_location_off_black_24dp"
+                    tools:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/location_tv"
+                    style="@style/large_title_text"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="4dp"
+                    android:text="@string/na"
+                    android:textSize="14sp"
+                    tools:text="亚东新城区文苑路" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/weather_alert_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="32dp"
+            android:src="@drawable/ic_alert"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

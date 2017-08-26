@@ -19,7 +19,7 @@ public interface WeatherActivityContract {
 
         void setRefreshDone(boolean refreshDone);
 
-        void setRainInfo(String str);
+        void setRainInfo(String now, String today);
 
 //        void showDailyWeatherInfo(final ForecastBean.ResultBean.DailyBean dailyBean);
 
@@ -32,6 +32,8 @@ public interface WeatherActivityContract {
         void showToastMessage(String msg);
 
         void setCounty(String countyStr);
+
+        void setLocationDetail(String locationDetail);
 
         void startSwipe();
 
@@ -49,7 +51,7 @@ public interface WeatherActivityContract {
     }
 
     interface Presenter {
-        void rainInfo(String str);
+        void rainInfo(String now, String today);
 
         void setDailyWeatherInfo(final ForecastBean.ResultBean.DailyBean dailyBean);
 
@@ -66,6 +68,8 @@ public interface WeatherActivityContract {
         void setCurrentWeatherInfo(ForecastBean forecastBean);
 
         void setCounty(String countyStr);
+
+        void setLocationDetail(String locationDetail);
 
         void startSwipe();
 
