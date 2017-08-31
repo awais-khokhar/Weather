@@ -206,7 +206,7 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
                         mSurface.unlockCanvasAndPost(canvas);
 
                         final long drawTime = AnimationUtils.currentAnimationTimeMillis() - startTime;
-                        final long needSleepTime = 37 - drawTime;
+                        final long needSleepTime = 16 - drawTime;
 //                    Log.v(TAG, "drawSurface drawTime->" + drawTime + " needSleepTime->" + Math.max(0, needSleepTime));// needSleepTime);
                         if (needSleepTime > 0) {
                             try {

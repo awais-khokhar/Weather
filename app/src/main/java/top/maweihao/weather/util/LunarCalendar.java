@@ -11,7 +11,7 @@ import java.util.Objects;
  * lunar utility class
  * Created by ma on 17-6-3.
  */
-
+@Deprecated
 public class LunarCalendar {
     private int year; // 农历的年份
     private int month;

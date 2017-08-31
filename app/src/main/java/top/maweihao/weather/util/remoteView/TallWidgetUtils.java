@@ -9,13 +9,15 @@ import android.provider.AlarmClock;
 import android.view.View;
 import android.widget.RemoteViews;
 
+import java.util.GregorianCalendar;
+
 import top.maweihao.weather.R;
 import top.maweihao.weather.activity.WeatherActivity;
 import top.maweihao.weather.bean.ForecastBean;
 import top.maweihao.weather.bean.HeWeather.HeNowWeather;
 import top.maweihao.weather.bean.RealTimeBean;
 import top.maweihao.weather.contract.PreferenceConfigContact;
-import top.maweihao.weather.util.LunarCalendar;
+import top.maweihao.weather.util.Lunar;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.widget.TallWeatherWidget;
 import top.maweihao.weather.widget.TallWeatherWidgetConfigureActivity;
@@ -82,10 +84,10 @@ public class TallWidgetUtils {
         Boolean lunar = TallWeatherWidgetConfigureActivity.loadLunarPref(context);
         Boolean card = TallWeatherWidgetConfigureActivity.loadCardPref(context);
         if (lunar) {
-            LunarCalendar lunarCalendar = new LunarCalendar();
+            Lunar lunarDate = new Lunar(new GregorianCalendar());
             tallViews.setViewVisibility(R.id.tall_widget_lunar, View.VISIBLE);
 
-            tallViews.setTextViewText(R.id.tall_widget_lunar, lunarCalendar.getLunarDateFromTimeMills());
+            tallViews.setTextViewText(R.id.tall_widget_lunar, lunarDate.toString());
         } else {
             tallViews.setViewVisibility(R.id.tall_widget_lunar, View.GONE);
         }

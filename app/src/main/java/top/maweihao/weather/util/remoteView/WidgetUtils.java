@@ -24,7 +24,7 @@ public class WidgetUtils {
         }).start();
     }
 
-
+    @Deprecated
     public static void refreshWidget(final Context context, final ForecastBean forecastBean, final int minute) {
         new Thread(new Runnable() {
             @Override
@@ -38,6 +38,7 @@ public class WidgetUtils {
             }
         }).start();
     }
+
     public static boolean hasAnyWidget(Context context) {
         return SimpleWidgetUtils.isEnable(context)
                 || TallWidgetUtils.isEnable(context)

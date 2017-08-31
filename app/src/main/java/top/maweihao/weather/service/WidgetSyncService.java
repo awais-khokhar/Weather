@@ -19,7 +19,6 @@ import top.maweihao.weather.bean.ForecastBean;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.Utility;
-import top.maweihao.weather.util.remoteView.BigWidgetUtils;
 import top.maweihao.weather.util.remoteView.WidgetUtils;
 
 import static top.maweihao.weather.util.Constants.DEBUG;
@@ -96,11 +95,10 @@ public class WidgetSyncService extends Service {
 
     private void fetchData() {
         int minInterval = configContact.getRefreshInterval(5);
-//        int minInterval = 0;
         String weatherFull = configContact.getWeatherFull();
         long weatherFullLastUpdateTime = configContact.getWeatherFullLastUpdateTime(0);
         if (weatherFull != null && System.currentTimeMillis() - weatherFullLastUpdateTime < minInterval * 60 * 1000) {
-            WidgetUtils.refreshWidget(this, JSON.parseObject(weatherFull, ForecastBean.class), interval);
+            WidgetUtils.refreshWidget(this, JSON.parseObject(weatherFull, ForecastBean.class));
         } else {
             if (DEBUG) {
                 Log.d(TAG, " weather data out of date");
@@ -116,16 +114,14 @@ public class WidgetSyncService extends Service {
                                     .url(fUrl).build();
                             Response response = client.newCall(request).execute();
                             WidgetUtils.refreshWidget(WidgetSyncService.this, JSON.parseObject(response.body().string(),
-                                    ForecastBean.class), interval);
+                                    ForecastBean.class));
                         } catch (IOException e) {
                             e.printStackTrace();
                             startAgain(15);
-                            BigWidgetUtils.refreshTime(WidgetSyncService.this, 15);
                             Log.e(TAG, "run: network error");
                         }
                     } else {
                         startAgain(15);
-                        BigWidgetUtils.refreshTime(WidgetSyncService.this, 15);
                         Log.e(TAG, "run: fUrl == null");
                     }
                 }

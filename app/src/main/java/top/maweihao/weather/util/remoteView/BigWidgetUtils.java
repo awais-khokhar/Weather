@@ -109,6 +109,7 @@ public class BigWidgetUtils {
         appWidgetManager.updateAppWidget(new ComponentName(context, BigWeatherWidget.class), bigViews);
     }
 
+    @Deprecated
     public static void refreshTime(Context context, int minute) {
         RemoteViews bigViews = new RemoteViews(context.getPackageName(), R.layout.widget_big_weather);
         bigViews.setTextViewText(R.id.big_widget_refresh_time, '-' + Utility.parseTime(minute));
