@@ -12,9 +12,10 @@
         android:id="@+id/rain_info_tv"
         style="@style/small_rain_info_text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="36dp"
         android:layout_alignParentBottom="true"
-        android:gravity="start"
+        android:maxLines="2"
+        android:gravity="start|center_vertical"
         android:textAlignment="textStart"
         tools:text="这里不会有雨，不过您西边25公里正下着中雨呢" />
 
