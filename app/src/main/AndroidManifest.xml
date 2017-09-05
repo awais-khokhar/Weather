@@ -84,11 +84,6 @@
                 android:resource="@xml/simple_weather_widget_info" />
         </receiver>
 
-        <service
-            android:name=".service.SimpleWidgetUpdateService"
-            android:enabled="true"
-            android:exported="false" />
-
         <activity android:name=".activity.AlertActivity" />
 
         <receiver android:name=".widget.TallWeatherWidget">
@@ -116,15 +111,6 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/big_weather_widget_info" />
         </receiver>
-
-        <service
-            android:name=".service.BigWidgetUpdateService"
-            android:enabled="true"
-            android:exported="false" />
-        <service
-            android:name=".service.TallWidgetUpdateService"
-            android:enabled="true"
-            android:exported="false" />
 
         <activity android:name=".activity.DetailActivity" />
 

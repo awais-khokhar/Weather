@@ -1,6 +1,7 @@
 package top.maweihao.weather.util;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
 import android.location.LocationManager;
@@ -308,6 +309,7 @@ public class Utility {
         }
     }
 
+
     /**
      * 判断时间和现在的时间相差
      *
@@ -428,9 +430,10 @@ public class Utility {
         }
     }
 
-    public static String parseTime() {
+    public static String parseTime(Context context) {
         Date date = new Date();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("hh:mm", Locale.CHINA);
+        boolean time12 = isTimeFormat12(context);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(time12 ? "hh:mm" : "HH:mm", Locale.CHINA);
         return simpleDateFormat.format(date);
     }
 
@@ -472,6 +475,18 @@ public class Utility {
             }
         }
         return false;
+    }
+
+    // 系统时间是否为12小时制
+    public static boolean isTimeFormat12(Context context) {
+        ContentResolver cv = context.getContentResolver();
+        String strTimeFormat = android.provider.Settings.System.getString(cv,
+                android.provider.Settings.System.TIME_12_24);
+        if (strTimeFormat.equals("24")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 

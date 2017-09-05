@@ -32,6 +32,7 @@ public class WidgetSyncService extends Service {
     private boolean hasWidget;
     private int interval;
     private boolean forceRefresh;
+    private boolean isBigWidgetOn;
 
     private PreferenceConfigContact configContact;
 
@@ -49,7 +50,10 @@ public class WidgetSyncService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStartCommand: ");
+        isBigWidgetOn = WidgetUtils.hasBigWidget(this);
         forceRefresh = intent != null && intent.getBooleanExtra(force_refresh, false);
+
+
         int refreshInterval = (int) ((System.currentTimeMillis() - lastRefreshTime)
                 / (60 * 1000));
         if (hasWidget && refreshInterval >= interval - 5 || forceRefresh) {
@@ -57,7 +61,7 @@ public class WidgetSyncService extends Service {
             saveInterval();
             fetchData();
         } else {
-            startAgain(15);
+            startAgain(30);
         }
         return START_STICKY;
     }
@@ -73,8 +77,7 @@ public class WidgetSyncService extends Service {
         hasWidget = WidgetUtils.hasAnyWidget(this);
         configContact = Utility.createSimpleConfig(this).create(PreferenceConfigContact.class);
         lastRefreshTime = configContact.getLastSyncTime(0L);
-        // BigWidget need to be refreshed more frequently (minutes)
-        interval = WidgetUtils.hasBigWidget(this) ? 60 : 90;
+        interval = 90;
     }
 
     private void startAgain(int interval) {
@@ -95,6 +98,7 @@ public class WidgetSyncService extends Service {
 
     private void fetchData() {
         int minInterval = configContact.getRefreshInterval(5);
+
         String weatherFull = configContact.getWeatherFull();
         long weatherFullLastUpdateTime = configContact.getWeatherFullLastUpdateTime(0);
         if (weatherFull != null && System.currentTimeMillis() - weatherFullLastUpdateTime < minInterval * 60 * 1000) {
@@ -113,15 +117,17 @@ public class WidgetSyncService extends Service {
                             Request request = new Request.Builder()
                                     .url(fUrl).build();
                             Response response = client.newCall(request).execute();
+                            configContact.applyWeatherFull(response.body().string());
+                            configContact.applyWeatherFullLastUpdateTime(System.currentTimeMillis());
                             WidgetUtils.refreshWidget(WidgetSyncService.this, JSON.parseObject(response.body().string(),
                                     ForecastBean.class));
                         } catch (IOException e) {
                             e.printStackTrace();
-                            startAgain(15);
+                            startAgain(30);
                             Log.e(TAG, "run: network error");
                         }
                     } else {
-                        startAgain(15);
+                        startAgain(30);
                         Log.e(TAG, "run: fUrl == null");
                     }
                 }

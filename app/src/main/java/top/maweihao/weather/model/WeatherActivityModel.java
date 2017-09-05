@@ -632,10 +632,8 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
 
             configContact.applyCurl(cUrl);
             configContact.applyFurl(fUrl);
-
             presenter.startSwipe();
 
-//            requestCurrentWeather(cUrl);
             requestFullWeather(fUrl);
         } else {
             if (DEBUG)

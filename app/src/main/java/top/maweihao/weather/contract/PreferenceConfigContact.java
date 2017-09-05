@@ -17,11 +17,13 @@ public interface PreferenceConfigContact {
     String REFRESH_INTERVAL = "refresh_interval";
     String WEATHER_NOW = "weather_now";
     String WEATHER_FULL = "weather_full";
+    String WEATHER_HE_NOW = "weather_he_now";
     String LAST_SYNC_TIME = "last_sync_time";
     String WIDGET_UPDATE_INTERVAL = "widget_update_interval";
 
     String WEATHER_NOW_LAST_UPDATE_TIME = "weather_now_last_update_time";
     String WEATHER_FULL_LAST_UPDATE_TIME = "weather_full_last_update_time";
+    String WEATHER_HE_NOW_LAST_UPDATE_TIME = "weather_he_now_last_update_time";
     String IP = "IP";
     String COORDINATE="coordinate";
     String COORDINATE_LAST_UPDATE_TIME="coordinate_last_update";
@@ -52,6 +54,9 @@ public interface PreferenceConfigContact {
     @GET(key = WEATHER_FULL)
     String getWeatherFull();
 
+    @GET(key = WEATHER_HE_NOW)
+    String getWeatherHeNow();
+
     @GET(key = LAST_SYNC_TIME)
     Long getLastSyncTime(long defaultValue);
 
@@ -63,6 +68,9 @@ public interface PreferenceConfigContact {
 
     @GET(key = WEATHER_FULL_LAST_UPDATE_TIME)
     long getWeatherFullLastUpdateTime(long defaultValue);
+
+    @GET(key = WEATHER_HE_NOW_LAST_UPDATE_TIME)
+    long getWeatherHeNowLastUpdateTime(long dafaultValue);
 
     @GET(key = IP)
     String getIp();
@@ -107,6 +115,9 @@ public interface PreferenceConfigContact {
     @APPLY(key = WEATHER_FULL)
     void applyWeatherFull(String value);
 
+    @APPLY(key = WEATHER_HE_NOW)
+    void applyWeatherHeNow(String value);
+
     @APPLY(key = LAST_SYNC_TIME)
     void applyLastSyncTime(Long value);
 
@@ -118,6 +129,9 @@ public interface PreferenceConfigContact {
 
     @APPLY(key = WEATHER_FULL_LAST_UPDATE_TIME)
     void applyWeatherFullLastUpdateTime(long value);
+
+    @APPLY(key = WEATHER_HE_NOW_LAST_UPDATE_TIME)
+    void applyWeatherHeNowLastUpdateTime(long value);
 
     @APPLY(key = IP)
     void applyIp(String value);

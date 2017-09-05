@@ -3,6 +3,7 @@ package top.maweihao.weather.util.remoteView;
 import android.content.Context;
 
 import top.maweihao.weather.bean.ForecastBean;
+import top.maweihao.weather.bean.HeWeather.HeNowWeather;
 
 /**
  * Utility class for updating all widgets
@@ -24,6 +25,20 @@ public class WidgetUtils {
         }).start();
     }
 
+    // 使用和风天气的数据只能刷新 TallWidget 和 SimpleWidget
+    public static void refreshWidget(final Context context, final HeNowWeather heNowWeather) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (SimpleWidgetUtils.isEnable(context))
+                    SimpleWidgetUtils.refreshWidgetView(context, heNowWeather);
+                if (TallWidgetUtils.isEnable(context))
+                    TallWidgetUtils.refreshWidgetView(context, heNowWeather);
+            }
+        }).start();
+    }
+
+    // 为 BigWidget 带上下次刷新时间，测试用
     @Deprecated
     public static void refreshWidget(final Context context, final ForecastBean forecastBean, final int minute) {
         new Thread(new Runnable() {

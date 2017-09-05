@@ -50,7 +50,7 @@ public class BigWidgetUtils {
         bigViews.setTextViewText(R.id.big_widget_description, description);
         bigViews.setImageViewResource(R.id.big_widget_skycon, icon);
         bigViews.setTextViewText(R.id.big_widget_info, countyName + "\n" + skyconString + ' ' + tem + '°');
-        bigViews.setTextViewText(R.id.big_widget_refresh_time, Utility.parseTime());
+        bigViews.setTextViewText(R.id.big_widget_refresh_time, Utility.parseTime(context));
 
         PendingIntent weatherPendingIntent = PendingIntent.getActivity(context, WEATHER_PENDING_INTENT_CODE,
                 new Intent(context, WeatherActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
@@ -88,7 +88,7 @@ public class BigWidgetUtils {
         bigViews.setTextViewText(R.id.big_widget_description, description);
         bigViews.setImageViewResource(R.id.big_widget_skycon, icon);
         bigViews.setTextViewText(R.id.big_widget_info, countyName + "\n" + skyconString + ' ' + tem + '°');
-        bigViews.setTextViewText(R.id.big_widget_refresh_time, Utility.parseTime() + '-' + Utility.parseTime(minute));
+        bigViews.setTextViewText(R.id.big_widget_refresh_time, Utility.parseTime(context) + '-' + Utility.parseTime(minute));
 
         PendingIntent weatherPendingIntent = PendingIntent.getActivity(context, WEATHER_PENDING_INTENT_CODE,
                 new Intent(context, WeatherActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
@@ -114,4 +114,5 @@ public class BigWidgetUtils {
         RemoteViews bigViews = new RemoteViews(context.getPackageName(), R.layout.widget_big_weather);
         bigViews.setTextViewText(R.id.big_widget_refresh_time, '-' + Utility.parseTime(minute));
     }
+
 }

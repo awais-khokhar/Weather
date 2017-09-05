@@ -7,8 +7,8 @@ android {
         applicationId "top.maweihao.weather"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 3
-        versionName "1.3.0"
+        versionCode 32
+        versionName "1.3.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }

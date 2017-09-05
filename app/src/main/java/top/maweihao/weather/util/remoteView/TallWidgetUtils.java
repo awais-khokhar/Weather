@@ -17,6 +17,7 @@ import top.maweihao.weather.bean.ForecastBean;
 import top.maweihao.weather.bean.HeWeather.HeNowWeather;
 import top.maweihao.weather.bean.RealTimeBean;
 import top.maweihao.weather.contract.PreferenceConfigContact;
+import top.maweihao.weather.util.HeWeatherUtil;
 import top.maweihao.weather.util.Lunar;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.widget.TallWeatherWidget;
@@ -66,7 +67,15 @@ public class TallWidgetUtils {
     }
 
     public static void refreshWidgetView(Context context, HeNowWeather heNowWeather) {
-        // TODO: 17-7-28
+        String countyName = getCounty(context);
+        if (heNowWeather.getHeWeather5().get(0).getStatus().equals("ok")) {
+            HeNowWeather.HeWeather5Bean.NowBean now = heNowWeather.getHeWeather5().get(0).getNow();
+            int tem = Integer.parseInt(now.getTmp());
+            String skyconString = now.getCond().getTxt();
+            int icon = HeWeatherUtil.chooseHeIcon(now.getCond().getCode());
+
+            updateWidgetView(context, icon, countyName, skyconString, tem);
+        }
     }
 
     private static void updateWidgetView(Context context, int icon, String countyName, String skyconString, int tem) {
