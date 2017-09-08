@@ -264,38 +264,38 @@ public class Utility {
     public static int chooseWeatherIcon(String skycon, double precipitation, int mode, boolean simpleIcon) {
         switch (skycon) {
             case "CLEAR_DAY":
-                return simpleIcon ? R.mipmap.simple_clear_day_gray : R.mipmap.weather_clear;
+                return simpleIcon ? R.mipmap.simple_clear_day : R.mipmap.weather_clear;
             case "CLEAR_NIGHT":
-                return simpleIcon ? R.mipmap.simple_clear_night_gray : R.mipmap.weather_clear_night;
+                return simpleIcon ? R.mipmap.simple_clear_night : R.mipmap.weather_clear_night;
             case "PARTLY_CLOUDY_DAY":
-                return simpleIcon ? R.mipmap.simple_cloudy_day_gray : R.mipmap.weather_few_clouds;
+                return simpleIcon ? R.mipmap.simple_cloudy_day : R.mipmap.weather_few_clouds;
             case "PARTLY_CLOUDY_NIGHT":
-                return simpleIcon ? R.mipmap.simple_cloudy_night_gray : R.mipmap.weather_few_clouds_night;
+                return simpleIcon ? R.mipmap.simple_cloudy_night : R.mipmap.weather_few_clouds_night;
             case "CLOUDY":
-                return simpleIcon ? R.mipmap.simple_cloudy_2_gray : R.mipmap.weather_clouds;
+                return simpleIcon ? R.mipmap.simple_cloudy_2 : R.mipmap.weather_clouds;
             case "RAIN":
                 switch (mode) {
                     case MINUTELY_MODE:
                         if (precipitation <= 0.25)
-                            return simpleIcon ? R.mipmap.simple_light_rain_gray : R.mipmap.weather_drizzle_day;
+                            return simpleIcon ? R.mipmap.simple_light_rain : R.mipmap.weather_drizzle_day;
                         else if (precipitation <= 0.35)
-                            return simpleIcon ? R.mipmap.simple_medium_rain_gray : R.mipmap.weather_rain_day;
+                            return simpleIcon ? R.mipmap.simple_medium_rain : R.mipmap.weather_rain_day;
                         else
-                            return simpleIcon ? R.mipmap.simple_heavy_rain_gray : R.mipmap.weather_showers_day;
+                            return simpleIcon ? R.mipmap.simple_heavy_rain : R.mipmap.weather_showers_day;
                     case HOURLY_MODE:
                         if (precipitation <= 0.9)
-                            return simpleIcon ? R.mipmap.simple_light_rain_gray : R.mipmap.weather_drizzle_day;
+                            return simpleIcon ? R.mipmap.simple_light_rain : R.mipmap.weather_drizzle_day;
                         else if (precipitation <= 2.87)
-                            return simpleIcon ? R.mipmap.simple_medium_rain_gray : R.mipmap.weather_rain_day;
+                            return simpleIcon ? R.mipmap.simple_medium_rain : R.mipmap.weather_rain_day;
                         else
-                            return simpleIcon ? R.mipmap.simple_heavy_rain_gray : R.mipmap.weather_showers_day;
+                            return simpleIcon ? R.mipmap.simple_heavy_rain : R.mipmap.weather_showers_day;
                 }
             case "SNOW":
-                return simpleIcon ? R.mipmap.simple_snow_gray : R.mipmap.weather_snow;
+                return simpleIcon ? R.mipmap.simple_snow : R.mipmap.weather_snow;
             case "WIND":
-                return simpleIcon ? R.mipmap.simple_wind_gray : R.mipmap.weather_wind;
+                return simpleIcon ? R.mipmap.simple_wind : R.mipmap.weather_wind;
             case "FOG":
-                return simpleIcon ? R.mipmap.simple_wind_gray : R.mipmap.weather_fog;
+                return simpleIcon ? R.mipmap.simple_wind : R.mipmap.weather_fog;
             default:
                 return -1;
         }

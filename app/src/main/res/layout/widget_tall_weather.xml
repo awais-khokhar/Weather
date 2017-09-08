@@ -1,8 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
 
     android:orientation="vertical"
     android:padding="@dimen/widget_margin"
@@ -39,7 +39,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:fontFamily="monospace"
             android:format12Hour="hh"
             android:format24Hour="HH"
             android:shadowColor="@color/colorTextDark"
@@ -47,7 +46,8 @@
             android:shadowDy="1.0"
             android:shadowRadius="1.0"
             android:textColor="#fafafa"
-            android:textSize="72sp" />
+            android:textSize="72sp"
+            android:fontFamily="@font/s8_clock" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -61,7 +61,6 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:layout_centerInParent="true"
-            android:fontFamily="monospace"
             android:format12Hour="mm"
             android:format24Hour="mm"
             android:shadowColor="@color/colorTextDark"
@@ -69,7 +68,8 @@
             android:shadowDy="1.0"
             android:shadowRadius="1.0"
             android:textColor="#fafafa"
-            android:textSize="72sp" />
+            android:textSize="72sp"
+            android:fontFamily="@font/s8_clock" />
 
     </RelativeLayout>
     </LinearLayout>

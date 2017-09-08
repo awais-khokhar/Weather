@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -148,9 +149,6 @@ public class SettingActivity extends AppCompatActivity {
             notificationTime = findPreference("notification_time");
             notificationTime.setOnPreferenceClickListener(new NotificationTimePreferenceClickListener());
 
-//            temLp.setSummary(temLp.getEntry());
-//            temLp.setOnPreferenceChangeListener(changeListener);
-
             if (notification.isChecked()) {
                 notificationTime.setEnabled(true);
                 notificationTime.setSummary(configContact.getNotificationTime("18 : 00"));
@@ -246,27 +244,53 @@ public class SettingActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 } else if (preference.getKey().equals("donate")) {
+                    ImageView imageView = new ImageView(getActivity());
+                    imageView.setImageResource(R.drawable.wechat_donate_qrcode);
+
+                    final AlertDialog.Builder weChatDialog = new AlertDialog.Builder(getActivity());
+                    weChatDialog.setTitle(R.string.donate_with_wechat)
+                            .setMessage(R.string.info_wechat_donate)
+                            .setView(imageView)
+                            .setNegativeButton(R.string.cancel, null);
+
+                    final AlertDialog.Builder chooseMethod = new AlertDialog.Builder(getActivity());
+                    chooseMethod.setTitle(R.string.choose_donate_method)
+                            .setItems(new String[]{"Alipay", "WeChat"}, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    switch (which) {
+                                        case 0:
+                                            try {
+                                                Intent intent = new Intent(Intent.ACTION_VIEW);
+                                                intent.setData(Uri.parse("alipayqr://platformapi/startapp?saId=10000007&qrcode=https://qr.alipay.com/a6x07374sqhbxyur624d77e"));
+                                                startActivity(intent);
+                                            } catch (ActivityNotFoundException e) {
+                                                Toast.makeText(getActivity(), getResources().getString(R.string.alipay_needed), Toast.LENGTH_LONG).show();
+                                                e.printStackTrace();
+                                            }
+                                            break;
+                                        case 1:
+                                            AlertDialog alertDialog = weChatDialog.create();
+                                            alertDialog.show();
+                                    }
+                                }
+                            })
+                            .setNegativeButton(R.string.cancel, null);
+
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
                     alertDialogBuilder.setTitle(getResources().getString(R.string.donate))
                             .setMessage(getResources().getString(R.string.donate_info))
-                            .setNegativeButton("Cancel", null)
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            .setNegativeButton(R.string.cancel, null)
+                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    try {
-                                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                                        intent.setData(Uri.parse("alipayqr://platformapi/startapp?saId=10000007&qrcode=https://qr.alipay.com/a6x07374sqhbxyur624d77e"));
-                                        startActivity(intent);
-                                    } catch (ActivityNotFoundException e) {
-                                        Toast.makeText(getActivity(), getResources().getString(R.string.alipay_needed), Toast.LENGTH_LONG).show();
-                                        e.printStackTrace();
-                                    }
+                                    AlertDialog alertDialog = chooseMethod.create();
+                                    alertDialog.show();
                                 }
                             });
-                    Log.d(TAG, "onPreferenceClick: here");
+
                     AlertDialog alertDialog = alertDialogBuilder.create();
                     alertDialog.show();
-
                 }
                 return true;
             }

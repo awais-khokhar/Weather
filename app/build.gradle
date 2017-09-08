@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.0"
     defaultConfig {
         applicationId "top.maweihao.weather"
         minSdkVersion 21
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 32
         versionName "1.3.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -24,7 +24,16 @@ android {
 }
 
 ext {
-    supportLibVersion = '25.3.1'
+    supportLibVersion = '26.0.2'
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        maven {
+            url 'https://maven.google.com'
+        }
+    }
 }
 
 dependencies {
@@ -35,9 +44,6 @@ dependencies {
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    //https://github.com/CymChad/BaseRecyclerViewAdapterHelper/
-    //https://github.com/yqritc/RecyclerView-FlexibleDivider  分割线
-    //https://github.com/BCsl/SimpleConfig
     compile "com.android.support:cardview-v7:${supportLibVersion}"
     compile "com.android.support:appcompat-v7:${supportLibVersion}"
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
@@ -45,13 +51,13 @@ dependencies {
     compile "com.android.support:support-v4:${supportLibVersion}"
     compile "com.android.support:support-vector-drawable:${supportLibVersion}"
     compile "com.android.support:support-annotations:${supportLibVersion}"
-    compile 'com.jakewharton:butterknife:8.6.0'
-    compile 'com.squareup.okhttp3:okhttp:3.7.0'
+    compile 'com.jakewharton:butterknife:8.8.0'
+    compile 'com.squareup.okhttp3:okhttp:3.8.0'
     compile 'org.litepal.android:core:1.4.1'
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.18'
     compile 'com.yqritc:recyclerview-flexibledivider:1.4.0'
-    compile 'com.alibaba:fastjson:1.1.58.android'
+    compile 'com.alibaba:fastjson:1.1.60.android'
     compile 'github.hellocsl:simpleconfig:1.0.0'
     testCompile 'junit:junit:4.12'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.0'
 }

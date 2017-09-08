@@ -16,12 +16,14 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import top.maweihao.weather.bean.ForecastBean;
+import top.maweihao.weather.bean.HeWeather.HeNowWeather;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.util.Constants;
+import top.maweihao.weather.util.HeWeatherUtil;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.util.remoteView.WidgetUtils;
 
-import static top.maweihao.weather.util.Constants.DEBUG;
+import static com.alibaba.fastjson.JSON.parseObject;
 
 public class WidgetSyncService extends Service {
 
@@ -101,26 +103,40 @@ public class WidgetSyncService extends Service {
 
         String weatherFull = configContact.getWeatherFull();
         long weatherFullLastUpdateTime = configContact.getWeatherFullLastUpdateTime(0);
-        if (weatherFull != null && System.currentTimeMillis() - weatherFullLastUpdateTime < minInterval * 60 * 1000) {
-            WidgetUtils.refreshWidget(this, JSON.parseObject(weatherFull, ForecastBean.class));
+        String weatherHeNow = configContact.getWeatherHeNow();
+        long weatherHeNowLastUpdateTime = configContact.getWeatherHeNowLastUpdateTime(0);
+        String coordinate = configContact.getCoordinate();
+
+        if (isBigWidgetOn && (weatherFull != null && System.currentTimeMillis() - weatherFullLastUpdateTime < minInterval * 60 * 1000)) {
+            WidgetUtils.refreshWidget(this, parseObject(weatherFull, ForecastBean.class));
+        } else if (!isBigWidgetOn && (weatherHeNow != null && System.currentTimeMillis() - weatherHeNowLastUpdateTime < minInterval * 60 * 1000)) {
+            WidgetUtils.refreshWidget(this, parseObject(weatherHeNow, HeNowWeather.class));
         } else {
-            if (DEBUG) {
-                Log.d(TAG, " weather data out of date");
-            }
-            final String fUrl = configContact.getFurl();
+            Log.d(TAG, " weather data out of date");
+            final String url = isBigWidgetOn ? configContact.getFurl() : HeWeatherUtil.initRequireUrl(HeWeatherUtil.MODE_NOW, coordinate);
+            Log.d(TAG, "fetchData: URL" + HeWeatherUtil.initRequireUrl(HeWeatherUtil.MODE_NOW, coordinate));
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    if (fUrl != null) {
+                    if (url != null) {
                         try {
                             OkHttpClient client = new OkHttpClient();
                             Request request = new Request.Builder()
-                                    .url(fUrl).build();
+                                    .url(url).build();
                             Response response = client.newCall(request).execute();
-                            configContact.applyWeatherFull(response.body().string());
-                            configContact.applyWeatherFullLastUpdateTime(System.currentTimeMillis());
-                            WidgetUtils.refreshWidget(WidgetSyncService.this, JSON.parseObject(response.body().string(),
-                                    ForecastBean.class));
+
+                            if (isBigWidgetOn) {
+                                configContact.applyWeatherFull(response.body().string());
+                                configContact.applyWeatherFullLastUpdateTime(System.currentTimeMillis());
+                                WidgetUtils.refreshWidget(WidgetSyncService.this, parseObject(response.body().string(),
+                                        ForecastBean.class));
+                            } else {
+                                String body = response.body().string();
+                                configContact.applyWeatherHeNow(body);
+                                configContact.applyWeatherHeNowLastUpdateTime(System.currentTimeMillis());
+                                HeNowWeather heWeather = JSON.parseObject(body, HeNowWeather.class);
+                                WidgetUtils.refreshWidget(WidgetSyncService.this, heWeather);
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
                             startAgain(30);
