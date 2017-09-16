@@ -1,5 +1,6 @@
 package top.maweihao.weather.util;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -337,7 +338,7 @@ public class Utility {
     /**
      * getIP 获取网络IP地址(优先获取wifi地址)
      *
-     * @param ctx
+     * @param ctx context
      * @return ip地址字符串
      */
     public static String getIP(Context ctx) {
@@ -347,8 +348,7 @@ public class Utility {
 
     private static String getWifiIP(WifiManager wifiManager) {
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-        String ip = intToIp(wifiInfo.getIpAddress());
-        return ip != null ? ip : "";
+        return intToIp(wifiInfo.getIpAddress());
     }
 
     private static String getGPRSIP() {
@@ -375,9 +375,10 @@ public class Utility {
 
     /**
      * 获取状态栏高度
-     * @param context
+     * @param context context
      * @return 高度值
      */
+    @SuppressLint("PrivateApi")
     public static int getStatusBarHeight(@NonNull Context context) {
         Class<?> c = null;
         Object obj = null;
@@ -420,7 +421,7 @@ public class Utility {
 
     /**
      * 关闭软键盘
-     * @param context
+     * @param context context
      */
     public static void closeSoftInput(@Nullable Context context) {
         assert context != null;
@@ -479,14 +480,7 @@ public class Utility {
 
     // 系统时间是否为12小时制
     public static boolean isTimeFormat12(Context context) {
-        ContentResolver cv = context.getContentResolver();
-        String strTimeFormat = android.provider.Settings.System.getString(cv,
-                android.provider.Settings.System.TIME_12_24);
-        if (strTimeFormat.equals("24")) {
-            return true;
-        } else {
-            return false;
-        }
+        return !android.text.format.DateFormat.is24HourFormat(context);
     }
 }
 
