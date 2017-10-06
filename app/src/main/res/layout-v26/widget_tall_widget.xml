@@ -26,6 +26,7 @@
             <TextClock
                 android:id="@+id/tall_widget_clock"
                 style="@style/widget_text_clock"
+                android:fontFamily="@font/font_clock_text"
                 android:format12Hour="hh\nmm"
                 android:format24Hour="HH\nmm"
                 android:textSize="64sp" />
@@ -89,44 +90,44 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-                <LinearLayout
-                    android:id="@+id/tall_widget_date_all"
-                    android:layout_alignParentTop="true"
+            <LinearLayout
+                android:id="@+id/tall_widget_date_all"
+                android:layout_alignParentTop="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:orientation="horizontal">
+
+                <TextClock
+                    android:id="@+id/tall_widget_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:orientation="horizontal">
+                    android:fontFamily="sans-serif-light"
+                    android:format12Hour="MM/dd EE"
+                    android:format24Hour="MM/dd EE"
+                    android:shadowColor="@color/colorTextDark"
+                    android:shadowDx="1.0"
+                    android:shadowDy="1.0"
+                    android:shadowRadius="1.0"
+                    android:textColor="#fafafa"
+                    android:textSize="14sp" />
 
-                    <TextClock
-                        android:id="@+id/tall_widget_date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-light"
-                        android:format12Hour="MM/dd EE"
-                        android:format24Hour="MM/dd EE"
-                        android:shadowColor="@color/colorTextDark"
-                        android:shadowDx="1.0"
-                        android:shadowDy="1.0"
-                        android:shadowRadius="1.0"
-                        android:textColor="#fafafa"
-                        android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/tall_widget_lunar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingStart="7dp"
+                    android:paddingEnd="7dp"
+                    android:shadowColor="@color/colorTextDark"
+                    android:shadowDx="1.0"
+                    android:shadowDy="1.0"
+                    android:shadowRadius="1.0"
+                    android:textColor="#fafafa"
+                    android:textSize="14sp"
+                    tools:text="十月廿一" />
 
-                    <TextView
-                        android:id="@+id/tall_widget_lunar"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:paddingStart="7dp"
-                        android:paddingEnd="7dp"
-                        android:shadowColor="@color/colorTextDark"
-                        android:shadowDx="1.0"
-                        android:shadowDy="1.0"
-                        android:shadowRadius="1.0"
-                        android:textColor="#fafafa"
-                        android:textSize="14sp"
-                        tools:text="十月廿一" />
-
-                </LinearLayout>
+            </LinearLayout>
 
             <ImageView
                 android:id="@+id/tall_widget_skycon"

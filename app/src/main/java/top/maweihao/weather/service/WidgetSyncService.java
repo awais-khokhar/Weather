@@ -126,10 +126,10 @@ public class WidgetSyncService extends Service {
                             Response response = client.newCall(request).execute();
 
                             if (isBigWidgetOn) {
-                                configContact.applyWeatherFull(response.body().string());
+                                String body = response.body().string();
+                                configContact.applyWeatherFull(body);
                                 configContact.applyWeatherFullLastUpdateTime(System.currentTimeMillis());
-                                WidgetUtils.refreshWidget(WidgetSyncService.this, parseObject(response.body().string(),
-                                        ForecastBean.class));
+                                WidgetUtils.refreshWidget(WidgetSyncService.this, parseObject(body, ForecastBean.class));
                             } else {
                                 String body = response.body().string();
                                 configContact.applyWeatherHeNow(body);

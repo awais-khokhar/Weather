@@ -336,7 +336,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             return location;
         }
     }
-    //=========================================================================================================
 
     /**
      * 网络请求未来天气数据
@@ -626,9 +625,9 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
     private void initRequireUrl() {
         if (!TextUtils.isEmpty(locationCoordinates)) {
 //            即 current weather Url， 获取当前天气的url
-            String cUrl = "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/" + locationCoordinates + "/realtime.json";
+            String cUrl = "https://api.caiyunapp.com/v2/Ahu2IBCHsYWm1--o/" + locationCoordinates + "/realtime.json";
 //            即 full weather Url， 获取未来天气的url
-            String fUrl = "https://api.caiyunapp.com/v2/3a9KGv6UhM=btTHY/" + locationCoordinates + "/forecast.json?alert=true&dailysteps=15";
+            String fUrl = "https://api.caiyunapp.com/v2/Ahu2IBCHsYWm1--o/" + locationCoordinates + "/forecast.json?alert=true&dailysteps=15";
 
             configContact.applyCurl(cUrl);
             configContact.applyFurl(fUrl);
