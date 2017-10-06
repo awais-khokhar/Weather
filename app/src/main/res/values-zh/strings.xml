@@ -94,7 +94,7 @@
     <string name="southwest">西南风</string>
     <string name="west">西风</string>
     <string name="east">东风</string>
-    <string name="loading">Loading</string>
+    <string name="loading">加载中</string>
     <string name="just_now">刚刚</string>
     <string name="minute_age">分钟前</string>
     <string name="hour_ago">小时前</string>
@@ -108,13 +108,13 @@
     <string name="email_needed">未找到任何邮件客户端</string>
     <string name="alipay_needed">暂时只支持支付宝</string>
     <string name="action_alert">天气预警</string>
-    <string name="weather_15">Weather in 15 days</string>
-    <string name="Today">Today</string>
-    <string name="dark_background">Dark Background</string>
-    <string name="cancel">Cancel</string>
-    <string name="ok">OK</string>
-    <string name="choose_donate_method">Choose Method</string>
-    <string name="donate_with_wechat">Donate Through WeChat</string>
-    <string name="info_wechat_donate">Please cut a screenshot of the QR code and scan it in WeChat</string>
+    <string name="weather_15">未来 15 天天气</string>
+    <string name="Today">今天</string>
+    <string name="dark_background">暗色背景</string>
+    <string name="cancel">取消</string>
+    <string name="ok">确定</string>
+    <string name="choose_donate_method">选择捐赠方式</string>
+    <string name="donate_with_wechat">通过微信支付捐赠</string>
+    <string name="info_wechat_donate">请将当前页面截图，并在微信中选择扫描。（该方式我已深思熟虑）</string>
 
 </resources>
