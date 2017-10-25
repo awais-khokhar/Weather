@@ -28,16 +28,20 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.functions.Consumer;
 import top.maweihao.weather.R;
 import top.maweihao.weather.adapter.DailyWeatherAdapter;
 import top.maweihao.weather.adapter.HourlyWeatherAdapter;
-import top.maweihao.weather.bean.Alert;
-import top.maweihao.weather.bean.ForecastBean;
-import top.maweihao.weather.bean.SingleWeather;
+import top.maweihao.weather.entity.Alert;
+import top.maweihao.weather.entity.ForecastBean;
+import top.maweihao.weather.entity.HeWeather.NewHeWeatherNow;
+import top.maweihao.weather.entity.NewWeatherRealtime;
+import top.maweihao.weather.entity.SingleWeather;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.contract.WeatherActivityContract;
 import top.maweihao.weather.presenter.WeatherActivityPresenter;
 import top.maweihao.weather.service.NotifyService;
+import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.SimplePermissionUtils;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.view.SemiCircleView;
@@ -81,8 +85,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     TextView lastUpdateTime;
     @BindView(R.id.now_card_desc)
     TextView todayDesc;
-    //    @BindView(R.id.toolbar_LinearLayout)
-//    LinearLayout toolBarLinearLayout;
     @BindView(R.id.dynamicWeatherView)
     DynamicWeatherView dynamicWeatherView;
     @BindView(R.id.aqi_image)
@@ -115,23 +117,12 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.more_days_weather)
     ImageButton imageButton;
-    //    @BindView(R.id.head_layout)
-//    ConstraintLayout headLayout;
-//    @BindView(R.id.toolbar_layout)
-//    CollapsingToolbarLayout toolbarLayout;
-//    @BindView(R.id.app_bar_layout)
-//    AppBarLayout appBarLayout;
     @BindView(R.id.hourly_weather_rv)
     RecyclerView hourlyRecyclerView;
     @BindView(R.id.daily_weather_rv)
     RecyclerView dailyRecyclerView;
     @BindView(R.id.weather_alert_icon)
     ImageView alertImage;
-//    @BindView(R.id.location_detail_tv)
-//    TextView locationDetailTV;
-
-//    @Constants.CollapsingToolbarLayoutState
-//    private int state;
 
     private boolean isRefreshDone = false;
     public String countyName = null;
@@ -153,25 +144,15 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         PreferenceManager.setDefaultValues(this, R.xml.settingpreference, false);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather_new);
         ButterKnife.bind(this);
+//        doDebugThings();
 
         configContact = Utility.createSimpleConfig(this).create(PreferenceConfigContact.class);
 
-//        int statusHeight = Utility.getStatusBarHeight(this);
-//        int navigationBarHeight = Utility.getNavigationBarHeight(this);
-//        CollapsingToolbarLayout.LayoutParams lp = (CollapsingToolbarLayout.LayoutParams) toolbar.getLayoutParams();
-//        LinearLayout.LayoutParams lp2 = (LinearLayout.LayoutParams) headLayout.getLayoutParams();
-//        LinearLayout.LayoutParams lp3 = (LinearLayout.LayoutParams) navigationBarView.getLayoutParams();
-//        lp.topMargin = lp2.topMargin = statusHeight;
-//        lp3.topMargin = navigationBarHeight;
-//        toolbar.setLayoutParams(lp);
-//        headLayout.setLayoutParams(lp2);
-//        navigationBarView.setLayoutParams(lp3);
-        toolbar.setTitle(getResources().getString(R.string.app_name));
         setSupportActionBar(toolbar);
+        toolbar.setTitle(getResources().getString(R.string.app_name));
 
         handler = new MessageHandler(this);
         presenter = new WeatherActivityPresenter(this, this);
@@ -185,10 +166,18 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
             }
         }));
 
-//        appBarLayout.addOnOffsetChangedListener(new AppBarOnOffsetChanged());
-
         alertImage.setOnClickListener(this);
         imageButton.setOnClickListener(this);
+    }
+
+    private void doDebugThings() {
+        HttpUtil.getWeatherNow("118.933321,32.112267")
+                .subscribe(new Consumer<NewWeatherRealtime>() {
+                    @Override
+                    public void accept(NewWeatherRealtime newWeatherRealtime) throws Exception {
+                        Log.d(TAG, "accept: HERE" + newWeatherRealtime.getLocation());
+                    }
+                });
     }
 
     @Override
@@ -314,38 +303,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     }
 
     /**
-     * CollapsingToolbarLayout滑动改变监听
-     */
-//    private class AppBarOnOffsetChanged implements AppBarLayout.OnOffsetChangedListener {
-//        @Override
-//        public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-//            if (verticalOffset == 0) {
-//                if (state != Constants.CollapsingToolbarLayoutState.EXPANDED) {
-//                    state = Constants.CollapsingToolbarLayoutState.EXPANDED;//修改状态标记为展开
-////                    toolbarLayout.setTitle(null);
-//                    toolBarLinearLayout.setVisibility(View.VISIBLE);
-//                }
-//            } else if (Math.abs(verticalOffset) >= appBarLayout.getTotalScrollRange()) {
-//                if (state != Constants.CollapsingToolbarLayoutState.COLLAPSED) {
-////                    toolbarLayout.setTitle(countyName);//设置title
-//                    toolBarLinearLayout.setVisibility(View.INVISIBLE);
-//                    state = Constants.CollapsingToolbarLayoutState.COLLAPSED;//修改状态标记为折叠
-//                }
-//            } else {
-//                if (state != Constants.CollapsingToolbarLayoutState.INTERNEDIATE) {
-//                    if (state == Constants.CollapsingToolbarLayoutState.COLLAPSED) {
-////                        toolbarLayout.setTitle(null);
-//                        if (toolBarLinearLayout.getVisibility() == View.INVISIBLE)
-//                            toolBarLinearLayout.setVisibility(View.VISIBLE);
-//                    }
-//                    state = Constants.CollapsingToolbarLayoutState.INTERNEDIATE;//修改状态标记为中间
-//
-//                }
-//            }
-//        }
-//    }
-
-    /**
      * 创建"弱引用"的Handler,而不是强引用
      * 避免内存泄漏
      */
@@ -395,33 +352,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         Log.i(TAG, "onOptionsMenuClosed");
         super.onOptionsMenuClosed(menu);
     }
-
-//    //菜单打开时，暂停天气view绘制
-//    @Override
-//    public boolean onMenuOpened(int featureId, Menu menu) {
-//        handler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                dynamicWeatherView.onPause();
-//                dynamicWeatherView.onPause();
-//            }
-//        }, 400);
-//        return super.onMenuOpened(featureId, menu);
-//    }
-//
-//    boolean isItemSelected = false;
-//
-//    //菜单关闭时，重启天气view绘制
-//    @Override
-//    public void onPanelClosed(int featureId, Menu menu) {
-//        if (!isItemSelected) {
-////            Log.i(TAG,"onPanelClosed" + featureId);
-////            if (isMenuClose)
-//            dynamicWeatherView.onResume();
-//        }
-//        super.onPanelClosed(featureId, menu);
-//    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -506,8 +436,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 , new SimplePermissionUtils.OnPermissionListener() {
                     @Override
                     public void onPermissionGranted() {
-                        //Toast.makeText(BaseActivity.this, "获取权限成功!", Toast.LENGTH_SHORT).show();
-//                        readPreferencesAndCache();
                         presenter.refreshWeather(false, null);
                     }
 
@@ -516,8 +444,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                         Toast.makeText(WeatherActivity.this, getResources().getString(R.string.permission_denied), Toast.LENGTH_SHORT).show();
                         if (DEBUG)
                             Log.d(TAG, "onActivityResult: Locate permission denied, switch to ip mode");
-//                        SimplePermissionUtils.showTipsDialog(WeatherActivity.this);
-//                        readPreferencesAndCache();
                         presenter.refreshWeather(false, null);
                     }
                 });

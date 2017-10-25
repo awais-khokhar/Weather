@@ -11,9 +11,9 @@ import android.widget.RemoteViews;
 
 import top.maweihao.weather.R;
 import top.maweihao.weather.activity.WeatherActivity;
-import top.maweihao.weather.bean.ForecastBean;
-import top.maweihao.weather.bean.HeWeather.HeNowWeather;
-import top.maweihao.weather.bean.RealTimeBean;
+import top.maweihao.weather.entity.ForecastBean;
+import top.maweihao.weather.entity.HeWeather.HeNowWeather;
+import top.maweihao.weather.entity.RealTimeBean;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.util.HeWeatherUtil;
 import top.maweihao.weather.util.Utility;

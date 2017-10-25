@@ -20,8 +20,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import top.maweihao.weather.R;
 import top.maweihao.weather.adapter.DailyWeatherAdapter;
-import top.maweihao.weather.bean.ForecastBean;
-import top.maweihao.weather.bean.SingleWeather;
+import top.maweihao.weather.entity.ForecastBean;
+import top.maweihao.weather.entity.SingleWeather;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.util.Utility;
 

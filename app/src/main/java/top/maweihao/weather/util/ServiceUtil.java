@@ -1,4 +1,4 @@
-package top.maweihao.weather.helper;
+package top.maweihao.weather.util;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +10,7 @@ import top.maweihao.weather.service.WidgetSyncService;
  * Created by ma on 17-8-24.
  */
 
-public class ServiceHelper {
+public class ServiceUtil {
     public static void startWidgetSyncService(Context context, boolean forceRefresh) {
         if (forceRefresh) {
             Intent intent = new Intent(context, WidgetSyncService.class);

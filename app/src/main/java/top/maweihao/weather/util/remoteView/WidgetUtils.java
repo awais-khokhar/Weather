@@ -2,8 +2,8 @@ package top.maweihao.weather.util.remoteView;
 
 import android.content.Context;
 
-import top.maweihao.weather.bean.ForecastBean;
-import top.maweihao.weather.bean.HeWeather.HeNowWeather;
+import top.maweihao.weather.entity.ForecastBean;
+import top.maweihao.weather.entity.HeWeather.HeNowWeather;
 
 /**
  * Utility class for updating all widgets

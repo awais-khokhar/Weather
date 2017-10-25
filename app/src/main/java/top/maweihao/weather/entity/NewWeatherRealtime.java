@@ -1,32 +1,55 @@
-package top.maweihao.weather.bean;
+package top.maweihao.weather.entity;
+
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Property;
+import org.greenrobot.greendao.annotation.Transient;
 
 import java.util.List;
+import org.greenrobot.greendao.annotation.Generated;
 
 /**
- * 实时天气bean
- * 对应json数据格式，自动生成
- * Created by limuyang on 2017/6/10.
+ * Created by maweihao on 2017/10/24.
  */
-
-public class RealTimeBean {
+@Entity
+public class NewWeatherRealtime {
 
     /**
      * status : ok
      * lang : zh_CN
-     * server_time : 1499510476
+     * server_time : 1508853981
      * tzshift : 28800
-     * title : [25.1552,121.6544]
+     * location : [25.1552,121.6544]
      * unit : metric
-     * result : {"status":"ok","temperature":29.2,"skycon":"RAIN","cloudrate":1,"aqi":12,"humidity":0.76,"pres":99029.61,"pm25":6,"precipitation":{"nearest":{"status":"ok","distance":1.3,"intensity":0.4375},"local":{"status":"ok","intensity":0.2436,"datasource":"radar"}},"wind":{"direction":104.32,"speed":4.18}}
+     * result : {"status":"ok","temperature":21,"skycon":"RAIN","cloudrate":0.68,"aqi":21,"humidity":0.81,"pm25":13,"precipitation":{"nearest":{"status":"ok","distance":1.26,"intensity":0.1875},"local":{"status":"ok","intensity":0.125,"datasource":"radar"}},"wind":{"direction":55.37,"speed":24.46}}
      */
-
+    @Transient
     private String status;
+    @Transient
     private String lang;
+    @Id
     private long server_time;
+    @Transient
     private int tzshift;
+    @Transient
     private String unit;
+    @Transient
     private ResultBean result;
-    private List<Float> location;
+    @Transient
+    private List<Double> location;
+
+    @Property
+    private String jsonString;
+
+    @Generated(hash = 990581002)
+    public NewWeatherRealtime(long server_time, String jsonString) {
+        this.server_time = server_time;
+        this.jsonString = jsonString;
+    }
+
+    @Generated(hash = 512272162)
+    public NewWeatherRealtime() {
+    }
 
     public String getStatus() {
         return status;
@@ -76,36 +99,42 @@ public class RealTimeBean {
         this.result = result;
     }
 
-    public List<Float> getLocation() {
+    public List<Double> getLocation() {
         return location;
     }
 
-    public void setLocation(List<Float> location) {
+    public void setLocation(List<Double> location) {
         this.location = location;
+    }
+
+    public String getJsonString() {
+        return this.jsonString;
+    }
+
+    public void setJsonString(String jsonString) {
+        this.jsonString = jsonString;
     }
 
     public static class ResultBean {
         /**
          * status : ok
-         * temperature : 29.2
+         * temperature : 21.0
          * skycon : RAIN
-         * cloudrate : 1
-         * aqi : 12
-         * humidity : 0.76
-         * pres : 99029.61
-         * pm25 : 6
-         * precipitation : {"nearest":{"status":"ok","distance":1.3,"intensity":0.4375},"local":{"status":"ok","intensity":0.2436,"datasource":"radar"}}
-         * wind : {"direction":104.32,"speed":4.18}
+         * cloudrate : 0.68
+         * aqi : 21.0
+         * humidity : 0.81
+         * pm25 : 13.0
+         * precipitation : {"nearest":{"status":"ok","distance":1.26,"intensity":0.1875},"local":{"status":"ok","intensity":0.125,"datasource":"radar"}}
+         * wind : {"direction":55.37,"speed":24.46}
          */
 
         private String status;
-        private float temperature;
+        private double temperature;
         private String skycon;
-        private int cloudrate;
-        private int aqi;
-        private float humidity;
-        private float pres;
-        private int pm25;
+        private double cloudrate;
+        private double aqi;
+        private double humidity;
+        private double pm25;
         private PrecipitationBean precipitation;
         private WindBean wind;
 
@@ -117,11 +146,11 @@ public class RealTimeBean {
             this.status = status;
         }
 
-        public float getTemperature() {
+        public double getTemperature() {
             return temperature;
         }
 
-        public void setTemperature(float temperature) {
+        public void setTemperature(double temperature) {
             this.temperature = temperature;
         }
 
@@ -133,43 +162,35 @@ public class RealTimeBean {
             this.skycon = skycon;
         }
 
-        public int getCloudrate() {
+        public double getCloudrate() {
             return cloudrate;
         }
 
-        public void setCloudrate(int cloudrate) {
+        public void setCloudrate(double cloudrate) {
             this.cloudrate = cloudrate;
         }
 
-        public int getAqi() {
+        public double getAqi() {
             return aqi;
         }
 
-        public void setAqi(int aqi) {
+        public void setAqi(double aqi) {
             this.aqi = aqi;
         }
 
-        public float getHumidity() {
+        public double getHumidity() {
             return humidity;
         }
 
-        public void setHumidity(float humidity) {
+        public void setHumidity(double humidity) {
             this.humidity = humidity;
         }
 
-        public float getPres() {
-            return pres;
-        }
-
-        public void setPres(float pres) {
-            this.pres = pres;
-        }
-
-        public int getPm25() {
+        public double getPm25() {
             return pm25;
         }
 
-        public void setPm25(int pm25) {
+        public void setPm25(double pm25) {
             this.pm25 = pm25;
         }
 
@@ -191,8 +212,8 @@ public class RealTimeBean {
 
         public static class PrecipitationBean {
             /**
-             * nearest : {"status":"ok","distance":1.3,"intensity":0.4375}
-             * local : {"status":"ok","intensity":0.2436,"datasource":"radar"}
+             * nearest : {"status":"ok","distance":1.26,"intensity":0.1875}
+             * local : {"status":"ok","intensity":0.125,"datasource":"radar"}
              */
 
             private NearestBean nearest;
@@ -217,13 +238,13 @@ public class RealTimeBean {
             public static class NearestBean {
                 /**
                  * status : ok
-                 * distance : 1.3
-                 * intensity : 0.4375
+                 * distance : 1.26
+                 * intensity : 0.1875
                  */
 
                 private String status;
-                private float distance;
-                private float intensity;
+                private double distance;
+                private double intensity;
 
                 public String getStatus() {
                     return status;
@@ -233,19 +254,19 @@ public class RealTimeBean {
                     this.status = status;
                 }
 
-                public float getDistance() {
+                public double getDistance() {
                     return distance;
                 }
 
-                public void setDistance(float distance) {
+                public void setDistance(double distance) {
                     this.distance = distance;
                 }
 
-                public float getIntensity() {
+                public double getIntensity() {
                     return intensity;
                 }
 
-                public void setIntensity(float intensity) {
+                public void setIntensity(double intensity) {
                     this.intensity = intensity;
                 }
             }
@@ -253,12 +274,12 @@ public class RealTimeBean {
             public static class LocalBean {
                 /**
                  * status : ok
-                 * intensity : 0.2436
+                 * intensity : 0.125
                  * datasource : radar
                  */
 
                 private String status;
-                private float intensity;
+                private double intensity;
                 private String datasource;
 
                 public String getStatus() {
@@ -269,11 +290,11 @@ public class RealTimeBean {
                     this.status = status;
                 }
 
-                public float getIntensity() {
+                public double getIntensity() {
                     return intensity;
                 }
 
-                public void setIntensity(float intensity) {
+                public void setIntensity(double intensity) {
                     this.intensity = intensity;
                 }
 
@@ -289,26 +310,26 @@ public class RealTimeBean {
 
         public static class WindBean {
             /**
-             * direction : 104.32
-             * speed : 4.18
+             * direction : 55.37
+             * speed : 24.46
              */
 
-            private float direction;
-            private float speed;
+            private double direction;
+            private double speed;
 
-            public float getDirection() {
+            public double getDirection() {
                 return direction;
             }
 
-            public void setDirection(float direction) {
+            public void setDirection(double direction) {
                 this.direction = direction;
             }
 
-            public float getSpeed() {
+            public double getSpeed() {
                 return speed;
             }
 
-            public void setSpeed(float speed) {
+            public void setSpeed(double speed) {
                 this.speed = speed;
             }
         }

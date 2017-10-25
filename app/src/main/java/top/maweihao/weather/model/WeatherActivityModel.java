@@ -25,13 +25,13 @@ import java.util.concurrent.Executors;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
-import top.maweihao.weather.bean.BaiDu.BaiDuChoosePositionBean;
-import top.maweihao.weather.bean.BaiDu.BaiDuCoordinateBean;
-import top.maweihao.weather.bean.BaiDu.BaiDuIPLocationBean;
-import top.maweihao.weather.bean.ForecastBean;
-import top.maweihao.weather.bean.MyLocation;
-import top.maweihao.weather.bean.RealTimeBean;
-import top.maweihao.weather.bean.SingleWeather;
+import top.maweihao.weather.entity.BaiDu.BaiDuChoosePositionBean;
+import top.maweihao.weather.entity.BaiDu.BaiDuCoordinateBean;
+import top.maweihao.weather.entity.BaiDu.BaiDuIPLocationBean;
+import top.maweihao.weather.entity.ForecastBean;
+import top.maweihao.weather.entity.MyLocation;
+import top.maweihao.weather.entity.RealTimeBean;
+import top.maweihao.weather.entity.SingleWeather;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.contract.WeatherActivityContract;
 import top.maweihao.weather.util.Constants;
@@ -628,7 +628,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             String cUrl = "https://api.caiyunapp.com/v2/Ahu2IBCHsYWm1--o/" + locationCoordinates + "/realtime.json";
 //            即 full weather Url， 获取未来天气的url
             String fUrl = "https://api.caiyunapp.com/v2/Ahu2IBCHsYWm1--o/" + locationCoordinates + "/forecast.json?alert=true&dailysteps=15";
-
+            Log.d(TAG, "HERE " + fUrl);
             configContact.applyCurl(cUrl);
             configContact.applyFurl(fUrl);
             presenter.startSwipe();

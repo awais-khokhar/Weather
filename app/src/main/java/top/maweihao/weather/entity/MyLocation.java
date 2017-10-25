@@ -1,4 +1,4 @@
-package top.maweihao.weather.bean;
+package top.maweihao.weather.entity;
 
 /**
  * simplified class of BDLocation

@@ -1,4 +1,4 @@
-package top.maweihao.weather.bean.BaiDu;
+package top.maweihao.weather.entity.BaiDu;
 
 /**
  * 根据城市位知名，百度定位返回的json bean

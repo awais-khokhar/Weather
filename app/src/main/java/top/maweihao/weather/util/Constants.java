@@ -28,6 +28,8 @@ public class Constants {
     public static final int WidgetSyncServiceRequestCode = 66;
     public static boolean isSetResultIntent = false;
 
+    public static final String HeWeatherKey = "5dfd7d649560440ca704c077a21af092";
+
 
     @IntDef({Through.THROUGH_IP, Through.THROUGH_CHOOSE_POSITION,
             Through.THROUGH_LOCATE, Through.THROUGH_COORDINATE})
@@ -48,24 +50,5 @@ public class Constants {
         int COLLAPSED = 1;
         int INTERNEDIATE = 2;
     }
-
-    //    @StringDef({COUNTY_NAME,AUTO_LOCATE,COUNTY_NAME_LAST_UPDATE_TIME,REFRESH_INTERVAL,WEATHER_NOW,WEATHER_FULL,
-//            WEATHER_NOW_LAST_UPDATE_TIME,WEATHER_FULL_LAST_UPDATE_TIME,IP})
-//    @Documented
-//    @Retention(SOURCE)
-//    public @interface PreferencesKey {
-//        String COUNTY_NAME="countyName";
-//        String  AUTO_LOCATE="auto_locate";
-//        String COUNTY_NAME_LAST_UPDATE_TIME="countyName_last_update_time";
-//        String REFRESH_INTERVAL="refresh_interval";
-//        String WEATHER_NOW="weather_now";
-//        String WEATHER_FULL="weather_full";
-//
-//        String  WEATHER_NOW_LAST_UPDATE_TIME="weather_now_last_update_time";
-//        String  WEATHER_FULL_LAST_UPDATE_TIME="weather_full_last_update_time";
-//        String IP="IP";
-//    }
-
-
 
 }

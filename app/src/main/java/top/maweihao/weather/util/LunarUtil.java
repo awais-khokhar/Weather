@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class Lunar {
+public class LunarUtil {
     private int year;
     private int month;
     private int day;
@@ -109,7 +109,7 @@ public class Lunar {
      * @param cal
      * @return
      */
-    public Lunar(Calendar cal) {
+    public LunarUtil(Calendar cal) {
         // cal.add(cal.get(Calendar.DAY_OF_MONTH),1);
         @SuppressWarnings(" unused ")
         int yearCyl, monCyl, dayCyl;

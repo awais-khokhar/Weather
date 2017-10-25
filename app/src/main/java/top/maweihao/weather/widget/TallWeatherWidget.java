@@ -5,7 +5,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.util.Log;
 
-import top.maweihao.weather.helper.ServiceHelper;
+import top.maweihao.weather.util.ServiceUtil;
 import top.maweihao.weather.util.remoteView.WidgetUtils;
 
 /**
@@ -19,7 +19,7 @@ public class TallWeatherWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         Log.d(TAG, "onUpdate: ");
-        ServiceHelper.startWidgetSyncService(context, true);
+        ServiceUtil.startWidgetSyncService(context, true);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class TallWeatherWidget extends AppWidgetProvider {
     public void onDisabled(Context context) {
         TallWeatherWidgetConfigureActivity.deleteAllPref(context);
         if (WidgetUtils.hasAnyWidget(context)) {
-            ServiceHelper.stopWidgetSyncService(context);
+            ServiceUtil.stopWidgetSyncService(context);
         }
     }
 }

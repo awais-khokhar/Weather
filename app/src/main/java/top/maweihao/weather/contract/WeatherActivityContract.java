@@ -5,8 +5,8 @@ import android.support.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-import top.maweihao.weather.bean.ForecastBean;
-import top.maweihao.weather.bean.SingleWeather;
+import top.maweihao.weather.entity.ForecastBean;
+import top.maweihao.weather.entity.SingleWeather;
 
 /**
  * Created by limuyang on 2017/5/31.

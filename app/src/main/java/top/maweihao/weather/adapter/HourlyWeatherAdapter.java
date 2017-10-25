@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import top.maweihao.weather.R;
-import top.maweihao.weather.bean.SingleWeather;
+import top.maweihao.weather.entity.SingleWeather;
 
 /**
  * hourlyRecyclerView adapter for 24hour weather

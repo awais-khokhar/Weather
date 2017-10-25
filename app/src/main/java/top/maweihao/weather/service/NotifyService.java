@@ -25,7 +25,7 @@ import okhttp3.Response;
 import top.maweihao.weather.R;
 import top.maweihao.weather.activity.SettingActivity;
 import top.maweihao.weather.activity.WeatherActivity;
-import top.maweihao.weather.bean.ForecastBean;
+import top.maweihao.weather.entity.ForecastBean;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.util.Utility;
 

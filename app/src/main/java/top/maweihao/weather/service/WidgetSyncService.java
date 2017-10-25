@@ -15,8 +15,8 @@ import java.io.IOException;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import top.maweihao.weather.bean.ForecastBean;
-import top.maweihao.weather.bean.HeWeather.HeNowWeather;
+import top.maweihao.weather.entity.ForecastBean;
+import top.maweihao.weather.entity.HeWeather.HeNowWeather;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.HeWeatherUtil;
@@ -114,7 +114,7 @@ public class WidgetSyncService extends Service {
         } else {
             Log.d(TAG, " weather data out of date");
             final String url = isBigWidgetOn ? configContact.getFurl() : HeWeatherUtil.initRequireUrl(HeWeatherUtil.MODE_NOW, coordinate);
-            Log.d(TAG, "fetchData: URL" + HeWeatherUtil.initRequireUrl(HeWeatherUtil.MODE_NOW, coordinate));
+            Log.d(TAG, "fetchData: URL HERE" + HeWeatherUtil.initRequireUrl(HeWeatherUtil.MODE_NOW, coordinate));
             new Thread(new Runnable() {
                 @Override
                 public void run() {

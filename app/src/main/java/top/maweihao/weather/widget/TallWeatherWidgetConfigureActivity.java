@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.Switch;
 
 import top.maweihao.weather.R;
-import top.maweihao.weather.helper.ServiceHelper;
+import top.maweihao.weather.util.ServiceUtil;
 
 import static top.maweihao.weather.R.id.tall_widget_preview;
 
@@ -37,7 +37,7 @@ public class TallWeatherWidgetConfigureActivity extends Activity {
                     Intent resultValue = new Intent();
                     resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                     setResult(RESULT_OK, resultValue);
-                    ServiceHelper.startWidgetSyncService(context, true);
+                    ServiceUtil.startWidgetSyncService(context, true);
                     finish();
                     break;
                 case R.id.tall_lunar_switch:

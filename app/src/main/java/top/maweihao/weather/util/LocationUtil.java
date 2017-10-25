@@ -1,9 +1,9 @@
-package top.maweihao.weather.helper;
+package top.maweihao.weather.util;
 
 /**
  * some methods related to location
  * Created by ma on 17-5-30.
  */
 
-public class LocationHelper {
+public class LocationUtil {
 }

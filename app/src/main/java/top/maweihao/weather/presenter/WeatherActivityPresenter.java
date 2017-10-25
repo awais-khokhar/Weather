@@ -13,10 +13,10 @@ import java.util.Date;
 import java.util.Locale;
 
 import top.maweihao.weather.R;
-import top.maweihao.weather.bean.ForecastBean;
-import top.maweihao.weather.bean.SingleWeather;
+import top.maweihao.weather.entity.ForecastBean;
+import top.maweihao.weather.entity.SingleWeather;
 import top.maweihao.weather.contract.WeatherActivityContract;
-import top.maweihao.weather.helper.ServiceHelper;
+import top.maweihao.weather.util.ServiceUtil;
 import top.maweihao.weather.model.WeatherActivityModel;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.util.remoteView.WidgetUtils;
@@ -93,11 +93,6 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
             weatherView.setRefreshDone(true);
         }
     }
-
-//    @Override
-//    public void setHourlyWeatherInfo(final ForecastBean.ResultBean.HourlyBean hourlyBean) {
-//        weatherView.showHourlyWeatherInfo(hourlyBean);
-//    }
 
     @Override
     public void setHourlyWeatherChart(ForecastBean.ResultBean.HourlyBean hourlyBean) {
@@ -196,7 +191,7 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
     @Override
     public void updateWidget(ForecastBean forecastBean) {
         if (WidgetUtils.hasAnyWidget((Activity) weatherView)) {
-            ServiceHelper.startWidgetSyncService((Activity) weatherView, true);
+            ServiceUtil.startWidgetSyncService((Activity) weatherView, true);
         }
     }
 

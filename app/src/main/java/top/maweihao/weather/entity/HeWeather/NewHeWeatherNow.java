@@ -1,17 +1,36 @@
-package top.maweihao.weather.bean.HeWeather;
+package top.maweihao.weather.entity.HeWeather;
+
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.Property;
+import org.greenrobot.greendao.annotation.Transient;
 
 import java.util.List;
+import org.greenrobot.greendao.annotation.Generated;
 
 /**
- * 和风 实时 天气 bean
- * 打算用来刷新 SimpleWidget 和 BigWidget
- * url： https://free-api.heweather.com/v5/now?city=119.704311,32.450265&key=5dfd7d649560440ca704c077a21af092
- * Created by ma on 17-7-28.
+ * bean for he weather
+ * Created by maweihao on 2017/10/25.
  */
+@Entity
+public class NewHeWeatherNow {
 
-public class HeNowWeather {
-
+    @Id
+    private long currentTimeInMills;
+    @Property
+    private String jsonString;
+    @Transient
     private List<HeWeather5Bean> HeWeather5;
+
+    @Generated(hash = 1405266888)
+    public NewHeWeatherNow(long currentTimeInMills, String jsonString) {
+        this.currentTimeInMills = currentTimeInMills;
+        this.jsonString = jsonString;
+    }
+
+    @Generated(hash = 1759305134)
+    public NewHeWeatherNow() {
+    }
 
     public List<HeWeather5Bean> getHeWeather5() {
         return HeWeather5;
@@ -21,10 +40,26 @@ public class HeNowWeather {
         this.HeWeather5 = HeWeather5;
     }
 
+    public long getCurrentTimeInMills() {
+        return this.currentTimeInMills;
+    }
+
+    public void setCurrentTimeInMills(long currentTimeInMills) {
+        this.currentTimeInMills = currentTimeInMills;
+    }
+
+    public String getJsonString() {
+        return this.jsonString;
+    }
+
+    public void setJsonString(String jsonString) {
+        this.jsonString = jsonString;
+    }
+
     public static class HeWeather5Bean {
         /**
-         * basic : {"city":"江都","cnty":"中国","id":"CN101190605","lat":"32.42656326","lon":"119.56748199","update":{"loc":"2017-09-05 11:46","utc":"2017-09-05 03:46"}}
-         * now : {"cond":{"code":"104","txt":"阴"},"fl":"30","hum":"80","pcpn":"0","pres":"1010","tmp":"27","vis":"7","wind":{"deg":"257","dir":"西南风","sc":"微风","spd":"7"}}
+         * basic : {"city":"栖霞","cnty":"中国","id":"CN101190112","lat":"32.10214615","lon":"118.80870056","update":{"loc":"2017-10-25 10:46","utc":"2017-10-25 02:46"}}
+         * now : {"cond":{"code":"100","txt":"晴"},"fl":"18","hum":"68","pcpn":"0","pres":"1026","tmp":"17","vis":"9","wind":{"deg":"99","dir":"东风","sc":"3-4","spd":"11"}}
          * status : ok
          */
 
@@ -58,12 +93,12 @@ public class HeNowWeather {
 
         public static class BasicBean {
             /**
-             * city : 江都
+             * city : 栖霞
              * cnty : 中国
-             * id : CN101190605
-             * lat : 32.42656326
-             * lon : 119.56748199
-             * update : {"loc":"2017-09-05 11:46","utc":"2017-09-05 03:46"}
+             * id : CN101190112
+             * lat : 32.10214615
+             * lon : 118.80870056
+             * update : {"loc":"2017-10-25 10:46","utc":"2017-10-25 02:46"}
              */
 
             private String city;
@@ -123,8 +158,8 @@ public class HeNowWeather {
 
             public static class UpdateBean {
                 /**
-                 * loc : 2017-09-05 11:46
-                 * utc : 2017-09-05 03:46
+                 * loc : 2017-10-25 10:46
+                 * utc : 2017-10-25 02:46
                  */
 
                 private String loc;
@@ -150,14 +185,14 @@ public class HeNowWeather {
 
         public static class NowBean {
             /**
-             * cond : {"code":"104","txt":"阴"}
-             * fl : 30
-             * hum : 80
+             * cond : {"code":"100","txt":"晴"}
+             * fl : 18
+             * hum : 68
              * pcpn : 0
-             * pres : 1010
-             * tmp : 27
-             * vis : 7
-             * wind : {"deg":"257","dir":"西南风","sc":"微风","spd":"7"}
+             * pres : 1026
+             * tmp : 17
+             * vis : 9
+             * wind : {"deg":"99","dir":"东风","sc":"3-4","spd":"11"}
              */
 
             private CondBean cond;
@@ -235,18 +270,18 @@ public class HeNowWeather {
 
             public static class CondBean {
                 /**
-                 * code : 104
-                 * txt : 阴
+                 * code : 100
+                 * txt : 晴
                  */
 
-                private int code;
+                private String code;
                 private String txt;
 
-                public int getCode() {
+                public String getCode() {
                     return code;
                 }
 
-                public void setCode(int code) {
+                public void setCode(String code) {
                     this.code = code;
                 }
 
@@ -261,10 +296,10 @@ public class HeNowWeather {
 
             public static class WindBean {
                 /**
-                 * deg : 257
-                 * dir : 西南风
-                 * sc : 微风
-                 * spd : 7
+                 * deg : 99
+                 * dir : 东风
+                 * sc : 3-4
+                 * spd : 11
                  */
 
                 private String deg;

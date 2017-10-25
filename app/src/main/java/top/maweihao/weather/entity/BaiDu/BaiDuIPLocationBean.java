@@ -1,4 +1,4 @@
-package top.maweihao.weather.bean.BaiDu;
+package top.maweihao.weather.entity.BaiDu;
 
 /**
  * 百度IP定位

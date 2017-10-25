@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import top.maweihao.weather.R;
-import top.maweihao.weather.bean.Alert;
+import top.maweihao.weather.entity.Alert;
 
 ;
 

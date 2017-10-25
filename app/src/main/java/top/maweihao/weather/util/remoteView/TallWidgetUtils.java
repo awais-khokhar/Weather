@@ -13,12 +13,12 @@ import java.util.GregorianCalendar;
 
 import top.maweihao.weather.R;
 import top.maweihao.weather.activity.WeatherActivity;
-import top.maweihao.weather.bean.ForecastBean;
-import top.maweihao.weather.bean.HeWeather.HeNowWeather;
-import top.maweihao.weather.bean.RealTimeBean;
+import top.maweihao.weather.entity.ForecastBean;
+import top.maweihao.weather.entity.HeWeather.HeNowWeather;
+import top.maweihao.weather.entity.RealTimeBean;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.util.HeWeatherUtil;
-import top.maweihao.weather.util.Lunar;
+import top.maweihao.weather.util.LunarUtil;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.widget.TallWeatherWidget;
 import top.maweihao.weather.widget.TallWeatherWidgetConfigureActivity;
@@ -93,10 +93,10 @@ public class TallWidgetUtils {
         Boolean lunar = TallWeatherWidgetConfigureActivity.loadLunarPref(context);
         Boolean card = TallWeatherWidgetConfigureActivity.loadCardPref(context);
         if (lunar) {
-            Lunar lunarDate = new Lunar(new GregorianCalendar());
+            LunarUtil lunarUtilDate = new LunarUtil(new GregorianCalendar());
             tallViews.setViewVisibility(R.id.tall_widget_lunar, View.VISIBLE);
 
-            tallViews.setTextViewText(R.id.tall_widget_lunar, lunarDate.toString());
+            tallViews.setTextViewText(R.id.tall_widget_lunar, lunarUtilDate.toString());
         } else {
             tallViews.setViewVisibility(R.id.tall_widget_lunar, View.GONE);
         }

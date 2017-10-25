@@ -5,8 +5,8 @@ package top.maweihao.weather.util;
  * some methods about Baidu web api
  */
 
-public class BaiduApiUtility {
+public class BaiduApiUtil {
 
-    private static String TAG = "BaiduApiUtility";
+    private static String TAG = "BaiduApiUtil";
 
 }

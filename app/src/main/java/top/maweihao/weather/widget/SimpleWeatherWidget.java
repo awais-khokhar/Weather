@@ -4,7 +4,7 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 
-import top.maweihao.weather.helper.ServiceHelper;
+import top.maweihao.weather.util.ServiceUtil;
 import top.maweihao.weather.util.remoteView.WidgetUtils;
 
 /**
@@ -15,7 +15,7 @@ public class SimpleWeatherWidget extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        ServiceHelper.startWidgetSyncService(context, true);
+        ServiceUtil.startWidgetSyncService(context, true);
     }
 
     @Override
@@ -27,7 +27,7 @@ public class SimpleWeatherWidget extends AppWidgetProvider {
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
         if (WidgetUtils.hasAnyWidget(context)) {
-            ServiceHelper.stopWidgetSyncService(context);
+            ServiceUtil.stopWidgetSyncService(context);
         }
     }
 }

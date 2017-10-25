@@ -13,7 +13,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import top.maweihao.weather.R;
 import top.maweihao.weather.adapter.AlertAdapter;
-import top.maweihao.weather.bean.Alert;
+import top.maweihao.weather.entity.Alert;
 
 public class AlertActivity extends AppCompatActivity {
 
