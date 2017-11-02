@@ -5,4 +5,13 @@ package top.maweihao.weather.contract;
  */
 
 public interface NewWeatherActivityContract {
+
+    interface newView extends BaseView<newPresenter> {
+
+
+    }
+
+    interface newPresenter extends BasePresenter {
+
+    }
 }

@@ -6,6 +6,15 @@
     android:padding="@dimen/widget_margin"
     tools:background="#FF424242">
 
+    <ImageView
+        android:id="@+id/widget_big_card"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:src="@drawable/widget_card"
+        android:visibility="gone"
+        tools:ignore="ContentDescription" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,9 +31,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:gravity="center"
                 android:format12Hour="hh : mm"
                 android:format24Hour="HH : mm"
+                android:gravity="center"
                 android:shadowColor="@color/colorTextDark"
                 android:textSize="62sp" />
 
@@ -39,10 +48,10 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_centerInParent="true"
-                android:layout_marginStart="24dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginTop="4dp"
                 android:layout_marginBottom="14dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="4dp"
                 android:src="@mipmap/weather_few_clouds"
                 tools:ignore="ContentDescription" />
 
@@ -53,9 +62,9 @@
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@id/big_widget_skycon"
                 android:gravity="right"
+                android:maxLines="2"
                 android:paddingEnd="16dp"
                 android:paddingStart="16dp"
-                android:maxLines="2"
                 android:shadowColor="@color/colorTextDark"
                 android:shadowDx="1.0"
                 android:shadowDy="1.0"
@@ -70,33 +79,83 @@
                 android:id="@+id/big_weather_refresh"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
                 android:layout_centerVertical="true"
                 android:layout_toEndOf="@id/big_widget_skycon"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp">
 
-                <TextView
-                    android:id="@+id/big_widget_refresh_time"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:maxLines="1"
-                    android:shadowColor="@color/colorTextDark"
-                    android:shadowDx="1.0"
-                    android:shadowDy="1.0"
-                    android:shadowRadius="1.0"
-                    android:text="@string/na"
-                    android:textAlignment="gravity"
-                    android:textColor="@color/colorTextLight"
-                    android:textSize="14sp"
-                    tools:ignore="RtlHardcoded"
-                    tools:text="18:00" />
+                    android:orientation="horizontal">
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_refresh_gray_24dp" />
+                    <TextView
+                        android:id="@+id/big_widget_refresh_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="left"
+                        android:maxLines="1"
+                        android:shadowColor="@color/colorTextDark"
+                        android:shadowDx="1.0"
+                        android:shadowDy="1.0"
+                        android:shadowRadius="1.0"
+                        android:text="@string/na"
+                        android:textAlignment="gravity"
+                        android:textColor="@color/colorTextLight"
+                        android:textSize="14sp"
+                        android:visibility="gone"
+                        tools:ignore="RtlHardcoded"
+                        tools:text="18:00" />
+
+                    <TextClock
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:format12Hour="MM/dd EE"
+                        android:format24Hour="MM/dd EE"
+                        android:shadowColor="@color/colorTextDark"
+                        android:textColor="@color/colorTextLight"
+                        android:shadowDx="1.0"
+                        android:shadowDy="1.0"
+                        android:shadowRadius="1.0" />
+
+                    <ImageView
+                        android:id="@+id/iv_refresh"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_refresh_gray_24dp"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <!--<TextClock-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:format12Hour="EE"-->
+                        <!--android:format24Hour="EE"-->
+                        <!--android:shadowColor="@color/colorTextDark"-->
+                        <!--android:textColor="@color/colorTextLight"-->
+                        <!--android:shadowDx="1.0"-->
+                        <!--android:shadowDy="1.0"-->
+                        <!--android:shadowRadius="1.0" />-->
+
+                    <TextView
+                        android:layout_marginStart="8dp"
+                        android:id="@+id/big_widget_lunar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:shadowColor="@color/colorTextDark"
+                        android:textColor="@color/colorTextLight"
+                        android:shadowDx="1.0"
+                        android:shadowDy="1.0"
+                        android:shadowRadius="1.0"
+                        android:textSize="14sp"
+                        android:visibility="visible" />
+                </LinearLayout>
+
 
             </LinearLayout>
 
@@ -105,7 +164,6 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
 
             <TextView
                 android:id="@+id/big_widget_description"

@@ -13,11 +13,12 @@ import java.util.Date;
 import java.util.Locale;
 
 import top.maweihao.weather.R;
+import top.maweihao.weather.contract.BasePresenter;
+import top.maweihao.weather.contract.WeatherActivityContract;
 import top.maweihao.weather.entity.ForecastBean;
 import top.maweihao.weather.entity.SingleWeather;
-import top.maweihao.weather.contract.WeatherActivityContract;
-import top.maweihao.weather.util.ServiceUtil;
 import top.maweihao.weather.model.WeatherActivityModel;
+import top.maweihao.weather.util.ServiceUtil;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.util.remoteView.WidgetUtils;
 
@@ -30,7 +31,7 @@ import static top.maweihao.weather.util.Utility.stringRoundDouble;
  * Created by limuyang on 2017/5/31.
  */
 
-public class WeatherActivityPresenter implements WeatherActivityContract.Presenter {
+public class WeatherActivityPresenter implements WeatherActivityContract.Presenter, BasePresenter {
 
     private static final String TAG = "WeatherPresenter";
 
@@ -195,4 +196,13 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
         }
     }
 
+    @Override
+    public void subscribe() {
+
+    }
+
+    @Override
+    public void unSubscribe() {
+
+    }
 }

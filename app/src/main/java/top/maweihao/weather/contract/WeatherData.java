@@ -15,11 +15,17 @@ public interface WeatherData {
 
     Observable<NewWeather> getWeatherCached();
 
-    Observable<NewHeWeatherNow> getWeatherNow(String location);
+    Observable<NewWeatherRealtime> getWeatherNow(String location);
 
-    Observable<NewHeWeatherNow> getWeatherNowCached();
+    Observable<NewWeatherRealtime> getWeatherNowCached();
 
     Observable<NewHeWeatherNow> getHeWeatherNow(String location);
 
     Observable<NewHeWeatherNow> getHeWeatherNowCached();
+
+    void saveWeather(NewWeather newWeather);
+
+    void saveWeather(NewWeatherRealtime weatherRealtime);
+
+    void saveWeather(NewHeWeatherNow heWeatherNow);
 }

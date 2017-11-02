@@ -9,13 +9,16 @@ import android.provider.AlarmClock;
 import android.support.annotation.NonNull;
 import android.widget.RemoteViews;
 
+import java.util.GregorianCalendar;
+
 import top.maweihao.weather.R;
 import top.maweihao.weather.activity.WeatherActivity;
+import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.entity.ForecastBean;
 import top.maweihao.weather.entity.HeWeather.HeNowWeather;
 import top.maweihao.weather.entity.RealTimeBean;
-import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.util.HeWeatherUtil;
+import top.maweihao.weather.util.LunarUtil;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.widget.SimpleWeatherWidget;
 
@@ -81,6 +84,9 @@ public class SimpleWidgetUtils {
         RemoteViews simpleViews = new RemoteViews(context.getPackageName(), R.layout.widget_simple_weather);
         simpleViews.setImageViewResource(R.id.simple_widget_skycon, icon);
         simpleViews.setTextViewText(R.id.simple_widget_info, countyName + " | " + skyconString + ' ' + tem + '°');
+
+        LunarUtil lunarUtilDate = new LunarUtil(new GregorianCalendar());
+        simpleViews.setTextViewText(R.id.simple_widget_lunar, lunarUtilDate.toString());
 
         PendingIntent weatherPendingIntent = PendingIntent.getActivity(context, WEATHER_PENDING_INTENT_CODE,
                 new Intent(context, WeatherActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);

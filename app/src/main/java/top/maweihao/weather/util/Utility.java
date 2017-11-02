@@ -2,7 +2,6 @@ package top.maweihao.weather.util;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
 import android.location.LocationManager;
@@ -16,6 +15,8 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
+
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,6 +37,9 @@ import top.maweihao.weather.R;
 import top.maweihao.weather.db.City;
 import top.maweihao.weather.db.County;
 import top.maweihao.weather.db.Province;
+import top.maweihao.weather.entity.HeWeather.NewHeWeatherNow;
+import top.maweihao.weather.entity.NewWeather;
+import top.maweihao.weather.entity.NewWeatherRealtime;
 import top.maweihao.weather.view.dynamicweather.BaseDrawer;
 
 import static top.maweihao.weather.activity.WeatherActivity.HOURLY_MODE;
@@ -482,5 +486,40 @@ public class Utility {
     public static boolean isTimeFormat12(Context context) {
         return !android.text.format.DateFormat.is24HourFormat(context);
     }
+
+    public static NewWeather packWeather(NewWeather weather) {
+        Gson gson = new Gson();
+        weather.setJsonString(gson.toJson(weather));
+        return weather;
+    }
+
+    public static NewWeather unpackWeather(NewWeather weather) {
+        Gson gson = new Gson();
+        return gson.fromJson(weather.getJsonString(), NewWeather.class);
+    }
+
+    public static NewWeatherRealtime packWeather(NewWeatherRealtime weather) {
+        Gson gson = new Gson();
+        weather.setJsonString(gson.toJson(weather));
+        return weather;
+    }
+
+    public static NewWeatherRealtime unpackWeather(NewWeatherRealtime weather) {
+        Gson gson = new Gson();
+        return gson.fromJson(weather.getJsonString(), NewWeatherRealtime.class);
+    }
+
+    public static NewHeWeatherNow packWeather(NewHeWeatherNow weather, long time) {
+        Gson gson = new Gson();
+        weather.setCurrentTimeInMills(time);
+        weather.setJsonString(gson.toJson(weather));
+        return weather;
+    }
+
+    public static NewHeWeatherNow unpackWeather(NewHeWeatherNow weather) {
+        Gson gson = new Gson();
+        return gson.fromJson(weather.getJsonString(), NewHeWeatherNow.class);
+    }
+
 }
 

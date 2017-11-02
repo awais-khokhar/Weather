@@ -113,11 +113,12 @@
         </receiver>
 
         <activity android:name=".activity.DetailActivity" />
+        <activity android:name=".widget.BigWidgetConfigureActivity" />
 
         <service
             android:name=".service.WidgetSyncService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
     </application>
 
 </manifest>

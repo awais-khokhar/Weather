@@ -54,10 +54,8 @@ import static top.maweihao.weather.util.Utility.GPSEnabled;
 
 public class WeatherActivityModel implements WeatherActivityContract.Model {
     private static final String TAG = "WeatherActivityModel";
-    //    private Boolean autoLocate;
     private String countyName = null;
     private String locationDetail;
-
     private String locationCoordinates;
 
     private Long locateTime;

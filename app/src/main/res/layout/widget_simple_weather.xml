@@ -33,11 +33,15 @@
                 android:shadowRadius="1.0"
                 tools:ignore="RtlHardcoded" />
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/big_widget_clock"
+                android:layout_centerHorizontal="true">
             <TextClock
                 android:id="@+id/widget_clock_day_title"
                 style="@style/content_text"
-                android:layout_below="@id/big_widget_clock"
-                android:layout_centerHorizontal="true"
                 android:format12Hour="MM/dd EE"
                 android:format24Hour="MM/dd EE"
                 android:maxLines="1"
@@ -48,6 +52,21 @@
                 android:text="@string/na"
                 android:textColor="@color/colorTextLight"
                 tools:text="05-17 周三" />
+
+            <TextView
+                android:layout_marginStart="8dp"
+                android:id="@+id/simple_widget_lunar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:shadowColor="@color/colorTextDark"
+                android:textColor="@color/colorTextLight"
+                android:shadowDx="1.0"
+                android:shadowDy="1.0"
+                android:shadowRadius="1.0"
+                android:textSize="14sp"
+                android:visibility="visible"
+                tools:text="十月初一"/>
+            </LinearLayout>
 
         </RelativeLayout>
 

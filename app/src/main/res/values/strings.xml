@@ -127,5 +127,6 @@
     <string name="choose_donate_method">Choose Method</string>
     <string name="donate_with_wechat">Donate Through WeChat</string>
     <string name="info_wechat_donate">Please cut a screenshot of the QR code and scan it in WeChat</string>
+    <string name="refresh_circle">Show Refresh Button</string>
 
 </resources>

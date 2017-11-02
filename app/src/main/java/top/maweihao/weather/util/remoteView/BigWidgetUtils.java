@@ -8,11 +8,14 @@ import android.content.Intent;
 import android.provider.AlarmClock;
 import android.widget.RemoteViews;
 
+import java.util.GregorianCalendar;
+
 import top.maweihao.weather.R;
 import top.maweihao.weather.activity.WeatherActivity;
-import top.maweihao.weather.entity.ForecastBean;
 import top.maweihao.weather.contract.PreferenceConfigContact;
+import top.maweihao.weather.entity.ForecastBean;
 import top.maweihao.weather.service.WidgetSyncService;
+import top.maweihao.weather.util.LunarUtil;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.widget.BigWeatherWidget;
 
@@ -46,6 +49,9 @@ public class BigWidgetUtils {
         double intensity = forecastBean.getResult().getHourly().getPrecipitation().get(0).getValue();
         String skyconString = Utility.chooseWeatherSkycon(context, skycon, intensity, WeatherActivity.HOURLY_MODE);
         int icon = Utility.chooseWeatherIcon(skycon, intensity, WeatherActivity.HOURLY_MODE, false);
+
+        LunarUtil lunarUtilDate = new LunarUtil(new GregorianCalendar());
+        bigViews.setTextViewText(R.id.big_widget_lunar, lunarUtilDate.toString());
 
         bigViews.setTextViewText(R.id.big_widget_description, description);
         bigViews.setImageViewResource(R.id.big_widget_skycon, icon);

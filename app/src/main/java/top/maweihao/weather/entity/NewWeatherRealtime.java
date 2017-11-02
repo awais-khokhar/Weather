@@ -1,18 +1,20 @@
 package top.maweihao.weather.entity;
 
+import android.support.annotation.NonNull;
+
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Property;
 import org.greenrobot.greendao.annotation.Transient;
 
 import java.util.List;
-import org.greenrobot.greendao.annotation.Generated;
 
 /**
  * Created by maweihao on 2017/10/24.
  */
 @Entity
-public class NewWeatherRealtime {
+public class NewWeatherRealtime implements Comparable<NewWeatherRealtime> {
 
     /**
      * status : ok
@@ -113,6 +115,17 @@ public class NewWeatherRealtime {
 
     public void setJsonString(String jsonString) {
         this.jsonString = jsonString;
+    }
+
+    @Override
+    public int compareTo(@NonNull NewWeatherRealtime weatherRealtime) {
+        if (this.server_time < weatherRealtime.server_time) {
+            return -1;
+        } else if (this.server_time == weatherRealtime.server_time) {
+            return 0;
+        } else {
+            return -1;
+        }
     }
 
     public static class ResultBean {

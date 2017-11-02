@@ -21,10 +21,6 @@ public interface WeatherActivityContract {
 
         void setRainInfo(String now, String today);
 
-//        void showDailyWeatherInfo(final ForecastBean.ResultBean.DailyBean dailyBean);
-
-//        void showHourlyWeatherInfo(final ForecastBean.ResultBean.HourlyBean hourlyBean);
-
         void showCurrentWeatherInfo(ForecastBean forecastBean);
 
         void setLastUpdateTime(long time);
@@ -54,8 +50,6 @@ public interface WeatherActivityContract {
         void rainInfo(String now, String today);
 
         void setDailyWeatherInfo(final ForecastBean.ResultBean.DailyBean dailyBean);
-
-//        void setHourlyWeatherInfo(final ForecastBean.ResultBean.HourlyBean hourlyBean);
 
         void setHourlyWeatherChart(final ForecastBean.ResultBean.HourlyBean hourlyBean);
 

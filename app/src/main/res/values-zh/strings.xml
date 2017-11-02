@@ -116,5 +116,6 @@
     <string name="choose_donate_method">选择捐赠方式</string>
     <string name="donate_with_wechat">通过微信支付捐赠</string>
     <string name="info_wechat_donate">请将当前页面截图，并在微信中选择扫描。（该方式我已深思熟虑）</string>
+    <string name="refresh_circle">刷新按钮</string>
 
 </resources>

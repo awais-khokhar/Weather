@@ -32,16 +32,16 @@ import io.reactivex.functions.Consumer;
 import top.maweihao.weather.R;
 import top.maweihao.weather.adapter.DailyWeatherAdapter;
 import top.maweihao.weather.adapter.HourlyWeatherAdapter;
-import top.maweihao.weather.entity.Alert;
-import top.maweihao.weather.entity.ForecastBean;
-import top.maweihao.weather.entity.HeWeather.NewHeWeatherNow;
-import top.maweihao.weather.entity.NewWeatherRealtime;
-import top.maweihao.weather.entity.SingleWeather;
+import top.maweihao.weather.contract.BaseView;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.contract.WeatherActivityContract;
+import top.maweihao.weather.entity.Alert;
+import top.maweihao.weather.entity.ForecastBean;
+import top.maweihao.weather.entity.NewWeatherRealtime;
+import top.maweihao.weather.entity.SingleWeather;
+import top.maweihao.weather.model.WeatherRepository;
 import top.maweihao.weather.presenter.WeatherActivityPresenter;
 import top.maweihao.weather.service.NotifyService;
-import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.SimplePermissionUtils;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.view.SemiCircleView;
@@ -58,7 +58,7 @@ import static top.maweihao.weather.util.Constants.SettingCode;
 import static top.maweihao.weather.util.Constants.isSetResultIntent;
 import static top.maweihao.weather.util.Utility.chooseWeatherSkycon;
 
-public class WeatherActivity extends AppCompatActivity implements WeatherActivityContract.View, View.OnClickListener {
+public class WeatherActivity extends AppCompatActivity implements WeatherActivityContract.View, View.OnClickListener, BaseView<WeatherActivityPresenter> {
 
     static final String TAG = "WeatherActivity";
 
@@ -171,26 +171,23 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     }
 
     private void doDebugThings() {
-        HttpUtil.getWeatherNow("118.933321,32.112267")
-                .subscribe(new Consumer<NewWeatherRealtime>() {
-                    @Override
-                    public void accept(NewWeatherRealtime newWeatherRealtime) throws Exception {
-                        Log.d(TAG, "accept: HERE" + newWeatherRealtime.getLocation());
-                    }
-                });
+        WeatherRepository.getInstance(this).getWeatherNowCached().subscribe(new Consumer<NewWeatherRealtime>() {
+            @Override
+            public void accept(NewWeatherRealtime newWeatherRealtime) throws Exception {
+                Log.d(TAG, "accept: HERE" + newWeatherRealtime.getLocation());
+            }
+        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-//        isItemSelected = false;
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 dynamicWeatherView.onResume();
             }
         }, 150);
-
     }
 
     @Override
@@ -300,6 +297,11 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         message.what = HANDLE_EXACT_LOCATION;
         message.obj = locationDetail;
         handler.sendMessage(message);
+    }
+
+    @Override
+    public void setPresenter(WeatherActivityPresenter presenter) {
+        // TODO: 28/10/2017
     }
 
     /**
@@ -448,7 +450,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                     }
                 });
     }
-
 
     /**
      * 定位图片的显示
