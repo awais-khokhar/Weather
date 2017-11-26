@@ -6,6 +6,7 @@ import top.maweihao.weather.entity.NewWeather;
 import top.maweihao.weather.entity.NewWeatherRealtime;
 
 /**
+ * weather repository
  * Created by maweihao on 2017/10/25.
  */
 
@@ -28,4 +29,8 @@ public interface WeatherData {
     void saveWeather(NewWeatherRealtime weatherRealtime);
 
     void saveWeather(NewHeWeatherNow heWeatherNow);
+
+    void getLocationCached();
+
+    void getLocation();
 }

@@ -4,7 +4,6 @@ package top.maweihao.weather.entity;
  * simplified class of BDLocation
  * Created by ma on 17-6-3.
  */
-
 public class MyLocation {
 
     // 各种定位方式码

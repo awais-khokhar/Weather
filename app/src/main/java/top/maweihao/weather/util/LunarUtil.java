@@ -10,18 +10,18 @@ public class LunarUtil {
     private int month;
     private int day;
     private boolean leap;
-    final static String chineseNumber[] =
+    private final static String chineseNumber[] =
             {"一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"};
-    final static String Big_Or_Small[] =
+    private final static String Big_Or_Small[] =
             {"大", "小", "大", "小", "大", "小", "大", "大", "小", "大", "小", "大"};
     private String[] LunarHolDayName =
             {"小寒", "大寒", "立春", "雨水", "惊蛰", "春分", "清明", "谷雨", "立夏", "小满", "芒种", "夏至",
                     "小暑", "大暑", "立秋", "处暑", "白露", "秋分", "寒露", "霜降", "立冬", "小雪", "大雪",
                     "冬至"};
 
-    static SimpleDateFormat chineseDateFormat = new SimpleDateFormat(
+    private static SimpleDateFormat chineseDateFormat = new SimpleDateFormat(
             " yyyy年MM月dd日 ");
-    final static long[] lunarInfo = new long[]
+    private final static long[] lunarInfo = new long[]
             {0x04bd8, 0x04ae0, 0x0a570, 0x054d5, 0x0d260, 0x0d950, 0x16554, 0x056a0,
                     0x09ad0, 0x055d2, 0x04ae0, 0x0a5b6, 0x0a4d0, 0x0d250, 0x1d255,
                     0x0b540, 0x0d6a0, 0x0ada2, 0x095b0, 0x14977, 0x04970, 0x0a4b0,
@@ -46,7 +46,7 @@ public class LunarUtil {
                     0x06d20, 0x0ada0};
 
     // ====== 传回农历 y年的总天数
-    final private static int yearDays(int y) {
+    private static int yearDays(int y) {
         int i, sum = 348;
         for (i = 0x8000; i > 0x8; i >>= 1) {
             if ((lunarInfo[y - 1900] & i) != 0)
@@ -56,7 +56,7 @@ public class LunarUtil {
     }
 
     // ====== 传回农历 y年闰月的天数
-    final private static int leapDays(int y) {
+    private static int leapDays(int y) {
         if (leapMonth(y) != 0) {
             if ((lunarInfo[y - 1900] & 0x10000) != 0)
                 return 30;
@@ -67,12 +67,12 @@ public class LunarUtil {
     }
 
     // ====== 传回农历 y年闰哪个月 1-12 , 没闰传回 0
-    final private static int leapMonth(int y) {
+    private static int leapMonth(int y) {
         return (int) (lunarInfo[y - 1900] & 0xf);
     }
 
     // ====== 传回农历 y年m月的总天数
-    final private static int monthDays(int y, int m) {
+    private static int monthDays(int y, int m) {
         if ((lunarInfo[y - 1900] & (0x10000 >> m)) == 0)
             return 29;
         else
@@ -87,7 +87,7 @@ public class LunarUtil {
     }
 
     // ====== 传入 月日的offset 传回干支, 0=甲子
-    final private static String cyclicalm(int num) {
+    private static String cyclicalm(int num) {
         final String[] Gan = new String[]
                 {"甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"};
         final String[] Zhi = new String[]
@@ -101,7 +101,6 @@ public class LunarUtil {
         return (cyclicalm(num));
     }
 
-    /** */
     /**
      * 传出y年m月d日对应的农历. yearCyl3:农历年与1864的相差数 ? monCyl4:从1900年1月31日以来,闰月数
      * dayCyl5:与1900年1月31日相差的天数,再加40 ?
@@ -187,7 +186,7 @@ public class LunarUtil {
         day = offset + 1;
     }
 
-    public static String getChinaDayString(int day) {
+    private static String getChinaDayString(int day) {
         String chineseTen[] =
                 {"初", "十", "廿", "卅"};
         int n = day % 10 == 0 ? 9 : day % 10 - 1;

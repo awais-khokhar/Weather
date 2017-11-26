@@ -352,7 +352,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
     @Override
     public void onOptionsMenuClosed(Menu menu) {
-//        Log.i(TAG, "onOptionsMenuClosed");
         super.onOptionsMenuClosed(menu);
     }
 
@@ -364,7 +363,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-//        isItemSelected = true;
         switch (item.getItemId()) {
             case R.id.change_position:
                 Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
@@ -409,8 +407,9 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                     locationDetail = countyName;
                     setCounty(countyName);
                     setLocationDetail(locationDetail);
-                    if (DEBUG)
+                    if (DEBUG) {
                         Log.d(TAG, "onActivityResult: county_return: " + countyName);
+                    }
                     configContact.applyCountyName(countyName);
                     configContact.applyLocationDetail(locationDetail);
                     configContact.applyCountyNameLastUpdateTime(System.currentTimeMillis());
@@ -429,7 +428,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     }
 
     String[] per = {Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION,};
+            Manifest.permission.ACCESS_COARSE_LOCATION};
 
     /**
      * 申请权限，可批量授权
@@ -634,6 +633,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     /**
      * 显示风向
      */
+    @Deprecated
     private void setWindDirection(double direction) {
         String dir;
         if (direction <= 22.5 || direction >= 337.5) {
@@ -659,6 +659,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     /**
      * 显示风力
      */
+    @Deprecated
     private void setWindLevel(double speed) {
         int level;
         String info;

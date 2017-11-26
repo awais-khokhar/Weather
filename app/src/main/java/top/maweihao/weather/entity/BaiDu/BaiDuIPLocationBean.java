@@ -3,15 +3,10 @@ package top.maweihao.weather.entity.BaiDu;
 /**
  * 百度IP定位
  * Created by limuyang on 2017/6/10.
+ * example: http://api.map.baidu.com/location/ip?ak=RUUaavVwpwqYdz8QGHLXSFBfwhs2ba6j&coor=bd09&mcode=B6:F3:EA:31:1E:7F:BB:C5:D2:6C:5A:A7:CA:D8:4F:DF:79:46:C9:C2;top.maweihao.weather
  */
 
 public class BaiDuIPLocationBean {
-
-    /**
-     * address : CN|云南|曲靖|None|CHINANET|0|0
-     * content : {"address":"云南省曲靖市","address_detail":{"city":"曲靖市","city_code":249,"district":"","province":"云南省","street":"","street_number":""},"point":{"x":"103.78253889","y":"25.52075814"}}
-     * status : 0
-     */
 
     private String address;
     private ContentBean content;

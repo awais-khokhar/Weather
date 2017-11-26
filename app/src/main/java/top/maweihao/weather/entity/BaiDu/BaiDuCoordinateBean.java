@@ -5,14 +5,10 @@ import java.util.List;
 /**
  * 根据坐标定位，百度返回的 json Bean
  * Created by limuyang on 2017/6/10.
+ * example: http://api.map.baidu.com/geocoder/v2/?location=32.114931,118.928228&output=json&pois=0&ak=RUUaavVwpwqYdz8QGHLXSFBfwhs2ba6j&mcode=B6:F3:EA:31:1E:7F:BB:C5:D2:6C:5A:A7:CA:D8:4F:DF:79:46:C9:C2;top.maweihao.weather
  */
 
 public class BaiDuCoordinateBean {
-
-    /**
-     * status : 0
-     * result : {"location":{"lng":119.70405179999993,"lat":32.45012298165853},"formatted_address":"江苏省扬州市江都区","business":"","addressComponent":{"country":"中国","country_code":0,"province":"江苏省","city":"扬州市","district":"江都区","adcode":"321088","street":"","street_number":"","direction":"","distance":""},"pois":[],"roads":[],"poiRegions":[],"sematic_description":"宜陵镇五一村北271米","cityCode":346}
-     */
 
     private int status;
     private ResultBean result;

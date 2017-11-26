@@ -151,4 +151,14 @@ public class WeatherRepository implements WeatherData {
         }
     }
 
+    @Override
+    public void getLocationCached() {
+
+    }
+
+    @Override
+    public void getLocation() {
+
+    }
+
 }

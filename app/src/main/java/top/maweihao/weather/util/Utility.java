@@ -12,15 +12,10 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 
 import com.google.gson.Gson;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 import java.net.InetAddress;
@@ -34,9 +29,6 @@ import java.util.Locale;
 import github.hellocsl.simpleconfig.Config;
 import github.hellocsl.simpleconfig.SimpleConfig;
 import top.maweihao.weather.R;
-import top.maweihao.weather.db.City;
-import top.maweihao.weather.db.County;
-import top.maweihao.weather.db.Province;
 import top.maweihao.weather.entity.HeWeather.NewHeWeatherNow;
 import top.maweihao.weather.entity.NewWeather;
 import top.maweihao.weather.entity.NewWeatherRealtime;
@@ -49,12 +41,12 @@ import static top.maweihao.weather.util.Constants.DEBUG;
 
 /**
  * Created by ma on 17-3-5.
- * this is a unity class
+ * this is a utility class
  */
 
 public class Utility {
 
-    private static final String TAG = "Utility";
+    private static final String TAG = Utility.class.getSimpleName();
 
     /**
      * 创建自定义的配置文件读取方法
@@ -71,84 +63,8 @@ public class Utility {
         }).build();
     }
 
-
     /**
-     * choosePositionActivity 里用的方法，应该不用改
-     */
-    public static boolean handleProvinceResponse(String response) {
-        if (!TextUtils.isEmpty(response)) {
-            try {
-
-                JSONArray allProvinces = new JSONArray(response);
-                for (int i = 0; i < allProvinces.length(); i++) {
-                    JSONObject provinceObject = allProvinces.getJSONObject(i);
-                    Province province = new Province();
-                    province.setProvinceName(provinceObject.getString("name"));
-                    province.setProvinceCode(provinceObject.getInt("id"));
-                    province.save();
-                    Log.v(TAG, "saved province: " + provinceObject.getString("name"));
-                }
-                return true;
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Log.e(TAG, "handleProvinceResponse: JSONObeject error");
-            }
-        }
-        return false;
-    }
-
-    /**
-     * choosePositionActivity 里用的方法，应该不用改
-     */
-    public static boolean handleCityResponse(String response, int provinceId) {
-        if (!TextUtils.isEmpty(response)) {
-            try {
-                JSONArray allCities = new JSONArray(response);
-                for (int i = 0; i < allCities.length(); i++) {
-                    JSONObject cityObject = allCities.getJSONObject(i);
-                    City city = new City();
-                    city.setCityName(cityObject.getString("name"));
-                    city.setCityCode(cityObject.getInt("id"));
-                    city.setProvinceId(provinceId);
-                    city.save();
-                    Log.v(TAG, "saved city: " + cityObject.getString("name"));
-                }
-                return true;
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Log.e(TAG, "handleCityResponse: JSONObject error");
-            }
-        }
-        return false;
-    }
-
-    /**
-     * choosePositionActivity 里用的方法，应该不用改
-     */
-    public static boolean handleCountyResponse(String response, int cityId) {
-        Log.d(TAG, "handleCountyResponse: ");
-        if (!TextUtils.isEmpty(response)) {
-            try {
-                JSONArray allCounties = new JSONArray(response);
-                for (int i = 0; i < allCounties.length(); i++) {
-                    JSONObject countyObject = allCounties.getJSONObject(i);
-                    County county = new County();
-                    county.setCountyName(countyObject.getString("name"));
-                    county.setCityId(cityId);
-                    county.save();
-                    Log.v(TAG, "saved county: " + countyObject.getString("name"));
-                }
-                return true;
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Log.e(TAG, "handleCountyResponse: JSONObject error");
-            }
-        }
-        return false;
-    }
-
-    /**
-     * 把 float  四舍五入再返回 String，用来处理温度的
+     * 把 float 四舍五入再返回 String，用来处理温度
      */
     public static String stringRoundDouble(double f) {
         return String.valueOf(Math.round(f));
@@ -156,23 +72,17 @@ public class Utility {
 
 
     /**
-     * 把  float 四舍五入再返回 int，用来处理温度的
+     * 把 float 四舍五入再返回 int，用来处理温度
      */
     public static int intRoundDouble(double s) {
         return (int)Math.round(s);
     }
 
-    /**
-     * 摄氏度华氏度转换的 还没用
-     */
     public static int Cel2Fah(int cel) {
         double fah = cel * 1.8 + 32;
         return (int) Math.round(fah);
     }
 
-    /**
-     * 摄氏度华氏度转换的 还没用
-     */
     public static int Cel2Fah(float cel) {
         double fah = cel * 1.8 + 32;
         return (int) Math.round(fah);
@@ -209,9 +119,9 @@ public class Utility {
     /**
      * 获得天气 String
      * @param context  context
-     * @param skycon        天气标识
+     * @param skycon  天气标识
      * @param precipitation 雨量
-     * @param mode          Mode 代表 precipitation 的精度，分为小时级和分钟级， 以确定雨量
+     * @param mode  Mode 代表 precipitation 的精度，分为小时级和分钟级， 以确定雨量
      * @return 描述（string）
      */
     public static String chooseWeatherSkycon(Context context, String skycon, double precipitation, int mode) {
@@ -260,11 +170,11 @@ public class Utility {
 
     /**
      * 获得天气图标
-     * @param skycon    天气标识
-     * @param precipitation   雨量
-     * @param mode   Mode 代表 precipitation 的精度，分为小时级和分钟级， 以确定雨量
-     * @param simpleIcon 是否返回简单黑白风格的 icon
-     * @return 天气图片 id
+     * @param skycon  天气标识
+     * @param precipitation  雨量
+     * @param mode  Mode 代表 precipitation 的精度，分为小时级和分钟级， 以确定雨量
+     * @param simpleIcon  是否返回简单黑白风格的 icon
+     * @return  天气图片
      */
     public static int chooseWeatherIcon(String skycon, double precipitation, int mode, boolean simpleIcon) {
         switch (skycon) {
@@ -306,6 +216,11 @@ public class Utility {
         }
     }
 
+    /**
+     * 系统语言是否为中文
+     * @param context context
+     * @return isChinese?
+     */
     public static boolean isChinese(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return context.getResources().getConfiguration().getLocales().get(0).getDisplayLanguage().equals("中文");
@@ -314,10 +229,92 @@ public class Utility {
         }
     }
 
+    /**
+     * 获得风向
+     * @param context context
+     * @param direction double
+     * @return 风向
+     */
+    private String getWindDirection(Context context, double direction) {
+        String dir;
+        if (direction <= 22.5 || direction >= 337.5) {
+            dir = context.getResources().getString(R.string.north);
+        } else if (direction <= 67.5) {
+            dir = context.getResources().getString(R.string.northeast);
+        } else if (direction <= 112.5) {
+            dir = context.getResources().getString(R.string.east);
+        } else if (direction <= 157.5) {
+            dir = context.getResources().getString(R.string.southeast);
+        } else if (direction <= 202.5) {
+            dir = context.getResources().getString(R.string.south);
+        } else if (direction <= 247.5) {
+            dir = context.getResources().getString(R.string.southwest);
+        } else if (direction <= 292.5) {
+            dir = context.getResources().getString(R.string.west);
+        } else {
+            dir = context.getResources().getString(R.string.northwest);
+        }
+        return dir;
+    }
+
+    /**
+     * 获得风力
+     * @param context context
+     * @param speed double
+     * @return string
+     */
+    private String getWindLevel(Context context, double speed) {
+        int level;
+        String info;
+        if (speed <= 0.72) {
+            level = 0;
+            info = "无风";
+        } else if (speed <= 5.4) {
+            level = 1;
+            info = "软风";
+        } else if (speed <= 11.88) {
+            level = 2;
+            info = "轻风";
+        } else if (speed <= 19.44) {
+            level = 3;
+            info = "微风";
+        } else if (speed <= 28.44) {
+            level = 4;
+            info = "和风";
+        } else if (speed <= 38.52) {
+            level = 5;
+            info = "劲风";
+        } else if (speed <= 49.68) {
+            level = 6;
+            info = "强风";
+        } else if (speed <= 61.56) {
+            level = 7;
+            info = "疾风";
+        } else if (speed <= 74.52) {
+            level = 8;
+            info = "大风";
+        } else if (speed <= 87.84) {
+            level = 9;
+            info = "烈风";
+        } else if (speed <= 102.24) {
+            level = 10;
+            info = "狂风";
+        } else if (speed <= 117.36) {
+            level = 11;
+            info = "暴风";
+        } else {
+            level = 12;
+            info = "飓风";
+        }
+        if (isChinese(context)) {
+            return level + " 级" + info;
+        } else {
+            return "LEVEL " + level;
+        }
+    }
 
     /**
      * 判断时间和现在的时间相差
-     *
      * @param mills 时间
      */
     public static String getTime(Context context, long mills) {
@@ -341,7 +338,6 @@ public class Utility {
 
     /**
      * getIP 获取网络IP地址(优先获取wifi地址)
-     *
      * @param ctx context
      * @return ip地址字符串
      */
@@ -383,6 +379,7 @@ public class Utility {
      * @return 高度值
      */
     @SuppressLint("PrivateApi")
+    @Deprecated
     public static int getStatusBarHeight(@NonNull Context context) {
         Class<?> c = null;
         Object obj = null;
@@ -455,13 +452,12 @@ public class Utility {
     }
 
     public static boolean GPSEnabled(Context context) {
-        LocationManager alm =
-                (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        return alm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        LocationManager alm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        return alm != null && alm.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
     /**
-     * 网络连接是否可用
+     * 检查网络连接是否可用
      *
      * @param context context
      * @return boolean

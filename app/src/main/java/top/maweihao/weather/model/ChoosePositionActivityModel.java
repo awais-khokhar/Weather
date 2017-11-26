@@ -1,7 +1,11 @@
 package top.maweihao.weather.model;
 
+import android.text.TextUtils;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.litepal.crud.DataSupport;
 
 import java.io.IOException;
@@ -17,7 +21,6 @@ import top.maweihao.weather.db.City;
 import top.maweihao.weather.db.County;
 import top.maweihao.weather.db.Province;
 import top.maweihao.weather.util.HttpUtil;
-import top.maweihao.weather.util.Utility;
 
 import static top.maweihao.weather.activity.ChoosePositionActivity.LEVEL_CITY;
 import static top.maweihao.weather.activity.ChoosePositionActivity.LEVEL_COUNTY;
@@ -81,11 +84,11 @@ public class ChoosePositionActivityModel implements ChoosePositionActivityContra
                 String responseText = response.body().string();
                 boolean result = false;
                 if ("province".equals(type)) {
-                    result = Utility.handleProvinceResponse(responseText);
+                    result = handleProvinceResponse(responseText);
                 } else if ("city".equals(type)) {
-                    result = Utility.handleCityResponse(responseText, selectedProvince.getId());
+                    result = handleCityResponse(responseText, selectedProvince.getId());
                 } else if ("county".equals(type)) {
-                    result = Utility.handleCountyResponse(responseText, selectedCity.getId());
+                    result = handleCountyResponse(responseText, selectedCity.getId());
                     if (DEBUG)
                         Log.d(TAG, "onResponse: result: " + result);
                 }
@@ -157,5 +160,71 @@ public class ChoosePositionActivityModel implements ChoosePositionActivityContra
             }
         }
         return filterList;
+    }
+
+    private boolean handleProvinceResponse(String response) {
+        if (!TextUtils.isEmpty(response)) {
+            try {
+
+                JSONArray allProvinces = new JSONArray(response);
+                for (int i = 0; i < allProvinces.length(); i++) {
+                    JSONObject provinceObject = allProvinces.getJSONObject(i);
+                    Province province = new Province();
+                    province.setProvinceName(provinceObject.getString("name"));
+                    province.setProvinceCode(provinceObject.getInt("id"));
+                    province.save();
+                    Log.v(TAG, "saved province: " + provinceObject.getString("name"));
+                }
+                return true;
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.e(TAG, "handleProvinceResponse: JSONObeject error");
+            }
+        }
+        return false;
+    }
+
+    private boolean handleCityResponse(String response, int provinceId) {
+        if (!TextUtils.isEmpty(response)) {
+            try {
+                JSONArray allCities = new JSONArray(response);
+                for (int i = 0; i < allCities.length(); i++) {
+                    JSONObject cityObject = allCities.getJSONObject(i);
+                    City city = new City();
+                    city.setCityName(cityObject.getString("name"));
+                    city.setCityCode(cityObject.getInt("id"));
+                    city.setProvinceId(provinceId);
+                    city.save();
+                    Log.v(TAG, "saved city: " + cityObject.getString("name"));
+                }
+                return true;
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.e(TAG, "handleCityResponse: JSONObject error");
+            }
+        }
+        return false;
+    }
+
+    private boolean handleCountyResponse(String response, int cityId) {
+        Log.d(TAG, "handleCountyResponse: ");
+        if (!TextUtils.isEmpty(response)) {
+            try {
+                JSONArray allCounties = new JSONArray(response);
+                for (int i = 0; i < allCounties.length(); i++) {
+                    JSONObject countyObject = allCounties.getJSONObject(i);
+                    County county = new County();
+                    county.setCountyName(countyObject.getString("name"));
+                    county.setCityId(cityId);
+                    county.save();
+                    Log.v(TAG, "saved county: " + countyObject.getString("name"));
+                }
+                return true;
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.e(TAG, "handleCountyResponse: JSONObject error");
+            }
+        }
+        return false;
     }
 }
