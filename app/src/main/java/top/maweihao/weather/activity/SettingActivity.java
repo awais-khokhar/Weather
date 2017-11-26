@@ -30,7 +30,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import top.maweihao.weather.R;
 import top.maweihao.weather.contract.PreferenceConfigContact;
-import top.maweihao.weather.service.NotifyService;
+import top.maweihao.weather.service.PushService;
 import top.maweihao.weather.util.Utility;
 
 import static top.maweihao.weather.util.Constants.ChooseCode;
@@ -198,11 +198,11 @@ public class SettingActivity extends AppCompatActivity {
                     }
                     return true;
                 } else if (preference.getKey().equals("notification")) {
-                    Intent startIntent = new Intent(getActivity(), NotifyService.class);
+                    Intent startIntent = new Intent(getActivity(), PushService.class);
                     if (stringValue.equals("true")) {
                         notificationTime.setEnabled(true);
                         notificationTime.setSummary(configContact.getNotificationTime("18 : 00"));
-                        NotifyService.isStarSendNotification = false;
+                        PushService.isStarSendNotification = false;
                         getActivity().startService(startIntent);
                         if (DEBUG)
                             Log.d(TAG, "onPreferenceChange: start SyncService");
@@ -322,8 +322,8 @@ public class SettingActivity extends AppCompatActivity {
                                 String formatMinute = df.format(minute);
                                 preference.setSummary(formatHour + ": " + formatMinute);
                                 configContact.applyNotificationTime(formatHour + TIME_SPLIT + formatMinute);
-                                NotifyService.isStarSendNotification = false;
-                                Intent startIntent = new Intent(getActivity(), NotifyService.class);
+                                PushService.isStarSendNotification = false;
+                                Intent startIntent = new Intent(getActivity(), PushService.class);
                                 getActivity().startService(startIntent);
                             }
                         }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);

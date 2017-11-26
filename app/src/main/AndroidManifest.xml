@@ -56,7 +56,7 @@
             android:enabled="true"
             android:process=":remote" />
         <service
-            android:name=".service.NotifyService"
+            android:name=".service.PushService"
             android:enabled="true"
             android:exported="false" />
 

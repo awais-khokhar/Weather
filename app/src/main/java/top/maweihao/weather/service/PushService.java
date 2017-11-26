@@ -35,9 +35,9 @@ import static top.maweihao.weather.util.Constants.DEBUG;
  * 后台刷新service， 每晚提示第二天温差
  */
 
-public class NotifyService extends Service {
+public class PushService extends Service {
 
-    private static final String TAG = NotifyService.class.getSimpleName();
+    private static final String TAG = PushService.class.getSimpleName();
 
     Boolean isChinese = false;
 
@@ -143,7 +143,7 @@ public class NotifyService extends Service {
 //            Log.d(TAG, "startAgain: System.currentTimeMillis== " + System.currentTimeMillis());
 //        }
 
-        Intent intent = new Intent(this, NotifyService.class);
+        Intent intent = new Intent(this, PushService.class);
         PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);

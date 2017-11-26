@@ -41,7 +41,7 @@ import top.maweihao.weather.entity.NewWeatherRealtime;
 import top.maweihao.weather.entity.SingleWeather;
 import top.maweihao.weather.model.WeatherRepository;
 import top.maweihao.weather.presenter.WeatherActivityPresenter;
-import top.maweihao.weather.service.NotifyService;
+import top.maweihao.weather.service.PushService;
 import top.maweihao.weather.util.SimplePermissionUtils;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.view.SemiCircleView;
@@ -255,11 +255,12 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
      */
     @Override
     public void setLastUpdateTime(final long time) {
-        runOnUiThread(new Runnable() {
+        handler.post(new Runnable() {
             @Override
             public void run() {
-                if (time == 0)
+                if (time == 0) {
                     lastUpdateTime.setText(Utility.getTime(getApplicationContext()));
+                }
                 else
                     lastUpdateTime.setText(Utility.getTime(WeatherActivity.this, time));
             }
@@ -351,7 +352,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
     @Override
     public void onOptionsMenuClosed(Menu menu) {
-        Log.i(TAG, "onOptionsMenuClosed");
+//        Log.i(TAG, "onOptionsMenuClosed");
         super.onOptionsMenuClosed(menu);
     }
 
@@ -370,7 +371,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 startActivityForResult(intent, ChoosePositionActivityRequestCode);
                 break;
             case R.id.start_service:
-                Intent startIntent = new Intent(WeatherActivity.this, NotifyService.class);
+                // debug only
+                Intent startIntent = new Intent(WeatherActivity.this, PushService.class);
                 startService(startIntent);
                 break;
             case R.id.setting:
@@ -388,7 +390,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
             case SettingActivityRequestCode:
                 if (resultCode == SettingCode) {
                     configContact.applyAutoLocate(data.getBooleanExtra("autoLocate", false));
-
                     if (DEBUG)
                         Log.d(TAG, "onActivityResult: SettingActivity");
                     String perCountyName = configContact.getCountyName();
@@ -604,7 +605,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
      */
     @Override
     public void startSwipe() {
-        runOnUiThread(new Runnable() {
+        handler.post(new Runnable() {
             @Override
             public void run() {
                 if (!swipeRefreshLayout.isRefreshing()) {
@@ -627,6 +628,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 }
             }
         });
+
     }
 
     /**

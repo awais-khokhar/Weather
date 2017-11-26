@@ -7,7 +7,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
-import top.maweihao.weather.service.NotifyService;
+import top.maweihao.weather.service.PushService;
 
 import static top.maweihao.weather.util.Constants.DEBUG;
 
@@ -21,7 +21,7 @@ public class BootCompleteReceiver extends BroadcastReceiver {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 //        因为service还有问题，默认不开
         if (prefs.getBoolean("notification", false)) {
-            Intent startIntent = new Intent(context, NotifyService.class);
+            Intent startIntent = new Intent(context, PushService.class);
             context.startService(startIntent);
             if (DEBUG) {
                 Toast.makeText(context, "Weather: SyncService started", Toast.LENGTH_SHORT).show();

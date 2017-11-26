@@ -54,10 +54,10 @@ public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapte
 
         public ViewHolder(View itemView) {
             super(itemView);
-            time = (TextView) itemView.findViewById(R.id.per_day_recycler_time_tv);
-            skyconImage = (ImageView) itemView.findViewById(R.id.per_day_recycler_skycon_iv);
-            skyconDesc = (TextView) itemView.findViewById(R.id.per_day_recycler_skycon_tv);
-            temperature = (TextView) itemView.findViewById(R.id.per_day_recycler_temperature_tv);
+            time = itemView.findViewById(R.id.per_day_recycler_time_tv);
+            skyconImage = itemView.findViewById(R.id.per_day_recycler_skycon_iv);
+            skyconDesc = itemView.findViewById(R.id.per_day_recycler_skycon_tv);
+            temperature = itemView.findViewById(R.id.per_day_recycler_temperature_tv);
         }
     }
 }

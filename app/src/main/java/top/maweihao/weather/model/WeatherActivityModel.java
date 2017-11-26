@@ -285,7 +285,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             Log.d(TAG, "BAIDU: received" + (System.currentTimeMillis() - locateTime));
             if (System.currentTimeMillis() - locateTime < 2 * 1000) {  //at most x second
                 if (bdLocation.getLocType() != BDLocation.TypeGpsLocation) {
-                    // do nothing
                     if (DEBUG) {
                         Log.d(TAG, "BAIDU onReceiveLocation: Locate type == " + bdLocation.getLocType());
                     }
@@ -321,7 +320,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
 
         @Override
         public void onConnectHotSpotMessage(String s, int i) {
-//      nothing to do
         }
 
         private MyLocation simplifyBDLocation(BDLocation bdLocation) {
@@ -480,8 +478,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
         }
     }
 
-    //=========================================================================================================
-
 
     /**
      * 通过获取的坐标获得位置描述， 使用 baidu web api
@@ -637,7 +633,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                 Log.e(TAG, "initRequireUrl: locationCoordinates = null");
         }
     }
-
 
     private void afterGetCoordinate() {
         Runnable runnable = new Runnable() {

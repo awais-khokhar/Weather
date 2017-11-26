@@ -19,7 +19,7 @@ import top.maweihao.weather.R;
  * View for sun rise and sun set
  * Created by ma on 17-5-17.
  */
-
+@Deprecated
 public class SunTimeView extends View {
 
     public static final String TAG = "SunTimeView";

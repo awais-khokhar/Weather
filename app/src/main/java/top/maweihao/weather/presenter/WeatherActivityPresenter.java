@@ -33,7 +33,7 @@ import static top.maweihao.weather.util.Utility.stringRoundDouble;
 
 public class WeatherActivityPresenter implements WeatherActivityContract.Presenter, BasePresenter {
 
-    private static final String TAG = "WeatherPresenter";
+    private static final String TAG = WeatherActivityPresenter.class.getSimpleName();
 
     private WeatherActivityContract.View weatherView;
     private WeatherActivityContract.Model weatherModel;
@@ -54,8 +54,9 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
     @Override
     public void setDailyWeatherInfo(final ForecastBean.ResultBean.DailyBean dailyBean) {
         int length = dailyBean.getSkycon().size();
-        if (DEBUG)
+        if (DEBUG) {
             Log.d(TAG, "setDailyWeatherInfo: all " + dailyBean.getSkycon().size() + " days");
+        }
         ArrayList<SingleWeather> singleWeatherArrayList = weatherModel.getDailyWeatherList();
         singleWeatherArrayList.clear();
         Calendar calendar = Calendar.getInstance();
