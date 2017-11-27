@@ -1,10 +1,15 @@
 package top.maweihao.weather.presenter;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.baidu.location.BDLocation;
@@ -18,12 +23,16 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import top.maweihao.weather.contract.NewWeatherActivityContract;
+import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.contract.WeatherData;
+import top.maweihao.weather.entity.BaiDu.BaiDuCoordinateBean;
 import top.maweihao.weather.entity.BaiDu.BaiDuIPLocationBean;
 import top.maweihao.weather.entity.NewWeather;
 import top.maweihao.weather.refactor.MLocation;
+import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.LocationUtil;
+import top.maweihao.weather.util.Utility;
 
 import static top.maweihao.weather.util.Constants.DEBUG;
 import static top.maweihao.weather.util.Utility.GPSEnabled;
@@ -39,6 +48,9 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
     private final WeatherData model;
     private final NewWeatherActivityContract.newView view;
     private final CompositeDisposable compositeDisposable;
+    private PreferenceConfigContact configContact;
+    private volatile boolean isWorkDown = false;
+
     private Context context;
     private LocationClient mLocationClient;
 
@@ -48,10 +60,10 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
         this.model = model;
         this.view = view;
         compositeDisposable = new CompositeDisposable();
+        configContact = Utility.createSimpleConfig(context).create(PreferenceConfigContact.class);
 
         context = (Context) view;
         mLocationClient = new LocationClient(context);
-
     }
 
     @Override
@@ -61,8 +73,8 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
 
     @Override
     public void unSubscribe() {
-        compositeDisposable.clear();
         stopBaiduLocate();
+        compositeDisposable.clear();
     }
 
     @Override
@@ -74,7 +86,6 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                     @Override
                     public void accept(NewWeather weather) throws Exception {
                         view.showWeather(weather);
-                        view.setUpdateTime(weather.getServer_time() * 1000);
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -87,13 +98,81 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
 
     @Override
     public void locate() {
-        initBaiduLocate();
+        if (configContact.getAutoLocate(true)) {
+            checkPermissionAndLocate();
+        } else {
+            MLocation location = model.getLocationCached();
+            if (location != null) {
+                refreshWeather(location);
+            } else {
+                view.askForChoosePosition();
+            }
+        }
+    }
 
+    private void checkPermissionAndLocate() {
+        String[] permission = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission_group.LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            initBaiduLocate();
+        } else {
+            ActivityCompat.requestPermissions((Activity) view, permission, Constants.requestLocationCode);
+        }
     }
 
     @Override
     public void refreshWeather(MLocation location) {
+        if (location.isNeedGeocode()) {
+            geocodeLocationAndSave(location, true);
+        }
+        model.getWeather(location.getLocationStringReversed())
+                .subscribe(new Consumer<NewWeather>() {
+                    @Override
+                    public void accept(NewWeather weather) throws Exception {
+                        view.showRefreshingState(false);
+                        if (weather.getStatus().equals("ok")) {
+                            view.showWeather(weather);
+                        } else {
+                            view.showError("api error");
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        view.showRefreshingState(false);
+                        view.showNetworkError();
+                    }
+                });
+    }
 
+    private void geocodeLocationAndSave(final MLocation location, final boolean showLocation) {
+        Disposable disposable =
+                HttpUtil.getAddressDetail(location.getLocationString())
+                .subscribe(new Consumer<BaiDuCoordinateBean>() {
+                    @Override
+                    public void accept(BaiDuCoordinateBean baiDuCoordinateBean) throws Exception {
+                        if (baiDuCoordinateBean != null && baiDuCoordinateBean.getStatus() == 0) {
+                            LocationUtil.fillLocation(location, baiDuCoordinateBean);
+                            if (showLocation) {
+                                view.showLocation(location);
+                            }
+                        } else {
+                            Log.e(TAG, "geocodeLocationAndSave: bean status error. " +
+                                    (baiDuCoordinateBean != null ? baiDuCoordinateBean.getStatus() : ""));
+                        }
+                        model.saveLocation(location);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.e(TAG, "geocodeLocationAndSave: geo failed");
+                        if (showLocation) {
+                            view.showLocation(location);
+                        }
+                        model.saveLocation(location);
+                    }
+                });
+        compositeDisposable.add(disposable);
     }
 
     private void initBaiduLocate() {
@@ -162,9 +241,6 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                 if (DEBUG) {
                     Log.d(TAG, "LocationManager: locationCoordinates = " + loc.getLocationString());
                 }
-//                configContact.applyCoordinateLastUpdateTimerdinate(locationCoordinates);
-//                configContact.applyCoordinateLastUpdateTime(System.currentTimeMillis());
-
                 refreshWeather(loc);
             } else {
                 Log.e(TAG, "LocationManager: get null answer, switch to IP method");
@@ -173,59 +249,37 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
         } else {
             initIpLocate();
         }
-
     }
 
     private void stopBaiduLocate() {
-        if (mLocationClient.isStarted()) {
+        if (mLocationClient != null && mLocationClient.isStarted()) {
             mLocationClient.stop();
+            mLocationClient = null;
         }
     }
 
     private void initIpLocate() {
-//        String url = "http://api.map.baidu.com/title/ip?ak=eTTiuvV4YisaBbLwvj4p8drl7BGfl1eo&coor=bd09ll";
-//        HttpUtil.sendOkHttpRequest(url, new Callback() {
-//            @Override
-//            public void onFailure(Call call, IOException e) {
-//                if (DEBUG)
-//                    Log.e(TAG, "onFailure: fetch locationCoordinates by IP failed");
-//                presenter.toastMessage("Refresh failed");
-//                presenter.stopSwipe();
-//            }
-//
-//            @Override
-//            public void onResponse(Call call, Response response) throws IOException {
-//                final String responseText = response.body().string();
-//                BaiDuIPLocationBean bean = JSON.parseObject(responseText, BaiDuIPLocationBean.class);
-//                if (bean != null && bean.getStatus() == 0) {
-//                    locationCoordinates = bean.getContent().getPoint().getX() + "," + bean.getContent().getPoint().getY();
-//                    String city = bean.getContent().getAddress_detail().getCity();
-//                    String district = bean.getContent().getAddress_detail().getDistrict();
-//                    countyName = TextUtils.isEmpty(district) ? city : district;
-//                    long time = System.currentTimeMillis();
-//                    String ip = Utility.getIP(context);
-//
-//                    configContact.applyCoordinate(locationCoordinates);
-//                    configContact.applyCoordinateLastUpdateTime(time);
-//                    configContact.applyCountyName(countyName);
-//                    configContact.applyCountyNameLastUpdateTime(time);
-//                    configContact.applyIp(ip);
-//                    configContact.applyLocationDetail(ip);
-//                    if (DEBUG)
-//                        Log.d(TAG, "GetCoordinateByIp: locationCoordinates = " + locationCoordinates);
-//                    afterGetCoordinate();
-//                } else {
-//                    presenter.toastMessage("根据IP定位失败！");
-//                }
-//            }
-//        });
-        Disposable disposable = HttpUtil.getIpLocation()
-                .subscribe(new Consumer<BaiDuIPLocationBean>() {
-                    @Override
-                    public void accept(BaiDuIPLocationBean baiDuIPLocationBean) throws Exception {
-                        // TODO: 26/11/2017
+        Disposable disposable =
+            HttpUtil.getIpLocation()
+            .subscribe(new Consumer<BaiDuIPLocationBean>() {
+                @Override
+                public void accept(BaiDuIPLocationBean baiDuIPLocationBean) throws Exception {
+                    if (baiDuIPLocationBean != null && baiDuIPLocationBean.getStatus() == 0) {
+                        MLocation location = LocationUtil.convertType(baiDuIPLocationBean);
+                        Log.d(TAG, "ip locate success: " + location.getLocationString());
+                        model.saveLocation(location);
+                    } else {
+                        Log.e(TAG, "initIpLocate: baidu ip address error. " +
+                                (baiDuIPLocationBean != null ? baiDuIPLocationBean.getStatus() : ""));
                     }
-                });
+                }
+            }, new Consumer<Throwable>() {
+                @Override
+                public void accept(Throwable throwable) throws Exception {
+                    Log.e(TAG, "initIpLocate: ip locate failed");
+                    locateFailed(false);
+                }
+            });
         compositeDisposable.add(disposable);
     }
 

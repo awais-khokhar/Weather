@@ -4,6 +4,7 @@ import io.reactivex.Observable;
 import top.maweihao.weather.entity.HeWeather.NewHeWeatherNow;
 import top.maweihao.weather.entity.NewWeather;
 import top.maweihao.weather.entity.NewWeatherRealtime;
+import top.maweihao.weather.refactor.MLocation;
 
 /**
  * weather repository
@@ -30,7 +31,9 @@ public interface WeatherData {
 
     void saveWeather(NewHeWeatherNow heWeatherNow);
 
-    void getLocationCached();
+    MLocation getLocationCached();
 
-    void getLocation();
+    Observable<MLocation> getLocation();
+
+    void saveLocation(MLocation location);
 }

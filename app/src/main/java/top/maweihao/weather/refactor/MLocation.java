@@ -15,8 +15,8 @@ public class MLocation {
     public static final int TYPE_LOCATION_MANAGER = 5;
 
     private int locateType;
-    private int rawBaiduLocateCode;
-    private boolean needGeocode;
+    private int rawBaiduLocateCode;  //百度定位 BDLocation 原始结果码
+    private boolean needGeocode;  //是否需要根据解析地址
 
     private float latitude;  //经度
     private float longitude;  //纬度
@@ -45,6 +45,12 @@ public class MLocation {
         this.longitude = longitude.floatValue();
     }
 
+    public MLocation(int locateType, String latitude, String longitude) {
+        this.locateType = locateType;
+        this.latitude = Float.parseFloat(latitude);
+        this.longitude = Float.parseFloat(longitude);
+    }
+
     public MLocation(float latitude, float longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
@@ -53,6 +59,11 @@ public class MLocation {
     public MLocation(Double latitude, Double longitude) {
         this.latitude = latitude.floatValue();
         this.longitude = longitude.floatValue();
+    }
+
+    public MLocation(String latitude, String longitude) {
+        this.latitude = Float.parseFloat(latitude);
+        this.longitude = Float.parseFloat(longitude);
     }
 
     public String getLocationStringReversed() {

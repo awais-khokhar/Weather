@@ -1,11 +1,15 @@
 package top.maweihao.weather.util;
 
 import android.location.Location;
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.baidu.location.BDLocation;
 
 import org.greenrobot.greendao.annotation.NotNull;
 
+import top.maweihao.weather.entity.BaiDu.BaiDuCoordinateBean;
+import top.maweihao.weather.entity.BaiDu.BaiDuIPLocationBean;
 import top.maweihao.weather.refactor.MLocation;
 
 /**
@@ -55,6 +59,44 @@ public class LocationUtil {
                 location.getLatitude(), location.getLongitude());
         return loc;
 
+    }
+
+    public static MLocation convertType(@NonNull BaiDuIPLocationBean bean) {
+        BaiDuIPLocationBean.ContentBean.AddressDetailBean address_detail =
+                bean.getContent().getAddress_detail();
+        MLocation location = new MLocation(MLocation.TYPE_IP,
+                bean.getContent().getPoint().getY(), bean.getContent().getPoint().getX());
+        if (!TextUtils.isEmpty(address_detail.getProvince())) {
+            location.setProvince(address_detail.getProvince());
+        }
+        if (!TextUtils.isEmpty(address_detail.getCity())) {
+            location.setCity(address_detail.getCity());
+        }
+        if (!TextUtils.isEmpty(address_detail.getDistrict())) {
+            location.setCounty(address_detail.getDistrict());
+        }
+        return location;
+    }
+
+    public static void fillLocation(MLocation location, BaiDuCoordinateBean bean) {
+        BaiDuCoordinateBean.ResultBean.AddressComponentBean addressComponentBean
+                 = bean.getResult().getAddressComponent();
+        if (!TextUtils.isEmpty(addressComponentBean.getProvince())) {
+            location.setProvince(addressComponentBean.getProvince());
+        }
+        if (!TextUtils.isEmpty(addressComponentBean.getCity())) {
+            location.setCity(addressComponentBean.getCity());
+        }
+        if (!TextUtils.isEmpty(addressComponentBean.getDistrict())) {
+            location.setCounty(addressComponentBean.getDistrict());
+        }
+        // "sematic_description" is more accurate than "street"
+        if (!TextUtils.isEmpty(bean.getResult().getSematic_description())) {
+            location.setStreet(bean.getResult().getSematic_description());
+        } else if (!TextUtils.isEmpty(addressComponentBean.getStreet())){
+            location.setStreet(addressComponentBean.getStreet());
+        }
+        location.setNeedGeocode(false);
     }
 
     public static boolean isBaiduLocateSuccess(int type) {

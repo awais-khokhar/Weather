@@ -28,6 +28,8 @@ public class Constants {
     public static final int WidgetSyncServiceRequestCode = 66;
     public static boolean isSetResultIntent = false;
 
+    public static final int requestLocationCode = 3;
+
     public static final String HeWeatherKey = "5dfd7d649560440ca704c077a21af092";
 
     public static final String BaiduKey = "RUUaavVwpwqYdz8QGHLXSFBfwhs2ba6j";

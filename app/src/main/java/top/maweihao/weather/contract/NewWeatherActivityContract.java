@@ -19,6 +19,8 @@ public interface NewWeatherActivityContract {
         void showError(String error);
         void showPermissionError();
         void showIpLocateMessage();
+        void showRefreshingState(boolean refresh);
+        void askForChoosePosition();
     }
 
     interface newPresenter extends BasePresenter {

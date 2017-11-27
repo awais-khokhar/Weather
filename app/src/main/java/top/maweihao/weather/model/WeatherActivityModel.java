@@ -109,7 +109,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
         presenter.initHourlyView();
         presenter.initDailyView();
         //读取配置
-        boolean autoLocate = configContact.getAutoLocate(false);
+        boolean autoLocate = configContact.getAutoLocate(true);
         countyName = configContact.getCountyName();
         locationDetail = configContact.getLocationDetail("");
         if (!forceAllRefresh) {

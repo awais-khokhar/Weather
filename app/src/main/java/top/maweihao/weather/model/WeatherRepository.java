@@ -18,6 +18,7 @@ import top.maweihao.weather.entity.NewWeather;
 import top.maweihao.weather.entity.NewWeatherDao;
 import top.maweihao.weather.entity.NewWeatherRealtime;
 import top.maweihao.weather.entity.NewWeatherRealtimeDao;
+import top.maweihao.weather.refactor.MLocation;
 import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.Utility;
 
@@ -61,7 +62,9 @@ public class WeatherRepository implements WeatherData {
                 .doOnNext(new Consumer<NewWeather>() {
                     @Override
                     public void accept(NewWeather weather) throws Exception {
-                        saveWeather(weather);
+                        if (weather.getStatus().equals("ok")) {
+                            saveWeather(weather);
+                        }
                     }
                 });
     }
@@ -128,26 +131,26 @@ public class WeatherRepository implements WeatherData {
     }
 
     @Override
-    public void saveWeather(NewWeather Weather) {
-        if (Weather.getStatus().equals("ok")) {
+    public void saveWeather(NewWeather weather) {
+        if (weather.getStatus().equals("ok")) {
             weatherDao.deleteAll();
-            weatherDao.insert(Utility.packWeather(Weather));
+            weatherDao.insert(Utility.packWeather(weather));
         }
     }
 
     @Override
-    public void saveWeather(NewWeatherRealtime Weather) {
-        if (Weather.getStatus().equals("ok")) {
+    public void saveWeather(NewWeatherRealtime weather) {
+        if (weather.getStatus().equals("ok")) {
             weatherRealtimeDao.deleteAll();
-            weatherRealtimeDao.insert(Utility.packWeather(Weather));
+            weatherRealtimeDao.insert(Utility.packWeather(weather));
         }
     }
 
     @Override
-    public void saveWeather(NewHeWeatherNow Weather) {
-        if (Weather.getHeWeather5().get(0).getStatus().equals("ok")) {
+    public void saveWeather(NewHeWeatherNow weather) {
+        if (weather.getHeWeather5().get(0).getStatus().equals("ok")) {
             heWeatherNowDao.deleteAll();;
-            heWeatherNowDao.insert(Utility.packWeather(Weather, System.currentTimeMillis()));
+            heWeatherNowDao.insert(Utility.packWeather(weather, System.currentTimeMillis()));
         }
     }
 
@@ -158,6 +161,11 @@ public class WeatherRepository implements WeatherData {
 
     @Override
     public void getLocation() {
+
+    }
+
+    @Override
+    public void saveLocation(MLocation location) {
 
     }
 
