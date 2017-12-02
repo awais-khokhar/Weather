@@ -155,13 +155,13 @@ public class WeatherRepository implements WeatherData {
     }
 
     @Override
-    public void getLocationCached() {
-
+    public MLocation getLocationCached() {
+        return null;
     }
 
     @Override
-    public void getLocation() {
-
+    public Observable<MLocation> getLocation() {
+        return null;
     }
 
     @Override

@@ -27,7 +27,7 @@ public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapte
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.per_day_recycler_layout, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_per_day_list_RL, parent, false);
         return new ViewHolder(view);
     }
 

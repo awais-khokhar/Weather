@@ -13,7 +13,7 @@ import top.maweihao.weather.R;
 
 /**
  * Created by ma on 17-3-28.
- * class for 'per_day_weather_layout'
+ * class for 'card_per_day_layout'
  */
 
 public class perDayWeatherView extends ConstraintLayout {
@@ -27,7 +27,7 @@ public class perDayWeatherView extends ConstraintLayout {
     private int temperatureSize;
 
     public void initView(Context context) {
-        View.inflate(context, R.layout.per_day_weather_layout, this);
+        View.inflate(context, R.layout.card_per_day_layout, this);
         date = (TextView) findViewById(R.id.date_text);
         icon = (ImageView) findViewById(R.id.per_day_weather_icon);
         temperature = (TextView) findViewById(R.id.temperature_text);

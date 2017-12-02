@@ -34,7 +34,7 @@ public class BigWidgetConfigureActivity extends Activity implements View.OnClick
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.big_weather_weather_configure);
+        setContentView(R.layout.widget_configure_big);
         initView();
     }
 

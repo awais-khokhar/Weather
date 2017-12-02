@@ -120,7 +120,7 @@
 
                     <android.support.v7.widget.CardView style="@style/card_view_style">
 
-                        <include layout="@layout/more_weather_info" />
+                        <include layout="@layout/card_more_info" />
                     </android.support.v7.widget.CardView>
 
                     <android.support.v7.widget.CardView style="@style/card_view_style">
@@ -130,9 +130,9 @@
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
 
-                            <include layout="@layout/wind_view" />
+                            <include layout="@layout/card_wind_view" />
 
-                            <include layout="@layout/air_condition_layout" />
+                            <include layout="@layout/card_air_condition" />
                         </LinearLayout>
                     </android.support.v7.widget.CardView>
                 </LinearLayout>

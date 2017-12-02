@@ -69,7 +69,7 @@ public class TallWeatherWidgetConfigureActivity extends Activity {
 
         setResult(RESULT_CANCELED);
 
-        setContentView(R.layout.tall_weather_widget_configure);
+        setContentView(R.layout.widget_configure_tall);
         findViewById(R.id.tall_lunar_switch).setOnClickListener(mOnClickListener);
         findViewById(R.id.add_button).setOnClickListener(mOnClickListener);
         findViewById(R.id.tall_card_switch).setOnClickListener(mOnClickListener);
