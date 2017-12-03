@@ -318,14 +318,36 @@ public class Utility {
      * @param mills 时间
      */
     public static String getTime(Context context, long mills) {
-        long nowTime = System.currentTimeMillis();
-        long interval = nowTime - mills;
-        if (interval < 60 * 1000) {
-            return context.getResources().getString(R.string.just_now);
-        } else if (interval < 60 * 60 * 1000) {
-            return (interval / 1000 / 60) + context.getResources().getString(R.string.minute_age);
+//        long nowTime = System.currentTimeMillis();
+//        long interval = nowTime - mills;
+//        if (interval < 60 * 1000) {
+//            return context.getResources().getString(R.string.just_now);
+//        } else if (interval < 60 * 60 * 1000) {
+//            return (interval / 1000 / 60) + context.getResources().getString(R.string.minute_age);
+//        } else {
+//            return (interval / 1000 / 60 / 60) + context.getResources().getString(R.string.hour_ago);
+//        }
+        Calendar today = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(mills);
+        if (today.get(Calendar.DAY_OF_MONTH) == cal.get(Calendar.DAY_OF_MONTH) &&
+                today.get(Calendar.MONTH) == cal.get(Calendar.MONTH)) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.CHINA);
+            return simpleDateFormat.format(cal);
         } else {
-            return (interval / 1000 / 60 / 60) + context.getResources().getString(R.string.hour_ago);
+            today.set(Calendar.HOUR, 0);
+            today.set(Calendar.MINUTE, 0);
+            today.set(Calendar.SECOND, 0);
+            cal.set(Calendar.HOUR, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            int intervalDay = Long.valueOf(today.getTimeInMillis() - cal.getTimeInMillis()
+                    / (24 * 60 * 60 * 1000)).intValue();
+            if (intervalDay == -1) {
+                return context.getResources().getString(R.string.yesterday);
+            } else {
+                return (-1 * intervalDay) + " " + context.getResources().getString(R.string.days_before);
+            }
         }
     }
 
@@ -342,7 +364,8 @@ public class Utility {
      * @return ip地址字符串
      */
     public static String getIP(Context ctx) {
-        WifiManager wifiManager = (WifiManager) ctx.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        WifiManager wifiManager = (WifiManager)
+                ctx.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         return wifiManager.isWifiEnabled() ? getWifiIP(wifiManager) : getGPRSIP();
     }
 
@@ -354,8 +377,10 @@ public class Utility {
     private static String getGPRSIP() {
         String ip = null;
         try {
-            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
-                for (Enumeration<InetAddress> enumIpAddr = en.nextElement().getInetAddresses(); enumIpAddr.hasMoreElements(); ) {
+            for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
+                 en.hasMoreElements(); ) {
+                for (Enumeration<InetAddress> enumIpAddr = en.nextElement().getInetAddresses();
+                     enumIpAddr.hasMoreElements(); ) {
                     InetAddress inetAddress = enumIpAddr.nextElement();
                     if (!inetAddress.isLoopbackAddress()) {
                         ip = inetAddress.getHostAddress();
@@ -412,9 +437,11 @@ public class Utility {
     public static int getNavigationBarHeight(@NonNull Context context) {
         int result = 0;
         int resourceId = 0;
-        int rid = context.getResources().getIdentifier("config_showNavigationBar", "bool", "android");
+        int rid = context.getResources().getIdentifier("config_showNavigationBar",
+                "bool", "android");
         if (rid != 0) {
-            resourceId = context.getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+            resourceId = context.getResources().getIdentifier("navigation_bar_height",
+                    "dimen", "android");
             return context.getResources().getDimensionPixelSize(resourceId);
         } else
             return 0;
@@ -426,9 +453,12 @@ public class Utility {
      */
     public static void closeSoftInput(@Nullable Context context) {
         assert context != null;
-        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager = (InputMethodManager)
+                context.getSystemService(Context.INPUT_METHOD_SERVICE);
         if (inputMethodManager != null && ((Activity) context).getCurrentFocus() != null) {
-            inputMethodManager.hideSoftInputFromWindow(((Activity) context).getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            inputMethodManager.hideSoftInputFromWindow(
+                    ((Activity) context).getCurrentFocus().getWindowToken(),
+                    InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
 

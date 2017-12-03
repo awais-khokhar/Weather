@@ -26,6 +26,7 @@ import top.maweihao.weather.contract.BasePresenter;
 import top.maweihao.weather.contract.NewWeatherActivityContract;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.contract.WeatherData;
+import top.maweihao.weather.entity.BaiDu.BaiDuChoosePositionBean;
 import top.maweihao.weather.entity.BaiDu.BaiDuCoordinateBean;
 import top.maweihao.weather.entity.BaiDu.BaiDuIPLocationBean;
 import top.maweihao.weather.entity.NewWeather;
@@ -350,4 +351,31 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
         }
     }
 
+    @Override
+    public void refreshChosenWeather(final String desc) {
+        Disposable disposable =
+                HttpUtil.getCoordinateByDesc(desc)
+                .subscribe(new Consumer<BaiDuChoosePositionBean>() {
+                    @Override
+                    public void accept(BaiDuChoosePositionBean positionBean) throws Exception {
+                        if (positionBean != null && positionBean.getStatus() == 0 &&
+                                0 != positionBean.getResult().getLocation().getLat() &&
+                                0 != positionBean.getResult().getLocation().getLng()) {
+                            MLocation location = LocationUtil.convertType(positionBean, desc);
+                            model.saveLocation(location);
+                            refreshWeather(location);
+                        } else {
+                            Log.e(TAG, "refreshChosenWeather: get coo failed" + desc);
+                            view.showError("get weather failed, try to enable \"auto locate\"");
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.e(TAG, "refreshChosenWeather: get coo failed");
+                        view.showNetworkError();
+                    }
+                });
+        compositeDisposable.add(disposable);
+    }
 }

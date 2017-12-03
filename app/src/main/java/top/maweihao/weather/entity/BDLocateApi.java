@@ -4,6 +4,7 @@ import io.reactivex.Observable;
 
 import retrofit2.http.GET;
 import retrofit2.http.Query;
+import top.maweihao.weather.entity.BaiDu.BaiDuChoosePositionBean;
 import top.maweihao.weather.entity.BaiDu.BaiDuCoordinateBean;
 import top.maweihao.weather.entity.BaiDu.BaiDuIPLocationBean;
 
@@ -15,11 +16,20 @@ import top.maweihao.weather.entity.BaiDu.BaiDuIPLocationBean;
 public interface BDLocateApi {
 
     @GET("location/ip")
-    Observable<BaiDuIPLocationBean> getIpLocation(@Query("ak") String ak, @Query("coor") String coor,
-                                                 @Query("mcode") String mcode);
+    Observable<BaiDuIPLocationBean> getIpLocation(@Query("ak") String ak,
+                                                  @Query("coor") String coor,
+                                                  @Query("mcode") String mcode);
 
     @GET("geocoder/v2/")
     Observable<BaiDuCoordinateBean> getAddressDetail(@Query("location") String location,
-                                    @Query("output") String output, @Query("pois") int pois,
-                                    @Query("ak") String ak, @Query("mcode") String mcode);
+                                                     @Query("output") String output,
+                                                     @Query("pois") int pois,
+                                                     @Query("ak") String ak,
+                                                     @Query("mcode") String mcode);
+
+    @GET("geocoder/v2/")
+    Observable<BaiDuChoosePositionBean> getCoordinateByDesc(@Query("location") String location,
+                                                            @Query("output") String output,
+                                                            @Query("ak") String ak,
+                                                            @Query("mcode") String mcode);
 }

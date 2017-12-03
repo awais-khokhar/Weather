@@ -8,6 +8,7 @@ import com.baidu.location.BDLocation;
 
 import org.greenrobot.greendao.annotation.NotNull;
 
+import top.maweihao.weather.entity.BaiDu.BaiDuChoosePositionBean;
 import top.maweihao.weather.entity.BaiDu.BaiDuCoordinateBean;
 import top.maweihao.weather.entity.BaiDu.BaiDuIPLocationBean;
 import top.maweihao.weather.refactor.MLocation;
@@ -75,6 +76,15 @@ public class LocationUtil {
         if (!TextUtils.isEmpty(address_detail.getDistrict())) {
             location.setCounty(address_detail.getDistrict());
         }
+        return location;
+    }
+
+    public static MLocation convertType(@NonNull BaiDuChoosePositionBean bean, String county) {
+        BaiDuChoosePositionBean.ResultBean.LocationBean locationBean =
+                bean.getResult().getLocation();
+        MLocation location = new MLocation(MLocation.TYPE_CHOOSE,
+                locationBean.getLat(), locationBean.getLng());
+        location.setCounty(county);
         return location;
     }
 

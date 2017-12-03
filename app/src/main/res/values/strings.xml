@@ -134,5 +134,7 @@
     <string name="donnot_show">don\'t show</string>
     <string name="grant_permission">Grant</string>
     <string name="locate_failed">Locate failed, make sure you enable the location function.</string>
+    <string name="yesterday">yesterday</string>
+    <string name="days_before">days before</string>
 
 </resources>

@@ -10,6 +10,7 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import top.maweihao.weather.entity.BDLocateApi;
+import top.maweihao.weather.entity.BaiDu.BaiDuChoosePositionBean;
 import top.maweihao.weather.entity.BaiDu.BaiDuCoordinateBean;
 import top.maweihao.weather.entity.BaiDu.BaiDuIPLocationBean;
 import top.maweihao.weather.entity.HeWeather.HeWeatherApi;
@@ -94,5 +95,10 @@ public class HttpUtil {
         return getBDLocateApi().getAddressDetail(location, "json", 0,
                 Constants.BaiduKey, Constants.mBaiduCode)
                 .subscribeOn(Schedulers.io());
+    }
+
+    public static Observable<BaiDuChoosePositionBean> getCoordinateByDesc(String desc) {
+        return getBDLocateApi().getCoordinateByDesc(desc, "json",
+                Constants.BaiduKey, Constants.mBaiduCode);
     }
 }
