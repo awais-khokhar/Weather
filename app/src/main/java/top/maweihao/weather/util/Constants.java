@@ -35,7 +35,8 @@ public class Constants {
 
     public static final String BaiduKey = "RUUaavVwpwqYdz8QGHLXSFBfwhs2ba6j";
 
-    public static final String mBaiduCode = "B6:F3:EA:31:1E:7F:BB:C5:D2:6C:5A:A7:CA:D8:4F:DF:79:46:C9:C2;top.maweihao.weather";
+    public static final String mBaiduCode =
+            "B6:F3:EA:31:1E:7F:BB:C5:D2:6C:5A:A7:CA:D8:4F:DF:79:46:C9:C2;top.maweihao.weather";
 
 
     @IntDef({Through.THROUGH_IP, Through.THROUGH_CHOOSE_POSITION,

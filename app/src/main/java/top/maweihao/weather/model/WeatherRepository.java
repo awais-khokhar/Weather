@@ -74,14 +74,17 @@ public class WeatherRepository implements WeatherData {
 
     @Override
     public Observable<NewWeather> getWeatherCached() {
-//        final QueryBuilder<NewWeather> qb = weatherDao.queryBuilder();
         return Observable.create(new ObservableOnSubscribe<NewWeather>() {
             @Override
             public void subscribe(ObservableEmitter<NewWeather> e) throws Exception {
-                List<NewWeather> newWeatherList = weatherDao.loadAll();
-                Collections.sort(newWeatherList);
-                e.onNext(Utility.unpackWeather(newWeatherList.get(0)));
-                e.onComplete();
+                List<NewWeather> weatherList = weatherDao.loadAll();
+                if (weatherList != null && weatherList.size() > 0) {
+                    Collections.sort(weatherList);
+                    e.onNext(Utility.unpackWeather(weatherList.get(0)));
+                    e.onComplete();
+                } else {
+                    e.onError(new Throwable("no cached weather"));
+                }
             }
         });
     }
@@ -103,9 +106,13 @@ public class WeatherRepository implements WeatherData {
             @Override
             public void subscribe(ObservableEmitter<NewWeatherRealtime> e) throws Exception {
                 List<NewWeatherRealtime> weatherList = weatherRealtimeDao.loadAll();
-                Collections.sort(weatherList);
-                e.onNext(Utility.unpackWeather(weatherList.get(0)));
-                e.onComplete();
+                if (weatherList != null && weatherList.size() > 0) {
+                    Collections.sort(weatherList);
+                    e.onNext(Utility.unpackWeather(weatherList.get(0)));
+                    e.onComplete();
+                } else {
+                    e.onError(new Throwable("no cached weatherNow"));
+                }
             }
         });
     }
@@ -127,8 +134,12 @@ public class WeatherRepository implements WeatherData {
             @Override
             public void subscribe(ObservableEmitter<NewHeWeatherNow> e) throws Exception {
                 List<NewHeWeatherNow> weatherList = heWeatherNowDao.loadAll();
-                e.onNext(Utility.unpackWeather(weatherList.get(0)));
-                e.onComplete();
+                if (weatherList != null && weatherList.size() > 0) {
+                    e.onNext(Utility.unpackWeather(weatherList.get(0)));
+                    e.onComplete();
+                } else {
+                    e.onError(new Throwable("no cached heWeatherNow"));
+                }
             }
         });
     }

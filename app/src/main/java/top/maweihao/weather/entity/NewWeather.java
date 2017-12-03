@@ -20,7 +20,7 @@ public class NewWeather implements Comparable<NewWeather> {
      * unit : metric
      * location : [40.319077,116.632878]
      */
-    @Transient
+    @Property
     private String status;
     @Transient
     private String lang;
@@ -42,8 +42,9 @@ public class NewWeather implements Comparable<NewWeather> {
     @Property
     private String jsonString;
 
-    @Generated(hash = 2072301913)
-    public NewWeather(long server_time, String jsonString) {
+    @Generated(hash = 1649306418)
+    public NewWeather(String status, long server_time, String jsonString) {
+        this.status = status;
         this.server_time = server_time;
         this.jsonString = jsonString;
     }

@@ -70,7 +70,7 @@ public class HttpUtil {
     }
 
     public static Observable<NewWeather> getWeather(@NonNull String location, Boolean alert, Integer days) {
-        alert = (alert != null) && alert;
+        alert = (alert == null) || alert;
         days = (days == null) ? 15 : days;
         return getWeatherApi().getWeather(location, alert, days)
                 .subscribeOn(Schedulers.io());

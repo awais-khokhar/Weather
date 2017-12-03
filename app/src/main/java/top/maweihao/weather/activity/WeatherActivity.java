@@ -35,6 +35,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.functions.Consumer;
 import top.maweihao.weather.R;
 import top.maweihao.weather.adapter.DailyWeatherAdapter;
 import top.maweihao.weather.adapter.HourlyWeatherAdapter;
@@ -45,7 +46,8 @@ import top.maweihao.weather.entity.Alert;
 import top.maweihao.weather.entity.ForecastBean;
 import top.maweihao.weather.entity.NewWeather;
 import top.maweihao.weather.entity.SingleWeather;
-import top.maweihao.weather.presenter.WeatherActivityPresenter;
+import top.maweihao.weather.model.WeatherRepository;
+import top.maweihao.weather.presenter.NewWeatherPresenter;
 import top.maweihao.weather.refactor.MLocation;
 import top.maweihao.weather.service.PushService;
 import top.maweihao.weather.util.Constants;
@@ -53,7 +55,6 @@ import top.maweihao.weather.util.SimplePermissionUtils;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.view.SemiCircleView;
 import top.maweihao.weather.view.SunTimeView;
-import top.maweihao.weather.view.dynamicweather.DynamicWeatherView;
 
 import static top.maweihao.weather.R.id.skycon_text;
 import static top.maweihao.weather.R.id.temperature_text;
@@ -96,8 +97,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     TextView lastUpdateTime;
     @BindView(R.id.now_card_desc)
     TextView todayDesc;
-    @BindView(R.id.dynamicWeatherView)
-    DynamicWeatherView dynamicWeatherView;
+//    @BindView(R.id.dynamicWeatherView)
+//    DynamicWeatherView dynamicWeatherView;
     @BindView(R.id.aqi_image)
     ImageView aqiImage;
     @BindView(R.id.uv_name)
@@ -160,24 +161,31 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     protected void onCreate(Bundle savedInstanceState) {
         PreferenceManager.setDefaultValues(this, R.xml.settingpreference, false);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_weather_new);
-        ButterKnife.bind(this);
+        setContentView(R.layout.activity_weather);
+//        ButterKnife.bind(this);
+        initView();
 //        doDebugThings();
-
         configContact = Utility.createSimpleConfig(this).create(PreferenceConfigContact.class);
 
-        setSupportActionBar(toolbar);
-        toolbar.setTitle(getResources().getString(R.string.app_name));
+//        setSupportActionBar(toolbar);
+//        toolbar.setTitle(getResources().getString(R.string.app_name));
 
         handler = new MessageHandler(this);
-        presenter = new WeatherActivityPresenter(this, this);
+//        presenter = new WeatherActivityPresenter(this, this);
+        newPresenter = new NewWeatherPresenter(WeatherActivity.this,
+                WeatherRepository.getInstance(getApplicationContext()), configContact);
+        newPresenter.subscribe();
 
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         swipeRefreshLayout.setDistanceToTriggerSync(200);
         swipeRefreshLayout.setOnRefreshListener((new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                presenter.refreshWeather(true, countyName);
+                if (presenter != null) {
+                    presenter.refreshWeather(true, countyName);
+                } else {
+                    newPresenter.locate();
+                }
             }
         }));
 
@@ -186,7 +194,20 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     }
 
     private void doDebugThings() {
+        WeatherRepository repo = WeatherRepository.getInstance(WeatherActivity.this);
 
+        repo.getWeatherCached()
+                .subscribe(new Consumer<NewWeather>() {
+                    @Override
+                    public void accept(NewWeather weather) throws Exception {
+                        Log.d(TAG, "accept: HERE" + weather);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.d(TAG, "accept: HERE" + throwable);
+                    }
+                });
     }
 
     private void initView() {
@@ -206,26 +227,32 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
     @Override
     protected void onResume() {
+        Log.d(TAG, "onResume: ");
         super.onResume();
         if (newPresenter != null) {
             newPresenter.onResume();
         }
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                dynamicWeatherView.onResume();
-            }
-        }, 150);
+//        handler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                dynamicWeatherView.onResume();
+//            }
+//        }, 150);
     }
 
     @Override
     protected void onPause() {
+        Log.d(TAG, "onPause: ");
         super.onPause();
-        dynamicWeatherView.onPause();
+        if (newPresenter != null) {
+            newPresenter.onPause();
+        }
+//        dynamicWeatherView.onPause();
     }
 
     @Override
     protected void onStart() {
+        Log.d(TAG, "onStart: ");
         super.onStart();
         if (!isSetResultIntent) {
             permission();
@@ -236,8 +263,11 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
     @Override
     protected void onStop() {
+        Log.d(TAG, "onStop: ");
         super.onStop();
-        presenter.stopBdLocation();
+        if (presenter != null) {
+            presenter.stopBdLocation();
+        }
         if (newPresenter != null) {
             newPresenter.onStop();
         }
@@ -245,10 +275,13 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
     @Override
     public void onDestroy() {
+        Log.d(TAG, "onDestroy: ");
         super.onDestroy();
-        dynamicWeatherView.onDestroy();
-        presenter.destroy();
-        presenter = null;
+//        dynamicWeatherView.onDestroy();
+        if (presenter != null) {
+            presenter.destroy();
+            presenter = null;
+        }
         if (newPresenter != null) {
             newPresenter.unSubscribe();
             newPresenter = null;
@@ -379,7 +412,9 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                         Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
                         startActivityForResult(intent, ChoosePositionActivityRequestCode);
                     } else {
-                        presenter.refreshWeather(true, perCountyName);
+                        if (presenter != null) {
+                            presenter.refreshWeather(true, perCountyName);
+                        }
                     }
                 } else if (resultCode == ChooseCode) {
                     onActivityResult(ChoosePositionActivityRequestCode, ChooseCode, data);
@@ -396,7 +431,9 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                     configContact.applyLocationDetail(locationDetail);
                     configContact.applyCountyNameLastUpdateTime(System.currentTimeMillis());
                     configContact.applyAutoLocate(false);
-                    presenter.refreshWeather(true, countyName);
+                    if (presenter != null) {
+                        presenter.refreshWeather(true, countyName);
+                    }
                 }
                 break;
             default:
@@ -427,15 +464,19 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 , new SimplePermissionUtils.OnPermissionListener() {
                     @Override
                     public void onPermissionGranted() {
-                        presenter.refreshWeather(false, null);
+                        if (presenter != null) {
+                            presenter.refreshWeather(false, null);
+                        }
                     }
 
                     @Override
                     public void onPermissionDenied() {
-                        Toast.makeText(WeatherActivity.this, getResources().getString(R.string.permission_denied), Toast.LENGTH_SHORT).show();
-                        if (DEBUG)
-                            Log.d(TAG, "onActivityResult: Locate permission denied, switch to ip mode");
-                        presenter.refreshWeather(false, null);
+                        Toast.makeText(WeatherActivity.this,
+                                getResources().getString(R.string.permission_denied), Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "onActivityResult: Locate permission denied, switch to ip mode");
+                        if (presenter != null) {
+                            presenter.refreshWeather(false, null);
+                        }
                     }
                 });
     }
@@ -511,7 +552,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 String weatherString = chooseWeatherSkycon(getApplicationContext(), skycon, intensity, MINUTELY_MODE);
                 skyconText.setText(weatherString);
 
-                dynamicWeatherView.setDrawerType(Utility.chooseBgImage(skycon));
+//                dynamicWeatherView.setDrawerType(Utility.chooseBgImage(skycon));
 
                 ForecastBean.ResultBean.DailyBean dailyBean = forecastBean.getResult().getDaily();
                 String sunRise = dailyBean.getAstro().get(0).getSunrise().getTime();
@@ -701,6 +742,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         NewWeather.ResultBean.DailyBean dailyBean = weather.getResult().getDaily();
         NewWeather.ResultBean.HourlyBean hourlyBean = weather.getResult().getHourly();
         NewWeather.ResultBean.MinutelyBean minutelyBean = weather.getResult().getMinutely();
+        Log.d(TAG, "showWeather: here " + dailyBean.getAqi().size());
 
         showDailyWeather(dailyBean);
         showHourlyWeather(hourlyBean);
@@ -757,7 +799,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 AQICircle.setValue((int) aqi);
                 hum_text.setText(String.valueOf(hum).substring(0, 2) + "%");
                 skyconText.setText(weatherString);
-                dynamicWeatherView.setDrawerType(Utility.chooseBgImage(skycon));
+//                dynamicWeatherView.setDrawerType(Utility.chooseBgImage(skycon));
                 sunrise_text.setText(sunRise);
                 sunset_text.setText(sunSet);
                 sunTimeView.setTime(sunRise, sunSet);
@@ -772,6 +814,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     private void showDailyWeather(NewWeather.ResultBean.DailyBean dailyBean) {
         int length = dailyBean.getSkycon().size();
         length = (length >= 5) ? 5 : length;
+        Log.d(TAG, "showDailyWeather: " + length);
         final ArrayList<SingleWeather> singleWeathers = new ArrayList<>(length);
         int dayOfWeek = Utility.getDayOfWeek();
         SimpleDateFormat oldSDF = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
@@ -838,7 +881,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         });
     }
 
-    private void refreshDailyRV(List<SingleWeather> list) {
+    private void refreshHourlyRV(List<SingleWeather> list) {
         if (hourWeatherAdapter == null) {
             hourWeatherAdapter = new HourlyWeatherAdapter(list);
             hourlyRecyclerView.setAdapter(hourWeatherAdapter);
@@ -847,10 +890,10 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         }
     }
 
-    private void refreshHourlyRV(List<SingleWeather> list) {
+    private void refreshDailyRV(List<SingleWeather> list) {
         if (dailyWeatherAdapter == null) {
             dailyWeatherAdapter = new DailyWeatherAdapter(list);
-            hourlyRecyclerView.setAdapter(dailyWeatherAdapter);
+            dailyRecyclerView.setAdapter(dailyWeatherAdapter);
         } else {
             dailyWeatherAdapter.setWeatherList(list);
         }
@@ -860,6 +903,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     public void showLocation(MLocation location) {
         String coarseLocation = location.getLocationCoarse();
         String detailLocation = location.getLocationDetail();
+        Log.d(TAG, "showLocation: HERE " + coarseLocation + detailLocation);
         switch (location.getLocateType()) {
             case MLocation.TYPE_CHOOSE:
                 setLoc(coarseLocation, coarseLocation, false);
@@ -1010,10 +1054,10 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 } else {
                     locateModeImage.setImageResource(R.drawable.ic_location_off_black_24dp);
                 }
-                if (TextUtils.isEmpty(coarse)) {
+                if (!TextUtils.isEmpty(coarse)) {
                     toolbar.setTitle(coarse);
                 }
-                if (TextUtils.isEmpty(detail)) {
+                if (!TextUtils.isEmpty(detail)) {
                     locateMode.setText(detail);
                 }
             }

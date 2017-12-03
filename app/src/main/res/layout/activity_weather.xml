@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/view_root"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -9,128 +10,137 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/app_bar_layout"
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="180dp">
+        android:layout_height="match_parent">
 
-        <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/toolbar_layout"
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:contentScrim="@android:color/transparent"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent">
 
-            <include layout="@layout/card_head" />
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?android:attr/actionBarSize"
-                app:layout_collapseMode="pin"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:titleTextColor="#E0E0E0" />
-
-        </android.support.design.widget.CollapsingToolbarLayout>
-    </android.support.design.widget.AppBarLayout>
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <android.support.v4.widget.NestedScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:id="@+id/collapsing_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                app:contentScrim="@android:color/transparent"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:background="@android:color/transparent"
+                    app:layout_collapseMode="parallax" />
 
                 <LinearLayout
-                    android:id="@+id/toolbar_LinearLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    app:layout_collapseMode="parallax">
+                    app:layout_collapseMode="pin">
 
-                    <include layout="@layout/card_current_weather" />
-
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/hourly_weather_rv"
-                        android:layout_width="match_parent"
-                        android:layout_height="90dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_marginTop="10dp" />
-                </LinearLayout>
-
-                <android.support.v7.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:clickable="true"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    app:cardCornerRadius="4dp"
-                    app:contentPaddingRight="5dp">
-
-                    <!--<include layout="@layout/few_days_content" />-->
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/daily_weather_rv"
+                    <top.maweihao.weather.view.StatusBarView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 
-                </android.support.v7.widget.CardView>
+                    <android.support.v7.widget.Toolbar
+                        android:id="@+id/toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="?android:attr/actionBarSize"
+                        android:background="@android:color/transparent"
+                        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                        app:theme="@style/ThemeToolbar"
+                        app:titleTextColor="#E0E0E0" />
 
-                <android.support.v7.widget.CardView
+                </LinearLayout>
+
+
+            </android.support.design.widget.CollapsingToolbarLayout>
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <android.support.v4.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/activity_weather_cardContainer"
                     android:layout_width="match_parent"
-                    android:layout_height="170dp"
-                    android:layout_margin="5dp"
-                    android:clickable="true"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    app:cardCornerRadius="4dp">
+                    android:layout_height="wrap_content"
+                    android:descendantFocusability="blocksDescendants"
+                    android:orientation="vertical">
 
-                    <include layout="@layout/card_more_info" />
-                </android.support.v7.widget.CardView>
+                    <include layout="@layout/card_now" />
 
-                <android.support.v7.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="100dp"
-                    android:layout_margin="5dp"
-                    android:clickable="true"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    app:cardCornerRadius="4dp">
+                    <android.support.v7.widget.CardView style="@style/card_view_style">
 
-                    <include layout="@layout/card_wind_view" />
-                </android.support.v7.widget.CardView>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
 
-                <android.support.v7.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:layout_margin="5dp"
-                    android:clickable="true"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    app:cardCornerRadius="4dp">
+                            <include layout="@layout/card_refresh_time" />
 
-                    <include layout="@layout/card_air_condition" />
-                </android.support.v7.widget.CardView>
+                            <android.support.v7.widget.RecyclerView
+                                android:id="@+id/hourly_weather_rv"
+                                android:layout_width="match_parent"
+                                android:layout_height="90dp"
+                                android:layout_marginTop="10dp" />
 
-                <android.support.v7.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:layout_margin="5dp"
-                    android:clickable="true"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    app:cardCornerRadius="4dp">
+                            <include layout="@layout/card_today" />
+                        </LinearLayout>
+                    </android.support.v7.widget.CardView>
 
-                    <include layout="@layout/card_sun_time" />
-                </android.support.v7.widget.CardView>
+                    <android.support.v7.widget.CardView style="@style/card_view_style">
 
-            </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
 
-        </android.support.v4.widget.NestedScrollView>
+                            <android.support.v7.widget.RecyclerView
+                                android:id="@+id/daily_weather_rv"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+                            <ImageButton
+                                android:id="@+id/more_days_weather"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:layout_gravity="center_horizontal"
+                                android:layout_marginBottom="5dp"
+                                android:background="@drawable/ic_chevron_right_black_24dp"
+                                android:scaleType="fitCenter" />
+                        </LinearLayout>
+                    </android.support.v7.widget.CardView>
+
+                    <android.support.v7.widget.CardView style="@style/card_view_style">
+
+                        <include layout="@layout/card_more_info" />
+                    </android.support.v7.widget.CardView>
+
+                    <android.support.v7.widget.CardView style="@style/card_view_style">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <include layout="@layout/card_wind_view" />
+
+                            <include layout="@layout/card_air_condition" />
+                        </LinearLayout>
+                    </android.support.v7.widget.CardView>
+                </LinearLayout>
+
+            </android.support.v4.widget.NestedScrollView>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+    </android.support.design.widget.CoordinatorLayout>
+
 </android.support.design.widget.CoordinatorLayout>
-

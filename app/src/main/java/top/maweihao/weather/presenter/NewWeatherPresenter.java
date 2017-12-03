@@ -22,7 +22,6 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import top.maweihao.weather.contract.BasePresenter;
 import top.maweihao.weather.contract.NewWeatherActivityContract;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.contract.WeatherData;
@@ -35,7 +34,6 @@ import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.LocationUtil;
 import top.maweihao.weather.util.ServiceUtil;
-import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.util.remoteView.WidgetUtils;
 
 import static top.maweihao.weather.util.Constants.DEBUG;
@@ -50,11 +48,11 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
     private static final String TAG = NewWeatherPresenter.class.getSimpleName();
 
     private final WeatherData model;
-    private final NewWeatherActivityContract.newView<BasePresenter> view;
+    private final NewWeatherActivityContract.newView<NewWeatherActivityContract.newPresenter> view;
     private final CompositeDisposable compositeDisposable;
     private PreferenceConfigContact configContact;
     private MLocation cachedLocation;
-    private volatile boolean isWorkDown = false;
+    private volatile boolean workingFlag = false;
 
     private Context context;
     private LocationClient mLocationClient;
@@ -62,11 +60,12 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
 
     private long locateTime;  //for Baidu locate
 
-    public NewWeatherPresenter(@NonNull NewWeatherActivityContract.newView<BasePresenter> view, WeatherData model) {
+    public NewWeatherPresenter(@NonNull NewWeatherActivityContract.newView<NewWeatherActivityContract.newPresenter> view,
+                               @NonNull WeatherData model, PreferenceConfigContact contact) {
         this.model = model;
         this.view = view;
         compositeDisposable = new CompositeDisposable();
-        configContact = Utility.createSimpleConfig(context).create(PreferenceConfigContact.class);
+        configContact = contact;
 
         context = (Context) view;
         mLocationClient = new LocationClient(context);
@@ -121,6 +120,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
 
     @Override
     public void locate() {
+        view.setRefreshingState(true);
         if (configContact.getAutoLocate(true)) {
             if (isPermissionDeniedPermanently()) {
                 initIpLocate();
@@ -133,6 +133,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                 cachedLocation = location;
                 refreshWeather(cachedLocation);
             } else {
+                view.setRefreshingState(false);
                 view.askForChoosePosition();
             }
         }
@@ -156,7 +157,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
     private void checkPermissionAndLocate() {
         String[] permission = {Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION};
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission_group.LOCATION)
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             initBaiduLocate();
         } else {
@@ -165,22 +166,33 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
     }
 
     private boolean isPermissionDeniedPermanently() {
-        return (ContextCompat.checkSelfPermission(context, Manifest.permission_group.LOCATION)
-                != PackageManager.PERMISSION_GRANTED) &&
+        return (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_DENIED) &&
                 (!ActivityCompat.shouldShowRequestPermissionRationale((Activity) view,
-                        Manifest.permission_group.LOCATION));
+                        Manifest.permission.ACCESS_FINE_LOCATION));
     }
 
     @Override
     public void refreshWeather(MLocation location) {
-        if (location.isNeedGeocode()) {
+        final boolean needGeo = location.isNeedGeocode();
+        Log.d(TAG, "refreshWeather: HERE" + location.getLocationStringReversed() + " " + location.getLocateType());
+        if (needGeo) {
+            workingFlag = true;
             geocodeLocationAndSave(location, true);
         }
         model.getWeather(location.getLocationStringReversed())
                 .subscribe(new Consumer<NewWeather>() {
                     @Override
                     public void accept(NewWeather weather) throws Exception {
-                        view.setRefreshingState(false);
+                        if (needGeo) {
+                            if (!workingFlag) {
+                                view.setRefreshingState(false);
+                            } else {
+                                workingFlag = false;
+                            }
+                        } else {
+                            view.setRefreshingState(false);
+                        }
                         if (weather.getStatus().equals("ok")) {
                             view.showWeather(weather);
                         } else {
@@ -190,7 +202,16 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-                        view.setRefreshingState(false);
+                        if (needGeo) {
+                            if (!workingFlag) {
+                                view.setRefreshingState(false);
+                            } else {
+                                workingFlag = false;
+                            }
+                        } else {
+                            view.setRefreshingState(false);
+                        }
+                        Log.e(TAG, "refreshWeather: " + throwable);
                         view.showNetworkError();
                     }
                 });
@@ -205,6 +226,11 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                         if (baiDuCoordinateBean != null && baiDuCoordinateBean.getStatus() == 0) {
                             LocationUtil.fillLocation(location, baiDuCoordinateBean);
                             if (showLocation) {
+                                if (!workingFlag) {
+                                    view.setRefreshingState(false);
+                                } else {
+                                    workingFlag = false;
+                                }
                                 view.showLocation(location);
                             }
                         } else {
@@ -216,7 +242,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-                        Log.e(TAG, "geocodeLocationAndSave: geo failed");
+                        Log.e(TAG, "geocodeLocationAndSave: geo failed " + throwable);
                         if (showLocation) {
                             view.showLocation(location);
                         }
@@ -322,6 +348,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                         MLocation location = LocationUtil.convertType(baiDuIPLocationBean);
                         Log.d(TAG, "ip locate success: " + location.getLocationString());
                         model.saveLocation(location);
+//                        refreshWeather(location);
                     } else {
                         Log.e(TAG, "initIpLocate: baidu ip address error. " +
                                 (baiDuIPLocationBean != null ? baiDuIPLocationBean.getStatus() : ""));

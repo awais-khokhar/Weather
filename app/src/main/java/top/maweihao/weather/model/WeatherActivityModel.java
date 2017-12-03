@@ -563,7 +563,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             String cUrl = "https://api.caiyunapp.com/v2/Ahu2IBCHsYWm1--o/" + locationCoordinates + "/realtime.json";
 //            即 full weather Url， 获取未来天气的url
             String fUrl = "https://api.caiyunapp.com/v2/Ahu2IBCHsYWm1--o/" + locationCoordinates + "/forecast.json?alert=true&dailysteps=15";
-            Log.d(TAG, "HERE " + fUrl);
+            Log.d(TAG, "request url=" + fUrl);
             configContact.applyCurl(cUrl);
             configContact.applyFurl(fUrl);
             presenter.startSwipe();

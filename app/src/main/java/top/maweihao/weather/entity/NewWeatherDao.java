@@ -22,8 +22,9 @@ public class NewWeatherDao extends AbstractDao<NewWeather, Long> {
      * Can be used for QueryBuilder and for referencing column names.
      */
     public static class Properties {
-        public final static Property Server_time = new Property(0, long.class, "server_time", true, "_id");
-        public final static Property JsonString = new Property(1, String.class, "jsonString", false, "JSON_STRING");
+        public final static Property Status = new Property(0, String.class, "status", false, "STATUS");
+        public final static Property Server_time = new Property(1, long.class, "server_time", true, "_id");
+        public final static Property JsonString = new Property(2, String.class, "jsonString", false, "JSON_STRING");
     }
 
 
@@ -39,8 +40,9 @@ public class NewWeatherDao extends AbstractDao<NewWeather, Long> {
     public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"NEW_WEATHER\" (" + //
-                "\"_id\" INTEGER PRIMARY KEY NOT NULL ," + // 0: server_time
-                "\"JSON_STRING\" TEXT);"); // 1: jsonString
+                "\"STATUS\" TEXT," + // 0: status
+                "\"_id\" INTEGER PRIMARY KEY NOT NULL ," + // 1: server_time
+                "\"JSON_STRING\" TEXT);"); // 2: jsonString
     }
 
     /** Drops the underlying database table. */
@@ -52,43 +54,55 @@ public class NewWeatherDao extends AbstractDao<NewWeather, Long> {
     @Override
     protected final void bindValues(DatabaseStatement stmt, NewWeather entity) {
         stmt.clearBindings();
-        stmt.bindLong(1, entity.getServer_time());
+ 
+        String status = entity.getStatus();
+        if (status != null) {
+            stmt.bindString(1, status);
+        }
+        stmt.bindLong(2, entity.getServer_time());
  
         String jsonString = entity.getJsonString();
         if (jsonString != null) {
-            stmt.bindString(2, jsonString);
+            stmt.bindString(3, jsonString);
         }
     }
 
     @Override
     protected final void bindValues(SQLiteStatement stmt, NewWeather entity) {
         stmt.clearBindings();
-        stmt.bindLong(1, entity.getServer_time());
+ 
+        String status = entity.getStatus();
+        if (status != null) {
+            stmt.bindString(1, status);
+        }
+        stmt.bindLong(2, entity.getServer_time());
  
         String jsonString = entity.getJsonString();
         if (jsonString != null) {
-            stmt.bindString(2, jsonString);
+            stmt.bindString(3, jsonString);
         }
     }
 
     @Override
     public Long readKey(Cursor cursor, int offset) {
-        return cursor.getLong(offset + 0);
+        return cursor.getLong(offset + 1);
     }    
 
     @Override
     public NewWeather readEntity(Cursor cursor, int offset) {
         NewWeather entity = new NewWeather( //
-            cursor.getLong(offset + 0), // server_time
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1) // jsonString
+            cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // status
+            cursor.getLong(offset + 1), // server_time
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2) // jsonString
         );
         return entity;
     }
      
     @Override
     public void readEntity(Cursor cursor, NewWeather entity, int offset) {
-        entity.setServer_time(cursor.getLong(offset + 0));
-        entity.setJsonString(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setStatus(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
+        entity.setServer_time(cursor.getLong(offset + 1));
+        entity.setJsonString(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
      }
     
     @Override

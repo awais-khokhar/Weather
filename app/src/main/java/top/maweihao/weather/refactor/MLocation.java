@@ -115,20 +115,20 @@ public class MLocation {
             case TYPE_LOCATION_MANAGER:
                 return TextUtils.isEmpty(street) ? county : street;
             default:
-                    return null;
+                return null;
         }
     }
 
     public String getLocationStringReversed() {
         if (latitude != 0 && longitude != 0) {
-            return latitude + "," + longitude;
+            return  longitude + "," + latitude;
         }
         return null;
     }
 
     public String getLocationString() {
         if (latitude != 0 && longitude != 0) {
-            return  longitude + "," + latitude;
+            return latitude + "," + longitude;
         }
         return null;
     }
