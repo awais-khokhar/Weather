@@ -48,6 +48,7 @@ import top.maweihao.weather.entity.SingleWeather;
 import top.maweihao.weather.presenter.WeatherActivityPresenter;
 import top.maweihao.weather.refactor.MLocation;
 import top.maweihao.weather.service.PushService;
+import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.SimplePermissionUtils;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.view.SemiCircleView;
@@ -206,6 +207,9 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     @Override
     protected void onResume() {
         super.onResume();
+        if (newPresenter != null) {
+            newPresenter.onResume();
+        }
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -223,16 +227,20 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     @Override
     protected void onStart() {
         super.onStart();
-        if (!isSetResultIntent)
+        if (!isSetResultIntent) {
             permission();
-        else
+        } else {
             isSetResultIntent = false;
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         presenter.stopBdLocation();
+        if (newPresenter != null) {
+            newPresenter.onStop();
+        }
     }
 
     @Override
@@ -241,8 +249,10 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         dynamicWeatherView.onDestroy();
         presenter.destroy();
         presenter = null;
-        newPresenter.unSubscribe();
-        newPresenter = null;
+        if (newPresenter != null) {
+            newPresenter.unSubscribe();
+            newPresenter = null;
+        }
     }
 
     @Override
@@ -395,7 +405,17 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        SimplePermissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case Constants.requestLocationCode:
+                SimplePermissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                break;
+            case Constants.newRequestLocationCode:
+                newPresenter.locate();
+                break;
+            default:
+                break;
+        }
+
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
@@ -465,8 +485,11 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                     }
                     alertArrayList = new ArrayList<>();
                     for (ForecastBean.ResultBean.AlertBean.ContentBean contentBean : alertBean.getContent()) {
-                        alertArrayList.add(new Alert(contentBean.getStatus(), Integer.parseInt(contentBean.getCode()),
-                                contentBean.getDescription(), contentBean.getAlertId(), contentBean.getCity() + contentBean.getCounty(), contentBean.getTitle()));
+                        alertArrayList.add(new Alert(contentBean.getStatus(),
+                                Integer.parseInt(contentBean.getCode()),
+                                contentBean.getDescription(), contentBean.getAlertId(),
+                                contentBean.getCity() + contentBean.getCounty(),
+                                contentBean.getTitle()));
                     }
                     alertImage.setVisibility(View.VISIBLE);
                 } else {
@@ -835,9 +858,22 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
     @Override
     public void showLocation(MLocation location) {
+        String coarseLocation = location.getLocationCoarse();
+        String detailLocation = location.getLocationDetail();
         switch (location.getLocateType()) {
+            case MLocation.TYPE_CHOOSE:
+                setLoc(coarseLocation, coarseLocation, false);
+                break;
+            case MLocation.TYPE_IP:
+                setLoc(coarseLocation, Utility.getIP(this), false);
+                break;
             case MLocation.TYPE_BAIDU_GPS:
-                // TODO: 03/12/2017
+            case MLocation.TYPE_BAIDU_NETWORK:
+            case MLocation.TYPE_BAIDU_UNKNOWN:
+            case MLocation.TYPE_LOCATION_MANAGER:
+                setLoc(coarseLocation, detailLocation, true);
+                break;
+            default:
         }
     }
 
@@ -902,6 +938,17 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     }
 
     @Override
+    public void showLocateError() {
+        Snackbar.make(viewRoot, R.string.locate_failed, Snackbar.LENGTH_LONG)
+                .setAction(R.string.go_to_settings, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(new Intent().setAction(Settings.ACTION_SETTINGS));
+                    }
+                });
+    }
+
+    @Override
     public void setRefreshingState(final boolean refresh) {
         handler.post(new Runnable() {
             @Override
@@ -938,31 +985,39 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
             if (activity != null) {
                 switch (msg.what) {
                     case HANDLE_POSITION:
-                        if (msg.obj instanceof String) {
-                            activity.countyName = (String) msg.obj;
-                            activity.toolbar.setTitle((String) msg.obj);
-                        } else {
-                            Log.e(TAG, "handleMessage: HANDLE_POSITION obj == " + msg.obj.getClass());
-                        }
+                        activity.countyName = (String) msg.obj;
+                        activity.toolbar.setTitle((String) msg.obj);
                         break;
                     case HANDLE_TOAST:
-                        if (msg.obj instanceof String) {
-                            Toast.makeText(activity, (String) msg.obj, Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.e(TAG, "handleMessage: HANDLE_TOAST obj == " + msg.obj.getClass());
-                        }
+                        Toast.makeText(activity, (String) msg.obj, Toast.LENGTH_SHORT).show();
                         break;
                     case HANDLE_EXACT_LOCATION:
-                        if (msg.obj instanceof String) {
-                            activity.locationDetail = (String) msg.obj;
-                            activity.locateMode.setText((String) msg.obj);
-                        } else {
-                            Log.e(TAG, "handleMessage: HANDLE_EXACT_LOCATION obj == " + msg.obj.getClass());
-                        }
-
+                        activity.locationDetail = (String) msg.obj;
+                        activity.locateMode.setText((String) msg.obj);
+                        break;
                 }
             }
         }
+    }
+
+    private void setLoc(final String coarse, final String detail, final boolean loc) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                locateModeImage.setVisibility(View.VISIBLE);
+                if (loc) {
+                    locateModeImage.setImageResource(R.drawable.ic_location_on_black_24dp);
+                } else {
+                    locateModeImage.setImageResource(R.drawable.ic_location_off_black_24dp);
+                }
+                if (TextUtils.isEmpty(coarse)) {
+                    toolbar.setTitle(coarse);
+                }
+                if (TextUtils.isEmpty(detail)) {
+                    locateMode.setText(detail);
+                }
+            }
+        });
     }
 
 }

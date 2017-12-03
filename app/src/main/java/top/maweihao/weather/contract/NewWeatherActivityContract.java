@@ -17,6 +17,7 @@ public interface NewWeatherActivityContract {
         void setUpdateTime(long timeInMills);
         void showNetworkError();
         void showError(String error);
+        void showLocateError();
         void showPermissionError();
         void showIpLocateMessage();
         void setRefreshingState(boolean refresh);
@@ -25,7 +26,11 @@ public interface NewWeatherActivityContract {
 
     interface newPresenter extends BasePresenter {
         void fetchData();
+        void refreshLocalWeather();
         void locate();
         void refreshWeather(MLocation location);
+        void onResume();
+        void onPause();
+        void onStop();
     }
 }

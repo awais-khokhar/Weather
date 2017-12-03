@@ -52,10 +52,12 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
     private final NewWeatherActivityContract.newView<BasePresenter> view;
     private final CompositeDisposable compositeDisposable;
     private PreferenceConfigContact configContact;
+    private MLocation cachedLocation;
     private volatile boolean isWorkDown = false;
 
     private Context context;
     private LocationClient mLocationClient;
+    LocationClientOption option;
 
     private long locateTime;  //for Baidu locate
 
@@ -82,6 +84,21 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
     }
 
     @Override
+    public void onResume() {
+
+    }
+
+    @Override
+    public void onPause() {
+
+    }
+
+    @Override
+    public void onStop() {
+        stopBaiduLocate();
+    }
+
+    @Override
     public void fetchData() {
         Disposable disposable = model.getWeatherCached()
                 .subscribeOn(Schedulers.io())
@@ -94,7 +111,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-                        view.showError("fetch data error, please refresh");
+                        view.showError("waiting for locating");
                     }
                 });
         compositeDisposable.add(disposable);
@@ -103,25 +120,53 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
     @Override
     public void locate() {
         if (configContact.getAutoLocate(true)) {
-            checkPermissionAndLocate();
+            if (isPermissionDeniedPermanently()) {
+                initIpLocate();
+            } else {
+                checkPermissionAndLocate();
+            }
         } else {
             MLocation location = model.getLocationCached();
             if (location != null) {
-                refreshWeather(location);
+                cachedLocation = location;
+                refreshWeather(cachedLocation);
             } else {
                 view.askForChoosePosition();
             }
         }
     }
 
+    @Override
+    public void refreshLocalWeather() {
+        if (cachedLocation == null) {
+            MLocation location = model.getLocationCached();
+            if (location != null) {
+                cachedLocation = location;
+                refreshWeather(cachedLocation);
+            } else {
+                view.askForChoosePosition();
+            }
+        } else {
+            refreshWeather(cachedLocation);
+        }
+    }
+
     private void checkPermissionAndLocate() {
-        String[] permission = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+        String[] permission = {Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION};
         if (ContextCompat.checkSelfPermission(context, Manifest.permission_group.LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             initBaiduLocate();
         } else {
-            ActivityCompat.requestPermissions((Activity) view, permission, Constants.requestLocationCode);
+            ActivityCompat.requestPermissions((Activity) view, permission, Constants.newRequestLocationCode);
         }
+    }
+
+    private boolean isPermissionDeniedPermanently() {
+        return (ContextCompat.checkSelfPermission(context, Manifest.permission_group.LOCATION)
+                != PackageManager.PERMISSION_GRANTED) &&
+                (!ActivityCompat.shouldShowRequestPermissionRationale((Activity) view,
+                        Manifest.permission_group.LOCATION));
     }
 
     @Override
@@ -180,10 +225,12 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
     }
 
     private void initBaiduLocate() {
-        LocationClientOption option = new LocationClientOption();
-        option.setScanSpan(1000);
-        option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
-        option.setIsNeedAddress(true);
+        if (option == null) {
+            option = new LocationClientOption();
+            option.setScanSpan(1000);
+            option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
+            option.setIsNeedAddress(true);
+        }
         locateTime = System.currentTimeMillis();
         mLocationClient.setLocOption(option);
         mLocationClient.registerLocationListener(new BDLocationListener() {
@@ -247,11 +294,12 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                 }
                 refreshWeather(loc);
             } else {
-                Log.e(TAG, "LocationManager: get null answer, switch to IP method");
-                initIpLocate();
+//                Log.e(TAG, "LocationManager: get null answer, switch to IP method");
+//                initIpLocate();
+                locateFailed(true);
             }
         } else {
-            initIpLocate();
+            locateFailed(true);
         }
     }
 
@@ -289,7 +337,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
 
     private void locateFailed(boolean isPermissionOn) {
         if (isPermissionOn) {
-            view.showError("Locate failed");
+            view.showLocateError();
         } else {
             view.showError("Locate failed");
         }
@@ -298,7 +346,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
     private void updateWidget(NewWeather weatherView) {
         if (WidgetUtils.hasAnyWidget(context)) {
             ServiceUtil.startWidgetSyncService(context, true);
-            // TODO: 02/12/2017 widget refresh problem
+            // TODO: 02/12/2017 widget refresh
         }
     }
 

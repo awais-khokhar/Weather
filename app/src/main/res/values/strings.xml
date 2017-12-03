@@ -133,5 +133,6 @@
     <string name="ip_method_locate">Locate according to your IP address.</string>
     <string name="donnot_show">don\'t show</string>
     <string name="grant_permission">Grant</string>
+    <string name="locate_failed">Locate failed, make sure you enable the location function.</string>
 
 </resources>

@@ -19,6 +19,7 @@ import top.maweihao.weather.entity.NewWeatherDao;
 import top.maweihao.weather.entity.NewWeatherRealtime;
 import top.maweihao.weather.entity.NewWeatherRealtimeDao;
 import top.maweihao.weather.refactor.MLocation;
+import top.maweihao.weather.refactor.MLocationDao;
 import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.Utility;
 
@@ -38,6 +39,7 @@ public class WeatherRepository implements WeatherData {
     private NewWeatherDao weatherDao;
     private NewWeatherRealtimeDao weatherRealtimeDao;
     private NewHeWeatherNowDao heWeatherNowDao;
+    private MLocationDao locationDao;
 //    private Context context;
 
     private WeatherRepository(Context context) {
@@ -45,8 +47,9 @@ public class WeatherRepository implements WeatherData {
         DaoMaster daoMaster = new DaoMaster(devOpenHelper.getWritableDb());
         DaoSession daoSession = daoMaster.newSession();
         weatherDao = daoSession.getNewWeatherDao();
-        weatherRealtimeDao = daoSession.getNewWeatherRealtimeDao();
-        heWeatherNowDao = daoSession.getNewHeWeatherNowDao();
+//        weatherRealtimeDao = daoSession.getNewWeatherRealtimeDao();
+//        heWeatherNowDao = daoSession.getNewHeWeatherNowDao();
+        locationDao = daoSession.getMLocationDao();
     }
 
     public static WeatherRepository getInstance(Context context) {
@@ -156,7 +159,12 @@ public class WeatherRepository implements WeatherData {
 
     @Override
     public MLocation getLocationCached() {
-        return null;
+        List<MLocation> locationList = locationDao.loadAll();
+        if (locationList.size() > 0) {
+            return locationList.get(0);
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -166,7 +174,8 @@ public class WeatherRepository implements WeatherData {
 
     @Override
     public void saveLocation(MLocation location) {
-
+        locationDao.deleteAll();
+        locationDao.insert(location);
     }
 
 }

@@ -15,9 +15,9 @@ import java.io.IOException;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.entity.ForecastBean;
 import top.maweihao.weather.entity.HeWeather.HeNowWeather;
-import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.HeWeatherUtil;
 import top.maweihao.weather.util.Utility;
@@ -85,12 +85,14 @@ public class WidgetSyncService extends Service {
     private void startAgain(int interval) {
         Log.d(TAG, "startAgain: interval ==" + interval);
         Intent intent = new Intent(this, WidgetSyncService.class);
-        PendingIntent pendingIntent = PendingIntent.getService(this, Constants.WidgetSyncServiceRequestCode,
-                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getService(this,
+                Constants.WidgetSyncServiceRequestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        alarmManager.cancel(pendingIntent);
-        alarmManager.set(AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime() + interval * 60 * 1000, pendingIntent);
+        if (alarmManager != null) {
+            alarmManager.cancel(pendingIntent);
+            alarmManager.set(AlarmManager.ELAPSED_REALTIME,
+                    SystemClock.elapsedRealtime() + interval * 60 * 1000, pendingIntent);
+        }
     }
 
     private void saveInterval() {
@@ -107,7 +109,8 @@ public class WidgetSyncService extends Service {
         long weatherHeNowLastUpdateTime = configContact.getWeatherHeNowLastUpdateTime(0);
         String coordinate = configContact.getCoordinate();
 
-        if (isBigWidgetOn && (weatherFull != null && System.currentTimeMillis() - weatherFullLastUpdateTime < minInterval * 60 * 1000)) {
+        if (isBigWidgetOn && (weatherFull != null &&
+                System.currentTimeMillis() - weatherFullLastUpdateTime < minInterval * 60 * 1000)) {
             WidgetUtils.refreshWidget(this, parseObject(weatherFull, ForecastBean.class));
         } else if (!isBigWidgetOn && (weatherHeNow != null && System.currentTimeMillis() - weatherHeNowLastUpdateTime < minInterval * 60 * 1000)) {
             WidgetUtils.refreshWidget(this, parseObject(weatherHeNow, HeNowWeather.class));

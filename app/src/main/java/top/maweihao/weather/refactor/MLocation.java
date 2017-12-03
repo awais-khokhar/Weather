@@ -2,11 +2,15 @@ package top.maweihao.weather.refactor;
 
 import android.text.TextUtils;
 
+import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Property;
+import org.greenrobot.greendao.annotation.Generated;
+
 /**
  * location bean
  * Created by maweihao on 26/11/2017.
  */
-
+@Entity
 public class MLocation {
 
     public static final int TYPE_CHOOSE = 0;
@@ -16,16 +20,25 @@ public class MLocation {
     public static final int TYPE_BAIDU_UNKNOWN = 4;
     public static final int TYPE_LOCATION_MANAGER = 5;
 
+    @Property
     private int locateType;
+    @Property
     private int rawBaiduLocateCode;  //百度定位 BDLocation 原始结果码
+    @Property
     private boolean needGeocode;  //是否需要根据解析地址
 
+    @Property
     private float latitude;  //经度
+    @Property
     private float longitude;  //纬度
 
+    @Property
     private String province;
+    @Property
     private String city;
+    @Property
     private String county;
+    @Property
     private String street;
 
     public MLocation() {
@@ -66,6 +79,21 @@ public class MLocation {
     public MLocation(String latitude, String longitude) {
         this.latitude = Float.parseFloat(latitude);
         this.longitude = Float.parseFloat(longitude);
+    }
+
+    @Generated(hash = 1684770172)
+    public MLocation(int locateType, int rawBaiduLocateCode, boolean needGeocode,
+            float latitude, float longitude, String province, String city,
+            String county, String street) {
+        this.locateType = locateType;
+        this.rawBaiduLocateCode = rawBaiduLocateCode;
+        this.needGeocode = needGeocode;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.province = province;
+        this.city = city;
+        this.county = county;
+        this.street = street;
     }
 
     public String getLocationCoarse() {
@@ -175,5 +203,9 @@ public class MLocation {
 
     public void setNeedGeocode(boolean needGeocode) {
         this.needGeocode = needGeocode;
+    }
+
+    public boolean getNeedGeocode() {
+        return this.needGeocode;
     }
 }

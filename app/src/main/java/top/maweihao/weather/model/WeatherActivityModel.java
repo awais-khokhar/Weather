@@ -54,7 +54,6 @@ import static top.maweihao.weather.util.Utility.GPSEnabled;
 public class WeatherActivityModel implements WeatherActivityContract.Model {
     private static final String TAG = "WeatherActivityModel";
     private String countyName = null;
-    private String locationDetail;
     private String locationCoordinates;
 
     private Long locateTime;
@@ -110,7 +109,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
         //读取配置
         boolean autoLocate = configContact.getAutoLocate(true);
         countyName = configContact.getCountyName();
-        locationDetail = configContact.getLocationDetail("");
+        String locationDetail = configContact.getLocationDetail("");
         if (!forceAllRefresh) {
             /*
              * 判断是否超过刷新间隔。
@@ -177,7 +176,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
                 break;
             case THROUGH_LOCATE:
                 presenter.setLocateModeImage(true);
-                Log.i(TAG, "THROUGH_LOCATE");
                 bdLocate();
                 break;
             case THROUGH_COORDINATE:
