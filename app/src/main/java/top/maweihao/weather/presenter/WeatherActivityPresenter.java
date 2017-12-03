@@ -8,7 +8,6 @@ import android.util.Log;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -23,7 +22,6 @@ import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.util.remoteView.WidgetUtils;
 
 import static top.maweihao.weather.activity.WeatherActivity.HOURLY_MODE;
-import static top.maweihao.weather.util.Constants.DEBUG;
 import static top.maweihao.weather.util.Utility.stringRoundDouble;
 
 /**
@@ -54,13 +52,9 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
     @Override
     public void setDailyWeatherInfo(final ForecastBean.ResultBean.DailyBean dailyBean) {
         int length = dailyBean.getSkycon().size();
-        if (DEBUG) {
-            Log.d(TAG, "setDailyWeatherInfo: all " + dailyBean.getSkycon().size() + " days");
-        }
         ArrayList<SingleWeather> singleWeatherArrayList = weatherModel.getDailyWeatherList();
         singleWeatherArrayList.clear();
-        Calendar calendar = Calendar.getInstance();
-        int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        int dayOfWeek = Utility.getDayOfWeek();
         if (dailyBean.getStatus().equals("ok")) {
             SimpleDateFormat oldsdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
             SimpleDateFormat newsdf = new SimpleDateFormat("MM/dd", Locale.CHINA);
@@ -99,8 +93,7 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
     @Override
     public void setHourlyWeatherChart(ForecastBean.ResultBean.HourlyBean hourlyBean) {
         int length = hourlyBean.getSkycon().size();
-        if (DEBUG)
-            Log.d(TAG, "setHourlyWeatherChart: total " + length + " hour");
+        Log.d(TAG, "setHourlyWeatherChart: total " + length + " hour");
         ArrayList<SingleWeather> singleWeatherArrayList = weatherModel.getHourWeatherList();
         singleWeatherArrayList.clear();
         for (int i = 0; i < length; i++) {

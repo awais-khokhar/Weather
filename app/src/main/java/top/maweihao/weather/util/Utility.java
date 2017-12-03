@@ -22,6 +22,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Locale;
@@ -69,7 +70,6 @@ public class Utility {
     public static String stringRoundDouble(double f) {
         return String.valueOf(Math.round(f));
     }
-
 
     /**
      * 把 float 四舍五入再返回 int，用来处理温度
@@ -235,7 +235,7 @@ public class Utility {
      * @param direction double
      * @return 风向
      */
-    private String getWindDirection(Context context, double direction) {
+    public static String getWindDirection(Context context, double direction) {
         String dir;
         if (direction <= 22.5 || direction >= 337.5) {
             dir = context.getResources().getString(R.string.north);
@@ -263,7 +263,7 @@ public class Utility {
      * @param speed double
      * @return string
      */
-    private String getWindLevel(Context context, double speed) {
+    public static String getWindLevel(Context context, double speed) {
         int level;
         String info;
         if (speed <= 0.72) {
@@ -481,6 +481,15 @@ public class Utility {
     // 系统时间是否为12小时制
     public static boolean isTimeFormat12(Context context) {
         return !android.text.format.DateFormat.is24HourFormat(context);
+    }
+
+    /**
+     * 现在是星期几？
+     * @return int
+     */
+    public static int getDayOfWeek() {
+        Calendar calendar = Calendar.getInstance();
+        return calendar.get(Calendar.DAY_OF_WEEK);
     }
 
     public static NewWeather packWeather(NewWeather weather) {

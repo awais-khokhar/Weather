@@ -25,15 +25,14 @@ import java.util.concurrent.Executors;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import top.maweihao.weather.contract.PreferenceConfigContact;
+import top.maweihao.weather.contract.WeatherActivityContract;
 import top.maweihao.weather.entity.BaiDu.BaiDuChoosePositionBean;
 import top.maweihao.weather.entity.BaiDu.BaiDuCoordinateBean;
 import top.maweihao.weather.entity.BaiDu.BaiDuIPLocationBean;
 import top.maweihao.weather.entity.ForecastBean;
 import top.maweihao.weather.entity.MyLocation;
-import top.maweihao.weather.entity.RealTimeBean;
 import top.maweihao.weather.entity.SingleWeather;
-import top.maweihao.weather.contract.PreferenceConfigContact;
-import top.maweihao.weather.contract.WeatherActivityContract;
 import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.Utility;
@@ -340,8 +339,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
      */
     private void requestFullWeather(String url) {
         if (TextUtils.isEmpty(url)) {
-            if (DEBUG)
-                Log.d(TAG, "requestFullWeather: url = null");
+            Log.d(TAG, "requestFullWeather: url = null");
             return;
         }
         HttpUtil.sendOkHttpRequest(url, new Callback() {
@@ -366,47 +364,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
         });
     }
 
-
-    /**
-     * 网络请求现在的天气
-     * 此方法未使用，直接在 requestFullWeather() 中使用 Forecast 结果刷新当前天气
-     */
-    @Deprecated
-    private void requestCurrentWeather(String url) {
-
-        if (TextUtils.isEmpty(url)) {
-            if (DEBUG)
-                Log.d(TAG, "requestCurrentWeather: url = null");
-            return;
-        }
-        HttpUtil.sendOkHttpRequest(url, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-
-                presenter.toastMessage("load current weather failed");
-                presenter.stopSwipe();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                final String responseText = response.body().string();
-//                final WeatherData weatherData = handleCurrentWeatherResponse(responseText);
-                RealTimeBean bean = JSON.parseObject(responseText, RealTimeBean.class);
-
-                if (bean != null && bean.getStatus().equals(Constants.STATUS_OK)) {
-
-                    configContact.applyWeatherNow(responseText);
-                    configContact.applyWeatherNowLastUpdateTime(System.currentTimeMillis());
-//                    presenter.setCurrentWeatherInfo(bean);
-                    presenter.setLastUpdateTime(SYSTEM_NOW_TIME);
-                } else {
-                    presenter.toastMessage("api source error");
-                }
-            }
-        });
-    }
-
     /**
      * 解析获得的未来天气json
      *
@@ -414,7 +371,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
      */
     @SuppressWarnings("unchecked")
     private void jsonFullWeatherData(String responseText) {
-        //fastJson解析数据
         ForecastBean forecastBean = JSON.parseObject(responseText, ForecastBean.class);
         if (forecastBean != null && forecastBean.getStatus().equals(Constants.STATUS_OK)) {
             List list;
@@ -465,7 +421,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
 //            if ((list = forecastBean.getResult().getDaily().getDesc()) != null)
 //                forecastBean.getResult().getDaily().setDesc(list.subList(0, 5));
 
-
             ForecastBean.ResultBean.MinutelyBean minutelyBean = forecastBean.getResult().getMinutely();
             ForecastBean.ResultBean.HourlyBean hourlyBean = forecastBean.getResult().getHourly();
             ForecastBean.ResultBean.DailyBean dailyBean = forecastBean.getResult().getDaily();
@@ -473,7 +428,7 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
             presenter.setDailyWeatherInfo(dailyBean);
             presenter.setHourlyWeatherChart(hourlyBean);
             presenter.rainInfo(minutelyBean.getDescription(), hourlyBean.getDescription());
-            Log.d(TAG, "jsonFullWeatherData: " + hourlyBean.getDescription());
+//            Log.d(TAG, "jsonFullWeatherData: " + hourlyBean.getDescription());
             presenter.updateWidget(forecastBean);
         }
     }
@@ -529,18 +484,6 @@ public class WeatherActivityModel implements WeatherActivityContract.Model {
      * 选择地址进行定位
      */
     private void getCoordinateByChoosePosition(String countyName) {
-//        if (TextUtils.isEmpty(countyName)) { //若无保存的地址，则打开 ChoosePositionActivity
-//            Log.e(TAG, "GetCoordinateByChoosePosition: choosed countyName == null");
-//            Toast.makeText(WeatherActivity.this, getResources().getString(R.string.choose_your_position),
-//                    Toast.LENGTH_LONG).show();
-//            Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
-//            startActivityForResult(intent, 1);
-//        } else {
-//            final Message message = handler.obtainMessage();
-//            message.what = HANDLE_POSITION;
-//            message.obj = countyName;
-//            handler.sendMessage(message);
-
         String url = "http://api.map.baidu.com/geocoder/v2/?output=json&address=%" + countyName + "&ak=eTTiuvV4YisaBbLwvj4p8drl7BGfl1eo";
         HttpUtil.sendOkHttpRequest(url, new Callback() {
             @Override

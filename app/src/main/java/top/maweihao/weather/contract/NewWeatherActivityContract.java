@@ -10,7 +10,7 @@ import top.maweihao.weather.refactor.MLocation;
 
 public interface NewWeatherActivityContract {
 
-    interface newView extends BaseView<newPresenter> {
+    interface newView<N extends BasePresenter> extends BaseView<newPresenter> {
 
         void showWeather(NewWeather weather);
         void showLocation(MLocation location);
@@ -19,7 +19,7 @@ public interface NewWeatherActivityContract {
         void showError(String error);
         void showPermissionError();
         void showIpLocateMessage();
-        void showRefreshingState(boolean refresh);
+        void setRefreshingState(boolean refresh);
         void askForChoosePosition();
     }
 

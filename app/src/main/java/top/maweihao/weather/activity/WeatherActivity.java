@@ -6,7 +6,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,24 +26,27 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.functions.Consumer;
 import top.maweihao.weather.R;
 import top.maweihao.weather.adapter.DailyWeatherAdapter;
 import top.maweihao.weather.adapter.HourlyWeatherAdapter;
-import top.maweihao.weather.contract.BaseView;
+import top.maweihao.weather.contract.NewWeatherActivityContract;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.contract.WeatherActivityContract;
 import top.maweihao.weather.entity.Alert;
 import top.maweihao.weather.entity.ForecastBean;
-import top.maweihao.weather.entity.NewWeatherRealtime;
+import top.maweihao.weather.entity.NewWeather;
 import top.maweihao.weather.entity.SingleWeather;
-import top.maweihao.weather.model.WeatherRepository;
 import top.maweihao.weather.presenter.WeatherActivityPresenter;
+import top.maweihao.weather.refactor.MLocation;
 import top.maweihao.weather.service.PushService;
 import top.maweihao.weather.util.SimplePermissionUtils;
 import top.maweihao.weather.util.Utility;
@@ -57,10 +63,12 @@ import static top.maweihao.weather.util.Constants.SettingActivityRequestCode;
 import static top.maweihao.weather.util.Constants.SettingCode;
 import static top.maweihao.weather.util.Constants.isSetResultIntent;
 import static top.maweihao.weather.util.Utility.chooseWeatherSkycon;
+import static top.maweihao.weather.util.Utility.stringRoundDouble;
 
-public class WeatherActivity extends AppCompatActivity implements WeatherActivityContract.View, View.OnClickListener, BaseView<WeatherActivityPresenter> {
+public class WeatherActivity extends AppCompatActivity implements WeatherActivityContract.View,
+        View.OnClickListener, NewWeatherActivityContract.newView<NewWeatherActivityContract.newPresenter> {
 
-    static final String TAG = "WeatherActivity";
+    static final String TAG = WeatherActivity.class.getSimpleName();
 
     public static final int MINUTELY_MODE = 4;
     public static final int HOURLY_MODE = 5;
@@ -68,6 +76,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     static final int HANDLE_POSITION = 0;
     static final int HANDLE_TOAST = 1;
     static final int HANDLE_EXACT_LOCATION = 2;
+
+    String[] per = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -124,12 +134,16 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     @BindView(R.id.weather_alert_icon)
     ImageView alertImage;
 
+    @BindView(R.id.view_root)
+    CoordinatorLayout viewRoot;
+
     private boolean isRefreshDone = false;
     public String countyName = null;
     public String locationDetail;
 
     private MessageHandler handler; //消息队列
     private WeatherActivityContract.Presenter presenter;
+    private NewWeatherActivityContract.newPresenter newPresenter;
 
     private PreferenceConfigContact configContact;
 
@@ -171,12 +185,22 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     }
 
     private void doDebugThings() {
-        WeatherRepository.getInstance(this).getWeatherNowCached().subscribe(new Consumer<NewWeatherRealtime>() {
-            @Override
-            public void accept(NewWeatherRealtime newWeatherRealtime) throws Exception {
-                Log.d(TAG, "accept: HERE" + newWeatherRealtime.getLocation());
-            }
-        });
+
+    }
+
+    private void initView() {
+        ButterKnife.bind(this);
+
+        LinearLayoutManager hourlyManager = new LinearLayoutManager(WeatherActivity.this);
+        hourlyManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        hourlyRecyclerView.setLayoutManager(hourlyManager);
+
+        LinearLayoutManager dailyManager = new LinearLayoutManager(WeatherActivity.this);
+        dailyManager.setOrientation(LinearLayoutManager.VERTICAL);
+        dailyRecyclerView.setLayoutManager(dailyManager);
+
+        setSupportActionBar(toolbar);
+        toolbar.setTitle(getResources().getString(R.string.app_name));
     }
 
     @Override
@@ -217,6 +241,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         dynamicWeatherView.onDestroy();
         presenter.destroy();
         presenter = null;
+        newPresenter.unSubscribe();
+        newPresenter = null;
     }
 
     @Override
@@ -269,7 +295,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
     /**
      * Toast消息
-     *
      * @param msg 信息
      */
     @Override
@@ -298,56 +323,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         message.what = HANDLE_EXACT_LOCATION;
         message.obj = locationDetail;
         handler.sendMessage(message);
-    }
-
-    @Override
-    public void setPresenter(WeatherActivityPresenter presenter) {
-        // TODO: 28/10/2017
-    }
-
-    /**
-     * 创建"弱引用"的Handler,而不是强引用
-     * 避免内存泄漏
-     */
-    private static class MessageHandler extends Handler {
-        WeakReference<WeatherActivity> activityWeakReference;
-
-        MessageHandler(WeatherActivity activity) {
-            activityWeakReference = new WeakReference<>(activity);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            WeatherActivity activity = activityWeakReference.get();
-            if (activity != null) {
-                switch (msg.what) {
-                    case HANDLE_POSITION:
-                        if (msg.obj instanceof String) {
-                            activity.countyName = (String) msg.obj;
-//                            activity.locateMode.setText((String) msg.obj);
-                            activity.toolbar.setTitle((String) msg.obj);
-                        } else {
-                            Log.e(TAG, "handleMessage: HANDLE_POSITION obj == " + msg.obj.getClass());
-                        }
-                        break;
-                    case HANDLE_TOAST:
-                        if (msg.obj instanceof String) {
-                            Toast.makeText(activity, (String) msg.obj, Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.e(TAG, "handleMessage: HANDLE_TOAST obj == " + msg.obj.getClass());
-                        }
-                        break;
-                    case HANDLE_EXACT_LOCATION:
-                        if (msg.obj instanceof String) {
-                            activity.locationDetail = (String) msg.obj;
-                            activity.locateMode.setText((String) msg.obj);
-                        } else {
-                            Log.e(TAG, "handleMessage: HANDLE_EXACT_LOCATION obj == " + msg.obj.getClass());
-                        }
-
-                }
-            }
-        }
     }
 
     @Override
@@ -388,8 +363,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
             case SettingActivityRequestCode:
                 if (resultCode == SettingCode) {
                     configContact.applyAutoLocate(data.getBooleanExtra("autoLocate", false));
-                    if (DEBUG)
-                        Log.d(TAG, "onActivityResult: SettingActivity");
+                    Log.d(TAG, "onActivityResult: SettingActivity");
                     String perCountyName = configContact.getCountyName();
                     if (TextUtils.isEmpty(perCountyName)) {
                         Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
@@ -407,9 +381,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                     locationDetail = countyName;
                     setCounty(countyName);
                     setLocationDetail(locationDetail);
-                    if (DEBUG) {
-                        Log.d(TAG, "onActivityResult: county_return: " + countyName);
-                    }
+                    Log.d(TAG, "onActivityResult: county_return: " + countyName);
                     configContact.applyCountyName(countyName);
                     configContact.applyLocationDetail(locationDetail);
                     configContact.applyCountyNameLastUpdateTime(System.currentTimeMillis());
@@ -426,9 +398,6 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         SimplePermissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
-
-    String[] per = {Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION};
 
     /**
      * 申请权限，可批量授权
@@ -458,10 +427,11 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
      */
     public void setLocateModeImage(boolean isLocation) {
         locateModeImage.setVisibility(View.VISIBLE);
-        if (isLocation)
+        if (isLocation) {
             locateModeImage.setImageResource(R.drawable.ic_location_on_black_24dp);
-        else
+        } else {
             locateModeImage.setImageResource(R.drawable.ic_location_off_black_24dp);
+        }
     }
 
     /**
@@ -599,19 +569,9 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         });
     }
 
-    /*
-     *刷新环开始刷新
-     */
     @Override
     public void startSwipe() {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (!swipeRefreshLayout.isRefreshing()) {
-                    swipeRefreshLayout.setRefreshing(true);
-                }
-            }
-        });
+        setRefreshingState(true);
     }
 
     /*
@@ -619,15 +579,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
      */
     @Override
     public void stopSwipe() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (swipeRefreshLayout.isRefreshing()) {
-                    swipeRefreshLayout.setRefreshing(false);
-                }
-            }
-        });
-
+        setRefreshingState(false);
     }
 
     /**
@@ -707,6 +659,309 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
             windLevelTv.setText(level + " 级" + info);
         } else {
             windLevelTv.setText("LEVEL " + level);
+        }
+    }
+
+
+    /*new
+    presenter
+    method
+    down!*/
+
+    @Override
+    public void setPresenter(NewWeatherActivityContract.newPresenter presenter) {
+        this.newPresenter = presenter;
+    }
+
+    @Override
+    public void showWeather(NewWeather weather) {
+        NewWeather.ResultBean.DailyBean dailyBean = weather.getResult().getDaily();
+        NewWeather.ResultBean.HourlyBean hourlyBean = weather.getResult().getHourly();
+        NewWeather.ResultBean.MinutelyBean minutelyBean = weather.getResult().getMinutely();
+
+        showDailyWeather(dailyBean);
+        showHourlyWeather(hourlyBean);
+        setRainInfo(minutelyBean.getDescription(), hourlyBean.getDescription());
+        showCurrentWeather(dailyBean, hourlyBean,weather.getResult().getAlert());
+        setUpdateTime(weather.getServer_time() * 1000);
+    }
+
+    private void showCurrentWeather(final NewWeather.ResultBean.DailyBean dailyBean,
+                                    NewWeather.ResultBean.HourlyBean hourlyBean,
+                                    NewWeather.ResultBean.AlertBean alertBean) {
+        final String temperature =
+                Utility.stringRoundDouble(hourlyBean.getTemperature().get(0).getValue());
+        final String skycon = hourlyBean.getSkycon().get(0).getValue();
+        double humidity = hourlyBean.getHumidity().get(0).getValue();
+        final double PM25 = hourlyBean.getPm25().get(0).getValue();
+        double intensity = hourlyBean.getPrecipitation().get(0).getValue();
+        final double aqi = hourlyBean.getAqi().get(0).getValue();
+        final boolean shouldShowAlert;
+        // 是否显示天气预警图标
+        if (alertBean.getContent().size() > 0) {
+            Log.d(TAG, "showCurrentWeather: alert size=" + alertBean.getContent().size());
+            alertArrayList = new ArrayList<>();
+            for (NewWeather.ResultBean.AlertBean.ContentBean contentBean : alertBean.getContent()) {
+                alertArrayList.add(new Alert(contentBean.getStatus(), Integer.parseInt(contentBean.getCode()),
+                        contentBean.getDescription(), contentBean.getAlertId(),
+                        contentBean.getCity() + contentBean.getCounty(), contentBean.getTitle()));
+            }
+            shouldShowAlert = true;
+        } else {
+            alertArrayList = null;
+            shouldShowAlert = false;
+        }
+
+        final String windDirection = Utility.getWindDirection(this, hourlyBean.getWind().get(0).getDirection());
+        final String windLevel = Utility.getWindLevel(this, hourlyBean.getWind().get(0).getSpeed());
+        final String sunRise = dailyBean.getAstro().get(0).getSunrise().getTime();
+        final String sunSet = dailyBean.getAstro().get(0).getSunset().getTime();
+        final double hum = humidity * 100;
+        final String weatherString = chooseWeatherSkycon(getApplicationContext(), skycon, intensity, MINUTELY_MODE);
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (shouldShowAlert) {
+                    alertImage.setVisibility(View.VISIBLE);
+                } else {
+                    alertImage.setVisibility(View.GONE);
+                }
+                windDirectionTv.setText(windDirection);
+                windLevelTv.setText(windLevel);
+                PMCircle.setValue((int) PM25);
+                temperatureText.setText(temperature);
+                AQICircle.setValue((int) aqi);
+                hum_text.setText(String.valueOf(hum).substring(0, 2) + "%");
+                skyconText.setText(weatherString);
+                dynamicWeatherView.setDrawerType(Utility.chooseBgImage(skycon));
+                sunrise_text.setText(sunRise);
+                sunset_text.setText(sunSet);
+                sunTimeView.setTime(sunRise, sunSet);
+                uv_text.setText(dailyBean.getUltraviolet().get(0).getDesc());
+                carWashing_text.setText(dailyBean.getCarWashing().get(0).getDesc());
+                dressing_text.setText(dailyBean.getDressing().get(0).getDesc());
+            }
+        });
+
+    }
+
+    private void showDailyWeather(NewWeather.ResultBean.DailyBean dailyBean) {
+        int length = dailyBean.getSkycon().size();
+        length = (length >= 5) ? 5 : length;
+        final ArrayList<SingleWeather> singleWeathers = new ArrayList<>(length);
+        int dayOfWeek = Utility.getDayOfWeek();
+        SimpleDateFormat oldSDF = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+        SimpleDateFormat newSDF = new SimpleDateFormat("MM/dd", Locale.getDefault());
+        for (int i = 0; i < length; i++) {
+            String time = "";
+            try {
+                Date date = oldSDF.parse(dailyBean.getSkycon().get(i).getDate());
+                time = newSDF.format(date) + " " +
+                        getResources().getStringArray(R.array.week)[(dayOfWeek + i - 1) % 7];
+            } catch (ParseException e) {
+                e.printStackTrace();
+                Log.e(TAG, "showDailyWeather: parse time format failed");
+            }
+            int icon = Utility.chooseWeatherIcon(dailyBean.getSkycon().get(i).getValue(),
+                    dailyBean.getPrecipitation().get(i).getAvg(), HOURLY_MODE, false);
+            String skyconDesc;
+            // 在有 desc 时优先显示 desc 的内容
+//            if (dailyBean.getDesc() == null) {
+//                skyconDesc = Utility.chooseWeatherSkycon(this,
+//                        dailyBean.getSkycon().get(i).getValue(),
+//                        dailyBean.getPrecipitation().get(i).getAvg(), HOURLY_MODE);
+//            } else {
+//                skyconDesc = dailyBean.getDesc().get(i).getValue();
+//            }
+            // TODO: 02/12/2017 deal with the 'desc'
+            skyconDesc = Utility.chooseWeatherSkycon(this,
+                    dailyBean.getSkycon().get(i).getValue(),
+                    dailyBean.getPrecipitation().get(i).getAvg(), HOURLY_MODE);
+            String temperature = Utility.stringRoundDouble(dailyBean.getTemperature().get(i).getMax())
+                    + "° / "
+                    + Utility.stringRoundDouble(dailyBean.getTemperature().get(i).getMin()) + '°';
+            singleWeathers.add(new SingleWeather(time, icon, skyconDesc, temperature));
+        }
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                refreshDailyRV(singleWeathers);
+            }
+        });
+
+    }
+
+    private void showHourlyWeather(NewWeather.ResultBean.HourlyBean hourlyBean) {
+        int length = hourlyBean.getSkycon().size();
+        length = (length >= 24) ? 24 : length;
+//        Log.d(TAG, "setHourlyWeatherChart: total " + length + " hour");
+        final ArrayList<SingleWeather> singleWeathers = new ArrayList<>(length);
+        for (int i = 0; i < length; i++) {
+            String time = hourlyBean.getSkycon().get(i).getDatetime().substring(11, 16);
+            int icon = Utility.chooseWeatherIcon(hourlyBean.getSkycon().get(i).getValue(),
+                    hourlyBean.getPrecipitation().get(i).getValue(), HOURLY_MODE, true);
+            String skyconDesc = Utility.chooseWeatherSkycon(this, hourlyBean.getSkycon().get(i).getValue(),
+                    hourlyBean.getPrecipitation().get(i).getValue(), HOURLY_MODE);
+            String temperature = stringRoundDouble(hourlyBean.getTemperature().get(i).getValue()) + '°';
+            singleWeathers.add(new SingleWeather(time, icon, skyconDesc, temperature));
+        }
+        singleWeathers.get(0).setTime(getResources().getString(R.string.now));
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                refreshHourlyRV(singleWeathers);
+            }
+        });
+    }
+
+    private void refreshDailyRV(List<SingleWeather> list) {
+        if (hourWeatherAdapter == null) {
+            hourWeatherAdapter = new HourlyWeatherAdapter(list);
+            hourlyRecyclerView.setAdapter(hourWeatherAdapter);
+        } else {
+            hourWeatherAdapter.setWeatherList(list);
+        }
+    }
+
+    private void refreshHourlyRV(List<SingleWeather> list) {
+        if (dailyWeatherAdapter == null) {
+            dailyWeatherAdapter = new DailyWeatherAdapter(list);
+            hourlyRecyclerView.setAdapter(dailyWeatherAdapter);
+        } else {
+            dailyWeatherAdapter.setWeatherList(list);
+        }
+    }
+
+    @Override
+    public void showLocation(MLocation location) {
+        switch (location.getLocateType()) {
+            case MLocation.TYPE_BAIDU_GPS:
+                // TODO: 03/12/2017
+        }
+    }
+
+    @Override
+    public void setUpdateTime(final long timeInMills) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (timeInMills == 0) {
+                    lastUpdateTime.setText(Utility.getTime(WeatherActivity.this));
+                }
+                else
+                    lastUpdateTime.setText(Utility.getTime(WeatherActivity.this, timeInMills));
+            }
+        });
+    }
+
+    @Override
+    public void showNetworkError() {
+        Snackbar.make(viewRoot, R.string.access_network_failed, Snackbar.LENGTH_LONG)
+                .setAction(R.string.go_to_settings, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(new Intent().setAction(Settings.ACTION_SETTINGS));
+                    }
+                }).show();
+    }
+
+    @Override
+    public void showError(String error) {
+        if (TextUtils.isEmpty(error)) {
+            error = getResources().getString(R.string.error_happens);
+        }
+        Snackbar.make(viewRoot, error, Snackbar.LENGTH_LONG)
+                .setAction(R.string.ok, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {}
+                }).show();
+    }
+
+    @Override
+    public void showPermissionError() {
+        // TODO: 02/12/2017 deal with the not show
+        Snackbar.make(viewRoot, R.string.permission_denied, Snackbar.LENGTH_LONG)
+                .setAction(R.string.grant_permission, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                }).show();
+    }
+
+    @Override
+    public void showIpLocateMessage() {
+        Snackbar.make(viewRoot, R.string.ip_method_locate, Snackbar.LENGTH_LONG)
+                .setAction(R.string.donnot_show, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // TODO: 02/12/2017
+                    }
+                });
+    }
+
+    @Override
+    public void setRefreshingState(final boolean refresh) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (refresh) {
+                    if (!swipeRefreshLayout.isRefreshing()) {
+                        swipeRefreshLayout.setRefreshing(true);
+                    }
+                } else {
+                    if (swipeRefreshLayout.isRefreshing()) {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    public void askForChoosePosition() {
+        Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
+        startActivityForResult(intent, ChoosePositionActivityRequestCode);
+    }
+
+    private static class MessageHandler extends Handler {
+        WeakReference<WeatherActivity> activityWeakReference;
+
+        MessageHandler(WeatherActivity activity) {
+            activityWeakReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            WeatherActivity activity = activityWeakReference.get();
+            if (activity != null) {
+                switch (msg.what) {
+                    case HANDLE_POSITION:
+                        if (msg.obj instanceof String) {
+                            activity.countyName = (String) msg.obj;
+                            activity.toolbar.setTitle((String) msg.obj);
+                        } else {
+                            Log.e(TAG, "handleMessage: HANDLE_POSITION obj == " + msg.obj.getClass());
+                        }
+                        break;
+                    case HANDLE_TOAST:
+                        if (msg.obj instanceof String) {
+                            Toast.makeText(activity, (String) msg.obj, Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.e(TAG, "handleMessage: HANDLE_TOAST obj == " + msg.obj.getClass());
+                        }
+                        break;
+                    case HANDLE_EXACT_LOCATION:
+                        if (msg.obj instanceof String) {
+                            activity.locationDetail = (String) msg.obj;
+                            activity.locateMode.setText((String) msg.obj);
+                        } else {
+                            Log.e(TAG, "handleMessage: HANDLE_EXACT_LOCATION obj == " + msg.obj.getClass());
+                        }
+
+                }
+            }
         }
     }
 

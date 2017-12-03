@@ -11,7 +11,6 @@
     <string name="title_activity_choose_position">选择地区</string>
     <string name="weather">天气</string>
     <string name="aqi">天气质量指数</string>
-    <string name="na">N/A</string>
 
     <!--各种天气名称-->
     <string name="CLEAR_DAY">晴</string>
@@ -35,7 +34,7 @@
     <string name="auto_locate">自动定位</string>
     <string name="choose_your_position">选择您的地区</string>
     <string name="current_version">当前版本</string>
-    <string name="data_resources">天气数据由中国气象局与彩云数据提供</string>
+    <string name="data_resources">天气数据来自中国气象局、彩云数据与和风天气\n本 App 仅作数据的呈现</string>
     <string name="title_activity_settings">设置</string>
     <string name="choose_position">更改地区</string>
     <string name="setting">设置</string>
@@ -117,5 +116,7 @@
     <string name="donate_with_wechat">通过微信支付捐赠</string>
     <string name="info_wechat_donate">请将当前页面截图，并在微信中选择扫描。（该方式我已深思熟虑）</string>
     <string name="refresh_circle">刷新按钮</string>
+    <string name="search">搜索</string>
+    <string name="go_to_settings">打开设置</string>
 
 </resources>

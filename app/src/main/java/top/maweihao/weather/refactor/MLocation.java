@@ -1,5 +1,7 @@
 package top.maweihao.weather.refactor;
 
+import android.text.TextUtils;
+
 /**
  * location bean
  * Created by maweihao on 26/11/2017.
@@ -64,6 +66,29 @@ public class MLocation {
     public MLocation(String latitude, String longitude) {
         this.latitude = Float.parseFloat(latitude);
         this.longitude = Float.parseFloat(longitude);
+    }
+
+    public String getLocationCoarse() {
+        return TextUtils.isEmpty(county) ? city : county;
+    }
+
+    public String getLocationDetail() {
+        switch (locateType) {
+            case TYPE_CHOOSE:
+                return TextUtils.isEmpty(county) ? city : county;
+            case TYPE_IP:
+                return city;
+            case TYPE_BAIDU_GPS:
+                return TextUtils.isEmpty(street) ? county : street;
+            case TYPE_BAIDU_NETWORK:
+                return TextUtils.isEmpty(street) ? county : street;
+            case TYPE_BAIDU_UNKNOWN:
+                return TextUtils.isEmpty(street) ? county : street;
+            case TYPE_LOCATION_MANAGER:
+                return TextUtils.isEmpty(street) ? county : street;
+            default:
+                    return null;
+        }
     }
 
     public String getLocationStringReversed() {

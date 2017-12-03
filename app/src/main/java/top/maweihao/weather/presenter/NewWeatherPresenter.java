@@ -22,6 +22,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import top.maweihao.weather.contract.BasePresenter;
 import top.maweihao.weather.contract.NewWeatherActivityContract;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.contract.WeatherData;
@@ -32,7 +33,9 @@ import top.maweihao.weather.refactor.MLocation;
 import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.LocationUtil;
+import top.maweihao.weather.util.ServiceUtil;
 import top.maweihao.weather.util.Utility;
+import top.maweihao.weather.util.remoteView.WidgetUtils;
 
 import static top.maweihao.weather.util.Constants.DEBUG;
 import static top.maweihao.weather.util.Utility.GPSEnabled;
@@ -46,7 +49,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
     private static final String TAG = NewWeatherPresenter.class.getSimpleName();
 
     private final WeatherData model;
-    private final NewWeatherActivityContract.newView view;
+    private final NewWeatherActivityContract.newView<BasePresenter> view;
     private final CompositeDisposable compositeDisposable;
     private PreferenceConfigContact configContact;
     private volatile boolean isWorkDown = false;
@@ -56,7 +59,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
 
     private long locateTime;  //for Baidu locate
 
-    public NewWeatherPresenter(@NonNull NewWeatherActivityContract.newView view, WeatherData model) {
+    public NewWeatherPresenter(@NonNull NewWeatherActivityContract.newView<BasePresenter> view, WeatherData model) {
         this.model = model;
         this.view = view;
         compositeDisposable = new CompositeDisposable();
@@ -69,6 +72,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
     @Override
     public void subscribe() {
         fetchData();
+        locate();
     }
 
     @Override
@@ -129,7 +133,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                 .subscribe(new Consumer<NewWeather>() {
                     @Override
                     public void accept(NewWeather weather) throws Exception {
-                        view.showRefreshingState(false);
+                        view.setRefreshingState(false);
                         if (weather.getStatus().equals("ok")) {
                             view.showWeather(weather);
                         } else {
@@ -139,7 +143,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-                        view.showRefreshingState(false);
+                        view.setRefreshingState(false);
                         view.showNetworkError();
                     }
                 });
@@ -231,7 +235,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
     @SuppressLint("MissingPermission")
     private void initSystemLocate() {
         LocationManager mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        Location location = null;
+        Location location;
         if (mLocationManager != null &&
                 mLocationManager.getProviders(true).contains(LocationManager.NETWORK_PROVIDER)) {
             location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
@@ -285,7 +289,16 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
 
     private void locateFailed(boolean isPermissionOn) {
         if (isPermissionOn) {
+            view.showError("Locate failed");
+        } else {
+            view.showError("Locate failed");
+        }
+    }
 
+    private void updateWidget(NewWeather weatherView) {
+        if (WidgetUtils.hasAnyWidget(context)) {
+            ServiceUtil.startWidgetSyncService(context, true);
+            // TODO: 02/12/2017 widget refresh problem
         }
     }
 

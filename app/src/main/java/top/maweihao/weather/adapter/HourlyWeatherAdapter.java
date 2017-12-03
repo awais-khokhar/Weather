@@ -39,7 +39,7 @@ public class HourlyWeatherAdapter extends RecyclerView.Adapter<HourlyWeatherAdap
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_few_hour_RL, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_few_hour_rl, parent, false);
         return new ViewHolder(view);
     }
 
@@ -59,5 +59,10 @@ public class HourlyWeatherAdapter extends RecyclerView.Adapter<HourlyWeatherAdap
     @Override
     public int getItemCount() {
         return weatherList.size();
+    }
+
+    public void setWeatherList(List<SingleWeather> list) {
+        weatherList = list;
+        notifyDataSetChanged();
     }
 }
