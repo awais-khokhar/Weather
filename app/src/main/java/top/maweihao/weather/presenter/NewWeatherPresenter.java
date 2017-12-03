@@ -97,6 +97,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
     @Override
     public void onStop() {
         stopBaiduLocate();
+        compositeDisposable.clear();
     }
 
     @Override

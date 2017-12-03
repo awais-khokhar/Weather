@@ -333,7 +333,9 @@ public class Utility {
         if (today.get(Calendar.DAY_OF_MONTH) == cal.get(Calendar.DAY_OF_MONTH) &&
                 today.get(Calendar.MONTH) == cal.get(Calendar.MONTH)) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.CHINA);
-            return simpleDateFormat.format(cal);
+            Date date = new Date();
+            date.setTime(mills);
+            return simpleDateFormat.format(date);
         } else {
             today.set(Calendar.HOUR, 0);
             today.set(Calendar.MINUTE, 0);
@@ -366,7 +368,7 @@ public class Utility {
     public static String getIP(Context ctx) {
         WifiManager wifiManager = (WifiManager)
                 ctx.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        return wifiManager.isWifiEnabled() ? getWifiIP(wifiManager) : getGPRSIP();
+        return (wifiManager != null && wifiManager.isWifiEnabled()) ? getWifiIP(wifiManager) : getGPRSIP();
     }
 
     private static String getWifiIP(WifiManager wifiManager) {
@@ -406,10 +408,10 @@ public class Utility {
     @SuppressLint("PrivateApi")
     @Deprecated
     public static int getStatusBarHeight(@NonNull Context context) {
-        Class<?> c = null;
-        Object obj = null;
-        Field field = null;
-        int x = 0;
+        Class<?> c;
+        Object obj;
+        Field field;
+        int x;
         try {
             c = Class.forName("com.android.internal.R$dimen");
             obj = c.newInstance();
@@ -436,7 +438,7 @@ public class Utility {
      */
     public static int getNavigationBarHeight(@NonNull Context context) {
         int result = 0;
-        int resourceId = 0;
+        int resourceId;
         int rid = context.getResources().getIdentifier("config_showNavigationBar",
                 "bool", "android");
         if (rid != 0) {

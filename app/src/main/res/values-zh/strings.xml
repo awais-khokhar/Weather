@@ -52,7 +52,7 @@
         <item>fahrenheit</item>
     </string-array>
 
-    <string name="feedback">反馈</string>
+    <string name="feedback">问题反馈</string>
     <string name="selected_county">"当前选择： "</string>
 
     <string-array name="weekend">
@@ -103,7 +103,7 @@
     <string name="notification_time">通知时间</string>
     <string name="now">现在</string>
     <string name="donate">捐赠</string>
-    <string name="donate_info">捐赠任意的金额以支持开发者的努力，您会在将来以一些形式获得 App 体验层面的回报。\n点击 “OK” 将跳转至支付宝。</string>
+    <string name="donate_info">捐赠任意的金额以支持开发者，您可能会在将来得到一些本 App 体验层面的回报。\n点击 “OK” 将跳转至支付宝。</string>
     <string name="email_needed">未找到任何邮件客户端</string>
     <string name="alipay_needed">暂时只支持支付宝</string>
     <string name="action_alert">天气预警</string>
@@ -117,6 +117,13 @@
     <string name="info_wechat_donate">请将当前页面截图，并在微信中选择扫描。（该方式我已深思熟虑）</string>
     <string name="refresh_circle">刷新按钮</string>
     <string name="search">搜索</string>
-    <string name="go_to_settings">打开设置</string>
+    <string name="go_to_settings">打开系统设置</string>
+    <string name="error_happens">发生了一些错误</string>
+    <string name="ip_method_locate">根据您的 ip 地址定位，精度会受限。</string>
+    <string name="donnot_show">不再显示</string>
+    <string name="grant_permission">手动授权</string>
+    <string name="locate_failed">定位失败，请打开系统位置。</string>
+    <string name="yesterday">昨天</string>
+    <string name="days_before">天前</string>
 
 </resources>
