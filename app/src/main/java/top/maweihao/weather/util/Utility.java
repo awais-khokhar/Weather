@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -501,10 +502,11 @@ public class Utility {
             NetworkInfo info = connectivity.getActiveNetworkInfo();
             if (info != null && info.isConnected()) {
                 // 当前网络是连接的
-                if (info.getState() == NetworkInfo.State.CONNECTED) {
+//                if (info.getState() == NetworkInfo.State.CONNECTED) {
                     // 当前所连接的网络可用
-                    return true;
-                }
+//                    return true;
+//                }
+                return true;
             }
         }
         return false;
@@ -556,6 +558,18 @@ public class Utility {
     public static NewHeWeatherNow unpackWeather(NewHeWeatherNow weather) {
         Gson gson = new Gson();
         return gson.fromJson(weather.getJsonString(), NewHeWeatherNow.class);
+    }
+
+    public static long getHeWeatherUpdateTime(NewHeWeatherNow weather) {
+        NewHeWeatherNow.HeWeather5Bean.BasicBean basicBean = weather.getHeWeather5().get(0).getBasic();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
+        try {
+            Date date = simpleDateFormat.parse(basicBean.getUpdate().getLoc());
+            return date.getTime();
+        } catch (ParseException e) {
+            Log.e(TAG, "getHeWeatherUpdateTime: parse failed" + basicBean.getUpdate().getLoc());
+            return 0;
+        }
     }
 
 }

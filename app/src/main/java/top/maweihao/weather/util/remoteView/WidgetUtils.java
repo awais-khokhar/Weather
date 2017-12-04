@@ -4,6 +4,8 @@ import android.content.Context;
 
 import top.maweihao.weather.entity.ForecastBean;
 import top.maweihao.weather.entity.HeWeather.HeNowWeather;
+import top.maweihao.weather.entity.HeWeather.NewHeWeatherNow;
+import top.maweihao.weather.entity.NewWeather;
 
 /**
  * Utility class for updating all widgets
@@ -11,29 +13,59 @@ import top.maweihao.weather.entity.HeWeather.HeNowWeather;
  */
 
 public class WidgetUtils {
-    public static void refreshWidget(final Context context, final ForecastBean forecastBean) {
+    public static void refreshWidget(final Context context, final ForecastBean weather) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 if (SimpleWidgetUtils.isEnable(context))
-                    SimpleWidgetUtils.refreshWidgetView(context, forecastBean);
+                    SimpleWidgetUtils.refreshWidgetView(context, weather);
                 if (TallWidgetUtils.isEnable(context))
-                    TallWidgetUtils.refreshWidgetView(context, forecastBean);
+                    TallWidgetUtils.refreshWidgetView(context, weather);
                 if (BigWidgetUtils.isEnable(context))
-                    BigWidgetUtils.refreshWidgetView(context, forecastBean);
+                    BigWidgetUtils.refreshWidgetView(context, weather);
             }
         }).start();
     }
 
     // 使用和风天气的数据只能刷新 TallWidget 和 SimpleWidget
-    public static void refreshWidget(final Context context, final HeNowWeather heNowWeather) {
+    @Deprecated
+    public static void refreshWidget(final Context context, final HeNowWeather heNowWeather,
+                                     final String countyName) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 if (SimpleWidgetUtils.isEnable(context))
-                    SimpleWidgetUtils.refreshWidgetView(context, heNowWeather);
+                    SimpleWidgetUtils.refreshWidgetView(context, heNowWeather, countyName);
                 if (TallWidgetUtils.isEnable(context))
-                    TallWidgetUtils.refreshWidgetView(context, heNowWeather);
+                    TallWidgetUtils.refreshWidgetView(context, heNowWeather, countyName);
+            }
+        }).start();
+    }
+
+    public static void refreshWidget(final Context context, final NewHeWeatherNow weather,
+                                     final String countyName) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (SimpleWidgetUtils.isEnable(context))
+                    SimpleWidgetUtils.refreshWidgetView(context, weather, countyName);
+                if (TallWidgetUtils.isEnable(context))
+                    TallWidgetUtils.refreshWidgetView(context, weather, countyName);
+            }
+        }).start();
+    }
+
+    public static void refreshWidget(final Context context, final NewWeather weather,
+                                     final String countyName) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (SimpleWidgetUtils.isEnable(context))
+                    SimpleWidgetUtils.refreshWidgetView(context, weather, countyName);
+                if (TallWidgetUtils.isEnable(context))
+                    TallWidgetUtils.refreshWidgetView(context, weather, countyName);
+                if (BigWidgetUtils.isEnable(context))
+                    BigWidgetUtils.refreshWidgetView(context, weather, countyName);
             }
         }).start();
     }
@@ -54,12 +86,22 @@ public class WidgetUtils {
         }).start();
     }
 
+    /**
+     * 是否添加了任何 widget
+     * @param context context
+     * @return bool
+     */
     public static boolean hasAnyWidget(Context context) {
         return SimpleWidgetUtils.isEnable(context)
                 || TallWidgetUtils.isEnable(context)
                 || BigWidgetUtils.isEnable(context);
     }
 
+    /**
+     * 是否有添加了 BigWidget(不能用和风源刷新)
+     * @param context context
+     * @return bool
+     */
     public static boolean hasBigWidget(Context context) {
         return BigWidgetUtils.isEnable(context);
     }

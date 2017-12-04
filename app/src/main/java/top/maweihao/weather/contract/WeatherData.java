@@ -36,4 +36,6 @@ public interface WeatherData {
     Observable<MLocation> getLocation();
 
     void saveLocation(MLocation location);
+
+    long getLastUpdateTime();
 }

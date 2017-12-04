@@ -112,7 +112,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-                        view.showError("waiting for locating");
+                        view.showError("waiting for locating", false);
                     }
                 });
         compositeDisposable.add(disposable);
@@ -120,6 +120,11 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
 
     @Override
     public void locate() {
+//        if (Utility.isNetworkAvailable(context)) {
+//            Log.e(TAG, "locate: no internet");
+//            view.showNetworkError();
+//            return;
+//        }
         view.setRefreshingState(true);
         if (configContact.getAutoLocate(true)) {
             if (isPermissionDeniedPermanently()) {
@@ -175,10 +180,13 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
     @Override
     public void refreshWeather(MLocation location) {
         final boolean needGeo = location.isNeedGeocode();
-        Log.d(TAG, "refreshWeather: HERE" + location.getLocationStringReversed() + " " + location.getLocateType());
+        Log.d(TAG, "refreshWeather " +
+                location.getLocationStringReversed() + " " + location.getLocateType());
         if (needGeo) {
             workingFlag = true;
             geocodeLocationAndSave(location, true);
+        } else {
+            view.showLocation(location);
         }
         model.getWeather(location.getLocationStringReversed())
                 .subscribe(new Consumer<NewWeather>() {
@@ -188,6 +196,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                             if (!workingFlag) {
                                 view.setRefreshingState(false);
                             } else {
+                                Log.d(TAG, "get weather: cannot stop swipe now");
                                 workingFlag = false;
                             }
                         } else {
@@ -196,7 +205,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                         if (weather.getStatus().equals("ok")) {
                             view.showWeather(weather);
                         } else {
-                            view.showError("api error");
+                            view.showError("api error", true);
                         }
                     }
                 }, new Consumer<Throwable>() {
@@ -206,6 +215,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                             if (!workingFlag) {
                                 view.setRefreshingState(false);
                             } else {
+                                Log.d(TAG, "get weather: cannot stop swipe now");
                                 workingFlag = false;
                             }
                         } else {
@@ -229,6 +239,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                                 if (!workingFlag) {
                                     view.setRefreshingState(false);
                                 } else {
+                                    Log.d(TAG, "get location: cannot stop swipe now");
                                     workingFlag = false;
                                 }
                                 view.showLocation(location);
@@ -274,7 +285,8 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                             if (!GPSEnabled(context)) {
                                 Log.d(TAG, "BAIDU onReceiveLocation: system GPS is off");
                                 mLocationClient.stop();
-                                refreshWeather(LocationUtil.convertType(bdLocation));
+//                                refreshWeather(LocationUtil.convertType(bdLocation));
+                                showAndSaveWeather(bdLocation);
                             }
                         }
                     } else {
@@ -282,7 +294,8 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                         if (DEBUG) {
                             Log.d(TAG, "BAIDU onReceiveLocation: Locate type == GPS");
                         }
-                        refreshWeather(LocationUtil.convertType(bdLocation));
+//                        refreshWeather(LocationUtil.convertType(bdLocation));
+                        showAndSaveWeather(bdLocation);
                     }
                 } else {
                     mLocationClient.stop();
@@ -291,11 +304,13 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                                 + bdLocation.getLocType());
                     }
                     if (LocationUtil.isBaiduLocateSuccess(bdLocation.getLocType())) {
-                        refreshWeather(LocationUtil.convertType(bdLocation));
+//                        refreshWeather(LocationUtil.convertType(bdLocation));
+                        showAndSaveWeather(bdLocation);
                     } else {
-                        if (DEBUG)
+                        if (DEBUG) {
                             Log.d(TAG, "BAIDU onReceiveLocation: baidu locate failed, " +
                                     "switch to LocationManager method");
+                        }
                         initSystemLocate();
                     }
                 }
@@ -303,13 +318,20 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
 
             @Override
             public void onConnectHotSpotMessage(String s, int i) {}
+
+            private void showAndSaveWeather(BDLocation bdLocation) {
+                MLocation location = LocationUtil.convertType(bdLocation);
+                model.saveLocation(location);
+                refreshWeather(location);
+            }
         });
         mLocationClient.start();
     }
 
     @SuppressLint("MissingPermission")
     private void initSystemLocate() {
-        LocationManager mLocationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        LocationManager mLocationManager =
+                (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         Location location;
         if (mLocationManager != null &&
                 mLocationManager.getProviders(true).contains(LocationManager.NETWORK_PROVIDER)) {
@@ -368,14 +390,13 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
         if (isPermissionOn) {
             view.showLocateError();
         } else {
-            view.showError("Locate failed");
+            view.showError("Locate failed", true);
         }
     }
 
     private void updateWidget(NewWeather weatherView) {
         if (WidgetUtils.hasAnyWidget(context)) {
             ServiceUtil.startWidgetSyncService(context, true);
-            // TODO: 02/12/2017 widget refresh
         }
     }
 
@@ -394,7 +415,8 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                             refreshWeather(location);
                         } else {
                             Log.e(TAG, "refreshChosenWeather: get coo failed" + desc);
-                            view.showError("get weather failed, try to enable \"auto locate\"");
+                            view.showError("Get weather failed, try to enable \"Auto Locate\"",
+                                    true);
                         }
                     }
                 }, new Consumer<Throwable>() {

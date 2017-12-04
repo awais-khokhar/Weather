@@ -16,7 +16,7 @@ public interface NewWeatherActivityContract {
         void showLocation(MLocation location);
         void setUpdateTime(long timeInMills);
         void showNetworkError();
-        void showError(String error);
+        void showError(String error, boolean showOkButton);
         void showLocateError();
         void showPermissionError();
         void showIpLocateMessage();

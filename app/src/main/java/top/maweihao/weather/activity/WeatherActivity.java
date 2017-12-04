@@ -806,6 +806,9 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 uv_text.setText(dailyBean.getUltraviolet().get(0).getDesc());
                 carWashing_text.setText(dailyBean.getCarWashing().get(0).getDesc());
                 dressing_text.setText(dailyBean.getDressing().get(0).getDesc());
+                if (DEBUG) {
+                    Log.d(TAG, "showWeather: refresh weather succeed");
+                }
             }
         });
 
@@ -901,9 +904,9 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
     @Override
     public void showLocation(MLocation location) {
-        String coarseLocation = location.getLocationCoarse();
-        String detailLocation = location.getLocationDetail();
-        Log.d(TAG, "showLocation: HERE " + coarseLocation + detailLocation);
+        String coarseLocation = location.getCoarseLocation();
+        String detailLocation = location.getFineLocation();
+        Log.d(TAG, "showLocation: " + coarseLocation + detailLocation);
         switch (location.getLocateType()) {
             case MLocation.TYPE_CHOOSE:
                 setLoc(coarseLocation, coarseLocation, false);
@@ -947,15 +950,18 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     }
 
     @Override
-    public void showError(String error) {
+    public void showError(String error, boolean showOkButton) {
         if (TextUtils.isEmpty(error)) {
             error = getResources().getString(R.string.error_happens);
         }
-        Snackbar.make(viewRoot, error, Snackbar.LENGTH_LONG)
-                .setAction(R.string.ok, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {}
-                }).show();
+        Snackbar snackbar = Snackbar.make(viewRoot, error, Snackbar.LENGTH_LONG);
+        if (showOkButton) {
+            snackbar.setAction(R.string.ok, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {}
+            });
+        }
+        snackbar.show();
     }
 
     @Override

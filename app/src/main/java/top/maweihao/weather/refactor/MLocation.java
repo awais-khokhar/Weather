@@ -96,11 +96,11 @@ public class MLocation {
         this.street = street;
     }
 
-    public String getLocationCoarse() {
+    public String getCoarseLocation() {
         return TextUtils.isEmpty(county) ? city : county;
     }
 
-    public String getLocationDetail() {
+    public String getFineLocation() {
         switch (locateType) {
             case TYPE_CHOOSE:
                 return TextUtils.isEmpty(county) ? city : county;

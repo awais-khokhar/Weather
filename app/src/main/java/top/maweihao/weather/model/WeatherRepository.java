@@ -145,10 +145,20 @@ public class WeatherRepository implements WeatherData {
     }
 
     @Override
+    public long getLastUpdateTime() {
+        List<NewWeather> weatherList = weatherDao.loadAll();
+        if (weatherList != null && weatherList.size() > 0) {
+            return weatherList.get(0).getServer_time() * 1000;
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
     public void saveWeather(NewWeather weather) {
         if (weather.getStatus().equals("ok")) {
             weatherDao.deleteAll();
-            weatherDao.insert(Utility.packWeather(weather));
+            weatherDao.insertOrReplace(Utility.packWeather(weather));
         }
     }
 
@@ -156,7 +166,7 @@ public class WeatherRepository implements WeatherData {
     public void saveWeather(NewWeatherRealtime weather) {
         if (weather.getStatus().equals("ok")) {
             weatherRealtimeDao.deleteAll();
-            weatherRealtimeDao.insert(Utility.packWeather(weather));
+            weatherRealtimeDao.insertOrReplace(Utility.packWeather(weather));
         }
     }
 
@@ -164,7 +174,7 @@ public class WeatherRepository implements WeatherData {
     public void saveWeather(NewHeWeatherNow weather) {
         if (weather.getHeWeather5().get(0).getStatus().equals("ok")) {
             heWeatherNowDao.deleteAll();;
-            heWeatherNowDao.insert(Utility.packWeather(weather, System.currentTimeMillis()));
+            heWeatherNowDao.insertOrReplace(Utility.packWeather(weather, System.currentTimeMillis()));
         }
     }
 
@@ -186,7 +196,7 @@ public class WeatherRepository implements WeatherData {
     @Override
     public void saveLocation(MLocation location) {
         locationDao.deleteAll();
-        locationDao.insert(location);
+        locationDao.insertOrReplace(location);
     }
 
 }
