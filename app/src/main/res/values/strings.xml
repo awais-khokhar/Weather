@@ -78,8 +78,8 @@
 
     <string name="appearance_setting">Appearance</string>
     <string name="temperature">Temperature</string>
-    <string name="notification_setting">Notification</string>
-    <string name="notification_summary">you will receive weather related notifications</string>
+    <string name="notification_setting">Notification(Beta)</string>
+    <string name="notification_summary">get weather-related message everyday</string>
     <string name="location_setting">Location</string>
     <string name="about_setting">About</string>
 
@@ -88,7 +88,7 @@
     <string name="data_resources">The weather data comes from \nChina meteorological administration \n, Colorful Clouds and heweather</string>
     <string name="choose_position">Choose Position</string>
     <string name="setting">Setting</string>
-    <string name="select_disabled">Choose position disabled when auto locate is on</string>
+    <string name="select_disabled">Place you chosen</string>
     <string name="uv">UV</string>
     <string name="carWashing">Car Washing</string>
     <string name="dressing">Dressing</string>

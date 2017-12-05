@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.support.annotation.Nullable;
@@ -30,6 +29,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import top.maweihao.weather.R;
 import top.maweihao.weather.contract.PreferenceConfigContact;
+import top.maweihao.weather.contract.WeatherData;
+import top.maweihao.weather.model.WeatherRepository;
 import top.maweihao.weather.service.PushService;
 import top.maweihao.weather.util.Utility;
 
@@ -40,24 +41,34 @@ import static top.maweihao.weather.util.Constants.isSetResultIntent;
 
 public class SettingActivity extends AppCompatActivity {
 
-    public static final String TAG = "SettingActivity";
-
+    public static final String TAG = SettingActivity.class.getSimpleName();
     public static final String TIME_SPLIT = " : ";
+
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    private static boolean originalAutoLocate, changeAutoLocate;//记录原始配置和改变后的配置，判断自动定位是否发生改变；
+    //记录原始配置和改变后的配置，判断自动定位是否发生改变；
+    private static boolean originalAutoLocate;
+    private static boolean changeAutoLocate;
+    private WeatherData model;
+    private static String countyName;
+    private static final String alipayUrl =
+            "alipayqr://platformapi/startapp?saId=10000007&qrcode=https://qr.alipay.com/a6x07374sqhbxyur624d77e";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
-        ButterKnife.bind(this);
+        initView();
+    }
 
+    private void initView() {
+        ButterKnife.bind(this);
         toolbar.setTitle(getResources().getString(R.string.setting));
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp);
         setSupportActionBar(toolbar);
-
+        model = WeatherRepository.getInstance(this);
+        countyName = model.getLocationCached().getCoarseLocation();
         getFragmentManager().beginTransaction()
                 .replace(R.id.setting_frameLayout, new PrefsFragment())
                 .commit();
@@ -90,38 +101,28 @@ public class SettingActivity extends AppCompatActivity {
 
     public static class PrefsFragment extends PreferenceFragment {
 
-        private PreferenceCategory appearance;
-
         private ListPreference temLp;
-
         private Preference aboutPreference;
-
         private Preference choosePositionPreference;
-
         private Preference feedBack;
-
         private Preference donate;
 
         private SwitchPreference autoUpdateSP;
         private SwitchPreference notification;
         private Preference notificationTime;
 
-        String countyName;
         private PreferenceConfigContact configContact;
-
 
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.settingpreference);
             configContact = Utility.createSimpleConfig(getActivity()).create(PreferenceConfigContact.class);
-            countyName = configContact.getCountyName();
             changeAutoLocate = originalAutoLocate = configContact.getAutoLocate(false);
             initViews();
         }
 
         private void initViews() {
-
             temLp = (ListPreference) findPreference("isCelsius");
             temLp.setEnabled(false);
             temLp.setSummary("当前地区不可用");
@@ -133,10 +134,6 @@ public class SettingActivity extends AppCompatActivity {
 
             donate = findPreference("donate");
             donate.setOnPreferenceClickListener(enterActivityListener);
-
-            //暂时隐藏 appearance
-//            PreferenceScreen preferenceScreen = getPreferenceScreen();
-//            preferenceScreen.removePreference(appearance);
 
             choosePositionPreference.setOnPreferenceClickListener(enterActivityListener);
             autoUpdateSP = (SwitchPreference) findPreference("auto_locate");
@@ -155,9 +152,8 @@ public class SettingActivity extends AppCompatActivity {
             } else
                 notificationTime.setEnabled(false);
 
-
             if (autoUpdateSP.isChecked()) {
-                Log.d(TAG, "SettingActivity::initViews: autoUpdate is checked");
+                Log.d(TAG, "initViews: autoUpdate is checked");
                 choosePositionPreference.setEnabled(false);
                 choosePositionPreference.setShouldDisableView(true);
             } else {
@@ -172,8 +168,7 @@ public class SettingActivity extends AppCompatActivity {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 String stringValue = newValue.toString();
-                if (DEBUG)
-                    Log.d(TAG, "onPreferenceChange: " + stringValue);
+                Log.d(TAG, "onPreferenceChange: " + stringValue);
                 if (preference instanceof ListPreference) {
                     ListPreference listPreference = (ListPreference) preference;
                     int index = listPreference.findIndexOfValue(stringValue);
@@ -192,8 +187,7 @@ public class SettingActivity extends AppCompatActivity {
                         changeAutoLocate = false;
                         choosePositionPreference.setEnabled(true);
                         if (!TextUtils.isEmpty(countyName)) {
-                            choosePositionPreference.setSummary(getResources().getString(R.string.selected_county)
-                                    + countyName);
+                            choosePositionPreference.setSummary(getResources().getString(R.string.selected_county) + countyName);
                         }
                     }
                     return true;
@@ -236,11 +230,12 @@ public class SettingActivity extends AppCompatActivity {
                     try {
                         Intent email = new Intent(Intent.ACTION_SENDTO);
                         email.setData(Uri.parse("mailto:hellowello1996@outlook.com"));
-                        email.putExtra(Intent.EXTRA_SUBJECT, "Feedback: Weather");
-                        email.putExtra(Intent.EXTRA_TEXT, "Feedback: ");
+                        email.putExtra(Intent.EXTRA_SUBJECT, "反馈: 速知天气");
+//                        email.putExtra(Intent.EXTRA_TEXT, "Feedback: ");
                         startActivity(email);
                     } catch (ActivityNotFoundException e) {
-                        Toast.makeText(getActivity(), getResources().getString(R.string.email_needed), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), getResources().getString(R.string.email_needed),
+                                Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
                 } else if (preference.getKey().equals("donate")) {
@@ -262,10 +257,12 @@ public class SettingActivity extends AppCompatActivity {
                                         case 0:
                                             try {
                                                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                                                intent.setData(Uri.parse("alipayqr://platformapi/startapp?saId=10000007&qrcode=https://qr.alipay.com/a6x07374sqhbxyur624d77e"));
+                                                intent.setData(Uri.parse(alipayUrl));
                                                 startActivity(intent);
                                             } catch (ActivityNotFoundException e) {
-                                                Toast.makeText(getActivity(), getResources().getString(R.string.alipay_needed), Toast.LENGTH_LONG).show();
+                                                Toast.makeText(getActivity(),
+                                                        getResources().getString(R.string.alipay_needed),
+                                                        Toast.LENGTH_LONG).show();
                                                 e.printStackTrace();
                                             }
                                             break;
@@ -305,7 +302,6 @@ public class SettingActivity extends AppCompatActivity {
                         getActivity().finish();
                     }
             }
-
         }
 
         private class NotificationTimePreferenceClickListener implements Preference.OnPreferenceClickListener {

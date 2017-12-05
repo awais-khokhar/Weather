@@ -2,16 +2,16 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
-        android:title="@string/appearance_setting"
-        android:key="appearance">
+        android:key="appearance"
+        android:title="@string/appearance_setting">
 
         <ListPreference
+            android:defaultValue="@string/temperature_default"
             android:dialogTitle="@string/temperature"
             android:entries="@array/temperature"
             android:entryValues="@array/temperature_value"
             android:key="isCelsius"
             android:summary="which degree?"
-            android:defaultValue="@string/temperature_default"
             android:title="@string/temperature" />
 
     </PreferenceCategory>
@@ -25,39 +25,39 @@
             android:title="@string/auto_locate" />
 
         <Preference
-            android:title="@string/choose_position"
-            android:key="choose_position" />
+            android:key="choose_position"
+            android:title="@string/choose_position" />
 
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/notification_setting">
 
         <SwitchPreference
-            android:persistent="true"
             android:defaultValue="false"
             android:key="notification"
+            android:persistent="true"
             android:summary="@string/notification_summary"
             android:title="@string/weather_notifications" />
         <Preference
-            android:persistent="true"
             android:key="notification_time"
+            android:persistent="true"
             android:title="@string/notification_time" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/about_setting">
         <Preference
-            android:title="@string/about_setting"
-            android:key="about">
+            android:key="about"
+            android:title="@string/about_setting">
 
         </Preference>
 
         <Preference
-            android:title="@string/donate"
-            android:key="donate" />
+            android:key="donate"
+            android:title="@string/donate" />
 
         <Preference
-            android:title="@string/feedback"
-            android:key="feedback" />
+            android:key="feedback"
+            android:title="@string/feedback" />
     </PreferenceCategory>
 
 
