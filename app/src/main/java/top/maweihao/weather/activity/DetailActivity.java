@@ -1,13 +1,16 @@
 package top.maweihao.weather.activity;
 
 import android.os.Bundle;
+import android.support.annotation.UiThread;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
-
-import com.alibaba.fastjson.JSON;
+import android.view.View;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -18,11 +21,15 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import top.maweihao.weather.R;
 import top.maweihao.weather.adapter.DailyWeatherAdapter;
-import top.maweihao.weather.entity.ForecastBean;
+import top.maweihao.weather.contract.WeatherData;
+import top.maweihao.weather.entity.NewWeather;
 import top.maweihao.weather.entity.SingleWeather;
-import top.maweihao.weather.contract.PreferenceConfigContact;
+import top.maweihao.weather.model.WeatherRepository;
 import top.maweihao.weather.util.Utility;
 
 import static top.maweihao.weather.activity.WeatherActivity.HOURLY_MODE;
@@ -30,29 +37,34 @@ import static top.maweihao.weather.util.Utility.stringRoundDouble;
 
 public class DetailActivity extends AppCompatActivity {
 
-    private static final String TAG = "DetailActivity";
-    private List<SingleWeather> weatherList;
-    private PreferenceConfigContact configContact;
+    public static final String KEY_DETAIL_ACTIVITY_WEATHER_LIST = "DETAIL_ACTIVITY_WEATHER_LIST";
+    private static final String TAG = DetailActivity.class.getSimpleName();
+    private WeatherData model;
+    DailyWeatherAdapter adapter;
 
     @BindView(R.id.activity_detail_toolbar)
     Toolbar toolbar;
     @BindView(R.id.detail_recycler_view)
     RecyclerView recyclerView;
-
-    public static final String KEY_DETAIL_ACTIVITY_WEATHER_LIST = "DETAIL_ACTIVITY_WEATHER_LIST";
+    @BindView(R.id.view_root)
+    CoordinatorLayout viewRoot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        initView();
+        fetchData();
+    }
+
+    private void initView() {
         ButterKnife.bind(this);
+        model = WeatherRepository.getInstance(getApplicationContext());
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp);
-        try {
-            init();
-        } catch (ParseException exception) {
-            exception.printStackTrace();
-        }
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(DetailActivity.this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(linearLayoutManager);
     }
 
     @Override
@@ -65,43 +77,83 @@ public class DetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void init() throws ParseException {
-        this.weatherList = getIntent().getParcelableArrayListExtra(KEY_DETAIL_ACTIVITY_WEATHER_LIST);
+    private void fetchData() {
+        List<SingleWeather> weatherList =
+                getIntent().getParcelableArrayListExtra(KEY_DETAIL_ACTIVITY_WEATHER_LIST);
         if (weatherList == null) {
-            weatherList = new ArrayList<>();
-            configContact = Utility.createSimpleConfig(this).create(PreferenceConfigContact.class);
-            String weather = configContact.getWeatherFull();
-            ForecastBean forecastBean = JSON.parseObject(weather, ForecastBean.class);
-            ForecastBean.ResultBean.DailyBean dailyBean = forecastBean.getResult().getDaily();
-
-            List<ForecastBean.ResultBean.DailyBean.TemperatureBeanX> temperatureBeanXList = dailyBean.getTemperature();
-            List<ForecastBean.ResultBean.DailyBean.SkyconBeanX> skyconBeanXList = dailyBean.getSkycon();
-            List<ForecastBean.ResultBean.DailyBean.PrecipitationBeanX> precipitationBeanXList = dailyBean.getPrecipitation();
-
-            SimpleDateFormat oldsdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
-            SimpleDateFormat newsdf = new SimpleDateFormat("MM/dd", Locale.CHINA);
-            for (int i = 0; i < temperatureBeanXList.size(); i++) {
-                Date date = oldsdf.parse(temperatureBeanXList.get(i).getDate());
-                String time = newsdf.format(date);
-                int icon = Utility.chooseWeatherIcon(skyconBeanXList.get(i).getValue(),
-                        precipitationBeanXList.get(i).getAvg(), HOURLY_MODE, false);
-                String skyconDesc;
-                // 在有 desc 时优先显示 desc 的内容
-                if (dailyBean.getDesc() == null) {
-                    skyconDesc = Utility.chooseWeatherSkycon(this, skyconBeanXList.get(i).getValue(),
-                            precipitationBeanXList.get(i).getAvg(), HOURLY_MODE);
-                } else {
-                    skyconDesc = dailyBean.getDesc().get(i).getValue();
-                }
-                String temperature = stringRoundDouble(temperatureBeanXList.get(i).getMax()) + "° / "
-                        + stringRoundDouble(temperatureBeanXList.get(i).getMin()) + '°';
-                weatherList.add(new SingleWeather(time, icon, skyconDesc, temperature));
-            }
+            model.getWeatherCached()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<NewWeather>() {
+                        @Override
+                        public void accept(NewWeather weather) throws Exception {
+                            List<SingleWeather> list = generateList(weather);
+                            if (list == null) {
+                                showError();
+                            } else if (adapter == null) {
+                                adapter = new DailyWeatherAdapter(list);
+                                recyclerView.setAdapter(adapter);
+                            } else {
+                                adapter.setWeatherList(list);
+                            }
+                        }
+                    }, new Consumer<Throwable>() {
+                        @Override
+                        public void accept(Throwable throwable) throws Exception {
+                            Log.e(TAG, "fetchData: get weather cached failed" + throwable);
+                            showError();
+                        }
+                    });
         }
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(DetailActivity.this);
-        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        DailyWeatherAdapter dailyWeatherAdapter = new DailyWeatherAdapter(weatherList);
-        recyclerView.setAdapter(dailyWeatherAdapter);
+    }
+
+    @UiThread
+    private void showError() {
+        Snackbar.make(viewRoot, R.string.error_happens, Snackbar.LENGTH_LONG)
+                .setAction(R.string.ok, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {}
+                }).show();
+    }
+
+    private List<SingleWeather> generateList(NewWeather weather) {
+        List<SingleWeather> list = new ArrayList<>();
+        NewWeather.ResultBean.DailyBean dailyBean = weather.getResult().getDaily();
+
+        List<NewWeather.ResultBean.DailyBean.TemperatureBeanX> temperatureBeanXList =
+                dailyBean.getTemperature();
+        List<NewWeather.ResultBean.DailyBean.SkyconBeanX> skyconBeanXList = dailyBean.getSkycon();
+        List<NewWeather.ResultBean.DailyBean.PrecipitationBeanX> precipitationBeanXList =
+                dailyBean.getPrecipitation();
+
+        SimpleDateFormat oldSdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+        SimpleDateFormat newSdf = new SimpleDateFormat("MM/dd", Locale.CHINA);
+        for (int i = 0; i < temperatureBeanXList.size(); i++) {
+            Date date;
+            try {
+                date = oldSdf.parse(temperatureBeanXList.get(i).getDate());
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return null;
+            }
+            String time = newSdf.format(date);
+            int icon = Utility.chooseWeatherIcon(skyconBeanXList.get(i).getValue(),
+                    precipitationBeanXList.get(i).getAvg(), HOURLY_MODE, false);
+            String skyconDesc;
+            // TODO: 05/12/2017 deal with the 'desc'
+            // 在有 desc 时优先显示 desc 的内容
+//            if (dailyBean.getDesc() == null) {
+//                skyconDesc = Utility.chooseWeatherSkycon(this, skyconBeanXList.get(i).getValue(),
+//                        precipitationBeanXList.get(i).getAvg(), HOURLY_MODE);
+//            } else {
+//                skyconDesc = dailyBean.getDesc().get(i).getValue();
+//            }
+            skyconDesc = Utility.chooseWeatherSkycon(this, skyconBeanXList.get(i).getValue(),
+                        precipitationBeanXList.get(i).getAvg(), HOURLY_MODE);
+            String temperature = stringRoundDouble(temperatureBeanXList.get(i).getMax()) + "° / "
+                    + stringRoundDouble(temperatureBeanXList.get(i).getMin()) + '°';
+            list.add(new SingleWeather(time, icon, skyconDesc, temperature));
+        }
+        return list;
     }
 }
