@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.provider.AlarmClock;
+import android.view.View;
 import android.widget.RemoteViews;
 
 import java.util.GregorianCalendar;
@@ -19,6 +20,7 @@ import top.maweihao.weather.service.WidgetSyncService;
 import top.maweihao.weather.util.LunarUtil;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.widget.BigWeatherWidget;
+import top.maweihao.weather.widget.BigWidgetConfigureActivity;
 
 /**
  * Util class for BigWeatherWidget
@@ -39,7 +41,6 @@ public class BigWidgetUtils {
     }
 
     public static void refreshWidgetView(Context context, NewWeather weather, String countyName) {
-//        String countyName = location.getCoarseLocation();
         RemoteViews bigViews = new RemoteViews(context.getPackageName(), R.layout.widget_big_weather);
 
         String description = weather.getResult().getMinutely().getDescription();
@@ -56,6 +57,25 @@ public class BigWidgetUtils {
         bigViews.setImageViewResource(R.id.big_widget_skycon, icon);
         bigViews.setTextViewText(R.id.big_widget_info, countyName + "\n" + skyconString + ' ' + tem + '°');
         bigViews.setTextViewText(R.id.big_widget_refresh_time, Utility.parseTime(context));
+
+        boolean lunar = BigWidgetConfigureActivity.loadLunarPref(context);
+        boolean card = BigWidgetConfigureActivity.loadCardPref(context);
+
+        if (card) {
+            bigViews.setViewVisibility(R.id.widget_big_card, View.VISIBLE);
+        } else {
+            bigViews.setViewVisibility(R.id.widget_big_card, View.GONE);
+        }
+
+        if (lunar) {
+            bigViews.setViewVisibility(R.id.big_widget_refresh_time, View.GONE);
+            bigViews.setViewVisibility(R.id.iv_refresh, View.GONE);
+            bigViews.setViewVisibility(R.id.big_widget_lunar, View.VISIBLE);
+        } else {
+            bigViews.setViewVisibility(R.id.big_widget_refresh_time, View.VISIBLE);
+            bigViews.setViewVisibility(R.id.iv_refresh, View.VISIBLE);
+            bigViews.setViewVisibility(R.id.big_widget_lunar, View.GONE);
+        }
 
         PendingIntent weatherPendingIntent = PendingIntent.getActivity(context, WEATHER_PENDING_INTENT_CODE,
                 new Intent(context, WeatherActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);

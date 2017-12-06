@@ -14,7 +14,7 @@ import top.maweihao.weather.util.remoteView.WidgetUtils;
  */
 public class TallWeatherWidget extends AppWidgetProvider {
 
-    public static final String TAG = "TallWeatherWidget";
+    public static final String TAG = TallWeatherWidget.class.getSimpleName();
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {

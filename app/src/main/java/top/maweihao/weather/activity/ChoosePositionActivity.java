@@ -33,47 +33,44 @@ import top.maweihao.weather.db.City;
 import top.maweihao.weather.db.County;
 import top.maweihao.weather.db.Province;
 import top.maweihao.weather.presenter.ChoosePositionActivityPresenter;
+import top.maweihao.weather.refactor.MLocation;
 import top.maweihao.weather.util.Utility;
 
 import static top.maweihao.weather.util.Constants.ChooseCode;
 import static top.maweihao.weather.util.Constants.DEBUG;
 import static top.maweihao.weather.util.Constants.isSetResultIntent;
 
-public class ChoosePositionActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, ChoosePositionActivityContract.View {
+public class ChoosePositionActivity extends AppCompatActivity
+        implements SearchView.OnQueryTextListener, ChoosePositionActivityContract.View {
 
-    public static final String TAG = "ChoosePositionActivity";
+    public static final String TAG = ChoosePositionActivity.class.getSimpleName();
 
     public static final int LEVEL_PROVINCE = 0;
-
     public static final int LEVEL_CITY = 1;
-
     public static final int LEVEL_COUNTY = 2;
+
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.posion_RecyclerView)
-    RecyclerView posionRecyclerView;
+    @BindView(R.id.positionon_RecyclerView)
+    RecyclerView positionRecyclerView;
 
     private ProgressDialog progressDialog;
-
     private ChoosePositionRecyclerViewAdapter adapter;
 
-    LinearLayoutManager linearLayoutManager;
+    private LinearLayoutManager linearLayoutManager;
 
     private List<String> dataList = new ArrayList<>();
-
     private List<String> filterList = new ArrayList<>(); //筛选后的List
 
     public static List<Province> provinceList;
-
     public static List<City> cityList;
-
     public static List<County> countyList;
 
     public static Province selectedProvince;
-
     public static City selectedCity;
-
     public static int currentLevel;
+    private String cityName;
+    private MLocation mLocation;
 
     private ChoosePositionActivityContract.Presenter presenter;
 
@@ -84,28 +81,30 @@ public class ChoosePositionActivity extends AppCompatActivity implements SearchV
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp);
+        mLocation = new MLocation(MLocation.TYPE_CHOOSE);
 
         presenter = new ChoosePositionActivityPresenter(this);
 
         linearLayoutManager = new LinearLayoutManager(this);//RecyclerView布局管理器
         linearLayoutManager.setOrientation(OrientationHelper.VERTICAL);//纵向item布局
-        adapter = new ChoosePositionRecyclerViewAdapter(null);//初始化适配器，给适配器设置数据。当前先不设置数据，获取到区域List后，再更新数据
+        adapter = new ChoosePositionRecyclerViewAdapter(null);
         adapter.openLoadAnimation(BaseQuickAdapter.ALPHAIN);
-        posionRecyclerView.addItemDecoration(
+        positionRecyclerView.addItemDecoration(
                 new HorizontalDividerItemDecoration.Builder(this)
                         .color(ContextCompat.getColor(this, R.color.split_line))
                         .sizeResId(R.dimen.recyclerView_divider_height)
                         .marginResId(R.dimen.recyclerView_divider_leftmargin, R.dimen.recyclerView_divider_rightmargin)
                         .build());//绘制分割线
-        posionRecyclerView.setHasFixedSize(true);
-        posionRecyclerView.setLayoutManager(linearLayoutManager);
-        posionRecyclerView.setAdapter(adapter);
+        positionRecyclerView.setHasFixedSize(true);
+        positionRecyclerView.setLayoutManager(linearLayoutManager);
+        positionRecyclerView.setAdapter(adapter);
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Utility.closeSoftInput(ChoosePositionActivity.this);//关闭软键盘
                 if (currentLevel == LEVEL_PROVINCE) {
-                    /*通过比对原始list数据和筛选后所点击的name，名字相同则为当前点击的选项。
+                    /*
+                    通过比对原始list数据和筛选后所点击的name，名字相同则为当前点击的选项。
                      如果数组越界，则没有进行筛选，直接取出原始数据
                     */
                     try {
@@ -127,6 +126,7 @@ public class ChoosePositionActivity extends AppCompatActivity implements SearchV
                     try {
                         for (City city : cityList) {
                             if (city.getCityName().equals(filterList.get(position))) {
+                                cityName = city.getCityName();
                                 selectedCity = city;
                                 break;
                             }
@@ -134,8 +134,7 @@ public class ChoosePositionActivity extends AppCompatActivity implements SearchV
                     } catch (IndexOutOfBoundsException e) {
                         selectedCity = cityList.get(position);
                     } finally {
-                        if (DEBUG)
-                            Log.i(TAG, "selectedCity = " + selectedCity.getCityName());
+                        Log.v(TAG, "selectedCity = " + selectedCity.getCityName());
                         filterList = new ArrayList<>();
                         presenter.queryCounties();
                     }
@@ -154,11 +153,17 @@ public class ChoosePositionActivity extends AppCompatActivity implements SearchV
                     } finally {
                         if (DEBUG)
                             Log.i(TAG, "countyName = " + countyName);
-                        isSetResultIntent=true;
+                        isSetResultIntent = true;
+                        mLocation.setCity(cityName);
+                        mLocation.setCounty(countyName);
                         Intent intent = new Intent();
-                        intent.putExtra("countyName", countyName);
+//                        intent.putExtra("countyName", countyName);
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("location", mLocation);
+                        intent.putExtras(bundle);
                         setResult(ChooseCode, intent);
-                        Toast.makeText(ChoosePositionActivity.this, getResources().getString(R.string.auto_locate_disabled), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ChoosePositionActivity.this,
+                                getResources().getString(R.string.auto_locate_disabled), Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 }
@@ -179,7 +184,6 @@ public class ChoosePositionActivity extends AppCompatActivity implements SearchV
         searchView.setOnQueryTextListener(this);
         searchView.setInputType(InputType.TYPE_CLASS_TEXT);
         searchView.setQueryHint("地区名");
-
         return true;
     }
 
@@ -232,7 +236,7 @@ public class ChoosePositionActivity extends AppCompatActivity implements SearchV
             public void run() {
                 if (progressDialog == null) {
                     progressDialog = new ProgressDialog(ChoosePositionActivity.this);
-                    progressDialog.setMessage("正在加载...");
+                    progressDialog.setMessage("loading...");
                     progressDialog.setCanceledOnTouchOutside(false);
                 }
                 progressDialog.show();

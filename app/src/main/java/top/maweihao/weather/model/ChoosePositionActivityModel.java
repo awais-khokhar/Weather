@@ -51,23 +51,61 @@ public class ChoosePositionActivityModel implements ChoosePositionActivityContra
         presenter.setToolBarTitle("中国");
 
         provinceList = DataSupport.findAll(Province.class);
-
         if (provinceList.size() > 0) {
             dataList.clear();
             for (Province province : provinceList) {
                 dataList.add(province.getProvinceName());
-                if (DEBUG)
-                    Log.i(TAG, "dataList add " + province.getProvinceName());
+                Log.i(TAG, "dataList add " + province.getProvinceName());
             }
             presenter.setRecyclerViewData(dataList);
-            if (DEBUG)
-                Log.d(TAG, "queryProvinces: adapter has been notified");
+            Log.d(TAG, "queryProvinces: adapter has been notified");
             ChoosePositionActivity.currentLevel = LEVEL_PROVINCE;
         } else {
             String address = "http://guolin.tech/api/china";
             queryFromServer(address, "province");
         }
+    }
 
+    @Override
+    public void queryCities() {
+        presenter.setToolBarTitle(selectedProvince.getProvinceName());
+
+        cityList = DataSupport.where("provinceid = ?",
+                String.valueOf(selectedProvince.getId())).find(City.class);
+        if (cityList.size() > 0) {
+            dataList.clear();
+            for (City city : cityList) {
+                dataList.add(city.getCityName());
+                Log.i(TAG, "dataList add " + city.getCityName());
+            }
+            presenter.setRecyclerViewData(dataList);
+            ChoosePositionActivity.currentLevel = LEVEL_CITY;
+        } else {
+            int provinceCode = selectedProvince.getProvinceCode();
+            String address = "http://guolin.tech/api/china/" + provinceCode;
+            queryFromServer(address, "city");
+        }
+    }
+
+    @Override
+    public void queryCounties() {
+//        Log.d(TAG, "queryCounties: on");
+        presenter.setToolBarTitle(selectedCity.getCityName());
+        countyList = DataSupport.where("cityid = ?", String.valueOf(selectedCity.getId())).find(County.class);
+//        Log.d(TAG, "queryCounties: countyList.size" + cityList.size());
+        if (countyList.size() > 0) {
+            dataList.clear();
+            for (County county : countyList) {
+                dataList.add(county.getCountyName());
+            }
+            presenter.setRecyclerViewData(dataList);
+            ChoosePositionActivity.currentLevel = LEVEL_COUNTY;
+        } else {
+            int provinceCode = selectedProvince.getProvinceCode();
+            int cityCode = selectedCity.getCityCode();
+            String address = "http://guolin.tech/api/china/" + provinceCode + "/" + cityCode;
+            queryFromServer(address, "county");
+        }
     }
 
     private void queryFromServer(String address, final String type) {
@@ -107,51 +145,6 @@ public class ChoosePositionActivityModel implements ChoosePositionActivityContra
     }
 
     @Override
-    public void queryCounties() {
-        if (DEBUG)
-            Log.d(TAG, "queryCounties: on");
-
-        presenter.setToolBarTitle(selectedCity.getCityName());
-
-        countyList = DataSupport.where("cityid = ?", String.valueOf(selectedCity.getId())).find(County.class);
-//        Log.d(TAG, "queryCounties: countyList.size" + cityList.size());
-        if (countyList.size() > 0) {
-            dataList.clear();
-            for (County county : countyList) {
-                dataList.add(county.getCountyName());
-            }
-
-            presenter.setRecyclerViewData(dataList);
-            ChoosePositionActivity.currentLevel = LEVEL_COUNTY;
-        } else {
-            int provinceCode = selectedProvince.getProvinceCode();
-            int cityCode = selectedCity.getCityCode();
-            String address = "http://guolin.tech/api/china/" + provinceCode + "/" + cityCode;
-            queryFromServer(address, "county");
-        }
-    }
-
-    @Override
-    public void queryCities() {
-        presenter.setToolBarTitle(selectedProvince.getProvinceName());
-
-        cityList = DataSupport.where("provinceid = ?", String.valueOf(selectedProvince.getId())).find(City.class);
-        if (cityList.size() > 0) {
-            dataList.clear();
-            for (City city : cityList) {
-                dataList.add(city.getCityName());
-            }
-            presenter.setRecyclerViewData(dataList);
-            ChoosePositionActivity.currentLevel = LEVEL_CITY;
-
-        } else {
-            int provinceCode = selectedProvince.getProvinceCode();
-            String address = "http://guolin.tech/api/china/" + provinceCode;
-            queryFromServer(address, "city");
-        }
-    }
-
-    @Override
     public List<String> filterData(List<String> list, String filterStr) {
         List<String> filterList = new ArrayList<>();
         for (String str : list) {
@@ -165,7 +158,6 @@ public class ChoosePositionActivityModel implements ChoosePositionActivityContra
     private boolean handleProvinceResponse(String response) {
         if (!TextUtils.isEmpty(response)) {
             try {
-
                 JSONArray allProvinces = new JSONArray(response);
                 for (int i = 0; i < allProvinces.length(); i++) {
                     JSONObject provinceObject = allProvinces.getJSONObject(i);

@@ -9,85 +9,45 @@
         android:id="@+id/widget_tall_card"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/widget_card"
+        android:src="@drawable/widget_dark_card"
         android:visibility="gone"
         tools:ignore="ContentDescription" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
             <TextClock
                 android:id="@+id/tall_widget_clock"
                 style="@style/widget_text_clock"
-                android:format12Hour="hh\nmm"
-                android:format24Hour="HH\nmm"
-                android:textSize="64sp" />
+                android:fontFamily="@font/s8_clock"
+                android:format12Hour="hh"
+                android:format24Hour="HH"
+                android:textSize="64sp"
+                android:layout_centerHorizontal="true"/>
+
+            <TextClock
+                style="@style/widget_text_clock"
+                android:fontFamily="@font/s8_clock"
+                android:format12Hour="mm"
+                android:format24Hour="mm"
+                android:textSize="64sp"
+                android:layout_below="@id/tall_widget_clock"
+                android:layout_centerHorizontal="true"/>
 
         </RelativeLayout>
-
-        <!--<LinearLayout-->
-        <!--android:id="@+id/tall_widget_clock"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:layout_weight="2"-->
-        <!--android:orientation="vertical"-->
-        <!--android:weightSum="2">-->
-
-        <!--<RelativeLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:layout_weight="1">-->
-
-        <!--<TextClock-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:gravity="center"-->
-        <!--android:fontFamily="@font/s8_clock"-->
-        <!--android:format12Hour="hh"-->
-        <!--android:format24Hour="HH"-->
-        <!--android:shadowColor="@color/colorTextDark"-->
-        <!--android:shadowDx="1.0"-->
-        <!--android:shadowDy="1.0"-->
-        <!--android:shadowRadius="1.0"-->
-        <!--android:textColor="#fafafa"-->
-        <!--android:textSize="72sp" />-->
-        <!--</RelativeLayout>-->
-
-        <!--<RelativeLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:layout_weight="1">-->
-
-        <!--<TextClock-->
-        <!--android:id="@+id/tall_widget_minute"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_centerInParent="true"-->
-        <!--android:fontFamily="@font/s8_clock"-->
-        <!--android:format12Hour="mm"-->
-        <!--android:format24Hour="mm"-->
-        <!--android:gravity="center"-->
-        <!--android:shadowColor="@color/colorTextDark"-->
-        <!--android:shadowDx="1.0"-->
-        <!--android:shadowDy="1.0"-->
-        <!--android:shadowRadius="1.0"-->
-        <!--android:textColor="#fafafa"-->
-        <!--android:textSize="72sp" />-->
-
-        <!--</RelativeLayout>-->
-        <!--</LinearLayout>-->
 
         <RelativeLayout
             android:id="@+id/tall_widget_weather"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
                 <LinearLayout
                     android:id="@+id/tall_widget_date_all"

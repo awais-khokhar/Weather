@@ -9,7 +9,7 @@
         android:id="@+id/widget_tall_card"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/widget_card"
+        android:src="@drawable/widget_dark_card"
         android:visibility="gone"
         tools:ignore="ContentDescription" />
 
@@ -26,10 +26,19 @@
             <TextClock
                 android:id="@+id/tall_widget_clock"
                 style="@style/widget_text_clock"
+                android:fontFamily="@font/s8_clock"
+                android:format12Hour="hh"
+                android:format24Hour="HH"
+                android:textSize="64sp"
+                android:layout_centerHorizontal="true"/>
+
+            <TextClock
+                style="@style/widget_text_clock"
                 android:fontFamily="@font/font_clock_text"
-                android:format12Hour="hh\nmm"
-                android:format24Hour="HH\nmm"
-                android:textSize="64sp" />
+                android:format12Hour="mm"
+                android:format24Hour="mm"
+                android:textSize="64sp"
+                android:layout_below="@id/tall_widget_clock"/>
 
         </RelativeLayout>
 

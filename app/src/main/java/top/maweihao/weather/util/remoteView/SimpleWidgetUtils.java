@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.provider.AlarmClock;
 import android.support.annotation.NonNull;
+import android.view.View;
 import android.widget.RemoteViews;
 
 import java.util.GregorianCalendar;
@@ -23,6 +24,7 @@ import top.maweihao.weather.util.HeWeatherUtil;
 import top.maweihao.weather.util.LunarUtil;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.widget.SimpleWeatherWidget;
+import top.maweihao.weather.widget.SimpleWidgetConfigureActivity;
 
 /**
  * Util class for SimpleWeatherWidget
@@ -116,8 +118,22 @@ public class SimpleWidgetUtils {
         simpleViews.setImageViewResource(R.id.simple_widget_skycon, icon);
         simpleViews.setTextViewText(R.id.simple_widget_info, countyName + " | " + skyconString + ' ' + tem + '°');
 
-        LunarUtil lunarUtilDate = new LunarUtil(new GregorianCalendar());
-        simpleViews.setTextViewText(R.id.simple_widget_lunar, lunarUtilDate.toString());
+        boolean lunar = SimpleWidgetConfigureActivity.loadLunarPref(context);
+        boolean card = SimpleWidgetConfigureActivity.loadCardPref(context);
+
+        if (lunar) {
+            simpleViews.setViewVisibility(R.id.simple_widget_lunar, View.VISIBLE);
+            LunarUtil lunarUtilDate = new LunarUtil(new GregorianCalendar());
+            simpleViews.setTextViewText(R.id.simple_widget_lunar, lunarUtilDate.toString());
+        } else {
+            simpleViews.setViewVisibility(R.id.simple_widget_lunar, View.GONE);
+        }
+
+        if (card) {
+            simpleViews.setViewVisibility(R.id.widget_big_card, View.VISIBLE);
+        } else {
+            simpleViews.setViewVisibility(R.id.widget_big_card, View.GONE);
+        }
 
         PendingIntent weatherPendingIntent = PendingIntent.getActivity(context, WEATHER_PENDING_INTENT_CODE,
                 new Intent(context, WeatherActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);

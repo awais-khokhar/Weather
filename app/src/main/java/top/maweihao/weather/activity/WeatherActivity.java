@@ -422,18 +422,27 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 break;
             case ChoosePositionActivityRequestCode:
                 if (resultCode == ChooseCode) {
-                    countyName = data.getStringExtra("countyName");
-                    locationDetail = countyName;
-                    setCounty(countyName);
-                    setLocationDetail(locationDetail);
-                    Log.d(TAG, "onActivityResult: county_return: " + countyName);
-                    configContact.applyCountyName(countyName);
-                    configContact.applyLocationDetail(locationDetail);
-                    configContact.applyCountyNameLastUpdateTime(System.currentTimeMillis());
+//                    countyName = data.getStringExtra("countyName");
+//                    locationDetail = countyName;
+//                    setCounty(countyName);
+//                    setLocationDetail(locationDetail);
+//                    Log.d(TAG, "onActivityResult: county_return: " + countyName);
+//                    configContact.applyCountyName(countyName);
+//                    configContact.applyLocationDetail(locationDetail);
+//                    configContact.applyCountyNameLastUpdateTime(System.currentTimeMillis());
                     configContact.applyAutoLocate(false);
-                    if (presenter != null) {
-                        presenter.refreshWeather(true, countyName);
+
+                    Bundle bundle = data.getExtras();
+                    if (bundle != null) {
+                        MLocation location = bundle.getParcelable("location");
+                        String desc = TextUtils.isEmpty(location.getCity()) ? location.getCounty()
+                                : location.getCity() + "" + location.getCounty();
+                        Log.d(TAG, "onActivityResult: desc = " + desc);
+                        newPresenter.refreshChosenWeather(desc);
+                    } else {
+                        Log.e(TAG, "onActivityResult: cannot get parcelable location");
                     }
+
                 }
                 break;
             default:
@@ -443,16 +452,13 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
-            case Constants.requestLocationCode:
-                SimplePermissionUtils.onRequestPermissionsResult(requestCode, permissions, grantResults);
-                break;
             case Constants.newRequestLocationCode:
                 newPresenter.locate();
                 break;
             default:
+                Log.e(TAG, "onRequestPermissionsResult: undefined request code" + requestCode);
                 break;
         }
-
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 

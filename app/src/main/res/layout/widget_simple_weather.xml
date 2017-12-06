@@ -6,12 +6,20 @@
     android:background="@android:color/transparent"
     tools:background="#FF424242">
 
+    <ImageView
+        android:id="@+id/widget_big_card"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:src="@drawable/widget_dark_card"
+        android:visibility="gone"
+        tools:ignore="ContentDescription" />
 
     <RelativeLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true">
+        android:layout_centerInParent="true"
+        android:orientation="horizontal">
 
         <RelativeLayout
             android:id="@+id/widget_clock_day_horizontal_clockContainer"
@@ -26,46 +34,47 @@
                 style="@style/widget_text_clock"
                 android:layout_centerHorizontal="true"
                 android:layout_marginLeft="24dp"
-                android:typeface="monospace"
                 android:shadowColor="@color/colorTextDark"
                 android:shadowDx="1.0"
                 android:shadowDy="1.0"
                 android:shadowRadius="1.0"
+                android:typeface="monospace"
                 tools:ignore="RtlHardcoded" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_below="@id/big_widget_clock"
-                android:layout_centerHorizontal="true">
-            <TextClock
-                android:id="@+id/widget_clock_day_title"
-                style="@style/content_text"
-                android:format12Hour="MM/dd EE"
-                android:format24Hour="MM/dd EE"
-                android:maxLines="1"
-                android:shadowColor="@color/colorTextDark"
-                android:shadowDx="1.0"
-                android:shadowDy="1.0"
-                android:shadowRadius="1.0"
-                android:text="@string/na"
-                android:textColor="@color/colorTextLight"
-                tools:text="05-17 周三" />
+                android:layout_centerHorizontal="true"
+                android:orientation="horizontal">
 
-            <TextView
-                android:layout_marginStart="8dp"
-                android:id="@+id/simple_widget_lunar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:shadowColor="@color/colorTextDark"
-                android:textColor="@color/colorTextLight"
-                android:shadowDx="1.0"
-                android:shadowDy="1.0"
-                android:shadowRadius="1.0"
-                android:textSize="14sp"
-                android:visibility="visible"
-                tools:text="十月初一"/>
+                <TextClock
+                    android:id="@+id/widget_clock_day_title"
+                    style="@style/content_text"
+                    android:format12Hour="MM/dd EE"
+                    android:format24Hour="MM/dd EE"
+                    android:maxLines="1"
+                    android:shadowColor="@color/colorTextDark"
+                    android:shadowDx="1.0"
+                    android:shadowDy="1.0"
+                    android:shadowRadius="1.0"
+                    android:text="@string/na"
+                    android:textColor="@color/colorTextLight"
+                    tools:text="05-17 周三" />
+
+                <TextView
+                    android:id="@+id/simple_widget_lunar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:shadowColor="@color/colorTextDark"
+                    android:shadowDx="1.0"
+                    android:shadowDy="1.0"
+                    android:shadowRadius="1.0"
+                    android:textColor="@color/colorTextLight"
+                    android:textSize="14sp"
+                    android:visibility="visible"
+                    tools:text="十月初一" />
             </LinearLayout>
 
         </RelativeLayout>
@@ -109,9 +118,9 @@
     </RelativeLayout>
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/simple_widget_left"

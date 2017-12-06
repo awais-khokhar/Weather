@@ -18,7 +18,6 @@ public class ChoosePositionActivityPresenter implements ChoosePositionActivityCo
         model = new ChoosePositionActivityModel(this);
     }
 
-
     @Override
     public void closeProgressDialog() {
         view.closeProgressDialog();

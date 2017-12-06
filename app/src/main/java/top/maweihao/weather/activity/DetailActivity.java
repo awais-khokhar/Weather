@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -48,6 +49,8 @@ public class DetailActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     @BindView(R.id.view_root)
     CoordinatorLayout viewRoot;
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +81,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void fetchData() {
+        startSwipe();
         List<SingleWeather> weatherList =
                 getIntent().getParcelableArrayListExtra(KEY_DETAIL_ACTIVITY_WEATHER_LIST);
         if (weatherList == null) {
@@ -87,6 +91,7 @@ public class DetailActivity extends AppCompatActivity {
                     .subscribe(new Consumer<NewWeather>() {
                         @Override
                         public void accept(NewWeather weather) throws Exception {
+                            stopSwipe();
                             List<SingleWeather> list = generateList(weather);
                             if (list == null) {
                                 showError();
@@ -100,6 +105,7 @@ public class DetailActivity extends AppCompatActivity {
                     }, new Consumer<Throwable>() {
                         @Override
                         public void accept(Throwable throwable) throws Exception {
+                            stopSwipe();
                             Log.e(TAG, "fetchData: get weather cached failed" + throwable);
                             showError();
                         }
@@ -109,6 +115,7 @@ public class DetailActivity extends AppCompatActivity {
 
     @UiThread
     private void showError() {
+        stopSwipe();
         Snackbar.make(viewRoot, R.string.error_happens, Snackbar.LENGTH_LONG)
                 .setAction(R.string.ok, new View.OnClickListener() {
                     @Override
@@ -155,5 +162,13 @@ public class DetailActivity extends AppCompatActivity {
             list.add(new SingleWeather(time, icon, skyconDesc, temperature));
         }
         return list;
+    }
+
+    private void stopSwipe() {
+        progressBar.setVisibility(View.GONE);
+    }
+
+    private void startSwipe() {
+        progressBar.setVisibility(View.VISIBLE);
     }
 }

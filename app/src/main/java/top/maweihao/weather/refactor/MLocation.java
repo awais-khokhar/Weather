@@ -1,5 +1,7 @@
 package top.maweihao.weather.refactor;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.TextUtils;
 
 import org.greenrobot.greendao.annotation.Entity;
@@ -11,7 +13,7 @@ import org.greenrobot.greendao.annotation.Generated;
  * Created by maweihao on 26/11/2017.
  */
 @Entity
-public class MLocation {
+public class MLocation implements Parcelable {
 
     public static final int TYPE_CHOOSE = 0;
     public static final int TYPE_IP = 1;
@@ -208,4 +210,46 @@ public class MLocation {
     public boolean getNeedGeocode() {
         return this.needGeocode;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.locateType);
+        dest.writeInt(this.rawBaiduLocateCode);
+        dest.writeByte(this.needGeocode ? (byte) 1 : (byte) 0);
+        dest.writeFloat(this.latitude);
+        dest.writeFloat(this.longitude);
+        dest.writeString(this.province);
+        dest.writeString(this.city);
+        dest.writeString(this.county);
+        dest.writeString(this.street);
+    }
+
+    protected MLocation(Parcel in) {
+        this.locateType = in.readInt();
+        this.rawBaiduLocateCode = in.readInt();
+        this.needGeocode = in.readByte() != 0;
+        this.latitude = in.readFloat();
+        this.longitude = in.readFloat();
+        this.province = in.readString();
+        this.city = in.readString();
+        this.county = in.readString();
+        this.street = in.readString();
+    }
+
+    public static final Parcelable.Creator<MLocation> CREATOR = new Parcelable.Creator<MLocation>() {
+        @Override
+        public MLocation createFromParcel(Parcel source) {
+            return new MLocation(source);
+        }
+
+        @Override
+        public MLocation[] newArray(int size) {
+            return new MLocation[size];
+        }
+    };
 }

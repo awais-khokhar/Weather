@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
-        android:src="@drawable/widget_card"
+        android:src="@drawable/widget_dark_card"
         android:visibility="gone"
         tools:ignore="ContentDescription" />
 
@@ -71,7 +71,7 @@
                 android:shadowRadius="1.0"
                 android:text="@string/na"
                 android:textColor="@color/colorTextLight"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 tools:ignore="RtlHardcoded"
                 tools:text="Partly Could\n21℃" />
 
@@ -90,8 +90,42 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
+                    <TextClock
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:format12Hour="MM/dd EE"
+                        android:format24Hour="MM/dd EE"
+                        android:textSize="16sp"
+                        android:shadowColor="@color/colorTextDark"
+                        android:shadowDx="1.0"
+                        android:shadowDy="1.0"
+                        android:shadowRadius="1.0"
+                        android:textColor="@color/colorTextLight" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/big_widget_lunar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:shadowColor="@color/colorTextDark"
+                        android:shadowDx="1.0"
+                        android:shadowDy="1.0"
+                        android:shadowRadius="1.0"
+                        android:textColor="@color/colorTextLight"
+                        android:textSize="14sp"
+                        android:visibility="visible" />
+
                     <TextView
                         android:id="@+id/big_widget_refresh_time"
+                        android:layout_marginStart="8dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="left"
@@ -103,57 +137,19 @@
                         android:text="@string/na"
                         android:textAlignment="gravity"
                         android:textColor="@color/colorTextLight"
-                        android:textSize="14sp"
+                        android:textSize="16sp"
                         android:visibility="gone"
                         tools:ignore="RtlHardcoded"
                         tools:text="18:00" />
 
-                    <TextClock
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:format12Hour="MM/dd EE"
-                        android:format24Hour="MM/dd EE"
-                        android:shadowColor="@color/colorTextDark"
-                        android:textColor="@color/colorTextLight"
-                        android:shadowDx="1.0"
-                        android:shadowDy="1.0"
-                        android:shadowRadius="1.0" />
-
                     <ImageView
                         android:id="@+id/iv_refresh"
+                        android:layout_marginStart="8dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_refresh_gray_24dp"
                         android:visibility="gone" />
-                </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <!--<TextClock-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:format12Hour="EE"-->
-                        <!--android:format24Hour="EE"-->
-                        <!--android:shadowColor="@color/colorTextDark"-->
-                        <!--android:textColor="@color/colorTextLight"-->
-                        <!--android:shadowDx="1.0"-->
-                        <!--android:shadowDy="1.0"-->
-                        <!--android:shadowRadius="1.0" />-->
-
-                    <TextView
-                        android:layout_marginStart="8dp"
-                        android:id="@+id/big_widget_lunar"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:shadowColor="@color/colorTextDark"
-                        android:textColor="@color/colorTextLight"
-                        android:shadowDx="1.0"
-                        android:shadowDy="1.0"
-                        android:shadowRadius="1.0"
-                        android:textSize="14sp"
-                        android:visibility="visible" />
                 </LinearLayout>
 
 
@@ -167,7 +163,6 @@
 
             <TextView
                 android:id="@+id/big_widget_description"
-                style="@style/content_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
@@ -177,7 +172,8 @@
                 android:shadowDy="1.0"
                 android:shadowRadius="1.0"
                 android:textColor="@color/colorTextLight"
-                android:textSize="13sp"
+                android:textColorLink="@color/colorTextDark2nd"
+                android:textSize="14sp"
                 tools:ignore="RtlHardcoded"
                 tools:text="未来两小时不会下雨，放心出门吧" />
 

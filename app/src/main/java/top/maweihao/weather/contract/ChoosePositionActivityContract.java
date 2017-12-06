@@ -7,8 +7,9 @@ import java.util.List;
  */
 
 public interface ChoosePositionActivityContract {
-    public interface View {
+    interface View {
         void showProgressDialog();
+
         void closeProgressDialog();
 
         void showToastMsg(String msg);
@@ -20,7 +21,7 @@ public interface ChoosePositionActivityContract {
         void setRecyclerViewFilterData(List<String> dataList);
     }
 
-    public interface Presenter {
+    interface Presenter {
 
         void closeProgressDialog();
 
@@ -41,8 +42,8 @@ public interface ChoosePositionActivityContract {
         void filterListData(List<String> list, String filterStr);
     }
 
-    public interface Model {
-        void  queryProvinces();
+    interface Model {
+        void queryProvinces();
 
         void queryCounties();
 

@@ -30,7 +30,6 @@ public class HttpUtil {
     private static HeWeatherApi heWeatherApi;
     private static BDLocateApi locateApi;
 
-    @Deprecated
     public static void sendOkHttpRequest(String address, okhttp3.Callback callback) {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(address).build();
@@ -99,6 +98,7 @@ public class HttpUtil {
 
     public static Observable<BaiDuChoosePositionBean> getCoordinateByDesc(String desc) {
         return getBDLocateApi().getCoordinateByDesc(desc, "json",
-                Constants.BaiduKey, Constants.mBaiduCode);
+                Constants.BaiduKey, Constants.mBaiduCode)
+                .subscribeOn(Schedulers.io());
     }
 }
