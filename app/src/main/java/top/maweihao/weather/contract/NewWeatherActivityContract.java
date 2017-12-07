@@ -25,7 +25,7 @@ public interface NewWeatherActivityContract {
     }
 
     interface newPresenter extends BasePresenter {
-        void fetchData();
+        void fetchData(boolean ignoreInterval);
         void refreshLocalWeather();
         void refreshChosenWeather(String desc);
         void locate();

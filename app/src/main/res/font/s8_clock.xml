@@ -7,6 +7,6 @@
         android:fontStyle="normal"
         app:font="@font/font_clock_text"
         app:fontStyle="normal"
-        tools:targetApi="o" />
+        tools:ignore="UnusedAttribute" />
 
 </font-family>

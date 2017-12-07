@@ -123,7 +123,7 @@ public class WeatherRepository implements WeatherData {
                 .doOnNext(new Consumer<NewHeWeatherNow>() {
                     @Override
                     public void accept(NewHeWeatherNow newHeWeatherNow) throws Exception {
-                        saveWeather(weather);
+//                        saveWeather(newHeWeatherNow);
                     }
                 });
     }

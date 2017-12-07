@@ -56,11 +56,13 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
 
     private Context context;
     private LocationClient mLocationClient;
-    LocationClientOption option;
+    private LocationClientOption option;
 
+    private long lastUpdateTime;
     private long locateTime;  //for Baidu locate
-//    private NewWeather weather;  //for widget refresh
-//    private MLocation location; //for widget refresh
+    private NewWeather weather4widget;  //for widget refresh
+    private String countyName4widget; //for widget refresh
+    private volatile boolean isWidgetOn = false;
 
     public NewWeatherPresenter(@NonNull NewWeatherActivityContract.newView<NewWeatherActivityContract.newPresenter> view,
                                @NonNull WeatherData model, PreferenceConfigContact contact) {
@@ -75,8 +77,9 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
 
     @Override
     public void subscribe() {
-        fetchData();
-        locate();
+        fetchData(false);
+
+//        locate();
     }
 
     @Override
@@ -99,10 +102,12 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
     public void onStop() {
         stopBaiduLocate();
         compositeDisposable.clear();
+        weather4widget = null;
+        countyName4widget = null;
     }
 
     @Override
-    public void fetchData() {
+    public void fetchData(final boolean ignoreInterval) {
         Disposable disposable = model.getWeatherCached()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -110,6 +115,22 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                     @Override
                     public void accept(NewWeather weather) throws Exception {
                         view.showWeather(weather);
+                        MLocation location = model.getLocationCached();
+                        view.showLocation(location);
+                        if (ignoreInterval) {
+                            locate();
+                        } else {
+                            long interval = (System.currentTimeMillis() - weather.getServer_time() * 1000)
+                                    / (60 * 1000);
+                            if (interval > 5) {  //hardcode the interval temporary
+                                locate();
+                            } else {
+                                Log.d(TAG, "fetchData: no need to refresh, last " + interval +" ago");
+                                if (WidgetUtils.hasAnyWidget(context)) {
+                                    updateWidget(weather, location.getCoarseLocation());
+                                }
+                            }
+                        }
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -175,8 +196,9 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
     }
 
     @Override
-    public void refreshWeather(MLocation location) {
+    public void refreshWeather(final MLocation location) {
         final boolean needGeo = location.isNeedGeocode();
+        isWidgetOn = WidgetUtils.hasAnyWidget(context);
         Log.d(TAG, "refreshWeather " +
                 location.getLocationStringReversed() + " " + location.getLocateType());
         if (needGeo) {
@@ -186,18 +208,27 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
             view.showLocation(location);
         }
         model.getWeather(location.getLocationStringReversed())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<NewWeather>() {
                     @Override
                     public void accept(NewWeather weather) throws Exception {
                         if (needGeo) {
                             if (!workingFlag) {
                                 view.setRefreshingState(false);
+                                if (isWidgetOn) {
+                                    updateWidget(weather, countyName4widget);
+                                }
                             } else {
                                 Log.d(TAG, "get weather: cannot stop swipe now");
                                 workingFlag = false;
+                                if (isWidgetOn) {
+                                    weather4widget = weather;
+                                }
                             }
                         } else {
                             view.setRefreshingState(false);
+                            updateWidget(weather, location.getCoarseLocation());
                         }
                         if (weather.getStatus().equals("ok")) {
                             view.showWeather(weather);
@@ -227,6 +258,8 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
     private void geocodeLocationAndSave(final MLocation location, final boolean showLocation) {
         Disposable disposable =
                 HttpUtil.getAddressDetail(location.getLocationString())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<BaiDuCoordinateBean>() {
                     @Override
                     public void accept(BaiDuCoordinateBean baiDuCoordinateBean) throws Exception {
@@ -235,10 +268,15 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                             if (showLocation) {
                                 if (!workingFlag) {
                                     view.setRefreshingState(false);
-
+                                    if (isWidgetOn) {
+                                        updateWidget(weather4widget, location.getCoarseLocation());
+                                    }
                                 } else {
                                     Log.d(TAG, "get location: cannot stop swipe now");
                                     workingFlag = false;
+                                    if (isWidgetOn) {
+                                        countyName4widget = location.getCoarseLocation();
+                                    }
                                 }
                                 view.showLocation(location);
                             }
@@ -387,10 +425,14 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
         }
     }
 
-    private void updateWidget(NewWeather weatherView) {
-        if (WidgetUtils.hasAnyWidget(context)) {
-            ServiceUtil.startWidgetSyncService(context, false);
-            WidgetUtils.refreshWidget(context, weatherView, );
+    private void updateWidget(NewWeather weatherView, String location) {
+        if (weatherView == null || location == null) {
+            Log.e(TAG, "updateWidget: null!" + weatherView + location);
+        } else {
+            if (WidgetUtils.hasAnyWidget(context)) {
+                ServiceUtil.startWidgetSyncService(context, false);
+                WidgetUtils.refreshWidget(context, weatherView, location);
+            }
         }
     }
 

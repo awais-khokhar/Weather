@@ -24,7 +24,7 @@ public class BootCompleteReceiver extends BroadcastReceiver {
             Intent startIntent = new Intent(context, PushService.class);
             context.startService(startIntent);
             if (DEBUG) {
-                Toast.makeText(context, "Weather: SyncService started", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Started", Toast.LENGTH_SHORT).show();
             }
         }
     }

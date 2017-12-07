@@ -18,93 +18,95 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <RelativeLayout
+        <TextClock
+            android:id="@+id/tall_widget_clock"
+            style="@style/widget_text_clock"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_weight="6"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="@font/s8_clock"
+            android:format12Hour="hh\nmm"
+            android:format24Hour="HH\nmm"
+            android:gravity="center" />
 
-            <TextClock
-                android:id="@+id/tall_widget_clock"
-                style="@style/widget_text_clock"
-                android:fontFamily="@font/s8_clock"
-                android:format12Hour="hh"
-                android:format24Hour="HH"
-                android:textSize="64sp"
-                android:layout_centerHorizontal="true"/>
+        <!--<TextClock-->
+            <!--style="@style/widget_text_clock"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight="3"-->
+            <!--android:autoSizeTextType="uniform"-->
+            <!--android:fontFamily="@font/s8_clock"-->
+            <!--android:format12Hour="mm"-->
+            <!--android:format24Hour="mm"-->
+            <!--android:gravity="center_horizontal" />-->
 
-            <TextClock
-                style="@style/widget_text_clock"
-                android:fontFamily="@font/s8_clock"
-                android:format12Hour="mm"
-                android:format24Hour="mm"
-                android:textSize="64sp"
-                android:layout_below="@id/tall_widget_clock"
-                android:layout_centerHorizontal="true"/>
-
-        </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/tall_widget_weather"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
-
-                <LinearLayout
-                    android:id="@+id/tall_widget_date_all"
-                    android:layout_alignParentTop="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:orientation="horizontal">
-
-                    <TextClock
-                        android:id="@+id/tall_widget_date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-light"
-                        android:format12Hour="MM/dd EE"
-                        android:format24Hour="MM/dd EE"
-                        android:shadowColor="@color/colorTextDark"
-                        android:shadowDx="1.0"
-                        android:shadowDy="1.0"
-                        android:shadowRadius="1.0"
-                        android:textColor="#fafafa"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/tall_widget_lunar"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:paddingStart="7dp"
-                        android:paddingEnd="7dp"
-                        android:shadowColor="@color/colorTextDark"
-                        android:shadowDx="1.0"
-                        android:shadowDy="1.0"
-                        android:shadowRadius="1.0"
-                        android:textColor="#fafafa"
-                        android:textSize="14sp"
-                        tools:text="十月廿一" />
-
-                </LinearLayout>
+            android:layout_weight="3">
 
             <ImageView
                 android:id="@+id/tall_widget_skycon"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_centerInParent="true"
+                android:layout_centerVertical="true"
                 android:layout_marginBottom="10dp"
                 android:layout_marginTop="10dp"
-                android:src="@mipmap/weather_none_available"
-                android:layout_below="@id/tall_widget_date_all" />
+                android:src="@mipmap/weather_none_available" />
+
+            <LinearLayout
+                android:id="@+id/tall_widget_date_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/tall_widget_skycon"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:orientation="horizontal">
+
+                <TextClock
+                    android:id="@+id/tall_widget_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-light"
+                    android:format12Hour="MM/dd EE"
+                    android:format24Hour="MM/dd EE"
+                    android:shadowColor="@color/colorTextDark"
+                    android:shadowDx="1.0"
+                    android:shadowDy="1.0"
+                    android:shadowRadius="1.0"
+                    android:textColor="#fafafa"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tall_widget_lunar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingEnd="7dp"
+                    android:paddingStart="7dp"
+                    android:shadowColor="@color/colorTextDark"
+                    android:shadowDx="1.0"
+                    android:shadowDy="1.0"
+                    android:shadowRadius="1.0"
+                    android:textColor="#fafafa"
+                    android:textSize="14sp"
+                    tools:text="十月廿一" />
+
+            </LinearLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tall_widget_skycon">
+                android:layout_below="@id/tall_widget_skycon"
+                android:layout_centerHorizontal="true">
 
                 <TextView
                     android:id="@+id/tall_widget_info"
+                    style="@style/content_text"
                     android:layout_centerHorizontal="true"
                     android:maxLines="1"
                     android:shadowColor="@color/colorTextDark"
@@ -113,8 +115,7 @@
                     android:shadowRadius="1.0"
                     android:textAlignment="center"
                     android:textColor="@color/colorTextLight"
-                    tools:text="LA | 28°"
-                    style="@style/content_text"/>
+                    tools:text="LA | 28°" />
 
             </RelativeLayout>
 

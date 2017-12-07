@@ -2,7 +2,6 @@ package top.maweihao.weather.util.remoteView;
 
 import android.content.Context;
 
-import top.maweihao.weather.entity.ForecastBean;
 import top.maweihao.weather.entity.HeWeather.HeNowWeather;
 import top.maweihao.weather.entity.HeWeather.NewHeWeatherNow;
 import top.maweihao.weather.entity.NewWeather;
@@ -13,19 +12,6 @@ import top.maweihao.weather.entity.NewWeather;
  */
 
 public class WidgetUtils {
-    public static void refreshWidget(final Context context, final ForecastBean weather) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (SimpleWidgetUtils.isEnable(context))
-                    SimpleWidgetUtils.refreshWidgetView(context, weather);
-                if (TallWidgetUtils.isEnable(context))
-                    TallWidgetUtils.refreshWidgetView(context, weather);
-                if (BigWidgetUtils.isEnable(context))
-                    BigWidgetUtils.refreshWidgetView(context, weather);
-            }
-        }).start();
-    }
 
     // 使用和风天气的数据只能刷新 TallWidget 和 SimpleWidget
     @Deprecated
@@ -71,20 +57,20 @@ public class WidgetUtils {
     }
 
     // 为 BigWidget 带上下次刷新时间，测试用
-    @Deprecated
-    public static void refreshWidget(final Context context, final ForecastBean forecastBean, final int minute) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (SimpleWidgetUtils.isEnable(context))
-                    SimpleWidgetUtils.refreshWidgetView(context, forecastBean);
-                if (TallWidgetUtils.isEnable(context))
-                    TallWidgetUtils.refreshWidgetView(context, forecastBean);
-                if (BigWidgetUtils.isEnable(context))
-                    BigWidgetUtils.refreshWidgetView(context, forecastBean, minute);
-            }
-        }).start();
-    }
+//    @Deprecated
+//    public static void refreshWidget(final Context context, final ForecastBean forecastBean, final int minute) {
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (SimpleWidgetUtils.isEnable(context))
+//                    SimpleWidgetUtils.refreshWidgetView(context, forecastBean);
+//                if (TallWidgetUtils.isEnable(context))
+//                    TallWidgetUtils.refreshWidgetView(context, forecastBean);
+//                if (BigWidgetUtils.isEnable(context))
+//                    BigWidgetUtils.refreshWidgetView(context, forecastBean, minute);
+//            }
+//        }).start();
+//    }
 
     /**
      * 是否添加了任何 widget

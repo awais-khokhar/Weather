@@ -910,6 +910,10 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
 
     @Override
     public void showLocation(MLocation location) {
+        if (location == null) {
+            Log.e(TAG, "showLocation: location=null");
+            return;
+        }
         String coarseLocation = location.getCoarseLocation();
         String detailLocation = location.getFineLocation();
         Log.d(TAG, "showLocation: " + coarseLocation + detailLocation);

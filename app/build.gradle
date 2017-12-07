@@ -30,7 +30,7 @@ android {
 }
 
 ext {
-    supportLibVersion = '26.0.2'
+    supportLibVersion = '26.1.0'
     gsonVersion = '2.8.0'
     retrofitVersion = '2.3.0'
     butterknifeVersion = '8.8.0'

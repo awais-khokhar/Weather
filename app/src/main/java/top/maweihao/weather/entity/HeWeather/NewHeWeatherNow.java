@@ -1,12 +1,12 @@
 package top.maweihao.weather.entity.HeWeather;
 
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Property;
 import org.greenrobot.greendao.annotation.Transient;
 
 import java.util.List;
-import org.greenrobot.greendao.annotation.Generated;
 
 /**
  * bean for he weather
@@ -57,11 +57,6 @@ public class NewHeWeatherNow {
     }
 
     public static class HeWeather5Bean {
-        /**
-         * basic : {"city":"栖霞","cnty":"中国","id":"CN101190112","lat":"32.10214615","lon":"118.80870056","update":{"loc":"2017-10-25 10:46","utc":"2017-10-25 02:46"}}
-         * now : {"cond":{"code":"100","txt":"晴"},"fl":"18","hum":"68","pcpn":"0","pres":"1026","tmp":"17","vis":"9","wind":{"deg":"99","dir":"东风","sc":"3-4","spd":"11"}}
-         * status : ok
-         */
 
         private BasicBean basic;
         private NowBean now;

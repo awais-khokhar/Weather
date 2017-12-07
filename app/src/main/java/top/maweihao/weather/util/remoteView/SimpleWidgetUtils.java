@@ -66,34 +66,6 @@ public class SimpleWidgetUtils {
         }
     }
 
-    @Deprecated
-    public static void refreshWidgetView(Context context, @NonNull ForecastBean weather) {
-        String countyName = getCounty(context);
-
-        ForecastBean.ResultBean.HourlyBean hourlyBean = weather.getResult().getHourly();
-        int tem = Utility.intRoundDouble(hourlyBean.getTemperature().get(0).getValue());
-        String skycon = hourlyBean.getSkycon().get(0).getValue();
-        Double precipitation = hourlyBean.getPrecipitation().get(0).getValue();
-        String skyconString = Utility.chooseWeatherSkycon(context, skycon, precipitation, WeatherActivity.HOURLY_MODE);
-        int icon = Utility.chooseWeatherIcon(skycon, precipitation, WeatherActivity.HOURLY_MODE, false);
-
-        updateWidgetView(context, icon, countyName, skyconString, tem);
-    }
-
-    @Deprecated
-    public static void refreshWidgetView(Context context, @NonNull RealTimeBean realTimeBean) {
-        String countyName = getCounty(context);
-
-        int tem = Utility.intRoundDouble(realTimeBean.getResult().getTemperature());
-        String skycon = realTimeBean.getResult().getSkycon();
-        float intensity = realTimeBean.getResult().getPrecipitation().getLocal().getIntensity();
-        String skyconString = Utility.chooseWeatherSkycon(context, skycon, intensity, WeatherActivity.MINUTELY_MODE);
-        int icon = Utility.chooseWeatherIcon(skycon, intensity, WeatherActivity.MINUTELY_MODE, false);
-
-        updateWidgetView(context, icon, countyName, skyconString, tem);
-    }
-
-    @Deprecated
     public static void refreshWidgetView(Context context, @NonNull HeNowWeather heNowWeather, String countyName) {
 //        String countyName = getCounty(context);
         if (heNowWeather.getHeWeather5().get(0).getStatus().equals("ok")) {

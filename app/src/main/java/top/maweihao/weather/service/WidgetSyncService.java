@@ -33,7 +33,6 @@ public class WidgetSyncService extends Service {
     private boolean isBigWidgetOn;
     private String countyName;
     private WeatherRepository weatherRepository;
-
 //    private PreferenceConfigContact configContact;
 
     @Override
@@ -58,12 +57,22 @@ public class WidgetSyncService extends Service {
         }
         int refreshInterval = (int) ((System.currentTimeMillis() - lastRefreshTime)
                 / (60 * 1000));
-        if ((hasWidget && refreshInterval >= interval - 5) || forceRefresh) {
-            startAgain(interval);
-            fetchData(weatherRepository.getLocationCached());
+        if (forceRefresh) {
+            if ((hasWidget && refreshInterval >= interval - 5)) {
+                startAgain(interval);
+                fetchData(weatherRepository.getLocationCached());
+            } else {
+                startAgain(failedInterval);
+            }
         } else {
             startAgain(failedInterval);
         }
+//        if ((hasWidget && refreshInterval >= interval - 5) || forceRefresh) {
+//            startAgain(interval);
+//            fetchData(weatherRepository.getLocationCached());
+//        } else {
+//            startAgain(failedInterval);
+//        }
         return START_STICKY;
     }
 
@@ -95,7 +104,7 @@ public class WidgetSyncService extends Service {
     }
 
     private void fetchData(final MLocation location) {
-        int minInterval = 5;  //hardcode temporary
+        int minInterval = 5;  //hardcode interval temporary
 
         long cachedLastUpdateTime = weatherRepository.getLastUpdateTime();
         if (System.currentTimeMillis() - cachedLastUpdateTime <= minInterval * 60 * 1000) {
@@ -115,8 +124,9 @@ public class WidgetSyncService extends Service {
                             Log.e(TAG, "fetchData: get cached weather failed " + throwable);
                         }
                     });
-        } else if (true /*Utility.isNetworkAvailable(this)*/) {
-            if (isBigWidgetOn) {
+        } else {
+            if (!isBigWidgetOn) {
+                Log.d(TAG, "fetchData: here" + location.getLocationStringReversed());
                 weatherRepository.getHeWeatherNow(location.getLocationStringReversed())
                         .subscribeOn(Schedulers.io())
                         .subscribe(new Consumer<NewHeWeatherNow>() {
@@ -162,58 +172,8 @@ public class WidgetSyncService extends Service {
                             }
                         });
             }
-        } else {
-            Log.e(TAG, "fetchData: no internet connect to refresh the widget");
-            startAgain(failedInterval);
         }
 
-//        if (isBigWidgetOn && (weatherFull != null &&
-//                System.currentTimeMillis() - weatherFullLastUpdateTime < minInterval * 60 * 1000)) {
-//            WidgetUtils.refreshWidget(this, parseObject(weatherFull, ForecastBean.class));
-//        } else if (!isBigWidgetOn && (weatherHeNow != null &&
-//                System.currentTimeMillis() - weatherHeNowLastUpdateTime < minInterval * 60 * 1000)) {
-//            WidgetUtils.refreshWidget(this, parseObject(weatherHeNow, HeNowWeather.class));
-//        } else {
-//            Log.d(TAG, " weather data out of date");
-//            final String url = isBigWidgetOn ? configContact.getFurl()
-//                    : HeWeatherUtil.initRequireUrl(HeWeatherUtil.MODE_NOW, coordinate);
-//            Log.d(TAG, "fetchData: URL HERE" + HeWeatherUtil.initRequireUrl(HeWeatherUtil.MODE_NOW, coordinate));
-//            new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    if (url != null) {
-//                        try {
-//                            OkHttpClient client = new OkHttpClient();
-//                            Request request = new Request.Builder()
-//                                    .url(url).build();
-//                            Response response = client.newCall(request).execute();
-//
-//                            if (isBigWidgetOn) {
-//                                String body = response.body().string();
-//                                configContact.applyWeatherFull(body);
-//                                configContact.applyWeatherFullLastUpdateTime(System.currentTimeMillis());
-//                                WidgetUtils.refreshWidget(WidgetSyncService.this,
-//                                        parseObject(body, ForecastBean.class));
-//                            } else {
-//                                String body = response.body().string();
-//                                configContact.applyWeatherHeNow(body);
-//                                configContact.applyWeatherHeNowLastUpdateTime(System.currentTimeMillis());
-//                                HeNowWeather heWeather = JSON.parseObject(body, HeNowWeather.class);
-//                                WidgetUtils.refreshWidget(WidgetSyncService.this, heWeather);
-//                            }
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                            startAgain(30);
-//                            Log.e(TAG, "run: network error");
-//                        }
-//                    } else {
-//                        startAgain(30);
-//                        Log.e(TAG, "run: fUrl == null");
-//                    }
-//                }
-//            }).start();
-//
-//        }
     }
 
 }
