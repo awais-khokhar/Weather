@@ -52,7 +52,7 @@
                 android:layout_marginEnd="24dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="4dp"
-                android:src="@mipmap/weather_few_clouds"
+                android:src="@mipmap/weather_none_available"
                 tools:ignore="ContentDescription" />
 
             <TextView
@@ -102,7 +102,6 @@
                         android:shadowRadius="1.0"
                         android:textColor="@color/colorTextLight" />
 
-
                 </LinearLayout>
 
                 <LinearLayout
@@ -121,6 +120,8 @@
                         android:shadowRadius="1.0"
                         android:textColor="@color/colorTextLight"
                         android:textSize="14sp"
+                        tools:text="十月廿一"
+                        android:text="@string/na"
                         android:visibility="visible" />
 
                     <TextView
@@ -175,6 +176,7 @@
                 android:textColorLink="@color/colorTextDark2nd"
                 android:textSize="14sp"
                 tools:ignore="RtlHardcoded"
+                android:text="@string/wish_you_lucky"
                 tools:text="未来两小时不会下雨，放心出门吧" />
 
         </RelativeLayout>

@@ -38,4 +38,6 @@ public interface WeatherData {
     void saveLocation(MLocation location);
 
     long getLastUpdateTime();
+
+    long getLastHeNowUpdateTime();
 }

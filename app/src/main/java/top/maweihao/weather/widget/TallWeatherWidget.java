@@ -19,7 +19,7 @@ public class TallWeatherWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         Log.d(TAG, "onUpdate: ");
-        ServiceUtil.startWidgetSyncService(context, true);
+        ServiceUtil.startWidgetSyncService(context, true, false);
     }
 
     @Override

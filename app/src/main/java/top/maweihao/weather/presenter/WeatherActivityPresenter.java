@@ -186,7 +186,7 @@ public class WeatherActivityPresenter implements WeatherActivityContract.Present
     @Override
     public void updateWidget(ForecastBean forecastBean) {
         if (WidgetUtils.hasAnyWidget((Activity) weatherView)) {
-            ServiceUtil.startWidgetSyncService((Activity) weatherView, true);
+            ServiceUtil.startWidgetSyncService((Activity) weatherView, true, true);
         }
     }
 

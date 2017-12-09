@@ -472,6 +472,8 @@ public class Utility {
         return simpleDateFormat.format(date);
     }
 
+
+    // used in BigWeatherWidget
     public static String parseTime(int minute) {
         Date date = new Date();
         date.setTime(System.currentTimeMillis() + minute * 60 * 1000);

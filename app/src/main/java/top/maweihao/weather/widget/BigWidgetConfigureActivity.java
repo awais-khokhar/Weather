@@ -142,7 +142,7 @@ public class BigWidgetConfigureActivity extends Activity implements View.OnClick
                 Intent resultValue = new Intent();
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                 setResult(RESULT_OK, resultValue);
-                ServiceUtil.startWidgetSyncService(BigWidgetConfigureActivity.this, true);
+                ServiceUtil.startWidgetSyncService(BigWidgetConfigureActivity.this, true, true);
                 finish();
                 break;
             default:

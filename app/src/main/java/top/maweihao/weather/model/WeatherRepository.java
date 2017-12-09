@@ -32,6 +32,8 @@ public class WeatherRepository implements WeatherData {
 
     private static WeatherRepository instance;
 
+    DaoSession daoSession;
+
     private NewWeather weather;
     private NewWeatherRealtime weatherRealtime;
     private NewHeWeatherNow heWeatherNow;
@@ -45,7 +47,7 @@ public class WeatherRepository implements WeatherData {
     private WeatherRepository(Context context) {
         DaoMaster.DevOpenHelper devOpenHelper = new DaoMaster.DevOpenHelper(context, "weather.db", null);
         DaoMaster daoMaster = new DaoMaster(devOpenHelper.getWritableDb());
-        DaoSession daoSession = daoMaster.newSession();
+        daoSession = daoMaster.newSession();
         weatherDao = daoSession.getNewWeatherDao();
 //        weatherRealtimeDao = daoSession.getNewWeatherRealtimeDao();
 //        heWeatherNowDao = daoSession.getNewHeWeatherNowDao();
@@ -119,17 +121,23 @@ public class WeatherRepository implements WeatherData {
 
     @Override
     public Observable<NewHeWeatherNow> getHeWeatherNow(String location) {
-        return HttpUtil.getHeWeatherNow(location);
-//                .doOnNext(new Consumer<NewHeWeatherNow>() {
-//                    @Override
-//                    public void accept(NewHeWeatherNow newHeWeatherNow) throws Exception {
-//                        saveWeather(newHeWeatherNow);
-//                    }
-//                });
+        if (heWeatherNowDao == null) {
+            heWeatherNowDao = daoSession.getNewHeWeatherNowDao();
+        }
+        return HttpUtil.getHeWeatherNow(location)
+                .doOnNext(new Consumer<NewHeWeatherNow>() {
+                    @Override
+                    public void accept(NewHeWeatherNow newHeWeatherNow) throws Exception {
+                        saveWeather(newHeWeatherNow);
+                    }
+                });
     }
 
     @Override
     public Observable<NewHeWeatherNow> getHeWeatherNowCached() {
+        if (heWeatherNowDao == null) {
+            heWeatherNowDao = daoSession.getNewHeWeatherNowDao();
+        }
         return Observable.create(new ObservableOnSubscribe<NewHeWeatherNow>() {
             @Override
             public void subscribe(ObservableEmitter<NewHeWeatherNow> e) throws Exception {
@@ -155,6 +163,19 @@ public class WeatherRepository implements WeatherData {
     }
 
     @Override
+    public long getLastHeNowUpdateTime() {
+        if (heWeatherNowDao == null) {
+            heWeatherNowDao = daoSession.getNewHeWeatherNowDao();
+        }
+        List<NewHeWeatherNow> weatherList = heWeatherNowDao.loadAll();
+        if (weatherList != null && weatherList.size() > 0) {
+            return weatherList.get(0).getCurrentTimeInMills();
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
     public void saveWeather(NewWeather weather) {
         if (weather.getStatus().equals("ok")) {
             weatherDao.deleteAll();
@@ -173,8 +194,8 @@ public class WeatherRepository implements WeatherData {
     @Override
     public void saveWeather(NewHeWeatherNow weather) {
         if (weather.getHeWeather5().get(0).getStatus().equals("ok")) {
-            heWeatherNowDao.deleteAll();;
-            heWeatherNowDao.insertOrReplace(Utility.packWeather(weather, System.currentTimeMillis()));
+            heWeatherNowDao.deleteAll();
+            heWeatherNowDao.insertOrReplace(Utility.packWeather(weather, Utility.getHeWeatherUpdateTime(weather)));
         }
     }
 

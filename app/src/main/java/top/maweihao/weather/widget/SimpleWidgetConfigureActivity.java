@@ -115,7 +115,7 @@ public class SimpleWidgetConfigureActivity extends Activity implements View.OnCl
                 Intent resultValue = new Intent();
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                 setResult(RESULT_OK, resultValue);
-                ServiceUtil.startWidgetSyncService(SimpleWidgetConfigureActivity.this, true);
+                ServiceUtil.startWidgetSyncService(SimpleWidgetConfigureActivity.this, true, true);
                 finish();
                 break;
             default:

@@ -55,6 +55,7 @@ import top.maweihao.weather.util.SimplePermissionUtils;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.view.SemiCircleView;
 import top.maweihao.weather.view.SunTimeView;
+import top.maweihao.weather.view.dynamicweather.DynamicWeatherView;
 
 import static top.maweihao.weather.R.id.skycon_text;
 import static top.maweihao.weather.R.id.temperature_text;
@@ -97,8 +98,8 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     TextView lastUpdateTime;
     @BindView(R.id.now_card_desc)
     TextView todayDesc;
-//    @BindView(R.id.dynamicWeatherView)
-//    DynamicWeatherView dynamicWeatherView;
+    @BindView(R.id.dynamicWeatherView)
+    DynamicWeatherView dynamicWeatherView;
     @BindView(R.id.aqi_image)
     ImageView aqiImage;
     @BindView(R.id.uv_name)
@@ -232,12 +233,12 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         if (newPresenter != null) {
             newPresenter.onResume();
         }
-//        handler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                dynamicWeatherView.onResume();
-//            }
-//        }, 150);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                dynamicWeatherView.onResume();
+            }
+        }, 150);
     }
 
     @Override
@@ -247,7 +248,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
         if (newPresenter != null) {
             newPresenter.onPause();
         }
-//        dynamicWeatherView.onPause();
+        dynamicWeatherView.onPause();
     }
 
     @Override
@@ -277,7 +278,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
     public void onDestroy() {
         Log.d(TAG, "onDestroy: ");
         super.onDestroy();
-//        dynamicWeatherView.onDestroy();
+        dynamicWeatherView.onDestroy();
         if (presenter != null) {
             presenter.destroy();
             presenter = null;
@@ -558,7 +559,7 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 String weatherString = chooseWeatherSkycon(getApplicationContext(), skycon, intensity, MINUTELY_MODE);
                 skyconText.setText(weatherString);
 
-//                dynamicWeatherView.setDrawerType(Utility.chooseBgImage(skycon));
+                dynamicWeatherView.setDrawerType(Utility.chooseBgImage(skycon));
 
                 ForecastBean.ResultBean.DailyBean dailyBean = forecastBean.getResult().getDaily();
                 String sunRise = dailyBean.getAstro().get(0).getSunrise().getTime();
@@ -805,16 +806,14 @@ public class WeatherActivity extends AppCompatActivity implements WeatherActivit
                 AQICircle.setValue((int) aqi);
                 hum_text.setText(String.valueOf(hum).substring(0, 2) + "%");
                 skyconText.setText(weatherString);
-//                dynamicWeatherView.setDrawerType(Utility.chooseBgImage(skycon));
+                dynamicWeatherView.setDrawerType(Utility.chooseBgImage(skycon));
                 sunrise_text.setText(sunRise);
                 sunset_text.setText(sunSet);
                 sunTimeView.setTime(sunRise, sunSet);
                 uv_text.setText(dailyBean.getUltraviolet().get(0).getDesc());
                 carWashing_text.setText(dailyBean.getCarWashing().get(0).getDesc());
                 dressing_text.setText(dailyBean.getDressing().get(0).getDesc());
-                if (DEBUG) {
                     Log.d(TAG, "showWeather: refresh weather succeed");
-                }
             }
         });
 

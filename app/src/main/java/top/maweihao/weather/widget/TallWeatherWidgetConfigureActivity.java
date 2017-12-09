@@ -37,7 +37,7 @@ public class TallWeatherWidgetConfigureActivity extends Activity {
                     Intent resultValue = new Intent();
                     resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                     setResult(RESULT_OK, resultValue);
-                    ServiceUtil.startWidgetSyncService(context, true);
+                    ServiceUtil.startWidgetSyncService(context, true, true);
                     finish();
                     break;
                 case R.id.tall_lunar_switch:

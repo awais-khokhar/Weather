@@ -1,6 +1,7 @@
 package top.maweihao.weather.util.remoteView;
 
 import android.content.Context;
+import android.util.Log;
 
 import top.maweihao.weather.entity.HeWeather.HeNowWeather;
 import top.maweihao.weather.entity.HeWeather.NewHeWeatherNow;
@@ -12,6 +13,8 @@ import top.maweihao.weather.entity.NewWeather;
  */
 
 public class WidgetUtils {
+
+    private static final String TAG = WidgetUtils.class.getSimpleName();
 
     // 使用和风天气的数据只能刷新 TallWidget 和 SimpleWidget
     @Deprecated
@@ -54,6 +57,13 @@ public class WidgetUtils {
                     BigWidgetUtils.refreshWidgetView(context, weather, countyName);
             }
         }).start();
+    }
+
+    public static void refreshBigWidgetTime(Context context) {
+        Log.d(TAG, "refreshBigWidgetTime: updateTime2Now");
+        if (hasBigWidget(context)) {
+            BigWidgetUtils.updateTime2Now(context);
+        }
     }
 
     // 为 BigWidget 带上下次刷新时间，测试用
