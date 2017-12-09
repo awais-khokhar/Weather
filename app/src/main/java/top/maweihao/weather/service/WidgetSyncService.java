@@ -42,6 +42,7 @@ public class WidgetSyncService extends Service {
 
     @Override
     public void onCreate() {
+        Log.d(TAG, "onCreate: ");
         super.onCreate();
         initData();
     }

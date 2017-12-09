@@ -119,13 +119,13 @@ public class WeatherRepository implements WeatherData {
 
     @Override
     public Observable<NewHeWeatherNow> getHeWeatherNow(String location) {
-        return HttpUtil.getHeWeatherNow(location)
-                .doOnNext(new Consumer<NewHeWeatherNow>() {
-                    @Override
-                    public void accept(NewHeWeatherNow newHeWeatherNow) throws Exception {
+        return HttpUtil.getHeWeatherNow(location);
+//                .doOnNext(new Consumer<NewHeWeatherNow>() {
+//                    @Override
+//                    public void accept(NewHeWeatherNow newHeWeatherNow) throws Exception {
 //                        saveWeather(newHeWeatherNow);
-                    }
-                });
+//                    }
+//                });
     }
 
     @Override
