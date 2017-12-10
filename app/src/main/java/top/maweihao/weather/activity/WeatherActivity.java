@@ -1,6 +1,7 @@
 package top.maweihao.weather.activity;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -391,7 +392,13 @@ public class WeatherActivity extends AppCompatActivity implements
                                            @NonNull int[] grantResults) {
         switch (requestCode) {
             case Constants.newRequestLocationCode:
-                newPresenter.locate();
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    newPresenter.locate();
+                } else {
+                    newPresenter.onPermissionDenied();
+                }
+
                 break;
             default:
                 Log.e(TAG, "onRequestPermissionsResult: undefined request code" + requestCode);

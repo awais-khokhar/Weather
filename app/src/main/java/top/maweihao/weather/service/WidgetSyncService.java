@@ -101,8 +101,8 @@ public class WidgetSyncService extends Service {
         Log.d(TAG, "onCreate");
 //        working = true;
         hasWidget = WidgetUtils.hasAnyWidget(this);
-        interval = 20;
-        failedInterval = 5;
+        interval = 60;
+        failedInterval = 20;
         weatherRepository = WeatherRepository.getInstance(this);
     }
 
@@ -114,7 +114,7 @@ public class WidgetSyncService extends Service {
                 Constants.WidgetSyncServiceRequestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         if (alarmManager != null) {
-            alarmManager.cancel(pendingIntent);
+//            alarmManager.cancel(pendingIntent);
             alarmManager.set(AlarmManager.ELAPSED_REALTIME,
                     SystemClock.elapsedRealtime() + interval * 60 * 1000, pendingIntent);
         }

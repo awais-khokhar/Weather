@@ -136,6 +136,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         view.showError("waiting for locating", false);
+                        locate();
                     }
                 });
         compositeDisposable.add(disposable);
@@ -145,11 +146,8 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
     public void locate() {
         view.setRefreshingState(true);
         if (configContact.getAutoLocate(true)) {
-            if (isPermissionDeniedPermanently()) {
-                initIpLocate();
-            } else {
-                checkPermissionAndLocate();
-            }
+            Log.d(TAG, "locate: true");
+            checkPermissionAndLocate();
         } else {
             MLocation location = model.getLocationCached();
             if (location != null) {
@@ -177,7 +175,18 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
         }
     }
 
+    @Override
+    public void onPermissionDenied() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) view,
+                Manifest.permission.ACCESS_FINE_LOCATION)) {
+            checkPermissionAndLocate();
+        } else {
+            initIpLocate();
+        }
+    }
+
     private void checkPermissionAndLocate() {
+        Log.d(TAG, "checkPermissionAndLocate: here check for permission");
         String[] permission = {Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION};
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -188,11 +197,11 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
         }
     }
 
-    private boolean isPermissionDeniedPermanently() {
+    private boolean checkForPermission() {
         return (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_DENIED) &&
-                (!ActivityCompat.shouldShowRequestPermissionRationale((Activity) view,
-                        Manifest.permission.ACCESS_FINE_LOCATION));
+                == PackageManager.PERMISSION_GRANTED) &&
+                ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED;
     }
 
     @Override
@@ -401,7 +410,8 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                         MLocation location = LocationUtil.convertType(baiDuIPLocationBean);
                         Log.d(TAG, "ip locate success: " + location.getLocationString());
                         model.saveLocation(location);
-//                        refreshWeather(location);
+                        view.showIpLocateMessage();
+                        refreshWeather(location);
                     } else {
                         Log.e(TAG, "initIpLocate: baidu ip address error. " +
                                 (baiDuIPLocationBean != null ? baiDuIPLocationBean.getStatus() : ""));
