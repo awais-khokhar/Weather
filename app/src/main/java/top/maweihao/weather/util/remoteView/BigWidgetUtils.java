@@ -138,7 +138,7 @@ public class BigWidgetUtils {
         PendingIntent clockPendingIntent = PendingIntent.getActivity(context, CLOCK_PENDING_INTENT_CODE,
                 mClockIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         Intent intent = new Intent(context, WidgetSyncService.class);
-        intent.putExtra(WidgetSyncService.force_refresh, true);
+        intent.putExtra(WidgetSyncService.from_widget, true);
         PendingIntent refreshPendingIntent = PendingIntent.getService(context, TALL_WIDGET_REFRESH_CODE,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
 

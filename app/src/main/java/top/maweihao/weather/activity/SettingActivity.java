@@ -78,7 +78,7 @@ public class SettingActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            backListener();
+            onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -86,10 +86,6 @@ public class SettingActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        backListener();
-    }
-
-    private void backListener() {
         if (originalAutoLocate != changeAutoLocate) {
             isSetResultIntent = true;
             Intent intent = new Intent();

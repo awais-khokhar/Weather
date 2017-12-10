@@ -34,11 +34,10 @@ import top.maweihao.weather.db.County;
 import top.maweihao.weather.db.Province;
 import top.maweihao.weather.presenter.ChoosePositionActivityPresenter;
 import top.maweihao.weather.refactor.MLocation;
+import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.Utility;
 
-import static top.maweihao.weather.util.Constants.ChooseCode;
 import static top.maweihao.weather.util.Constants.DEBUG;
-import static top.maweihao.weather.util.Constants.isSetResultIntent;
 
 public class ChoosePositionActivity extends AppCompatActivity
         implements SearchView.OnQueryTextListener, ChoosePositionActivityContract.View {
@@ -151,9 +150,8 @@ public class ChoosePositionActivity extends AppCompatActivity
                     } catch (IndexOutOfBoundsException e) {
                         countyName = countyList.get(position).getCountyName();
                     } finally {
-                        if (DEBUG)
-                            Log.i(TAG, "countyName = " + countyName);
-                        isSetResultIntent = true;
+                        Log.d(TAG, "countyName = " + countyName);
+                        Constants.isSetResultIntent = true;
                         mLocation.setCity(cityName);
                         mLocation.setCounty(countyName);
                         Intent intent = new Intent();
@@ -161,9 +159,9 @@ public class ChoosePositionActivity extends AppCompatActivity
                         Bundle bundle = new Bundle();
                         bundle.putParcelable("location", mLocation);
                         intent.putExtras(bundle);
-                        setResult(ChooseCode, intent);
-                        Toast.makeText(ChoosePositionActivity.this,
-                                getResources().getString(R.string.auto_locate_disabled), Toast.LENGTH_SHORT).show();
+                        setResult(Constants.ChooseCode, intent);
+//                        Toast.makeText(ChoosePositionActivity.this,
+//                                getResources().getString(R.string.auto_locate_disabled), Toast.LENGTH_SHORT).show();
                         finish();
                     }
                 }

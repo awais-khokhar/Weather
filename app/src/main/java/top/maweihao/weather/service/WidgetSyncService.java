@@ -29,7 +29,7 @@ public class WidgetSyncService extends Service {
     private boolean forceRefresh;
     public static final String county_name = "COUNTY_NAME";
     private String countyName;
-    public static final String FROM_WIDGET = "FROM_WIDGET";
+    public static final String from_widget = "from_widget";
     private boolean fromWidget;
 
     public static boolean working = false;
@@ -67,8 +67,7 @@ public class WidgetSyncService extends Service {
             fromWidget = intent.getBooleanExtra(force_refresh, false);
             countyName = (TextUtils.isEmpty(name)) ? countyName : name;
         }
-        int refreshInterval = (int) ((System.currentTimeMillis() - lastRefreshTime)
-                / (60 * 1000));
+        int refreshInterval = (int) ((System.currentTimeMillis() - lastRefreshTime) / (60 * 1000));
         if (forceRefresh) {
             if ((hasWidget && refreshInterval >= interval - 5) || fromWidget) {
                 startAgain(interval);
@@ -77,10 +76,12 @@ public class WidgetSyncService extends Service {
                 if (isBigWidgetOn) {
                     WidgetUtils.refreshBigWidgetTime(this);
                 }
-                startAgain(failedInterval);
+                startAgain(interval);
+                stopSelf();
             }
         } else {
-            startAgain(failedInterval);
+            startAgain(interval);
+            stopSelf();
         }
 //        if ((hasWidget && refreshInterval >= interval - 5) || forceRefresh) {
 //            startAgain(interval);
@@ -101,8 +102,8 @@ public class WidgetSyncService extends Service {
         Log.d(TAG, "onCreate");
 //        working = true;
         hasWidget = WidgetUtils.hasAnyWidget(this);
-        interval = 90;
-        failedInterval = 30;
+        interval = 20;
+        failedInterval = 5;
         weatherRepository = WeatherRepository.getInstance(this);
     }
 
@@ -135,6 +136,7 @@ public class WidgetSyncService extends Service {
                             Log.d(TAG, "fetchData: use cached weather to refresh the widget");
                             WidgetUtils.refreshWidget(WidgetSyncService.this,
                                     weather, location.getCoarseLocation());
+                            stopSelf();
                         }
                     }, new Consumer<Throwable>() {
                         @Override
@@ -156,6 +158,7 @@ public class WidgetSyncService extends Service {
                                     Log.d(TAG, "fetchData: use cached he weather to refresh the widget");
                                     WidgetUtils.refreshWidget(WidgetSyncService.this,
                                             weather, location.getCoarseLocation());
+                                    stopSelf();
                                 }
                             }, new Consumer<Throwable>() {
                                 @Override
@@ -189,12 +192,14 @@ public class WidgetSyncService extends Service {
                             Log.e(TAG, "fetchData: weather api error");
                             startAgain(failedInterval);
                         }
+                        stopSelf();
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         Log.e(TAG, "fetchData: get weather failed" + throwable);
                         startAgain(failedInterval);
+                        stopSelf();
                     }
                 });
     }
@@ -216,12 +221,14 @@ public class WidgetSyncService extends Service {
                             Log.e(TAG, "fetchData: he api error");
                             startAgain(failedInterval);
                         }
+                        stopSelf();
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         Log.e(TAG, "fetchData: get heWeatherNow failed " + throwable);
                         startAgain(failedInterval);
+                        stopSelf();
                     }
                 });
     }

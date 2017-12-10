@@ -113,14 +113,22 @@
         </receiver>
 
         <activity android:name=".activity.DetailActivity" />
-        <activity android:name=".widget.BigWidgetConfigureActivity" />
+        <activity android:name=".widget.BigWidgetConfigureActivity" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
 
         <service
             android:name=".service.WidgetSyncService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
 
-        <activity android:name=".widget.SimpleWidgetConfigureActivity" />
+        <activity android:name=".widget.SimpleWidgetConfigureActivity" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
 
         <!--<receiver android:name=".widget.MagicWeatherWidget">-->
             <!--<intent-filter>-->

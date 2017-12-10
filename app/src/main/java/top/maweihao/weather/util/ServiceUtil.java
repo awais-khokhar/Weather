@@ -21,7 +21,6 @@ public class ServiceUtil {
     private static final String TAG = ServiceUtil.class.getSimpleName();
 
     public static void startWidgetSyncService(Context context, boolean forceRefresh, boolean reOpen) {
-        Log.d(TAG, "startWidgetSyncService: here");
         if (reOpen || !WidgetSyncService.working) {
             Intent intent = new Intent(context, WidgetSyncService.class);
             intent.putExtra(WidgetSyncService.force_refresh, forceRefresh);

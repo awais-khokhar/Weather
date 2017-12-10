@@ -430,6 +430,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
             Log.e(TAG, "updateWidget: null!" + weatherView + location);
         } else {
             if (WidgetUtils.hasAnyWidget(context)) {
+                Log.d(TAG, "updateWidget: here has widget");
                 ServiceUtil.startWidgetSyncService(context, false, false);
                 WidgetUtils.refreshWidget(context, weatherView, location);
             }
