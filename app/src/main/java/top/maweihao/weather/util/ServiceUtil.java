@@ -30,7 +30,7 @@ public class ServiceUtil {
             if (alarmManager != null) {
                 alarmManager.cancel(pendingIntent);
                 alarmManager.set(AlarmManager.ELAPSED_REALTIME,
-                        SystemClock.elapsedRealtime() + 5 * 1000, pendingIntent);
+                        SystemClock.elapsedRealtime() + 3 * 1000, pendingIntent);
                 Log.d(TAG, "startWidgetSyncService in 5 second");
 //                Toast.makeText(context, "i started!", Toast.LENGTH_SHORT).show();
             }

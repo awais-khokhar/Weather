@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -132,31 +133,36 @@ public class DetailActivity extends AppCompatActivity {
         List<NewWeather.ResultBean.DailyBean.SkyconBeanX> skyconBeanXList = dailyBean.getSkycon();
         List<NewWeather.ResultBean.DailyBean.PrecipitationBeanX> precipitationBeanXList =
                 dailyBean.getPrecipitation();
-
+        int dayOfWeek = Utility.getDayOfWeek();
         SimpleDateFormat oldSdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
         SimpleDateFormat newSdf = new SimpleDateFormat("MM/dd", Locale.CHINA);
         for (int i = 0; i < temperatureBeanXList.size(); i++) {
-            Date date;
+            String time;
             try {
-                date = oldSdf.parse(temperatureBeanXList.get(i).getDate());
+                Date date = oldSdf.parse(temperatureBeanXList.get(i).getDate());
+                if (i != 0) {
+                    time = newSdf.format(date) + " " +
+                            getResources().getStringArray(R.array.week)[(dayOfWeek + i - 1) % 7];
+                } else {
+                    time = newSdf.format(date) + " " +
+                            getResources().getString(R.string.today);
+                }
             } catch (ParseException e) {
                 e.printStackTrace();
                 return null;
             }
-            String time = newSdf.format(date);
+//            String time = newSdf.format(date);
             int icon = Utility.chooseWeatherIcon(skyconBeanXList.get(i).getValue(),
                     precipitationBeanXList.get(i).getAvg(), HOURLY_MODE, false);
             String skyconDesc;
-            // TODO: 05/12/2017 deal with the 'desc'
             // 在有 desc 时优先显示 desc 的内容
-//            if (dailyBean.getDesc() == null) {
-//                skyconDesc = Utility.chooseWeatherSkycon(this, skyconBeanXList.get(i).getValue(),
-//                        precipitationBeanXList.get(i).getAvg(), HOURLY_MODE);
-//            } else {
-//                skyconDesc = dailyBean.getDesc().get(i).getValue();
-//            }
-            skyconDesc = Utility.chooseWeatherSkycon(this, skyconBeanXList.get(i).getValue(),
+            if (dailyBean.getDesc() == null || TextUtils.isEmpty(dailyBean.getDesc().get(i).getValue())) {
+                skyconDesc = Utility.chooseWeatherSkycon(this, skyconBeanXList.get(i).getValue(),
                         precipitationBeanXList.get(i).getAvg(), HOURLY_MODE);
+            } else {
+                skyconDesc = dailyBean.getDesc().get(i).getValue();
+            }
+            Log.d(TAG, "generateList: " + skyconDesc);
             String temperature = stringRoundDouble(temperatureBeanXList.get(i).getMax()) + "° / "
                     + stringRoundDouble(temperatureBeanXList.get(i).getMin()) + '°';
             list.add(new SingleWeather(time, icon, skyconDesc, temperature));

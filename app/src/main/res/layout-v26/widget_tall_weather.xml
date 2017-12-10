@@ -1,0 +1,124 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:background="#FF424242">
+
+    <ImageView
+        android:id="@+id/widget_tall_card"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/widget_dark_card"
+        android:visibility="gone"
+        tools:ignore="ContentDescription" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextClock
+            android:id="@+id/tall_widget_clock"
+            style="@style/widget_text_clock"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="@font/s8_clock"
+            android:format12Hour="hh"
+            android:format24Hour="HH"
+            android:gravity="center" />
+
+        <TextClock
+            style="@style/widget_text_clock"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="@font/s8_clock"
+            android:format12Hour="mm"
+            android:format24Hour="mm"
+            android:gravity="center_horizontal" />
+
+
+        <RelativeLayout
+            android:id="@+id/tall_widget_weather"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3">
+
+            <ImageView
+                android:id="@+id/tall_widget_skycon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerInParent="true"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:src="@mipmap/weather_none_available" />
+
+            <LinearLayout
+                android:id="@+id/tall_widget_date_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/tall_widget_skycon"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:orientation="horizontal">
+
+                <TextClock
+                    android:id="@+id/tall_widget_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-light"
+                    android:format12Hour="MM/dd EE"
+                    android:format24Hour="MM/dd EE"
+                    android:shadowColor="@color/colorTextDark"
+                    android:shadowDx="1.0"
+                    android:shadowDy="1.0"
+                    android:shadowRadius="1.0"
+                    android:textColor="#fafafa"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tall_widget_lunar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingEnd="7dp"
+                    android:paddingStart="7dp"
+                    android:shadowColor="@color/colorTextDark"
+                    android:shadowDx="1.0"
+                    android:shadowDy="1.0"
+                    android:shadowRadius="1.0"
+                    android:textColor="#fafafa"
+                    android:textSize="14sp"
+                    tools:text="十月廿一" />
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tall_widget_skycon"
+                android:layout_centerHorizontal="true">
+
+                <TextView
+                    android:id="@+id/tall_widget_info"
+                    style="@style/content_text"
+                    android:layout_centerHorizontal="true"
+                    android:maxLines="1"
+                    android:shadowColor="@color/colorTextDark"
+                    android:shadowDx="1.0"
+                    android:shadowDy="1.0"
+                    android:shadowRadius="1.0"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorTextLight"
+                    tools:text="LA | 28°" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+    </LinearLayout>
+</RelativeLayout>

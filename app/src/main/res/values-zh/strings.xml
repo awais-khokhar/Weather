@@ -125,5 +125,6 @@
     <string name="locate_failed">定位失败，请打开系统位置。</string>
     <string name="yesterday">昨天</string>
     <string name="days_before">天前</string>
+    <string name="wish_you_lucky">开心每一天</string>
 
 </resources>

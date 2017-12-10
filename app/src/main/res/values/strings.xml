@@ -83,7 +83,6 @@
     <string name="location_setting">Location</string>
     <string name="about_setting">About</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="current_version">Current Version</string>
     <string name="data_resources">The weather data comes from \nChina meteorological administration \n, Colorful Clouds and heweather</string>
     <string name="choose_position">Choose Position</string>
@@ -136,7 +135,7 @@
     <string name="locate_failed">Locate failed, make sure you enable the location function.</string>
     <string name="yesterday">yesterday</string>
     <string name="days_before">days before</string>
-    <string name="appwidget_text">EXAMPLE</string>
+    <string name="appwidget_text" translatable="false">EXAMPLE</string>
     <string name="wish_you_lucky">Hava a nice day!</string>
 
 </resources>

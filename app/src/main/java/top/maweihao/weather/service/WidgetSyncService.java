@@ -8,7 +8,6 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
@@ -50,7 +49,7 @@ public class WidgetSyncService extends Service {
 
     @Override
     public void onCreate() {
-        Toast.makeText(this, "onCreate", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "onCreate", Toast.LENGTH_SHORT).show();
         working = true;
         Log.d(TAG, "onCreate: ");
         super.onCreate();
@@ -108,7 +107,7 @@ public class WidgetSyncService extends Service {
     }
 
     private void startAgain(int interval) {
-        Toast.makeText(this, "again " + interval, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "again " + interval, Toast.LENGTH_SHORT).show();
         Log.d(TAG, "startAgain: interval ==" + interval);
         Intent intent = new Intent(this, WidgetSyncService.class);
         PendingIntent pendingIntent = PendingIntent.getService(this,
@@ -122,7 +121,7 @@ public class WidgetSyncService extends Service {
     }
 
     private void fetchData(final MLocation location) {
-        Toast.makeText(this, "fetchData!", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "fetchData!", Toast.LENGTH_SHORT).show();
         int minInterval = 5;  //hardcode interval temporary
         long now = System.currentTimeMillis();
         long cachedLastUpdateTime = weatherRepository.getLastUpdateTime();

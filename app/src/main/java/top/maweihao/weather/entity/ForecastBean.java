@@ -810,7 +810,7 @@ public class ForecastBean {
 
             public void setDesc(List<DescBean> desc) {
                 this.desc = desc;
-            };
+            }
 
             public static class ColdRiskBean {
                 /**
@@ -1474,7 +1474,7 @@ public class ForecastBean {
                 public void setValue(String value) {
                     this.value = value;
                 }
-            };
+            }
         }
     }
 }

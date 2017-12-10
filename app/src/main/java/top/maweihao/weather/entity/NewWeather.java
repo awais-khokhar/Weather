@@ -749,6 +749,7 @@ public class NewWeather implements Comparable<NewWeather> {
             private List<CarWashingBean> carWashing;
             private List<PrecipitationBeanX> precipitation;
             private List<WindBeanX> wind;
+            private List<DescBean> desc;
 
             public String getStatus() {
                 return status;
@@ -860,6 +861,14 @@ public class NewWeather implements Comparable<NewWeather> {
 
             public void setWind(List<WindBeanX> wind) {
                 this.wind = wind;
+            }
+
+            public List<DescBean> getDesc() {
+                return desc;
+            };
+
+            public void setDesc(List<DescBean> desc) {
+                this.desc = desc;
             }
 
             public static class ColdRiskBean {
@@ -1497,6 +1506,32 @@ public class NewWeather implements Comparable<NewWeather> {
                     public void setSpeed(double speed) {
                         this.speed = speed;
                     }
+                }
+            }
+
+            public static class DescBean {
+                /**
+                 * date : 2017-07-21
+                 * value : 多云
+                 */
+
+                private String date;
+                private String value;
+
+                public String getDate() {
+                    return date;
+                }
+
+                public void setDate(String date) {
+                    this.date = date;
+                }
+
+                public String getValue() {
+                    return value;
+                }
+
+                public void setValue(String value) {
+                    this.value = value;
                 }
             }
         }

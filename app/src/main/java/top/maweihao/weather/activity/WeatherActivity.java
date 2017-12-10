@@ -360,16 +360,6 @@ public class WeatherActivity extends AppCompatActivity implements
                         newPresenter.locate();
                     }
 
-//                    String perCountyName = configContact.getCountyName();
-//                    if (TextUtils.isEmpty(perCountyName)) {
-//                        Intent intent = new Intent(WeatherActivity.this, ChoosePositionActivity.class);
-//                        startActivityForResult(intent, ChoosePositionActivityRequestCode);
-//                    } else {
-//                        if (presenter != null) {
-//                            presenter.refreshWeather(true, perCountyName);
-//                        }
-//                    }
-
                 } else if (resultCode == ChooseCode) {
                     Log.d(TAG, "onActivityResult: here2");
                     onActivityResult(ChoosePositionActivityRequestCode, ChooseCode, data);
@@ -378,14 +368,6 @@ public class WeatherActivity extends AppCompatActivity implements
             case ChoosePositionActivityRequestCode:
                 Log.d(TAG, "onActivityResult: here3");
                 if (resultCode == ChooseCode) {
-//                    countyName = data.getStringExtra("countyName");
-//                    locationDetail = countyName;
-//                    setCounty(countyName);
-//                    setLocationDetail(locationDetail);
-//                    Log.d(TAG, "onActivityResult: county_return: " + countyName);
-//                    configContact.applyCountyName(countyName);
-//                    configContact.applyLocationDetail(locationDetail);
-//                    configContact.applyCountyNameLastUpdateTime(System.currentTimeMillis());
                     configContact.applyAutoLocate(false);
 
                     Bundle bundle = data.getExtras();
@@ -532,8 +514,13 @@ public class WeatherActivity extends AppCompatActivity implements
             String time = "";
             try {
                 Date date = oldSDF.parse(dailyBean.getSkycon().get(i).getDate());
-                time = newSDF.format(date) + " " +
-                        getResources().getStringArray(R.array.week)[(dayOfWeek + i - 1) % 7];
+                if (i != 0) {
+                    time = newSDF.format(date) + " " +
+                            getResources().getStringArray(R.array.week)[(dayOfWeek + i - 1) % 7];
+                } else {
+                    time = newSDF.format(date) + " " +
+                            getResources().getString(R.string.today);
+                }
             } catch (ParseException e) {
                 e.printStackTrace();
                 Log.e(TAG, "showDailyWeather: parse time format failed");
@@ -542,17 +529,13 @@ public class WeatherActivity extends AppCompatActivity implements
                     dailyBean.getPrecipitation().get(i).getAvg(), HOURLY_MODE, false);
             String skyconDesc;
             // 在有 desc 时优先显示 desc 的内容
-//            if (dailyBean.getDesc() == null) {
-//                skyconDesc = Utility.chooseWeatherSkycon(this,
-//                        dailyBean.getSkycon().get(i).getValue(),
-//                        dailyBean.getPrecipitation().get(i).getAvg(), HOURLY_MODE);
-//            } else {
-//                skyconDesc = dailyBean.getDesc().get(i).getValue();
-//            }
-            // TODO: 02/12/2017 deal with the 'desc'
-            skyconDesc = Utility.chooseWeatherSkycon(this,
-                    dailyBean.getSkycon().get(i).getValue(),
-                    dailyBean.getPrecipitation().get(i).getAvg(), HOURLY_MODE);
+            if (dailyBean.getDesc() == null || TextUtils.isEmpty(dailyBean.getDesc().get(i).getValue())) {
+                skyconDesc = Utility.chooseWeatherSkycon(this,
+                        dailyBean.getSkycon().get(i).getValue(),
+                        dailyBean.getPrecipitation().get(i).getAvg(), HOURLY_MODE);
+            } else {
+                skyconDesc = dailyBean.getDesc().get(i).getValue();
+            }
             String temperature = Utility.stringRoundDouble(dailyBean.getTemperature().get(i).getMax())
                     + "° / "
                     + Utility.stringRoundDouble(dailyBean.getTemperature().get(i).getMin()) + '°';
