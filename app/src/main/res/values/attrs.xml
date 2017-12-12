@@ -2,15 +2,11 @@
 <resources>
 
     <declare-styleable name="perDayWeatherView">
-
         <attr name="date_text_size" format="dimension" />
-
         <attr name="temperature_text_size" format="dimension" />
-
     </declare-styleable>
 
     <declare-styleable name="SunTimeView">
-
         <attr name="riseHour" format="integer" />
         <attr name="riseMinute" format="integer" />
         <attr name="setHour" format="integer" />
@@ -20,7 +16,7 @@
         <attr name="nowColor" format="color" />
     </declare-styleable>
 
-    <declare-styleable name="SemiCircleView" >
+    <declare-styleable name="SemiCircleView">
         <attr name="negativeColor" format="color" />
         <attr name="name" format="string" />
         <attr name="aqi" format="boolean" />
@@ -28,5 +24,9 @@
 
     <declare-styleable name="WindMillView">
         <attr name="color" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="SunTraceView">
+        <attr name="lineColor" format="color" />
     </declare-styleable>
 </resources>

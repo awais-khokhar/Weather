@@ -1,9 +1,54 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="150dp"
     android:background="@drawable/widget_magic_card"
+    android:orientation="horizontal"
     android:padding="@dimen/widget_margin">
 
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:orientation="vertical">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:paddingEnd="0dp"
+            android:paddingStart="16dp">
 
-</RelativeLayout>
+            <TextView
+                android:id="@+id/tv_desc_day"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                tools:text="@string/weather_desc_today" />
+
+            <TextView
+                android:id="@+id/tv_suntime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_desc_day"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                tools:text="@string/sun_set_time" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:paddingBottom="8dp"
+        android:paddingEnd="16dp"
+        android:paddingStart="0dp"
+        android:paddingTop="8dp"
+        android:src="@drawable/suntrace" />
+
+</LinearLayout>
