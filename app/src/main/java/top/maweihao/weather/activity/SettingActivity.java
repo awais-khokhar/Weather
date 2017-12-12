@@ -68,7 +68,7 @@ public class SettingActivity extends AppCompatActivity {
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp);
         setSupportActionBar(toolbar);
         model = WeatherRepository.getInstance(this);
-        countyName = model.getLocationCached().getCoarseLocation();
+        countyName = (model.getLocationCached() == null ? "" : model.getLocationCached().getCoarseLocation());
         getFragmentManager().beginTransaction()
                 .replace(R.id.setting_frameLayout, new PrefsFragment())
                 .commit();

@@ -25,6 +25,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.LogUtils;
+
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -65,8 +67,6 @@ import static top.maweihao.weather.util.Utility.stringRoundDouble;
 
 public class WeatherActivity extends AppCompatActivity implements
         View.OnClickListener, NewWeatherActivityContract.newView<NewWeatherActivityContract.newPresenter> {
-
-    static final String TAG = WeatherActivity.class.getSimpleName();
 
     static final int HANDLE_POSITION = 0;
     static final int HANDLE_TOAST = 1;
@@ -183,12 +183,12 @@ public class WeatherActivity extends AppCompatActivity implements
                 .subscribe(new Consumer<NewWeather>() {
                     @Override
                     public void accept(NewWeather weather) throws Exception {
-                        Log.d(TAG, "accept: HERE" + weather);
+                        LogUtils.d("accept: HERE" + weather);
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-                        Log.d(TAG, "accept: HERE" + throwable);
+                        LogUtils.d("accept: HERE" + throwable);
                     }
                 });
     }
@@ -210,7 +210,7 @@ public class WeatherActivity extends AppCompatActivity implements
 
     @Override
     protected void onResume() {
-        Log.d(TAG, "onResume: ");
+        LogUtils.d("onResume");
         super.onResume();
         if (newPresenter != null) {
             newPresenter.onResume();
@@ -225,7 +225,7 @@ public class WeatherActivity extends AppCompatActivity implements
 
     @Override
     protected void onPause() {
-        Log.d(TAG, "onPause: ");
+        LogUtils.d("onPause");
         super.onPause();
         if (newPresenter != null) {
             newPresenter.onPause();
@@ -235,13 +235,13 @@ public class WeatherActivity extends AppCompatActivity implements
 
     @Override
     protected void onStart() {
-        Log.d(TAG, "onStart: ");
+        LogUtils.d("onStart");
         super.onStart();
     }
 
     @Override
     protected void onStop() {
-        Log.d(TAG, "onStop: ");
+        LogUtils.d("onStop");
         super.onStop();
         if (newPresenter != null) {
             newPresenter.onStop();
@@ -250,7 +250,7 @@ public class WeatherActivity extends AppCompatActivity implements
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy: ");
+        LogUtils.d("onDestroy");
         super.onDestroy();
         dynamicWeatherView.onDestroy();
         if (newPresenter != null) {
@@ -291,6 +291,7 @@ public class WeatherActivity extends AppCompatActivity implements
 
     /**
      * Toast消息
+     *
      * @param msg 信息
      */
     private void showToastMessage(String msg) {
@@ -302,6 +303,7 @@ public class WeatherActivity extends AppCompatActivity implements
 
     /**
      * 设置城市
+     *
      * @param countyStr 城市名
      */
     private void setCounty(String countyStr) {
@@ -344,7 +346,7 @@ public class WeatherActivity extends AppCompatActivity implements
             case SettingActivityRequestCode:
                 if (resultCode == SettingCode) {
                     boolean autoLocate = data.getBooleanExtra("autoLocate", false);
-                    Log.d(TAG, "onActivityResult: SettingActivity autoLocate=" + autoLocate);
+                    LogUtils.d("onActivityResult: SettingActivity autoLocate=" + autoLocate);
                     if (autoLocate) {
                         newPresenter.locate();
                     }
@@ -362,10 +364,10 @@ public class WeatherActivity extends AppCompatActivity implements
                         MLocation location = bundle.getParcelable("location");
                         String desc = TextUtils.isEmpty(location.getCity()) ? location.getCounty()
                                 : location.getCity() + "" + location.getCounty();
-                        Log.d(TAG, "onActivityResult: desc = " + desc);
+                        LogUtils.d("onActivityResult: desc = " + desc);
                         newPresenter.refreshChosenWeather(desc);
                     } else {
-                        Log.e(TAG, "onActivityResult: cannot get parcelable location");
+                        LogUtils.d("onActivityResult: cannot get parcelable location");
                     }
                 }
                 break;
@@ -386,7 +388,7 @@ public class WeatherActivity extends AppCompatActivity implements
                 }
                 break;
             default:
-                Log.e(TAG, "onRequestPermissionsResult: undefined request code" + requestCode);
+                LogUtils.e("onRequestPermissionsResult: undefined request code" + requestCode);
                 break;
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -416,12 +418,12 @@ public class WeatherActivity extends AppCompatActivity implements
         NewWeather.ResultBean.DailyBean dailyBean = weather.getResult().getDaily();
         NewWeather.ResultBean.HourlyBean hourlyBean = weather.getResult().getHourly();
         NewWeather.ResultBean.MinutelyBean minutelyBean = weather.getResult().getMinutely();
-        Log.d(TAG, "showWeather: here " + dailyBean.getAqi().size());
+        LogUtils.d("showWeather: here " + dailyBean.getAqi().size());
 
         showDailyWeather(dailyBean);
         showHourlyWeather(hourlyBean);
         setRainInfo(minutelyBean.getDescription(), hourlyBean.getDescription());
-        showCurrentWeather(dailyBean, hourlyBean,weather.getResult().getAlert());
+        showCurrentWeather(dailyBean, hourlyBean, weather.getResult().getAlert());
         setUpdateTime(weather.getServer_time() * 1000);
     }
 
@@ -438,7 +440,7 @@ public class WeatherActivity extends AppCompatActivity implements
         final boolean shouldShowAlert;
         // 是否显示天气预警图标
         if (alertBean.getContent().size() > 0) {
-            Log.d(TAG, "showCurrentWeather: alert size=" + alertBean.getContent().size());
+            LogUtils.d( "showCurrentWeather: alert size=" + alertBean.getContent().size());
             alertArrayList = new ArrayList<>();
             for (NewWeather.ResultBean.AlertBean.ContentBean contentBean : alertBean.getContent()) {
                 alertArrayList.add(new Alert(contentBean.getStatus(),
@@ -484,7 +486,7 @@ public class WeatherActivity extends AppCompatActivity implements
                 uv_text.setText(dailyBean.getUltraviolet().get(0).getDesc());
                 carWashing_text.setText(dailyBean.getCarWashing().get(0).getDesc());
                 dressing_text.setText(dailyBean.getDressing().get(0).getDesc());
-                    Log.d(TAG, "showWeather: refresh weather succeed");
+                LogUtils.d( "showWeather: refresh weather succeed");
             }
         });
     }
@@ -492,7 +494,7 @@ public class WeatherActivity extends AppCompatActivity implements
     private void showDailyWeather(NewWeather.ResultBean.DailyBean dailyBean) {
         int length = dailyBean.getSkycon().size();
         length = (length >= 5) ? 5 : length;
-        Log.d(TAG, "showDailyWeather: " + length);
+        LogUtils.d("showDailyWeather: " + length);
         final ArrayList<SingleWeather> singleWeathers = new ArrayList<>(length);
         int dayOfWeek = Utility.getDayOfWeek();
         SimpleDateFormat oldSDF = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
@@ -510,7 +512,7 @@ public class WeatherActivity extends AppCompatActivity implements
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
-                Log.e(TAG, "showDailyWeather: parse time format failed");
+                LogUtils.d( "showDailyWeather: parse time format failed");
             }
             int icon = Utility.chooseWeatherIcon(dailyBean.getSkycon().get(i).getValue(),
                     dailyBean.getPrecipitation().get(i).getAvg(), HOURLY_MODE, false);
@@ -580,12 +582,12 @@ public class WeatherActivity extends AppCompatActivity implements
     @Override
     public void showLocation(MLocation location) {
         if (location == null) {
-            Log.e(TAG, "showLocation: location=null");
+            LogUtils.e( "showLocation: location=null");
             return;
         }
         String coarseLocation = location.getCoarseLocation();
         String detailLocation = location.getFineLocation();
-        Log.d(TAG, "showLocation: " + coarseLocation + detailLocation);
+        LogUtils.d( "showLocation: " + coarseLocation + detailLocation);
         switch (location.getLocateType()) {
             case MLocation.TYPE_CHOOSE:
                 setLoc(coarseLocation, coarseLocation, false);
@@ -610,8 +612,7 @@ public class WeatherActivity extends AppCompatActivity implements
             public void run() {
                 if (timeInMills == 0) {
                     lastUpdateTime.setText(Utility.getTime(WeatherActivity.this));
-                }
-                else
+                } else
                     lastUpdateTime.setText(Utility.getTime(WeatherActivity.this, timeInMills));
             }
         });
@@ -637,7 +638,8 @@ public class WeatherActivity extends AppCompatActivity implements
         if (showOkButton) {
             snackbar.setAction(R.string.ok, new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {}
+                public void onClick(View v) {
+                }
             });
         }
         snackbar.show();
