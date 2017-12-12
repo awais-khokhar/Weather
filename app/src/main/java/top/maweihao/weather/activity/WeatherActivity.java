@@ -41,7 +41,6 @@ import top.maweihao.weather.adapter.DailyWeatherAdapter;
 import top.maweihao.weather.adapter.HourlyWeatherAdapter;
 import top.maweihao.weather.contract.NewWeatherActivityContract;
 import top.maweihao.weather.contract.PreferenceConfigContact;
-import top.maweihao.weather.contract.WeatherActivityContract;
 import top.maweihao.weather.entity.Alert;
 import top.maweihao.weather.entity.NewWeather;
 import top.maweihao.weather.entity.SingleWeather;
@@ -138,7 +137,6 @@ public class WeatherActivity extends AppCompatActivity implements
     public String locationDetail;
 
     private MessageHandler handler; //消息队列
-    private WeatherActivityContract.Presenter presenter;
     private NewWeatherActivityContract.newPresenter newPresenter;
 
     private PreferenceConfigContact configContact;
@@ -161,7 +159,6 @@ public class WeatherActivity extends AppCompatActivity implements
         configContact = Utility.createSimpleConfig(this).create(PreferenceConfigContact.class);
 
         handler = new MessageHandler(this);
-//        presenter = new WeatherActivityPresenter(this, this);
         newPresenter = new NewWeatherPresenter(WeatherActivity.this,
                 WeatherRepository.getInstance(getApplicationContext()), configContact);
         newPresenter.subscribe();
@@ -282,8 +279,7 @@ public class WeatherActivity extends AppCompatActivity implements
         }
     }
 
-//    @Override
-    public void setRainInfo(final String now, final String today) {
+    private void setRainInfo(final String now, final String today) {
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -297,8 +293,7 @@ public class WeatherActivity extends AppCompatActivity implements
      * Toast消息
      * @param msg 信息
      */
-//    @Override
-    public void showToastMessage(String msg) {
+    private void showToastMessage(String msg) {
         Message message = new Message();
         message.what = HANDLE_TOAST;
         message.obj = msg;
@@ -309,17 +304,11 @@ public class WeatherActivity extends AppCompatActivity implements
      * 设置城市
      * @param countyStr 城市名
      */
-//    @Override
-    public void setCounty(String countyStr) {
+    private void setCounty(String countyStr) {
         Message message = handler.obtainMessage();
         message.what = HANDLE_POSITION;
         message.obj = countyStr;
         handler.sendMessage(message);
-    }
-
-    @Override
-    public void onOptionsMenuClosed(Menu menu) {
-        super.onOptionsMenuClosed(menu);
     }
 
     @Override
@@ -354,7 +343,6 @@ public class WeatherActivity extends AppCompatActivity implements
         switch (requestCode) {
             case SettingActivityRequestCode:
                 if (resultCode == SettingCode) {
-//                    configContact.applyAutoLocate(data.getBooleanExtra("autoLocate", false));
                     boolean autoLocate = data.getBooleanExtra("autoLocate", false);
                     Log.d(TAG, "onActivityResult: SettingActivity autoLocate=" + autoLocate);
                     if (autoLocate) {
@@ -362,12 +350,10 @@ public class WeatherActivity extends AppCompatActivity implements
                     }
 
                 } else if (resultCode == ChooseCode) {
-                    Log.d(TAG, "onActivityResult: here2");
                     onActivityResult(ChoosePositionActivityRequestCode, ChooseCode, data);
                 }
                 break;
             case ChoosePositionActivityRequestCode:
-                Log.d(TAG, "onActivityResult: here3");
                 if (resultCode == ChooseCode) {
                     configContact.applyAutoLocate(false);
 
@@ -398,7 +384,6 @@ public class WeatherActivity extends AppCompatActivity implements
                 } else {
                     newPresenter.onPermissionDenied();
                 }
-
                 break;
             default:
                 Log.e(TAG, "onRequestPermissionsResult: undefined request code" + requestCode);
@@ -412,7 +397,7 @@ public class WeatherActivity extends AppCompatActivity implements
      *
      * @param isLocation 是否是定位状态
      */
-    public void setLocateModeImage(boolean isLocation) {
+    private void setLocateModeImage(boolean isLocation) {
         locateModeImage.setVisibility(View.VISIBLE);
         if (isLocation) {
             locateModeImage.setImageResource(R.drawable.ic_location_on_black_24dp);
@@ -420,11 +405,6 @@ public class WeatherActivity extends AppCompatActivity implements
             locateModeImage.setImageResource(R.drawable.ic_location_off_black_24dp);
         }
     }
-
-    /*new
-    presenter
-    method
-    down!*/
 
     @Override
     public void setPresenter(NewWeatherActivityContract.newPresenter presenter) {
@@ -721,34 +701,6 @@ public class WeatherActivity extends AppCompatActivity implements
         startActivityForResult(intent, ChoosePositionActivityRequestCode);
     }
 
-    private static class MessageHandler extends Handler {
-        WeakReference<WeatherActivity> activityWeakReference;
-
-        MessageHandler(WeatherActivity activity) {
-            activityWeakReference = new WeakReference<>(activity);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            WeatherActivity activity = activityWeakReference.get();
-            if (activity != null) {
-                switch (msg.what) {
-                    case HANDLE_POSITION:
-                        activity.countyName = (String) msg.obj;
-                        activity.toolbar.setTitle((String) msg.obj);
-                        break;
-                    case HANDLE_TOAST:
-                        Toast.makeText(activity, (String) msg.obj, Toast.LENGTH_SHORT).show();
-                        break;
-                    case HANDLE_EXACT_LOCATION:
-                        activity.locationDetail = (String) msg.obj;
-                        activity.locateMode.setText((String) msg.obj);
-                        break;
-                }
-            }
-        }
-    }
-
     private void setLoc(final String coarse, final String detail, final boolean loc) {
         handler.post(new Runnable() {
             @Override
@@ -767,6 +719,30 @@ public class WeatherActivity extends AppCompatActivity implements
                 }
             }
         });
+    }
+
+    private static class MessageHandler extends Handler {
+        WeakReference<WeatherActivity> activityWeakReference;
+
+        MessageHandler(WeatherActivity activity) {
+            activityWeakReference = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            WeatherActivity activity = activityWeakReference.get();
+            if (activity != null) {
+                switch (msg.what) {
+                    case HANDLE_TOAST:
+                        Toast.makeText(activity, (String) msg.obj, Toast.LENGTH_SHORT).show();
+                        break;
+                    case HANDLE_EXACT_LOCATION:
+                        activity.locationDetail = (String) msg.obj;
+                        activity.locateMode.setText((String) msg.obj);
+                        break;
+                }
+            }
+        }
     }
 
 }

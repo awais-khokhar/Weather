@@ -3,7 +3,6 @@ package top.maweihao.weather.util.remoteView;
 import android.content.Context;
 import android.util.Log;
 
-import top.maweihao.weather.entity.HeWeather.HeNowWeather;
 import top.maweihao.weather.entity.HeWeather.NewHeWeatherNow;
 import top.maweihao.weather.entity.NewWeather;
 
@@ -15,21 +14,6 @@ import top.maweihao.weather.entity.NewWeather;
 public class WidgetUtils {
 
     private static final String TAG = WidgetUtils.class.getSimpleName();
-
-    // 使用和风天气的数据只能刷新 TallWidget 和 SimpleWidget
-    @Deprecated
-    public static void refreshWidget(final Context context, final HeNowWeather heNowWeather,
-                                     final String countyName) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (SimpleWidgetUtils.isEnable(context))
-                    SimpleWidgetUtils.refreshWidgetView(context, heNowWeather, countyName);
-                if (TallWidgetUtils.isEnable(context))
-                    TallWidgetUtils.refreshWidgetView(context, heNowWeather, countyName);
-            }
-        }).start();
-    }
 
     public static void refreshWidget(final Context context, final NewHeWeatherNow weather,
                                      final String countyName) {
@@ -65,22 +49,6 @@ public class WidgetUtils {
             BigWidgetUtils.updateTime2Now(context);
         }
     }
-
-    // 为 BigWidget 带上下次刷新时间，测试用
-//    @Deprecated
-//    public static void refreshWidget(final Context context, final ForecastBean forecastBean, final int minute) {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (SimpleWidgetUtils.isEnable(context))
-//                    SimpleWidgetUtils.refreshWidgetView(context, forecastBean);
-//                if (TallWidgetUtils.isEnable(context))
-//                    TallWidgetUtils.refreshWidgetView(context, forecastBean);
-//                if (BigWidgetUtils.isEnable(context))
-//                    BigWidgetUtils.refreshWidgetView(context, forecastBean, minute);
-//            }
-//        }).start();
-//    }
 
     /**
      * 是否添加了任何 widget

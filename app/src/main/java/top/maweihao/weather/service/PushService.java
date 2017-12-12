@@ -92,8 +92,10 @@ public class PushService extends Service {
                         String responseData = response.body().string();
                         //fastJson解析数据
                         ForecastBean forecastBean = JSON.parseObject(responseData, ForecastBean.class);
-                        ForecastBean.ResultBean.DailyBean.TemperatureBeanX temp = forecastBean.getResult().getDaily().getTemperature().get(0);
-                        ForecastBean.ResultBean.DailyBean.TemperatureBeanX temp2 = forecastBean.getResult().getDaily().getTemperature().get(1);
+                        ForecastBean.ResultBean.DailyBean.TemperatureBeanX temp =
+                                forecastBean.getResult().getDaily().getTemperature().get(0);
+                        ForecastBean.ResultBean.DailyBean.TemperatureBeanX temp2 =
+                                forecastBean.getResult().getDaily().getTemperature().get(1);
 //                        parseJSON(responseData);
                         calTemDiff(Utility.intRoundDouble(temp.getMax()), Utility.intRoundDouble(temp.getMin()),
                                 Utility.intRoundDouble(temp2.getMax()), Utility.intRoundDouble(temp2.getMin()));
@@ -144,7 +146,8 @@ public class PushService extends Service {
 //        }
 
         Intent intent = new Intent(this, PushService.class);
-        PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getService(this,
+                0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
         isStarSendNotification = true;
@@ -202,7 +205,8 @@ public class PushService extends Service {
                     todayMin + "°/" + todayMax + "°  ···>  " + tomMin + "°/" + tomMax + "° ");
         } else {
             Log.d(TAG, "calTemDiff: diff: " + maxDiff * minDiff);
-            sendNotification("Temperature", todayMin + "° - " + todayMax + "° -> " + tomMin + "° - " + tomMax + "° ");
+            sendNotification("Temperature", todayMin + "° - " +
+                    todayMax + "° -> " + tomMin + "° - " + tomMax + "° ");
         }
     }
 

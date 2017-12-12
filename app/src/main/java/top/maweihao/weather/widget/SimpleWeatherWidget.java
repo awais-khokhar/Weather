@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 
 import top.maweihao.weather.util.ServiceUtil;
+import top.maweihao.weather.util.remoteView.SimpleWidgetUtils;
 import top.maweihao.weather.util.remoteView.WidgetUtils;
 
 /**
@@ -15,6 +16,7 @@ public class SimpleWeatherWidget extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+        SimpleWidgetUtils.setIntent(context, null);
         ServiceUtil.startWidgetSyncService(context, true, false);
     }
 

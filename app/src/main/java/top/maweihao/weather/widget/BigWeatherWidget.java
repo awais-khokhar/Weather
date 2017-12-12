@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 
 import top.maweihao.weather.util.ServiceUtil;
+import top.maweihao.weather.util.remoteView.BigWidgetUtils;
 import top.maweihao.weather.util.remoteView.WidgetUtils;
 
 /**
@@ -12,11 +13,11 @@ import top.maweihao.weather.util.remoteView.WidgetUtils;
  */
 public class BigWeatherWidget extends AppWidgetProvider {
 
-    public static final String TAG = "BigWeatherWidget";
+    public static final String TAG = BigWeatherWidget.class.getSimpleName();
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-
+        BigWidgetUtils.setIntent(context, null);
         ServiceUtil.startWidgetSyncService(context, true, false);
     }
 

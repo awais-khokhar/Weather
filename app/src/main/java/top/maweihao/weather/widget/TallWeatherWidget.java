@@ -3,9 +3,9 @@ package top.maweihao.weather.widget;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
-import android.util.Log;
 
 import top.maweihao.weather.util.ServiceUtil;
+import top.maweihao.weather.util.remoteView.TallWidgetUtils;
 import top.maweihao.weather.util.remoteView.WidgetUtils;
 
 /**
@@ -18,7 +18,7 @@ public class TallWeatherWidget extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        Log.d(TAG, "onUpdate: ");
+        TallWidgetUtils.setIntent(context, null);
         ServiceUtil.startWidgetSyncService(context, true, false);
     }
 

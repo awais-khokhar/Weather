@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.provider.AlarmClock;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -14,12 +15,8 @@ import java.util.GregorianCalendar;
 
 import top.maweihao.weather.R;
 import top.maweihao.weather.activity.WeatherActivity;
-import top.maweihao.weather.contract.PreferenceConfigContact;
-import top.maweihao.weather.entity.ForecastBean;
-import top.maweihao.weather.entity.HeWeather.HeNowWeather;
 import top.maweihao.weather.entity.HeWeather.NewHeWeatherNow;
 import top.maweihao.weather.entity.NewWeather;
-import top.maweihao.weather.entity.RealTimeBean;
 import top.maweihao.weather.util.HeWeatherUtil;
 import top.maweihao.weather.util.LunarUtil;
 import top.maweihao.weather.util.Utility;
@@ -66,25 +63,6 @@ public class SimpleWidgetUtils {
         }
     }
 
-    public static void refreshWidgetView(Context context, @NonNull HeNowWeather heNowWeather, String countyName) {
-//        String countyName = getCounty(context);
-        if (heNowWeather.getHeWeather5().get(0).getStatus().equals("ok")) {
-            HeNowWeather.HeWeather5Bean.NowBean now = heNowWeather.getHeWeather5().get(0).getNow();
-            int tem = Integer.parseInt(now.getTmp());
-            String skyconString = now.getCond().getTxt();
-            int icon = HeWeatherUtil.chooseHeIcon(now.getCond().getCode());
-
-            updateWidgetView(context, icon, countyName, skyconString, tem);
-        }
-    }
-
-    @Deprecated
-    private static String getCounty(Context context) {
-        PreferenceConfigContact configContact = Utility.createSimpleConfig(context)
-                .create(PreferenceConfigContact.class);
-        return configContact.getCountyName() == null ? "error" : configContact.getCountyName();
-    }
-
     private static void updateWidgetView(Context context, int icon, String countyName, String skyconString, int tem) {
         RemoteViews simpleViews = new RemoteViews(context.getPackageName(), R.layout.widget_simple_weather);
         simpleViews.setImageViewResource(R.id.simple_widget_skycon, icon);
@@ -107,6 +85,19 @@ public class SimpleWidgetUtils {
             simpleViews.setViewVisibility(R.id.widget_big_card, View.GONE);
         }
 
+        setIntent(context, simpleViews);
+
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        appWidgetManager.updateAppWidget(new ComponentName(context, SimpleWeatherWidget.class), simpleViews);
+    }
+
+    public static void setIntent(Context context, @Nullable RemoteViews simpleViews) {
+        boolean refresh = false;
+        if (simpleViews == null) {
+            simpleViews = new RemoteViews(context.getPackageName(), R.layout.widget_simple_weather);
+            refresh = true;
+        }
+
         PendingIntent weatherPendingIntent = PendingIntent.getActivity(context, WEATHER_PENDING_INTENT_CODE,
                 new Intent(context, WeatherActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
         Intent mClockIntent = new Intent(AlarmClock.ACTION_SHOW_ALARMS);
@@ -117,7 +108,9 @@ public class SimpleWidgetUtils {
         simpleViews.setOnClickPendingIntent(R.id.simple_widget_left, clockPendingIntent);
         simpleViews.setOnClickPendingIntent(R.id.simple_widget_right, weatherPendingIntent);
 
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        appWidgetManager.updateAppWidget(new ComponentName(context, SimpleWeatherWidget.class), simpleViews);
+        if (refresh) {
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            appWidgetManager.updateAppWidget(new ComponentName(context, SimpleWeatherWidget.class), simpleViews);
+        }
     }
 }

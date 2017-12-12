@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.provider.AlarmClock;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -14,12 +15,10 @@ import java.util.GregorianCalendar;
 
 import top.maweihao.weather.R;
 import top.maweihao.weather.activity.WeatherActivity;
+import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.entity.ForecastBean;
-import top.maweihao.weather.entity.HeWeather.HeNowWeather;
 import top.maweihao.weather.entity.HeWeather.NewHeWeatherNow;
 import top.maweihao.weather.entity.NewWeather;
-import top.maweihao.weather.entity.RealTimeBean;
-import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.util.HeWeatherUtil;
 import top.maweihao.weather.util.LunarUtil;
 import top.maweihao.weather.util.Utility;
@@ -80,44 +79,10 @@ public class TallWidgetUtils {
         updateWidgetView(context, icon, countyName, skyconString, tem);
     }
 
-    @Deprecated
-    public static void refreshWidgetView(Context context, RealTimeBean realTimeBean) {
-        String countyName = getCounty(context);
-
-        int tem = Utility.intRoundDouble(realTimeBean.getResult().getTemperature());
-        String skycon = realTimeBean.getResult().getSkycon();
-        float intensity = realTimeBean.getResult().getPrecipitation().getLocal().getIntensity();
-        String skyconString = Utility.chooseWeatherSkycon(context, skycon, intensity, WeatherActivity.MINUTELY_MODE);
-        int icon = Utility.chooseWeatherIcon(skycon, intensity, WeatherActivity.MINUTELY_MODE, false);
-
-        updateWidgetView(context, icon, countyName, skyconString, tem);
-    }
-
-    @Deprecated
-    public static void refreshWidgetView(Context context, HeNowWeather heNowWeather, String countyName) {
-//        String countyName = getCounty(context);
-        if (heNowWeather.getHeWeather5().get(0).getStatus().equals("ok")) {
-            HeNowWeather.HeWeather5Bean.NowBean now = heNowWeather.getHeWeather5().get(0).getNow();
-            int tem = Integer.parseInt(now.getTmp());
-            String skyconString = now.getCond().getTxt();
-            int icon = HeWeatherUtil.chooseHeIcon(now.getCond().getCode());
-
-            updateWidgetView(context, icon, countyName, skyconString, tem);
-        }
-    }
-
     private static void updateWidgetView(Context context, int icon, String countyName, String skyconString, int tem) {
         RemoteViews tallViews = new RemoteViews(context.getPackageName(), R.layout.widget_tall_weather);
         tallViews.setImageViewResource(R.id.tall_widget_skycon, icon);
         tallViews.setTextViewText(R.id.tall_widget_info, countyName + " | " + skyconString + ' ' + tem + '°');
-
-        PendingIntent weatherPendingIntent = PendingIntent.getActivity(context, WEATHER_PENDING_INTENT_CODE,
-                new Intent(context, WeatherActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
-
-        Intent mClockIntent = new Intent(AlarmClock.ACTION_SHOW_ALARMS);
-        mClockIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent clockPendingIntent = PendingIntent.getActivity(context,
-                CLOCK_PENDING_INTENT_CODE, mClockIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Boolean lunar = TallWeatherWidgetConfigureActivity.loadLunarPref(context);
         Boolean card = TallWeatherWidgetConfigureActivity.loadCardPref(context);
@@ -134,8 +99,8 @@ public class TallWidgetUtils {
         } else {
             tallViews.setViewVisibility(R.id.widget_tall_card, View.GONE);
         }
-        tallViews.setOnClickPendingIntent(R.id.tall_widget_clock, clockPendingIntent);
-        tallViews.setOnClickPendingIntent(R.id.tall_widget_weather, weatherPendingIntent);
+
+        setIntent(context, tallViews);
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         appWidgetManager.updateAppWidget(new ComponentName(context, TallWeatherWidget.class), tallViews);
@@ -146,6 +111,29 @@ public class TallWidgetUtils {
     private static String getCounty(Context context) {
         PreferenceConfigContact configContact = Utility.createSimpleConfig(context).create(PreferenceConfigContact.class);
         return configContact.getCountyName() == null ? "error" : configContact.getCountyName();
+    }
+
+    public static void setIntent(Context context, @Nullable RemoteViews tallViews) {
+        boolean refresh = false;
+        if (tallViews == null) {
+            refresh = true;
+            tallViews = new RemoteViews(context.getPackageName(), R.layout.widget_tall_weather);
+        }
+        PendingIntent weatherPendingIntent = PendingIntent.getActivity(context, WEATHER_PENDING_INTENT_CODE,
+                new Intent(context, WeatherActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Intent mClockIntent = new Intent(AlarmClock.ACTION_SHOW_ALARMS);
+        mClockIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent clockPendingIntent = PendingIntent.getActivity(context,
+                CLOCK_PENDING_INTENT_CODE, mClockIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        tallViews.setOnClickPendingIntent(R.id.tall_widget_clock, clockPendingIntent);
+        tallViews.setOnClickPendingIntent(R.id.tall_widget_weather, weatherPendingIntent);
+
+        if (refresh) {
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            appWidgetManager.updateAppWidget(new ComponentName(context, TallWeatherWidget.class), tallViews);
+        }
     }
 
 }
