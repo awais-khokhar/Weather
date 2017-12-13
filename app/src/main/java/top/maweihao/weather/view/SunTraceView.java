@@ -16,7 +16,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import top.maweihao.weather.R;
-import top.maweihao.weather.util.Constants;
+import top.maweihao.weather.util.LogUtils;
 
 /**
  * view for sun trace
@@ -65,9 +65,7 @@ public class SunTraceView extends View {
     }
 
     private void initPaint() {
-        if (Constants.DEBUG) {
-            Log.d(TAG, "SunTraceView: init");
-        }
+        LogUtils.d("SunTraceView: init");
         Calendar calendar = new GregorianCalendar();
         hour = calendar.get(Calendar.HOUR_OF_DAY);
         minute = calendar.get(Calendar.MINUTE);
@@ -137,7 +135,7 @@ public class SunTraceView extends View {
     protected void onDraw(Canvas canvas) {
         Log.d(TAG, "onDraw: ");
         super.onDraw(canvas);
-        canvas.drawRect(0, 0 ,getWidth(), getHeight(), horizonPaint); //debug only
+        canvas.drawRect(0, 0, getWidth(), getHeight(), horizonPaint); //debug only
         canvas.drawPath(tracePath, pacePaint);
 
         pathMeasure.setPath(tracePath, false);
@@ -155,10 +153,11 @@ public class SunTraceView extends View {
 
     /**
      * set sunrise and sunset time
-     * @param riseHour hour of sunrise
+     *
+     * @param riseHour   hour of sunrise
      * @param riseMinute minute of minute
-     * @param setHour hour of sunset
-     * @param setMinute minute of sunset
+     * @param setHour    hour of sunset
+     * @param setMinute  minute of sunset
      */
     public void setTime(int riseHour, int riseMinute, int setHour, int setMinute) {
         this.riseHour = riseHour;
@@ -179,6 +178,7 @@ public class SunTraceView extends View {
 
     /**
      * return dark time in a day in minutes
+     *
      * @return minutes
      */
     private int darkTime() {

@@ -16,7 +16,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,8 +23,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.blankj.utilcode.util.LogUtils;
 
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
@@ -51,6 +48,7 @@ import top.maweihao.weather.presenter.NewWeatherPresenter;
 import top.maweihao.weather.refactor.MLocation;
 import top.maweihao.weather.service.PushService;
 import top.maweihao.weather.util.Constants;
+import top.maweihao.weather.util.LogUtils;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.view.SemiCircleView;
 import top.maweihao.weather.view.SunTimeView;
@@ -440,7 +438,7 @@ public class WeatherActivity extends AppCompatActivity implements
         final boolean shouldShowAlert;
         // 是否显示天气预警图标
         if (alertBean.getContent().size() > 0) {
-            LogUtils.d( "showCurrentWeather: alert size=" + alertBean.getContent().size());
+            LogUtils.d("showCurrentWeather: alert size=" + alertBean.getContent().size());
             alertArrayList = new ArrayList<>();
             for (NewWeather.ResultBean.AlertBean.ContentBean contentBean : alertBean.getContent()) {
                 alertArrayList.add(new Alert(contentBean.getStatus(),
@@ -486,7 +484,7 @@ public class WeatherActivity extends AppCompatActivity implements
                 uv_text.setText(dailyBean.getUltraviolet().get(0).getDesc());
                 carWashing_text.setText(dailyBean.getCarWashing().get(0).getDesc());
                 dressing_text.setText(dailyBean.getDressing().get(0).getDesc());
-                LogUtils.d( "showWeather: refresh weather succeed");
+                LogUtils.d("showWeather: refresh weather succeed");
             }
         });
     }
@@ -512,7 +510,7 @@ public class WeatherActivity extends AppCompatActivity implements
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
-                LogUtils.d( "showDailyWeather: parse time format failed");
+                LogUtils.d("showDailyWeather: parse time format failed");
             }
             int icon = Utility.chooseWeatherIcon(dailyBean.getSkycon().get(i).getValue(),
                     dailyBean.getPrecipitation().get(i).getAvg(), HOURLY_MODE, false);
@@ -582,12 +580,12 @@ public class WeatherActivity extends AppCompatActivity implements
     @Override
     public void showLocation(MLocation location) {
         if (location == null) {
-            LogUtils.e( "showLocation: location=null");
+            LogUtils.e("showLocation: location = null");
             return;
         }
         String coarseLocation = location.getCoarseLocation();
         String detailLocation = location.getFineLocation();
-        LogUtils.d( "showLocation: " + coarseLocation + detailLocation);
+        LogUtils.d("showLocation: " + coarseLocation + detailLocation);
         switch (location.getLocateType()) {
             case MLocation.TYPE_CHOOSE:
                 setLoc(coarseLocation, coarseLocation, false);

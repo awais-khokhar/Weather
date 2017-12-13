@@ -21,6 +21,7 @@ import top.maweihao.weather.db.City;
 import top.maweihao.weather.db.County;
 import top.maweihao.weather.db.Province;
 import top.maweihao.weather.util.HttpUtil;
+import top.maweihao.weather.util.LogUtils;
 
 import static top.maweihao.weather.activity.ChoosePositionActivity.LEVEL_CITY;
 import static top.maweihao.weather.activity.ChoosePositionActivity.LEVEL_COUNTY;
@@ -30,7 +31,6 @@ import static top.maweihao.weather.activity.ChoosePositionActivity.countyList;
 import static top.maweihao.weather.activity.ChoosePositionActivity.provinceList;
 import static top.maweihao.weather.activity.ChoosePositionActivity.selectedCity;
 import static top.maweihao.weather.activity.ChoosePositionActivity.selectedProvince;
-import static top.maweihao.weather.util.Constants.DEBUG;
 
 /**
  * Created by limuyang on 2017/6/2.
@@ -58,7 +58,7 @@ public class ChoosePositionActivityModel implements ChoosePositionActivityContra
                 Log.i(TAG, "dataList add " + province.getProvinceName());
             }
             presenter.setRecyclerViewData(dataList);
-            Log.d(TAG, "queryProvinces: adapter has been notified");
+            LogUtils.d("queryProvinces: adapter has been notified");
             ChoosePositionActivity.currentLevel = LEVEL_PROVINCE;
         } else {
             String address = "http://guolin.tech/api/china";
@@ -127,8 +127,7 @@ public class ChoosePositionActivityModel implements ChoosePositionActivityContra
                     result = handleCityResponse(responseText, selectedProvince.getId());
                 } else if ("county".equals(type)) {
                     result = handleCountyResponse(responseText, selectedCity.getId());
-                    if (DEBUG)
-                        Log.d(TAG, "onResponse: result: " + result);
+                    LogUtils.d("onResponse: result: " + result);
                 }
                 if (result) {
                     presenter.closeProgressDialog();
@@ -165,12 +164,12 @@ public class ChoosePositionActivityModel implements ChoosePositionActivityContra
                     province.setProvinceName(provinceObject.getString("name"));
                     province.setProvinceCode(provinceObject.getInt("id"));
                     province.save();
-                    Log.v(TAG, "saved province: " + provinceObject.getString("name"));
+                    LogUtils.v("saved province: " + provinceObject.getString("name"));
                 }
                 return true;
             } catch (JSONException e) {
                 e.printStackTrace();
-                Log.e(TAG, "handleProvinceResponse: JSONObeject error");
+                LogUtils.e("handleProvinceResponse: JSONObeject error");
             }
         }
         return false;
@@ -187,19 +186,19 @@ public class ChoosePositionActivityModel implements ChoosePositionActivityContra
                     city.setCityCode(cityObject.getInt("id"));
                     city.setProvinceId(provinceId);
                     city.save();
-                    Log.v(TAG, "saved city: " + cityObject.getString("name"));
+                    LogUtils.v("saved city: " + cityObject.getString("name"));
                 }
                 return true;
             } catch (JSONException e) {
                 e.printStackTrace();
-                Log.e(TAG, "handleCityResponse: JSONObject error");
+                LogUtils.e("handleCityResponse: JSONObject error");
             }
         }
         return false;
     }
 
     private boolean handleCountyResponse(String response, int cityId) {
-        Log.d(TAG, "handleCountyResponse: ");
+        LogUtils.d("handleCountyResponse: ");
         if (!TextUtils.isEmpty(response)) {
             try {
                 JSONArray allCounties = new JSONArray(response);
@@ -209,12 +208,12 @@ public class ChoosePositionActivityModel implements ChoosePositionActivityContra
                     county.setCountyName(countyObject.getString("name"));
                     county.setCityId(cityId);
                     county.save();
-                    Log.v(TAG, "saved county: " + countyObject.getString("name"));
+                    LogUtils.v("saved county: " + countyObject.getString("name"));
                 }
                 return true;
             } catch (JSONException e) {
                 e.printStackTrace();
-                Log.e(TAG, "handleCountyResponse: JSONObject error");
+                LogUtils.e("handleCountyResponse: JSONObject error");
             }
         }
         return false;

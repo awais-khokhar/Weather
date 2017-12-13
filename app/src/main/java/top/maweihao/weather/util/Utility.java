@@ -38,7 +38,6 @@ import top.maweihao.weather.view.dynamicweather.BaseDrawer;
 
 import static top.maweihao.weather.activity.WeatherActivity.HOURLY_MODE;
 import static top.maweihao.weather.activity.WeatherActivity.MINUTELY_MODE;
-import static top.maweihao.weather.util.Constants.DEBUG;
 
 
 /**
@@ -52,11 +51,11 @@ public class Utility {
 
     /**
      * 创建自定义的配置文件读取方法
+     *
      * @param context Context
      * @return SimpleConfig
      */
-    public static SimpleConfig createSimpleConfig(Context context)
-    {
+    public static SimpleConfig createSimpleConfig(Context context) {
         return new SimpleConfig.Builder(context).configFactory(new Config.Factory() {
             @Override
             public Config newConfig(Context context, String name, int mode) {
@@ -76,7 +75,7 @@ public class Utility {
      * 把 float 四舍五入再返回 int，用来处理温度
      */
     public static int intRoundDouble(double s) {
-        return (int)Math.round(s);
+        return (int) Math.round(s);
     }
 
     public static int Cel2Fah(int cel) {
@@ -92,7 +91,8 @@ public class Utility {
     /**
      * 通过天气获取背景图
      */
-    public static @BaseDrawer.Type int chooseBgImage(String skycon) {
+    public static @BaseDrawer.Type
+    int chooseBgImage(String skycon) {
         switch (skycon) {
             case "CLEAR_DAY":
                 return BaseDrawer.Type.CLEAR_D;
@@ -119,10 +119,11 @@ public class Utility {
 
     /**
      * 获得天气 String
-     * @param context  context
-     * @param skycon  天气标识
+     *
+     * @param context       context
+     * @param skycon        天气标识
      * @param precipitation 雨量
-     * @param mode  Mode 代表 precipitation 的精度，分为小时级和分钟级， 以确定雨量
+     * @param mode          Mode 代表 precipitation 的精度，分为小时级和分钟级， 以确定雨量
      * @return 描述（string）
      */
     public static String chooseWeatherSkycon(Context context, String skycon, double precipitation, int mode) {
@@ -171,11 +172,12 @@ public class Utility {
 
     /**
      * 获得天气图标
-     * @param skycon  天气标识
-     * @param precipitation  雨量
-     * @param mode  Mode 代表 precipitation 的精度，分为小时级和分钟级， 以确定雨量
-     * @param simpleIcon  是否返回简单黑白风格的 icon
-     * @return  天气图片
+     *
+     * @param skycon        天气标识
+     * @param precipitation 雨量
+     * @param mode          Mode 代表 precipitation 的精度，分为小时级和分钟级， 以确定雨量
+     * @param simpleIcon    是否返回简单黑白风格的 icon
+     * @return 天气图片
      */
     public static int chooseWeatherIcon(String skycon, double precipitation, int mode, boolean simpleIcon) {
         switch (skycon) {
@@ -219,6 +221,7 @@ public class Utility {
 
     /**
      * 系统语言是否为中文
+     *
      * @param context context
      * @return isChinese?
      */
@@ -232,7 +235,8 @@ public class Utility {
 
     /**
      * 获得风向
-     * @param context context
+     *
+     * @param context   context
      * @param direction double
      * @return 风向
      */
@@ -260,8 +264,9 @@ public class Utility {
 
     /**
      * 获得风力
+     *
      * @param context context
-     * @param speed double
+     * @param speed   double
      * @return string
      */
     public static String getWindLevel(Context context, double speed) {
@@ -316,6 +321,7 @@ public class Utility {
 
     /**
      * 判断时间和现在的时间相差
+     *
      * @param mills 时间
      */
     public static String getTime(Context context, long mills) {
@@ -363,6 +369,7 @@ public class Utility {
 
     /**
      * getIP 获取网络IP地址(优先获取wifi地址)
+     *
      * @param ctx context
      * @return ip地址字符串
      */
@@ -403,6 +410,7 @@ public class Utility {
 
     /**
      * 获取状态栏高度
+     *
      * @param context context
      * @return 高度值
      */
@@ -420,8 +428,7 @@ public class Utility {
             x = Integer.parseInt(field.get(obj).toString());
             return context.getResources().getDimensionPixelSize(x);
         } catch (Exception e1) {
-            if (DEBUG)
-                Log.e(TAG, "get status bar height failed");
+            LogUtils.e("get status bar height failed");
             e1.printStackTrace();
             return 75;
         }
@@ -434,6 +441,7 @@ public class Utility {
 
     /**
      * 获取导航栏高度
+     *
      * @param context context
      * @return 高度值
      */
@@ -452,6 +460,7 @@ public class Utility {
 
     /**
      * 关闭软键盘
+     *
      * @param context context
      */
     public static void closeSoftInput(@Nullable Context context) {
@@ -505,7 +514,7 @@ public class Utility {
             if (info != null && info.isConnected()) {
                 // 当前网络是连接的
 //                if (info.getState() == NetworkInfo.State.CONNECTED) {
-                    // 当前所连接的网络可用
+                // 当前所连接的网络可用
 //                    return true;
 //                }
                 return true;
@@ -521,6 +530,7 @@ public class Utility {
 
     /**
      * 现在是星期几？
+     *
      * @return int
      */
     public static int getDayOfWeek() {

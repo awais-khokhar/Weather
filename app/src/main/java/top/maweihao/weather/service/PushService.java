@@ -11,9 +11,6 @@ import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
-import android.util.Log;
-
-import com.blankj.utilcode.util.LogUtils;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -28,9 +25,8 @@ import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.contract.WeatherData;
 import top.maweihao.weather.entity.NewWeather;
 import top.maweihao.weather.model.WeatherRepository;
+import top.maweihao.weather.util.LogUtils;
 import top.maweihao.weather.util.Utility;
-
-import static top.maweihao.weather.util.Constants.DEBUG;
 
 /**
  * 后台刷新service， 每晚提示第二天温差
@@ -60,7 +56,7 @@ public class PushService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "onCreate: SyncService created");
+        LogUtils.d("onCreate: SyncService created");
         isChinese = Utility.isChinese(this);
 
     }
@@ -132,8 +128,7 @@ public class PushService extends Service {
         if (System.currentTimeMillis() > calendar.getTimeInMillis()) //使用系统时间进行判断，保证绝对性
         {
             calendar.set(Calendar.DAY_OF_MONTH, day + 1);
-            if (DEBUG)
-                Log.d(TAG, "startAgain: day+1    now is:" + calendar.get(Calendar.DAY_OF_MONTH));
+            LogUtils.d("startAgain: day+1    now is:" + calendar.get(Calendar.DAY_OF_MONTH));
         }
 
         Intent intent = new Intent(this, PushService.class);
@@ -180,25 +175,25 @@ public class PushService extends Service {
                 String tem = (maxDiff > 0 || minDiff > 0) ? getResources().getString(R.string.warmer)
                         : getResources().getString(R.string.colder);
                 if (isChinese) {
-                    Log.i(TAG, "Chinese");
+                    LogUtils.i("Chinese");
                     titleStr = dayOfWeek + "将" + tem + ' ' + Math.max(a, b) + "° ";
                 } else {
-                    Log.i(TAG, "no Chinese");
+                    LogUtils.i("no Chinese");
                     titleStr = Math.max(a, b) + "° " + tem + " than " + dayOfWeek;
                 }
             } else {
                 if (isChinese) {
-                    Log.i(TAG, "Chinese");
+                    LogUtils.i("Chinese");
                     titleStr = "明天温差变化不大哦~";
                 } else {
-                    Log.i(TAG, "no Chinese");
+                    LogUtils.i("no Chinese");
                     titleStr = "The temperature doesn't change much tomorrow~";
                 }
             }
             sendNotification(titleStr,
                     todayMin + "°/" + todayMax + "°  ···>  " + tomMin + "°/" + tomMax + "° ");
         } else {
-            Log.d(TAG, "calTemDiff: diff: " + maxDiff * minDiff);
+            LogUtils.d("calTemDiff: diff: " + maxDiff * minDiff);
             sendNotification("Temperature", todayMin + "° - " +
                     todayMax + "° -> " + tomMin + "° - " + tomMax + "° ");
         }

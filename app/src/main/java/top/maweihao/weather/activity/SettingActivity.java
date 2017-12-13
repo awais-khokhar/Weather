@@ -15,7 +15,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TimePicker;
@@ -32,16 +31,15 @@ import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.contract.WeatherData;
 import top.maweihao.weather.model.WeatherRepository;
 import top.maweihao.weather.service.PushService;
+import top.maweihao.weather.util.LogUtils;
 import top.maweihao.weather.util.Utility;
 
 import static top.maweihao.weather.util.Constants.ChooseCode;
-import static top.maweihao.weather.util.Constants.DEBUG;
 import static top.maweihao.weather.util.Constants.SettingCode;
 import static top.maweihao.weather.util.Constants.isSetResultIntent;
 
 public class SettingActivity extends AppCompatActivity {
 
-    public static final String TAG = SettingActivity.class.getSimpleName();
     public static final String TIME_SPLIT = " : ";
 
     @BindView(R.id.toolbar)
@@ -149,7 +147,7 @@ public class SettingActivity extends AppCompatActivity {
                 notificationTime.setEnabled(false);
 
             if (autoUpdateSP.isChecked()) {
-                Log.d(TAG, "initViews: autoUpdate is checked");
+                LogUtils.d( "initViews: autoUpdate is checked");
                 choosePositionPreference.setEnabled(false);
                 choosePositionPreference.setShouldDisableView(true);
             } else {
@@ -164,7 +162,7 @@ public class SettingActivity extends AppCompatActivity {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 String stringValue = newValue.toString();
-                Log.d(TAG, "onPreferenceChange: " + stringValue);
+                LogUtils.d( "onPreferenceChange: " + stringValue);
                 if (preference instanceof ListPreference) {
                     ListPreference listPreference = (ListPreference) preference;
                     int index = listPreference.findIndexOfValue(stringValue);
@@ -194,18 +192,15 @@ public class SettingActivity extends AppCompatActivity {
                         notificationTime.setSummary(configContact.getNotificationTime("18 : 00"));
                         PushService.isStarSendNotification = false;
                         getActivity().startService(startIntent);
-                        if (DEBUG)
-                            Log.d(TAG, "onPreferenceChange: start SyncService");
+                        LogUtils.d("onPreferenceChange: start SyncService");
                     } else {
                         notificationTime.setEnabled(false);
                         getActivity().stopService(startIntent);
-                        if (DEBUG)
-                            Log.d(TAG, "onPreferenceChange: stop SyncService");
+                        LogUtils.d("onPreferenceChange: stop SyncService");
                     }
                     return true;
                 } else if (preference.getKey().equals("notification_time")) {
-                    if (DEBUG)
-                        Log.d(TAG, "onPreferenceChange: notification_time");
+                    LogUtils.d("onPreferenceChange: notification_time");
                     notificationTime.setSummary(preference.getKey());
                     return true;
                 }

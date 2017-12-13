@@ -1,9 +1,9 @@
 package top.maweihao.weather;
 
-import com.blankj.utilcode.util.LogUtils;
-import com.blankj.utilcode.util.Utils;
 
 import org.litepal.LitePalApplication;
+
+import top.maweihao.weather.util.LogUtils;
 
 /**
  * Created by limuyang on 2017/12/13.
@@ -14,7 +14,7 @@ public class WeatherApplication extends LitePalApplication {
     public void onCreate() {
         super.onCreate();
 
-        Utils.init(this);
+        LogUtils.init(this);
         LogUtils.getConfig().setLogSwitch(BuildConfig.APP_DEBUG);
     }
 }
