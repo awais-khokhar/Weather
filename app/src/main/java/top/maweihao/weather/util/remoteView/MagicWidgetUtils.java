@@ -1,6 +1,7 @@
 package top.maweihao.weather.util.remoteView;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.View;
 
 /**
@@ -10,7 +11,9 @@ import android.view.View;
 
 public class MagicWidgetUtils {
 
-    private static Bitmap getViewBitmap(View addViewContent) {
+    private static final String TAG = MagicWidgetUtils.class.getSimpleName();
+
+    public static Bitmap getViewBitmap(View addViewContent) {
 
         addViewContent.setDrawingCacheEnabled(true);
         addViewContent.measure(
@@ -21,6 +24,7 @@ public class MagicWidgetUtils {
                 addViewContent.getMeasuredHeight());
         addViewContent.buildDrawingCache();
         Bitmap cacheBitmap = addViewContent.getDrawingCache();
+        Log.d(TAG, "getViewBitmap: " + cacheBitmap);
 
         return Bitmap.createBitmap(cacheBitmap);
     }

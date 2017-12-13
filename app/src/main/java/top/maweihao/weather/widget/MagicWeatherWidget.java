@@ -16,12 +16,17 @@ public class MagicWeatherWidget extends AppWidgetProvider {
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
-        CharSequence widgetText = MagicWeatherWidgetConfigureActivity.loadTitlePref(context, appWidgetId);
-        // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_magic_weather);
-        views.setTextViewText(R.id.appwidget_text, widgetText);
 
-        // Instruct the widget manager to update the widget
+
+//        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        if (inflater != null) {
+//            View view = inflater.inflate(R.layout.widget_sun_trace, null);
+//            SunTraceView sunTraceView = view.findViewById(R.id.stv);
+//            Bitmap bitmap = MagicWidgetUtils.getViewBitmap(view);
+//            views.setImageViewBitmap(R.id.iv_sun, bitmap);
+//        }
+
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
