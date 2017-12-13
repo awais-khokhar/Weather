@@ -75,6 +75,15 @@ public class WeatherRepository implements WeatherData {
     }
 
     @Override
+    public Observable<NewWeather> getLocalWeather() {
+        if (getLocationCached() != null) {
+            return getWeather(getLocationCached().getLocationStringReversed());
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public Observable<NewWeather> getWeatherCached() {
         return Observable.create(new ObservableOnSubscribe<NewWeather>() {
             @Override

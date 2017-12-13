@@ -13,20 +13,21 @@ import android.support.v7.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.alibaba.fastjson.JSON;
+import com.blankj.utilcode.util.LogUtils;
 
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import top.maweihao.weather.R;
 import top.maweihao.weather.activity.SettingActivity;
 import top.maweihao.weather.activity.WeatherActivity;
-import top.maweihao.weather.entity.ForecastBean;
 import top.maweihao.weather.contract.PreferenceConfigContact;
+import top.maweihao.weather.contract.WeatherData;
+import top.maweihao.weather.entity.NewWeather;
+import top.maweihao.weather.model.WeatherRepository;
 import top.maweihao.weather.util.Utility;
 
 import static top.maweihao.weather.util.Constants.DEBUG;
@@ -49,6 +50,7 @@ public class PushService extends Service {
 
     private PreferenceConfigContact configContact;
 
+    private WeatherData model;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -60,54 +62,50 @@ public class PushService extends Service {
         super.onCreate();
         Log.d(TAG, "onCreate: SyncService created");
         isChinese = Utility.isChinese(this);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//            isChinese = getResources().getConfiguration().getLocales().get(0).getDisplayLanguage().equals("中文");
-//        } else {
-//            isChinese = getResources().getConfiguration().locale.getDisplayLanguage().equals("zh-CN");
-//        }
+
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand: ");
+        LogUtils.d(TAG, "onStartCommand: ");
         configContact = Utility.createSimpleConfig(getApplicationContext()).create(PreferenceConfigContact.class);
-        if (isStarSendNotification) //标记是否发送通知
+        if (model == null) {
+            model = WeatherRepository.getInstance(this);
+        }
+        if (isStarSendNotification) { //标记是否发送通知
             fetchData();
+        }
         startAgain();
         return START_NOT_STICKY;
     }
 
     private void fetchData() {
-        final OkHttpClient client = new OkHttpClient();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String fUrl = configContact.getFurl();
-                if (fUrl != null) {
-                    Log.i(TAG, "furl  " + fUrl);
-                    try {
-                        Request request = new Request.Builder()
-                                .url(fUrl).build();
-                        Response response = client.newCall(request).execute();
-                        String responseData = response.body().string();
-                        //fastJson解析数据
-                        ForecastBean forecastBean = JSON.parseObject(responseData, ForecastBean.class);
-                        ForecastBean.ResultBean.DailyBean.TemperatureBeanX temp =
-                                forecastBean.getResult().getDaily().getTemperature().get(0);
-                        ForecastBean.ResultBean.DailyBean.TemperatureBeanX temp2 =
-                                forecastBean.getResult().getDaily().getTemperature().get(1);
-//                        parseJSON(responseData);
-                        calTemDiff(Utility.intRoundDouble(temp.getMax()), Utility.intRoundDouble(temp.getMin()),
-                                Utility.intRoundDouble(temp2.getMax()), Utility.intRoundDouble(temp2.getMin()));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "onStartCommand: okhttp error");
+        io.reactivex.Observable<NewWeather> observable = model.getLocalWeather();
+        if (observable == null) {
+            stopSelf();
+            return;
+        }
+        observable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<NewWeather>() {
+                    @Override
+                    public void accept(NewWeather weather) throws Exception {
+                        if (weather.getStatus().equals("ok")) {
+                            NewWeather.ResultBean.DailyBean.TemperatureBeanX temp =
+                                    weather.getResult().getDaily().getTemperature().get(0);
+                            NewWeather.ResultBean.DailyBean.TemperatureBeanX temp2 =
+                                    weather.getResult().getDaily().getTemperature().get(1);
+                            calTemDiff(Utility.intRoundDouble(temp.getMax()),
+                                    Utility.intRoundDouble(temp.getMin()),
+                                    Utility.intRoundDouble(temp2.getMax()),
+                                    Utility.intRoundDouble(temp2.getMin()));
+                            stopSelf();
+                        } else {
+                            LogUtils.e(TAG, "api error");
+                            stopSelf();
+                        }
                     }
-                } else {
-                    Log.e(TAG, "onStartCommand: furl == null");
-                }
-            }
-        }).start();
+                });
     }
 
     private void startAgain() {
@@ -120,8 +118,7 @@ public class PushService extends Service {
             GET_HOUR = "18";
             GET_MINUTE = "0";
         }
-        if (DEBUG)
-            Log.d(TAG, "startAgain: SharedPreferences == " + time);
+        LogUtils.d(TAG, "startAgain: SharedPreferences == " + time);
 
         //     每天18:00启动
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
@@ -138,12 +135,6 @@ public class PushService extends Service {
             if (DEBUG)
                 Log.d(TAG, "startAgain: day+1    now is:" + calendar.get(Calendar.DAY_OF_MONTH));
         }
-
-//        if (DEBUG) {
-//            Log.d(TAG, "startAgain: calendar == " + calendar.getTime());
-//            Log.d(TAG, "startAgain: calendar getTimeInMillis== " + calendar.getTimeInMillis());
-//            Log.d(TAG, "startAgain: System.currentTimeMillis== " + System.currentTimeMillis());
-//        }
 
         Intent intent = new Intent(this, PushService.class);
         PendingIntent pendingIntent = PendingIntent.getService(this,
@@ -166,7 +157,9 @@ public class PushService extends Service {
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .build();
-        manager.notify(1, notification);
+        if (manager != null) {
+            manager.notify(1, notification);
+        }
     }
 
 
@@ -184,7 +177,8 @@ public class PushService extends Service {
                 Calendar calendar = new GregorianCalendar();
                 int nextDay = calendar.get(Calendar.DAY_OF_WEEK) + 1;
                 String dayOfWeek = getResources().getStringArray(R.array.weekend)[nextDay % 7];
-                String tem = (maxDiff > 0 || minDiff > 0) ? getResources().getString(R.string.warmer) : getResources().getString(R.string.colder);
+                String tem = (maxDiff > 0 || minDiff > 0) ? getResources().getString(R.string.warmer)
+                        : getResources().getString(R.string.colder);
                 if (isChinese) {
                     Log.i(TAG, "Chinese");
                     titleStr = dayOfWeek + "将" + tem + ' ' + Math.max(a, b) + "° ";
@@ -212,8 +206,7 @@ public class PushService extends Service {
 
     @Override
     public void onDestroy() {
-        if (DEBUG)
-            Log.d(TAG, "onDestroy: SyncService destroyed");
+        LogUtils.d(TAG, "onDestroy: SyncService destroyed");
         super.onDestroy();
     }
 }

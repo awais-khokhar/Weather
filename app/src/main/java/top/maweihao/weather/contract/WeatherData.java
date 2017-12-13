@@ -17,6 +17,8 @@ public interface WeatherData {
 
     Observable<NewWeather> getWeatherCached();
 
+    Observable<NewWeather> getLocalWeather();
+
     Observable<NewWeatherRealtime> getWeatherNow(String location);
 
     Observable<NewWeatherRealtime> getWeatherNowCached();
