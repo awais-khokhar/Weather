@@ -19,13 +19,18 @@ public class MagicWidgetUtils {
         addViewContent.measure(
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        addViewContent.layout(0, 0,
-                addViewContent.getMeasuredWidth(),
+        addViewContent.layout(0, 0, addViewContent.getMeasuredWidth(),
                 addViewContent.getMeasuredHeight());
-        addViewContent.buildDrawingCache();
+        addViewContent.buildDrawingCache(true);
         Bitmap cacheBitmap = addViewContent.getDrawingCache();
+        addViewContent.setDrawingCacheEnabled(false);
         Log.d(TAG, "getViewBitmap: " + cacheBitmap);
 
         return Bitmap.createBitmap(cacheBitmap);
+
+//        Bitmap bitmap = Bitmap.createBitmap(addViewContent.getWidth(), addViewContent.getHeight(), Bitmap.Config.ARGB_8888);
+//        Canvas canvas = new Canvas(bitmap);
+//        addViewContent.draw(canvas);
+//        return bitmap;
     }
 }
