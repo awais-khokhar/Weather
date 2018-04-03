@@ -30,10 +30,10 @@ public class HourlyWeatherAdapter extends RecyclerView.Adapter<HourlyWeatherAdap
 
         public ViewHolder(View itemView) {
             super(itemView);
-            time = (TextView) itemView.findViewById(R.id.few_hour_time_tv);
-            skyconImage = (ImageView) itemView.findViewById(R.id.few_hour_skycon_iv);
-            skyconDesc = (TextView) itemView.findViewById(R.id.few_hour_skycon_tv);
-            temperature = (TextView) itemView.findViewById(R.id.few_hour_tem_tv);
+            time = itemView.findViewById(R.id.few_hour_time_tv);
+            skyconImage = itemView.findViewById(R.id.few_hour_skycon_iv);
+            skyconDesc = itemView.findViewById(R.id.few_hour_skycon_tv);
+            temperature = itemView.findViewById(R.id.few_hour_tem_tv);
         }
     }
 
@@ -51,6 +51,7 @@ public class HourlyWeatherAdapter extends RecyclerView.Adapter<HourlyWeatherAdap
     public void onBindViewHolder(ViewHolder holder, int position) {
         SingleWeather singleWeather = weatherList.get(position);
         holder.time.setText(singleWeather.getTime());
+//        LogUtils.d("skyon id: " + singleWeather.getSkyconId());
         holder.skyconImage.setImageResource(singleWeather.getSkyconId());
         holder.skyconDesc.setText(singleWeather.getSkyconDesc());
         holder.temperature.setText(singleWeather.getTemperature());

@@ -128,5 +128,7 @@
     <string name="wish_you_lucky">开心每一天</string>
     <string name="weather_desc_today">中雨，明天早晨7点钟后转小雨，中雨，明天早晨7点钟后转小雨。</string>
     <string name="sun_set_time">一小时二十五分钟后日落。</string>
+    <string name="haze">霾</string>
+    <string name="sleet">冻</string>
 
 </resources>

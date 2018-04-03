@@ -539,7 +539,7 @@ public class WeatherActivity extends AppCompatActivity implements
     private void showHourlyWeather(NewWeather.ResultBean.HourlyBean hourlyBean) {
         int length = hourlyBean.getSkycon().size();
         length = (length >= 24) ? 24 : length;
-//        Log.d(TAG, "setHourlyWeatherChart: total " + length + " hour");
+//        LogUtils.d("setHourlyWeatherChart: total " + length + " hour");
         final ArrayList<SingleWeather> singleWeathers = new ArrayList<>(length);
         for (int i = 0; i < length; i++) {
             String time = hourlyBean.getSkycon().get(i).getDatetime().substring(11, 16);

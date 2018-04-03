@@ -112,6 +112,10 @@ public class Utility {
                 return BaseDrawer.Type.WIND_D;
             case "FOG":
                 return BaseDrawer.Type.FOG_D;
+            case "HAZE":
+                return BaseDrawer.Type.HAZE_D;
+            case "SLEET":
+                return BaseDrawer.Type.RAIN_N;
             default:
                 return BaseDrawer.Type.UNKNOWN_D;
         }
@@ -162,8 +166,13 @@ public class Utility {
                     return context.getResources().getString(R.string.WIND);
                 case "FOG":
                     return context.getResources().getString(R.string.FOG);
+                case "HAZE":
+                    return context.getResources().getString(R.string.haze);
+                case "SLEET":
+                    return context.getResources().getString(R.string.sleet);
                 default:
-                    return null;
+                    LogUtils.e("unknown weather: " + skycon);
+                    return skycon;
             }
         } else {
             return null;
@@ -214,8 +223,13 @@ public class Utility {
                 return simpleIcon ? R.mipmap.simple_wind : R.mipmap.weather_wind;
             case "FOG":
                 return simpleIcon ? R.mipmap.simple_wind : R.mipmap.weather_fog;
+            case "HAZE":
+                return simpleIcon ? R.mipmap.simple_fog_day : R.mipmap.weather_haze;
+            case "SLEET":
+                return simpleIcon ? R.mipmap.simple_sleet : R.mipmap.icon_sleet;
             default:
-                return -1;
+                LogUtils.e("failed to choose weather icon " + skycon + " " + precipitation);
+                return R.mipmap.weather_none_available;
         }
     }
 

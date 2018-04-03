@@ -139,5 +139,7 @@
     <string name="wish_you_lucky">Hava a nice day!</string>
     <string name="weather_desc_today">Partly cloudy currently. It’s 15°, the high today was forecast as 18°.</string>
     <string name="sun_set_time">1hr 56min until sunset.</string>
+    <string name="haze">Haze</string>
+    <string name="sleet">Sleet</string>
 
 </resources>
