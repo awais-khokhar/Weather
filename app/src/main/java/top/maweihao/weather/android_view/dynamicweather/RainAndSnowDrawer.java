@@ -1,4 +1,4 @@
-package top.maweihao.weather.view.dynamicweather;
+package top.maweihao.weather.android_view.dynamicweather;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -6,9 +6,9 @@ import android.graphics.drawable.GradientDrawable;
 
 import java.util.ArrayList;
 
-import top.maweihao.weather.view.dynamicweather.RainDrawer.RainDrawable;
-import top.maweihao.weather.view.dynamicweather.RainDrawer.RainHolder;
-import top.maweihao.weather.view.dynamicweather.SnowDrawer.SnowHolder;
+import top.maweihao.weather.android_view.dynamicweather.RainDrawer.RainDrawable;
+import top.maweihao.weather.android_view.dynamicweather.RainDrawer.RainHolder;
+import top.maweihao.weather.android_view.dynamicweather.SnowDrawer.SnowHolder;
 
 /**
  * 雨夹雪

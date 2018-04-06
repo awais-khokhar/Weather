@@ -1,4 +1,4 @@
-package top.maweihao.weather.view.dynamicweather;
+package top.maweihao.weather.android_view.dynamicweather;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -10,8 +10,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Random;
 
-import static top.maweihao.weather.view.dynamicweather.BaseDrawer.SkyBackground.CLEAR_D;
-import static top.maweihao.weather.view.dynamicweather.BaseDrawer.SkyBackground.CLEAR_N;
+import static top.maweihao.weather.android_view.dynamicweather.BaseDrawer.SkyBackground.CLEAR_D;
+import static top.maweihao.weather.android_view.dynamicweather.BaseDrawer.SkyBackground.CLEAR_N;
 
 
 public abstract class BaseDrawer {

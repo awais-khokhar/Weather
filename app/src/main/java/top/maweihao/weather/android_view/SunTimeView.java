@@ -1,4 +1,4 @@
-package top.maweihao.weather.view;
+package top.maweihao.weather.android_view;
 
 import android.content.Context;
 import android.content.res.TypedArray;

@@ -18,8 +18,8 @@ import top.maweihao.weather.entity.NewWeather;
 import top.maweihao.weather.entity.NewWeatherDao;
 import top.maweihao.weather.entity.NewWeatherRealtime;
 import top.maweihao.weather.entity.NewWeatherRealtimeDao;
-import top.maweihao.weather.refactor.MLocation;
-import top.maweihao.weather.refactor.MLocationDao;
+import top.maweihao.weather.entity.MLocation;
+import top.maweihao.weather.entity.MLocationDao;
 import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.Utility;
 
@@ -45,7 +45,8 @@ public class WeatherRepository implements WeatherData {
 //    private Context context;
 
     private WeatherRepository(Context context) {
-        DaoMaster.DevOpenHelper devOpenHelper = new DaoMaster.DevOpenHelper(context, "weather.db", null);
+        DaoMaster.DevOpenHelper devOpenHelper =
+                new DaoMaster.DevOpenHelper(context.getApplicationContext(), "weather.db", null);
         DaoMaster daoMaster = new DaoMaster(devOpenHelper.getWritableDb());
         daoSession = daoMaster.newSession();
         weatherDao = daoSession.getNewWeatherDao();

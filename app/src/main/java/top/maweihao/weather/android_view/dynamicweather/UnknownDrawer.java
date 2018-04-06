@@ -1,4 +1,4 @@
-package top.maweihao.weather.view.dynamicweather;
+package top.maweihao.weather.android_view.dynamicweather;
 
 import android.content.Context;
 import android.graphics.Canvas;

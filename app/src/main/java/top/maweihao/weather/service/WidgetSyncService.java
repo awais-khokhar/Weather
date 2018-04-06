@@ -15,7 +15,7 @@ import top.maweihao.weather.contract.WeatherData;
 import top.maweihao.weather.entity.HeWeather.NewHeWeatherNow;
 import top.maweihao.weather.entity.NewWeather;
 import top.maweihao.weather.model.WeatherRepository;
-import top.maweihao.weather.refactor.MLocation;
+import top.maweihao.weather.entity.MLocation;
 import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.util.remoteView.WidgetUtils;

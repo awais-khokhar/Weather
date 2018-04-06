@@ -15,7 +15,7 @@ import java.util.List;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
-import top.maweihao.weather.activity.ChoosePositionActivity;
+import top.maweihao.weather.view.ChoosePositionActivity;
 import top.maweihao.weather.contract.ChoosePositionActivityContract;
 import top.maweihao.weather.db.City;
 import top.maweihao.weather.db.County;
@@ -23,14 +23,14 @@ import top.maweihao.weather.db.Province;
 import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.LogUtils;
 
-import static top.maweihao.weather.activity.ChoosePositionActivity.LEVEL_CITY;
-import static top.maweihao.weather.activity.ChoosePositionActivity.LEVEL_COUNTY;
-import static top.maweihao.weather.activity.ChoosePositionActivity.LEVEL_PROVINCE;
-import static top.maweihao.weather.activity.ChoosePositionActivity.cityList;
-import static top.maweihao.weather.activity.ChoosePositionActivity.countyList;
-import static top.maweihao.weather.activity.ChoosePositionActivity.provinceList;
-import static top.maweihao.weather.activity.ChoosePositionActivity.selectedCity;
-import static top.maweihao.weather.activity.ChoosePositionActivity.selectedProvince;
+import static top.maweihao.weather.view.ChoosePositionActivity.LEVEL_CITY;
+import static top.maweihao.weather.view.ChoosePositionActivity.LEVEL_COUNTY;
+import static top.maweihao.weather.view.ChoosePositionActivity.LEVEL_PROVINCE;
+import static top.maweihao.weather.view.ChoosePositionActivity.cityList;
+import static top.maweihao.weather.view.ChoosePositionActivity.countyList;
+import static top.maweihao.weather.view.ChoosePositionActivity.provinceList;
+import static top.maweihao.weather.view.ChoosePositionActivity.selectedCity;
+import static top.maweihao.weather.view.ChoosePositionActivity.selectedProvince;
 
 /**
  * Created by limuyang on 2017/6/2.

@@ -13,7 +13,7 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.5" />
 
-    <top.maweihao.weather.view.SemiCircleView
+    <top.maweihao.weather.android_view.SemiCircleView
         android:layout_width="100dp"
         android:layout_height="100dp"
         app:aqi="true"
@@ -29,7 +29,7 @@
         app:layout_constraintHorizontal_bias="0.593"
         app:layout_constraintVertical_bias="0.43" />
 
-    <top.maweihao.weather.view.SemiCircleView
+    <top.maweihao.weather.android_view.SemiCircleView
         android:layout_width="100dp"
         android:layout_height="100dp"
         app:aqi="false"

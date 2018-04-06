@@ -1,7 +1,7 @@
 package top.maweihao.weather.contract;
 
 import top.maweihao.weather.entity.NewWeather;
-import top.maweihao.weather.refactor.MLocation;
+import top.maweihao.weather.entity.MLocation;
 
 /**
  * mvp contract for WeatherActivity

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="top.maweihao.weather.activity.AlertActivity">
+    tools:context="top.maweihao.weather.view.AlertActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/activity_alert_toolbar"

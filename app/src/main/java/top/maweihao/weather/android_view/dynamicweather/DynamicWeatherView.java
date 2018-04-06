@@ -1,4 +1,4 @@
-package top.maweihao.weather.view.dynamicweather;
+package top.maweihao.weather.android_view.dynamicweather;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -11,7 +11,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.animation.AnimationUtils;
 
-import top.maweihao.weather.view.dynamicweather.BaseDrawer.Type;
+import top.maweihao.weather.android_view.dynamicweather.BaseDrawer.Type;
 
 public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Callback {
 

@@ -1,4 +1,4 @@
-package top.maweihao.weather.view;
+package top.maweihao.weather.android_view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -17,7 +17,7 @@ import android.view.View;
 
 import java.util.ArrayList;
 
-import top.maweihao.weather.activity.WeatherActivity;
+import top.maweihao.weather.view.WeatherActivity;
 import top.maweihao.weather.util.Utility;
 
 /**

@@ -28,7 +28,7 @@ import top.maweihao.weather.entity.BaiDu.BaiDuChoosePositionBean;
 import top.maweihao.weather.entity.BaiDu.BaiDuCoordinateBean;
 import top.maweihao.weather.entity.BaiDu.BaiDuIPLocationBean;
 import top.maweihao.weather.entity.NewWeather;
-import top.maweihao.weather.refactor.MLocation;
+import top.maweihao.weather.entity.MLocation;
 import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.LocationUtil;
@@ -119,7 +119,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                         } else {
                             long interval = (System.currentTimeMillis() - weather.getServer_time() * 1000)
                                     / (60 * 1000);
-                            if (interval > 5) {  //hardcode the interval temporary
+                            if (interval > 5) {  //hardcode the minimum refresh interval temporary
                                 locate();
                             } else {
                                 LogUtils.d( "fetchData: no need to refresh, last " + interval + " ago");

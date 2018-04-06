@@ -14,7 +14,7 @@
         tools:layout_editor_absoluteY="0dp"
         tools:layout_editor_absoluteX="180dp" />
 
-    <top.maweihao.weather.view.SunTimeView
+    <top.maweihao.weather.android_view.SunTimeView
         android:id="@+id/stv"
         app:darkColor="#1A237E"
         app:dayColor="#FFB300"

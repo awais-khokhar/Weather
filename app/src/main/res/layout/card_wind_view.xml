@@ -14,7 +14,7 @@
         tools:layout_editor_absoluteY="0dp"
         tools:layout_editor_absoluteX="180dp" />
 
-    <top.maweihao.weather.view.WindMillView
+    <top.maweihao.weather.android_view.WindMillView
         android:layout_width="100dp"
         android:layout_height="100dp"
         app:layout_constraintRight_toLeftOf="@+id/guideline8"

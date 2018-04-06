@@ -14,7 +14,7 @@ import android.widget.RemoteViews;
 import java.util.GregorianCalendar;
 
 import top.maweihao.weather.R;
-import top.maweihao.weather.activity.WeatherActivity;
+import top.maweihao.weather.view.WeatherActivity;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.entity.ForecastBean;
 import top.maweihao.weather.entity.HeWeather.NewHeWeatherNow;

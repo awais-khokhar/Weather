@@ -1,4 +1,4 @@
-package top.maweihao.weather.view.dynamicweather;
+package top.maweihao.weather.android_view.dynamicweather;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -9,9 +9,9 @@ import android.graphics.RectF;
 
 import java.util.ArrayList;
 
-public class WindDrawer extends BaseDrawer{
+public class SandDrawer extends BaseDrawer{
 
-	public WindDrawer(Context context, boolean isNight) {
+	public SandDrawer(Context context, boolean isNight) {
 		super(context, isNight);
 		paint.setStyle(Style.STROKE);
 	}
@@ -30,17 +30,16 @@ public class WindDrawer extends BaseDrawer{
 				float radiusHeight = radiusWidth * getRandom(0.92f, 0.96f);//getRandom(width * 0.02f,  width * 1.6f);
 				float strokeWidth = dp2px(getDownRandFloat(1f, 2.5f));
 				float sizeDegree = getDownRandFloat(8f, 15f);
-				this.holders.add(new ArcHolder(cx, cy, radiusWidth,radiusHeight, strokeWidth, 30f, 99f, sizeDegree,
-						isNight ? 0x33ffffff:0x66ffffff));
+				this.holders.add(new ArcHolder(cx, cy, radiusWidth,radiusHeight, strokeWidth, 30f, 99f, sizeDegree,isNight? 0x99a59056: 0xbba59056));
 			}
 		}
 		
 	}
 	@Override
 	public boolean drawWeather(Canvas canvas, float alpha) {
-			for (ArcHolder holder : this.holders) {
-				holder.updateAndDraw(canvas, paint, alpha);
-			}
+		for(ArcHolder holder : this.holders){
+			holder.updateAndDraw(canvas, paint, alpha);
+		}
 		return true;
 	}
 	
@@ -63,7 +62,7 @@ public class WindDrawer extends BaseDrawer{
 			this.sizeDegree = sizeDegree;
 			this.color = color;
 			this.curDegree = getRandom(fromDegree, endDegree);
-			this.stepDegree = getRandom(0.5f, 0.9f);
+			this.stepDegree = getRandom(0.4f, 0.8f);
 		}
 		public void updateAndDraw(Canvas canvas, Paint paint, float alpha){
 			paint.setColor(convertAlphaColor(alpha * (Color.alpha(color) / 255f), color));
@@ -84,7 +83,7 @@ public class WindDrawer extends BaseDrawer{
 	
 	@Override
 	protected int[] getSkyBackgroundGradient() {
-		return isNight ? SkyBackground.RAIN_N : SkyBackground.RAIN_D;
+		return isNight ? SkyBackground.SAND_N : SkyBackground.SAND_D;
 	}
 	
 	

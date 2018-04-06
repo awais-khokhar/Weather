@@ -45,7 +45,7 @@
         app:layout_constraintVertical_bias="0.0"
         tools:text="@string/weather_desc_today" />
 
-    <top.maweihao.weather.view.SunTimeView
+    <top.maweihao.weather.android_view.SunTimeView
         android:id="@+id/stv"
         android:layout_width="120dp"
         android:layout_height="70dp"

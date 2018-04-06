@@ -8,6 +8,6 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:targetPackage="top.maweihao.weather"
-            android:targetClass="top.maweihao.weather.activity.SettingActivity" />
+            android:targetClass="top.maweihao.weather.view.SettingActivity" />
     </shortcut>
 </shortcuts>

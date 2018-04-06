@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <top.maweihao.weather.view.dynamicweather.DynamicWeatherView
+    <top.maweihao.weather.android_view.dynamicweather.DynamicWeatherView
         android:id="@+id/dynamicWeatherView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -38,7 +38,7 @@
                     android:orientation="vertical"
                     app:layout_collapseMode="pin">
 
-                    <top.maweihao.weather.view.StatusBarView
+                    <top.maweihao.weather.android_view.StatusBarView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
 

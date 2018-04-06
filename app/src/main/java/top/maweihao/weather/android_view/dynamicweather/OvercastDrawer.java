@@ -1,4 +1,4 @@
-package top.maweihao.weather.view.dynamicweather;
+package top.maweihao.weather.android_view.dynamicweather;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -6,7 +6,7 @@ import android.graphics.Paint;
 
 import java.util.ArrayList;
 
-import top.maweihao.weather.view.dynamicweather.CloudyDrawer.CircleHolder;
+import top.maweihao.weather.android_view.dynamicweather.CloudyDrawer.CircleHolder;
 
 /**
  * 阴天

@@ -4,7 +4,7 @@ import io.reactivex.Observable;
 import top.maweihao.weather.entity.HeWeather.NewHeWeatherNow;
 import top.maweihao.weather.entity.NewWeather;
 import top.maweihao.weather.entity.NewWeatherRealtime;
-import top.maweihao.weather.refactor.MLocation;
+import top.maweihao.weather.entity.MLocation;
 
 /**
  * weather repository

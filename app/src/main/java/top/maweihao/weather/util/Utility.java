@@ -34,10 +34,10 @@ import top.maweihao.weather.R;
 import top.maweihao.weather.entity.HeWeather.NewHeWeatherNow;
 import top.maweihao.weather.entity.NewWeather;
 import top.maweihao.weather.entity.NewWeatherRealtime;
-import top.maweihao.weather.view.dynamicweather.BaseDrawer;
+import top.maweihao.weather.android_view.dynamicweather.BaseDrawer;
 
-import static top.maweihao.weather.activity.WeatherActivity.HOURLY_MODE;
-import static top.maweihao.weather.activity.WeatherActivity.MINUTELY_MODE;
+import static top.maweihao.weather.view.WeatherActivity.HOURLY_MODE;
+import static top.maweihao.weather.view.WeatherActivity.MINUTELY_MODE;
 
 
 /**
