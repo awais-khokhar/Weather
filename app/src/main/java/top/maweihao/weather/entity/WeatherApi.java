@@ -2,10 +2,10 @@ package top.maweihao.weather.entity;
 
 
 import io.reactivex.Observable;
-import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import top.maweihao.weather.util.Constants;
 
 /**
  * interface for retrofit
@@ -14,9 +14,15 @@ import retrofit2.http.Query;
 
 public interface WeatherApi {
 
-    @GET("Ahu2IBCHsYWm1--o/{location}/forecast.json")
-    Observable<NewWeather> getWeather(@Path("location") String cityId, @Query("alert") boolean alert, @Query("dailysteps") int days);
+    @GET(Constants.CaiyunWeatherKey + "/{location}/forecast.json")
+    Observable<NewWeather> getWeather(@Path("location") String cityId, @Query("alert") boolean alert,
+                                      @Query("dailysteps") int days);
 
-    @GET("Ahu2IBCHsYWm1--o/{location}/forecast.json")
+    @GET(Constants.CaiyunWeatherKey + "/{location}/forecast.json")
+    Observable<NewWeather> getWeather(@Path("location") String cityId, @Query("alert") boolean alert,
+                                      @Query("dailysteps") int days, @Query("tzshift") int shift,
+                                      @Query("lang") String lang);
+
+    @GET(Constants.CaiyunWeatherKey + "/{location}/forecast.json")
     Observable<NewWeatherRealtime> getWeatherNow(@Path("location") String cityId);
 }

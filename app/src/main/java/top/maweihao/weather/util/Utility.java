@@ -27,6 +27,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import github.hellocsl.simpleconfig.Config;
 import github.hellocsl.simpleconfig.SimpleConfig;
@@ -48,6 +49,31 @@ import static top.maweihao.weather.view.WeatherActivity.MINUTELY_MODE;
 public class Utility {
 
     private static final String TAG = Utility.class.getSimpleName();
+
+    /**
+     * 获取当前系统语言格式
+     *
+     * @param mContext
+     * @return
+     */
+    public static String getCurrentLanguage(Context mContext) {
+        Locale locale = mContext.getResources().getConfiguration().locale;
+        String language = locale.getLanguage();
+        String country = locale.getCountry();
+        return language + "_" + country;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public static int getTimeShift() {
+        TimeZone tz = TimeZone.getDefault();
+        String strTz = tz.getDisplayName(false, TimeZone.SHORT);
+        int timeShift = (tz.getRawOffset() + tz.getDSTSavings()) / 1000;
+        return timeShift;
+//        Log.d(TAG, "time: " + (tz.getRawOffset() + tz.getDSTSavings()) / 3600 / 1000);
+    }
 
     /**
      * 创建自定义的配置文件读取方法

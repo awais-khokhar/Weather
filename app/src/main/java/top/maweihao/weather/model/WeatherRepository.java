@@ -20,6 +20,7 @@ import top.maweihao.weather.entity.NewWeatherRealtime;
 import top.maweihao.weather.entity.NewWeatherRealtimeDao;
 import top.maweihao.weather.entity.MLocation;
 import top.maweihao.weather.entity.MLocationDao;
+import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.Utility;
 
@@ -64,7 +65,7 @@ public class WeatherRepository implements WeatherData {
 
     @Override
     public Observable<NewWeather> getWeather(String location) {
-        return HttpUtil.getWeather(location, null, null)
+        return HttpUtil.getWeather(location, null, null, Constants.timeShift, Constants.lang)
                 .doOnNext(new Consumer<NewWeather>() {
                     @Override
                     public void accept(NewWeather weather) throws Exception {

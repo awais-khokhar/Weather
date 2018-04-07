@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:key="data_res"
+        android:title="@string/data_resources">
+
+        <Preference
+            android:key="caiyun"
+            android:title="@string/caiyun_weather"
+            android:summary="@string/provide_weather_china"/>
+
+        <Preference
+            android:key="china_mete_admin"
+            android:title="@string/china_mete_admin"
+            android:summary="@string/provide_weather_china" />
+
+        <Preference
+            android:key="he_weather"
+            android:title="@string/he_weather"
+            android:summary="@string/provide_weather_china" />
+
+        <Preference
+            android:key="yahoo"
+            android:title="@string/yahoo_weather"
+            android:summary="@string/provide_weather_outside" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="thanks_to"
+        android:title="@string/thanks_to">
+
+        <Preference
+            android:key="mixiaoxiao_weather"
+            android:title="Mixiaoxiao/Weather in Github"
+            android:summary="@string/click_to_open_link"/>
+
+        <Preference
+            android:key="bumptech_glide"
+            android:title="bumptech/glide in Github"
+            android:summary="@string/click_to_open_link" />
+
+        <Preference
+            android:key="JakeWharton_butterknife"
+            android:title="JakeWharton/butterknife in Github"
+            android:summary="@string/click_to_open_link" />
+
+        <Preference
+            android:key="google_gson"
+            android:title="Google Inc. (Gson)"
+            android:summary="@string/click_to_open_link" />
+
+        <Preference
+            android:key="netflix_rxjava"
+            android:title="Netflix, Inc. (RxJava)"
+            android:summary="@string/click_to_open_link" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

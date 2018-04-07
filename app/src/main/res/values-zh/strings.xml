@@ -34,7 +34,7 @@
     <string name="auto_locate">自动定位</string>
     <string name="choose_your_position">选择您的地区</string>
     <string name="current_version">当前版本</string>
-    <string name="data_resources">天气数据来自中国气象局、彩云数据与和风天气\n本 App 仅作数据的呈现</string>
+    <string name="data_resources">数据来源</string>
     <string name="title_activity_settings">设置</string>
     <string name="choose_position">更改地区</string>
     <string name="setting">设置</string>
@@ -125,10 +125,17 @@
     <string name="locate_failed">定位失败，请打开系统位置。</string>
     <string name="yesterday">昨天</string>
     <string name="days_before">天前</string>
-    <string name="wish_you_lucky">开心每一天</string>
     <string name="weather_desc_today">中雨，明天早晨7点钟后转小雨，中雨，明天早晨7点钟后转小雨。</string>
     <string name="sun_set_time">一小时二十五分钟后日落。</string>
     <string name="haze">霾</string>
     <string name="sleet">冻</string>
+    <string name="caiyun_weather">彩云天气</string>
+    <string name="china_mete_admin">中国气象局</string>
+    <string name="he_weather">和风天气</string>
+    <string name="yahoo_weather">雅虎天气</string>
+    <string name="thanks_to">致谢</string>
+    <string name="provide_weather_china">提供中国的天气数据</string>
+    <string name="provide_weather_outside">提供大陆以外地区的天气数据</string>
+    <string name="click_to_open_link">点击以在浏览器中打开</string>
 
 </resources>

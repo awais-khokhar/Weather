@@ -1,0 +1,13 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="setting_sc"
+        android:enabled="true"
+        android:icon="@drawable/ic_settings_black_18dp"
+        android:shortcutLongLabel="@string/setting"
+        android:shortcutShortLabel="@string/setting">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="top.maweihao.weather"
+            android:targetClass="top.maweihao.weather.view.SettingActivity" />
+    </shortcut>
+</shortcuts>

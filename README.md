@@ -1,52 +1,9 @@
 # Weather
-**更新日志**    
-*2017/3/4verison 0.0.0:1*  
-First commit.  
-*2017/3/5 version 0.0.1:2*    
-使用 DrawerLayout，创建地区数据库和表的各项配置。  
-*2017/3/5 version 0.0.2:3*    
-将天气显示活动转到 'WeatherActivity' 中，一些方法分离至工具类中；增加主界面显示的天气信息。    
-*2017/3/7 version 0.0.3:4*    
-增加下拉刷新，通过 ip 判别大致位置坐标（使用百度 webapi ）    
-*2017/3/8 version 0.0.4:5*    
-完成遍历省市县三省的功能    
-*2017/3/9 version 0.1.0:6*    
-完成基础的界面，增加中文天气状况    
-*2017/3/28 version 0.1.1:7*    
-优先使用 "LocationManager" 获取位置，增加今明未来五天天气显示    
-*2017/4/2 version 0.2.0:8*    
-增加天气详情。修复：雨量判断错误    
-*2017/4/18 version 0.2.1:9*    
-优化界面    
-*2017/4/18 version 0.2.2:10*    
-增加最小刷新间隔    
-*2017/4/20 version 0.2.3:11*    
-后台获取天气后发送通知    
-*2017/5/3 version 0.3.0:12*    
-修复：refresh 环指示错误；权限请求逻辑错误；几率闪退 bug, 增加“设置”    
-*2017/5/6 version 0.3.1:13*    
-修复若干问题，完成设置     
-*2017/5/8 version 1.0.0:13[release]*    
-上架前的准备：一些温差提示语优化；暂时取消 摄氏度/华氏度 开关；ui 边距优化；修复湿度解析错误的问题    
-上架： 小米应用商店[被拒]、魅族应用商店[被拒]    
-*2017/5/10 version 1.0.1:14[release]*    
-删除未使用的图片，将部分资源 png 转为 webp，安装包大幅瘦身；通知星期判断 bug 修复。    
-上架：360手机助手[被拒]，腾讯应用宝[被拒]    
-*2017/5/17 version 1.0.2:15*    
-增加 日出日落 与 天气质量 的自定义 view     
-*2017/5/19 version 1.0.3:16*    
-ui 优化，支持 shortcut.    
-*2017/5/21 version 1.0.4:17*    
-增加未来 24h 天气显示    
-*2017/5/23 version 1.1.0:18[release]*    
-增加风力与几种生活指数，增加一小时内天气状况描述。    
-上架：应用宝, 酷安    
-*2017/5/28 version 1.1.1:19[release]*    
-更换天气大图,新增桌面 widget, ui 优化，增加 上次刷新时间 与 当前定位方式指示, 修复 bug：下拉刷新无视自动定位开关    
-发布： 酷安    
-*2017/5/30 version 1.1.2:20[bug-fixed-release]*     
-修复 widget 的一些问题。    
-发布： 应用宝    
-*2017/6/3 version 1.1.3:21*    
-代码重构，优化定位，ui 优化    
-
+**速知天气*：一款 Android 平台的天气 App *
+下载地址：https://www.coolapk.com/apk/top.maweihao.weather
+截图：    
+![avatar](http://image.coolapk.com/apk_image/2017/0827/enframe_2017-08-27-08-15-47-for-138843-o_1bogh3ssnpkf1f6opq81v5ggh6q-uid-546384.png.t.jpg)  
+![avatar](http://image.coolapk.com/apk_image/2017/0827/enframe_2017-08-27-08-14-35-for-138843-o_1bogh48nr4ifi661u60bn71v5810-uid-546384.png.t.jpg)  
+![avatar](http://image.coolapk.com/apk_image/2017/0827/enframe_2017-08-27-08-14-43-for-138843-o_1bogh4enm1f941v4ch0d53eb316-uid-546384.png.t.jpg)  
+![avatar](http://image.coolapk.com/apk_image/2017/0827/enframe_2017-08-27-08-14-50-for-138843-o_1bogh4p6dg2e1a4l1p2ipgt1d751c-uid-546384.png.t.jpg)    
+感谢：    

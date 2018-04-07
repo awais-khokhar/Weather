@@ -43,13 +43,10 @@
         android:id="@+id/textView11"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="0dp"
         android:layout_marginTop="17dp"
         android:text="@string/wind_level"
         app:layout_constraintLeft_toLeftOf="@+id/textView10"
-        app:layout_constraintTop_toTopOf="@+id/guideline10"
-        android:layout_marginRight="0dp"
-        app:layout_constraintRight_toRightOf="@+id/textView10" />
+        app:layout_constraintTop_toTopOf="@+id/guideline10" />
 
     <android.support.constraint.Guideline
         android:layout_width="wrap_content"

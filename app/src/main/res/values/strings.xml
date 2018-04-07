@@ -84,7 +84,7 @@
     <string name="about_setting">About</string>
 
     <string name="current_version">Current Version</string>
-    <string name="data_resources">The weather data comes from \nChina meteorological administration \n, Colorful Clouds and heweather</string>
+    <string name="data_resources">Data Resources</string>
     <string name="choose_position">Choose Position</string>
     <string name="setting">Setting</string>
     <string name="select_disabled">Place you chosen</string>
@@ -111,7 +111,7 @@
     <string name="notification_time">Notification Time</string>
     <string name="now">Now</string>
     <string name="donate">Donate</string>
-    <string name="donate_info">Donate any amout to support developers, You will be honored some way in the future.  \nClick  \'OK\' to open Alipay.</string>
+    <string name="donate_info">Donate any amount to support developers  \nClick  \'OK\' to open Alipay.</string>
     <string name="email_needed">You need to install any email app</string>
     <string name="alipay_needed">You have to install \'Alipay\' first from App Store</string>
     <string name="action_alert">Weather Alert</string>
@@ -136,10 +136,22 @@
     <string name="yesterday">yesterday</string>
     <string name="days_before">days before</string>
     <string name="appwidget_text" translatable="false">EXAMPLE</string>
-    <string name="wish_you_lucky">Hava a nice day!</string>
+    <string name="wish_you_lucky" translatable="false">Hava a nice day!</string>
     <string name="weather_desc_today">Partly cloudy currently. It’s 15°, the high today was forecast as 18°.</string>
     <string name="sun_set_time">1hr 56min until sunset.</string>
     <string name="haze">Haze</string>
     <string name="sleet">Sleet</string>
+
+    <string name="caiyun_weather">Colorful Clouds</string>
+    <string name="china_mete_admin">China Meteorological Administration</string>
+    <string name="he_weather">He Weather</string>
+    <string name="yahoo_weather">Yahoo！</string>
+
+    <string name="thanks_to">Thanks To</string>
+    <string name="provide_weather_china">Provides weather data in China</string>
+    <string name="provide_weather_outside">Provides weather data beyond China Mainland</string>
+
+    <string name="click_to_open_link">Click to open link in browser</string>
+    <string name="current_version_">Current Version: %s</string>
 
 </resources>

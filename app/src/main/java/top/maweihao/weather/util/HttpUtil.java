@@ -1,6 +1,8 @@
 package top.maweihao.weather.util;
 
 
+import android.text.TextUtils;
+
 import io.reactivex.Observable;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.schedulers.Schedulers;
@@ -68,10 +70,22 @@ public class HttpUtil {
                 .build();
     }
 
-    public static Observable<NewWeather> getWeather(@NonNull String location, Boolean alert, Integer days) {
+    /**
+     *
+     * @param location 坐标
+     * @param alert 需要预警？
+     * @param days 需要多少天的 forecast
+     * @param shift 时间偏移，eg. 北京 = +8 * 60 * 60 = 28800
+     * @param lang 语言
+     * @return Observable
+     */
+    public static Observable<NewWeather> getWeather(@NonNull String location, Boolean alert,
+                                                    Integer days, Integer shift, String lang) {
         alert = (alert == null) || alert;
         days = (days == null) ? 15 : days;
-        return getWeatherApi().getWeather(location, alert, days)
+        shift = (shift == null) ? 28800 : shift;
+        lang = (TextUtils.isEmpty(lang)) ? "zh_CN" :lang;
+        return getWeatherApi().getWeather(location, alert, days, shift, lang)
                 .subscribeOn(Schedulers.io());
     }
 
