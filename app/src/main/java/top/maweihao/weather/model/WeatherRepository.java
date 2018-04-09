@@ -43,11 +43,12 @@ public class WeatherRepository implements WeatherData {
     private NewWeatherRealtimeDao weatherRealtimeDao;
     private NewHeWeatherNowDao heWeatherNowDao;
     private MLocationDao locationDao;
-//    private Context context;
+    private Context context;
 
     private WeatherRepository(Context context) {
+        this.context = context.getApplicationContext();
         DaoMaster.DevOpenHelper devOpenHelper =
-                new DaoMaster.DevOpenHelper(context.getApplicationContext(), "weather.db", null);
+                new DaoMaster.DevOpenHelper(this.context, "weather.db", null);
         DaoMaster daoMaster = new DaoMaster(devOpenHelper.getWritableDb());
         daoSession = daoMaster.newSession();
         weatherDao = daoSession.getNewWeatherDao();
@@ -222,6 +223,11 @@ public class WeatherRepository implements WeatherData {
 
     @Override
     public Observable<MLocation> getLocation() {
+        return null;
+    }
+
+    @Override
+    public Observable<MLocation> getCurrentLocation() {
         return null;
     }
 

@@ -113,4 +113,6 @@ public class LocationUtil {
         return type == TypeGpsLocation || type == TypeNetWorkLocation || type == TypeOffLineLocation
                 || type == TypeCacheLocation;
     }
+
+
 }

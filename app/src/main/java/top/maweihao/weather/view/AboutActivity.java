@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -72,6 +73,8 @@ public class AboutActivity extends AppCompatActivity {
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.about_preference);
+            Preference yahoo = findPreference("yahoo");
+            ((PreferenceCategory)findPreference("data_res")).removePreference(yahoo);
             findPreference("mixiaoxiao_weather").setOnPreferenceClickListener(this);
             findPreference("bumptech_glide").setOnPreferenceClickListener(this);
             findPreference("JakeWharton_butterknife").setOnPreferenceClickListener(this);
@@ -79,7 +82,6 @@ public class AboutActivity extends AppCompatActivity {
             findPreference("netflix_rxjava").setOnPreferenceClickListener(this);
 
         }
-
 
         @Override
         public boolean onPreferenceClick(Preference preference) {

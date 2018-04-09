@@ -16,6 +16,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,25 +35,23 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.functions.Consumer;
 import top.maweihao.weather.R;
 import top.maweihao.weather.adapter.DailyWeatherAdapter;
 import top.maweihao.weather.adapter.HourlyWeatherAdapter;
+import top.maweihao.weather.android_view.SemiCircleView;
+import top.maweihao.weather.android_view.SunTimeView;
+import top.maweihao.weather.android_view.dynamicweather.DynamicWeatherView;
 import top.maweihao.weather.contract.NewWeatherActivityContract;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.entity.Alert;
+import top.maweihao.weather.entity.MLocation;
 import top.maweihao.weather.entity.NewWeather;
 import top.maweihao.weather.entity.SingleWeather;
 import top.maweihao.weather.model.WeatherRepository;
 import top.maweihao.weather.presenter.NewWeatherPresenter;
-import top.maweihao.weather.entity.MLocation;
 import top.maweihao.weather.service.PushService;
 import top.maweihao.weather.util.Constants;
-import top.maweihao.weather.util.LogUtils;
 import top.maweihao.weather.util.Utility;
-import top.maweihao.weather.android_view.SemiCircleView;
-import top.maweihao.weather.android_view.SunTimeView;
-import top.maweihao.weather.android_view.dynamicweather.DynamicWeatherView;
 
 import static top.maweihao.weather.R.id.skycon_text;
 import static top.maweihao.weather.R.id.temperature_text;
@@ -65,6 +64,8 @@ import static top.maweihao.weather.util.Utility.stringRoundDouble;
 
 public class WeatherActivity extends AppCompatActivity implements
         View.OnClickListener, NewWeatherActivityContract.newView<NewWeatherActivityContract.newPresenter> {
+
+    private static final String TAG = WeatherActivity.class.getSimpleName();
 
     static final int HANDLE_POSITION = 0;
     static final int HANDLE_TOAST = 1;
@@ -127,24 +128,20 @@ public class WeatherActivity extends AppCompatActivity implements
     RecyclerView dailyRecyclerView;
     @BindView(R.id.weather_alert_icon)
     ImageView alertImage;
-
     @BindView(R.id.view_root)
     CoordinatorLayout viewRoot;
 
     public String countyName = null;
     public String locationDetail;
 
-    private MessageHandler handler; //消息队列
+    private MessageHandler handler;
     private NewWeatherActivityContract.newPresenter newPresenter;
-
     private PreferenceConfigContact configContact;
 
     //24h hourlyRecyclerView adapter
     private HourlyWeatherAdapter hourWeatherAdapter;
-
     //5day hourlyRecyclerView adapter
     private DailyWeatherAdapter dailyWeatherAdapter;
-
     private ArrayList<Alert> alertArrayList;
 
     @Override
@@ -174,22 +171,22 @@ public class WeatherActivity extends AppCompatActivity implements
         imageButton.setOnClickListener(this);
     }
 
-    private void doDebugThings() {
-        WeatherRepository repo = WeatherRepository.getInstance(WeatherActivity.this);
-
-        repo.getWeatherCached()
-                .subscribe(new Consumer<NewWeather>() {
-                    @Override
-                    public void accept(NewWeather weather) throws Exception {
-                        LogUtils.d("accept: HERE" + weather);
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        LogUtils.d("accept: HERE" + throwable);
-                    }
-                });
-    }
+//    private void doDebugThings() {
+//        WeatherRepository repo = WeatherRepository.getInstance(WeatherActivity.this);
+//
+//        Disposable disposable = repo.getWeatherCached()
+//                .subscribe(new Consumer<NewWeather>() {
+//                    @Override
+//                    public void accept(NewWeather weather) throws Exception {
+//                        Log.d(TAG, "accept: HERE" + weather);
+//                    }
+//                }, new Consumer<Throwable>() {
+//                    @Override
+//                    public void accept(Throwable throwable) throws Exception {
+//                        Log.d(TAG, "accept: HERE" + throwable);
+//                    }
+//                });
+//    }
 
     private void initView() {
         ButterKnife.bind(this);
@@ -208,7 +205,7 @@ public class WeatherActivity extends AppCompatActivity implements
 
     @Override
     protected void onResume() {
-        LogUtils.d("onResume");
+        Log.d(TAG, "onResume");
         super.onResume();
         if (newPresenter != null) {
             newPresenter.onResume();
@@ -223,7 +220,7 @@ public class WeatherActivity extends AppCompatActivity implements
 
     @Override
     protected void onPause() {
-        LogUtils.d("onPause");
+        Log.d(TAG, "onPause");
         super.onPause();
         if (newPresenter != null) {
             newPresenter.onPause();
@@ -233,13 +230,13 @@ public class WeatherActivity extends AppCompatActivity implements
 
     @Override
     protected void onStart() {
-        LogUtils.d("onStart");
+        Log.d(TAG, "onStart");
         super.onStart();
     }
 
     @Override
     protected void onStop() {
-        LogUtils.d("onStop");
+        Log.d(TAG, "onStop");
         super.onStop();
         if (newPresenter != null) {
             newPresenter.onStop();
@@ -248,10 +245,11 @@ public class WeatherActivity extends AppCompatActivity implements
 
     @Override
     public void onDestroy() {
-        LogUtils.d("onDestroy");
+        Log.d(TAG, "onDestroy");
         super.onDestroy();
         dynamicWeatherView.onDestroy();
         if (newPresenter != null) {
+            newPresenter.onDestroy();
             newPresenter.unSubscribe();
             newPresenter = null;
         }
@@ -287,30 +285,6 @@ public class WeatherActivity extends AppCompatActivity implements
         });
     }
 
-    /**
-     * Toast消息
-     *
-     * @param msg 信息
-     */
-    private void showToastMessage(String msg) {
-        Message message = new Message();
-        message.what = HANDLE_TOAST;
-        message.obj = msg;
-        handler.sendMessage(message);
-    }
-
-    /**
-     * 设置城市
-     *
-     * @param countyStr 城市名
-     */
-    private void setCounty(String countyStr) {
-        Message message = handler.obtainMessage();
-        message.what = HANDLE_POSITION;
-        message.obj = countyStr;
-        handler.sendMessage(message);
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.nav_menu, menu);
@@ -344,7 +318,7 @@ public class WeatherActivity extends AppCompatActivity implements
             case SettingActivityRequestCode:
                 if (resultCode == SettingCode) {
                     boolean autoLocate = data.getBooleanExtra("autoLocate", false);
-                    LogUtils.d("onActivityResult: SettingActivity autoLocate=" + autoLocate);
+                    Log.d(TAG, "onActivityResult: SettingActivity autoLocate=" + autoLocate);
                     if (autoLocate) {
                         newPresenter.locate();
                     }
@@ -362,10 +336,10 @@ public class WeatherActivity extends AppCompatActivity implements
                         MLocation location = bundle.getParcelable("location");
                         String desc = TextUtils.isEmpty(location.getCity()) ? location.getCounty()
                                 : location.getCity() + "" + location.getCounty();
-                        LogUtils.d("onActivityResult: desc = " + desc);
+                        Log.d(TAG, "onActivityResult: desc = " + desc);
                         newPresenter.refreshChosenWeather(desc);
                     } else {
-                        LogUtils.d("onActivityResult: cannot get parcelable location");
+                        Log.d(TAG, "onActivityResult: cannot get parcelable location");
                     }
                 }
                 break;
@@ -386,25 +360,25 @@ public class WeatherActivity extends AppCompatActivity implements
                 }
                 break;
             default:
-                LogUtils.e("onRequestPermissionsResult: undefined request code" + requestCode);
+                Log.e(TAG, "onRequestPermissionsResult: undefined request code" + requestCode);
                 break;
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    /**
-     * 定位图片的显示
-     *
-     * @param isLocation 是否是定位状态
-     */
-    private void setLocateModeImage(boolean isLocation) {
-        locateModeImage.setVisibility(View.VISIBLE);
-        if (isLocation) {
-            locateModeImage.setImageResource(R.drawable.ic_location_on_black_24dp);
-        } else {
-            locateModeImage.setImageResource(R.drawable.ic_location_off_black_24dp);
-        }
-    }
+//    /**
+//     * 定位图片的显示
+//     *
+//     * @param isLocation 是否是定位状态
+//     */
+//    private void setLocateModeImage(boolean isLocation) {
+//        locateModeImage.setVisibility(View.VISIBLE);
+//        if (isLocation) {
+//            locateModeImage.setImageResource(R.drawable.ic_location_on_black_24dp);
+//        } else {
+//            locateModeImage.setImageResource(R.drawable.ic_location_off_black_24dp);
+//        }
+//    }
 
     @Override
     public void setPresenter(NewWeatherActivityContract.newPresenter presenter) {
@@ -416,7 +390,7 @@ public class WeatherActivity extends AppCompatActivity implements
         NewWeather.ResultBean.DailyBean dailyBean = weather.getResult().getDaily();
         NewWeather.ResultBean.HourlyBean hourlyBean = weather.getResult().getHourly();
         NewWeather.ResultBean.MinutelyBean minutelyBean = weather.getResult().getMinutely();
-        LogUtils.d("showWeather: here " + dailyBean.getAqi().size());
+        Log.d(TAG, "showWeather: here " + dailyBean.getAqi().size());
 
         showDailyWeather(dailyBean);
         showHourlyWeather(hourlyBean);
@@ -438,7 +412,7 @@ public class WeatherActivity extends AppCompatActivity implements
         final boolean shouldShowAlert;
         // 是否显示天气预警图标
         if (alertBean.getContent().size() > 0) {
-            LogUtils.d("showCurrentWeather: alert size=" + alertBean.getContent().size());
+            Log.d(TAG, "showCurrentWeather: alert size=" + alertBean.getContent().size());
             alertArrayList = new ArrayList<>();
             for (NewWeather.ResultBean.AlertBean.ContentBean contentBean : alertBean.getContent()) {
                 alertArrayList.add(new Alert(contentBean.getStatus(),
@@ -484,7 +458,7 @@ public class WeatherActivity extends AppCompatActivity implements
                 uv_text.setText(dailyBean.getUltraviolet().get(0).getDesc());
                 carWashing_text.setText(dailyBean.getCarWashing().get(0).getDesc());
                 dressing_text.setText(dailyBean.getDressing().get(0).getDesc());
-                LogUtils.d("showWeather: refresh weather succeed");
+                Log.d(TAG, "showWeather: refresh weather succeed");
             }
         });
     }
@@ -492,7 +466,7 @@ public class WeatherActivity extends AppCompatActivity implements
     private void showDailyWeather(NewWeather.ResultBean.DailyBean dailyBean) {
         int length = dailyBean.getSkycon().size();
         length = (length >= 5) ? 5 : length;
-        LogUtils.d("showDailyWeather: " + length);
+        Log.d(TAG, "showDailyWeather: " + length);
         final ArrayList<SingleWeather> singleWeathers = new ArrayList<>(length);
         int dayOfWeek = Utility.getDayOfWeek();
         SimpleDateFormat oldSDF = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
@@ -510,7 +484,7 @@ public class WeatherActivity extends AppCompatActivity implements
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
-                LogUtils.d("showDailyWeather: parse time format failed");
+                Log.d(TAG, "showDailyWeather: parse time format failed");
             }
             int icon = Utility.chooseWeatherIcon(dailyBean.getSkycon().get(i).getValue(),
                     dailyBean.getPrecipitation().get(i).getAvg(), HOURLY_MODE, false);
@@ -539,7 +513,7 @@ public class WeatherActivity extends AppCompatActivity implements
     private void showHourlyWeather(NewWeather.ResultBean.HourlyBean hourlyBean) {
         int length = hourlyBean.getSkycon().size();
         length = (length >= 24) ? 24 : length;
-//        LogUtils.d("setHourlyWeatherChart: total " + length + " hour");
+//        Log.d("setHourlyWeatherChart: total " + length + " hour");
         final ArrayList<SingleWeather> singleWeathers = new ArrayList<>(length);
         for (int i = 0; i < length; i++) {
             String time = hourlyBean.getSkycon().get(i).getDatetime().substring(11, 16);
@@ -580,12 +554,12 @@ public class WeatherActivity extends AppCompatActivity implements
     @Override
     public void showLocation(MLocation location) {
         if (location == null) {
-            LogUtils.e("showLocation: location = null");
+            Log.e(TAG, "showLocation: location = null");
             return;
         }
         String coarseLocation = location.getCoarseLocation();
         String detailLocation = location.getFineLocation();
-        LogUtils.d("showLocation: " + coarseLocation + detailLocation);
+        Log.d(TAG, "showLocation: " + coarseLocation + detailLocation);
         switch (location.getLocateType()) {
             case MLocation.TYPE_CHOOSE:
                 setLoc(coarseLocation, coarseLocation, false);
@@ -668,6 +642,19 @@ public class WeatherActivity extends AppCompatActivity implements
 
     @Override
     public void showLocateError() {
+        setRefreshingState(false);
+//        viewRoot.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                Snackbar.make(viewRoot, R.string.locate_failed, Snackbar.LENGTH_LONG)
+//                        .setAction(R.string.go_to_settings, new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                startActivity(new Intent().setAction(Settings.ACTION_SETTINGS));
+//                            }
+//                        });
+//            }
+//        }, 2000);
         Snackbar.make(viewRoot, R.string.locate_failed, Snackbar.LENGTH_LONG)
                 .setAction(R.string.go_to_settings, new View.OnClickListener() {
                     @Override

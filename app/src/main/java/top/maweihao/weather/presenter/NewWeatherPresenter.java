@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -27,12 +28,11 @@ import top.maweihao.weather.contract.WeatherData;
 import top.maweihao.weather.entity.BaiDu.BaiDuChoosePositionBean;
 import top.maweihao.weather.entity.BaiDu.BaiDuCoordinateBean;
 import top.maweihao.weather.entity.BaiDu.BaiDuIPLocationBean;
-import top.maweihao.weather.entity.NewWeather;
 import top.maweihao.weather.entity.MLocation;
+import top.maweihao.weather.entity.NewWeather;
 import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.LocationUtil;
-import top.maweihao.weather.util.LogUtils;
 import top.maweihao.weather.util.ServiceUtil;
 import top.maweihao.weather.util.remoteView.WidgetUtils;
 
@@ -43,6 +43,8 @@ import static top.maweihao.weather.util.Utility.GPSEnabled;
  */
 
 public class NewWeatherPresenter implements NewWeatherActivityContract.newPresenter {
+    
+    private static final String TAG = NewWeatherPresenter.class.getSimpleName();
 
     private final WeatherData model;
     private final NewWeatherActivityContract.newView<NewWeatherActivityContract.newPresenter> view;
@@ -81,7 +83,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
 
     @Override
     public void unSubscribe() {
-        stopBaiduLocate();
+//        stopBaiduLocate();
         compositeDisposable.clear();
     }
 
@@ -98,7 +100,11 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
     @Override
     public void onStop() {
         stopBaiduLocate();
-        compositeDisposable.clear();
+    }
+
+    @Override
+    public void onDestroy() {
+//        compositeDisposable.clear();
         weather4widget = null;
         countyName4widget = null;
     }
@@ -122,7 +128,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                             if (interval > 5) {  //hardcode the minimum refresh interval temporary
                                 locate();
                             } else {
-                                LogUtils.d( "fetchData: no need to refresh, last " + interval + " ago");
+                                Log.d(TAG,  "fetchData: no need to refresh, last " + interval + " ago");
                                 if (WidgetUtils.hasAnyWidget(context)) {
                                     updateWidget(weather, location.getCoarseLocation());
                                 }
@@ -143,7 +149,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
     public void locate() {
         view.setRefreshingState(true);
         if (configContact.getAutoLocate(true)) {
-            LogUtils.d( "locate: true");
+            Log.d(TAG, "locate: true");
             checkPermissionAndLocate();
         } else {
             MLocation location = model.getLocationCached();
@@ -183,9 +189,13 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
     }
 
     private void checkPermissionAndLocate() {
-        LogUtils.d("checkPermissionAndLocate: here check for permission");
+        Log.d(TAG, "checkPermissionAndLocate: here check for permission");
         String[] permission = {Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION};
+//        Log.d(TAG, "permission: " + (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+//                == PackageManager.PERMISSION_GRANTED));
+//        Log.d(TAG, "permission: " + (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
+//                == PackageManager.PERMISSION_GRANTED));
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             initBaiduLocate();
@@ -205,7 +215,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
     public void refreshWeather(final MLocation location) {
         final boolean needGeo = location.isNeedGeocode();
         isWidgetOn = WidgetUtils.hasAnyWidget(context);
-        LogUtils.d( "refreshWeather " +
+        Log.d(TAG, "refreshWeather " +
                 location.getLocationStringReversed() + " " + location.getLocateType());
         if (needGeo) {
             workingFlag = true;
@@ -213,7 +223,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
         } else {
             view.showLocation(location);
         }
-        model.getWeather(location.getLocationStringReversed())
+        Disposable disposable = model.getWeather(location.getLocationStringReversed())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<NewWeather>() {
@@ -226,7 +236,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                                     updateWidget(weather, countyName4widget);
                                 }
                             } else {
-                                LogUtils.d( "get weather: cannot stop swipe now");
+                                Log.d(TAG,  "get weather: cannot stop swipe now");
                                 workingFlag = false;
                                 if (isWidgetOn) {
                                     weather4widget = weather;
@@ -249,16 +259,17 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                             if (!workingFlag) {
                                 view.setRefreshingState(false);
                             } else {
-                                LogUtils.d( "get weather: cannot stop swipe now");
+                                Log.d(TAG, "get weather: cannot stop swipe now");
                                 workingFlag = false;
                             }
                         } else {
                             view.setRefreshingState(false);
                         }
-                        LogUtils.e( "refreshWeather: " + throwable);
+                        Log.e(TAG, "refreshWeather: " + throwable);
                         view.showNetworkError();
                     }
                 });
+        compositeDisposable.add(disposable);
     }
 
     private void geocodeLocationAndSave(final MLocation location, final boolean showLocation) {
@@ -278,7 +289,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                                                 updateWidget(weather4widget, location.getCoarseLocation());
                                             }
                                         } else {
-                                            LogUtils.d( "get location: cannot stop swipe now");
+                                            Log.d(TAG, "get location: cannot stop swipe now");
                                             workingFlag = false;
                                             if (isWidgetOn) {
                                                 countyName4widget = location.getCoarseLocation();
@@ -287,7 +298,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                                         view.showLocation(location);
                                     }
                                 } else {
-                                    LogUtils.e( "geocodeLocationAndSave: bean status error. " +
+                                    Log.e(TAG, "geocodeLocationAndSave: bean status error. " +
                                             (baiDuCoordinateBean != null ? baiDuCoordinateBean.getStatus() : ""));
                                 }
                                 model.saveLocation(location);
@@ -295,7 +306,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                         }, new Consumer<Throwable>() {
                             @Override
                             public void accept(Throwable throwable) throws Exception {
-                                LogUtils.e( "geocodeLocationAndSave: geo failed " + throwable);
+                                Log.e(TAG, "geocodeLocationAndSave: geo failed " + throwable);
                                 if (showLocation) {
                                     view.showLocation(location);
                                 }
@@ -317,31 +328,31 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
         mLocationClient.registerLocationListener(new BDLocationListener() {
             @Override
             public void onReceiveLocation(BDLocation bdLocation) {
-                LogUtils.d( "BAIDU: received" + (System.currentTimeMillis() - locateTime));
+                Log.d(TAG, "BAIDU: received" + (System.currentTimeMillis() - locateTime));
                 if (System.currentTimeMillis() - locateTime < 3 * 1000) {  //at most x second
                     if (bdLocation.getLocType() != BDLocation.TypeGpsLocation) {
-                        LogUtils.d("BAIDU onReceiveLocation: Locate type == " + bdLocation.getLocType());
+                        Log.d(TAG, "BAIDU onReceiveLocation: Locate type == " + bdLocation.getLocType());
                         if (LocationUtil.isBaiduLocateSuccess(bdLocation.getLocType())) {
                             if (!GPSEnabled(context)) {
-                                LogUtils.d("BAIDU onReceiveLocation: system GPS is off");
+                                Log.d(TAG, "BAIDU onReceiveLocation: system GPS is off");
                                 mLocationClient.stop();
                                 showAndSaveWeather(bdLocation);
                             }
                         }
                     } else {
                         mLocationClient.stop();
-                        LogUtils.d("BAIDU onReceiveLocation: Locate type == GPS");
+                        Log.d(TAG, "BAIDU onReceiveLocation: Locate type == GPS");
                         showAndSaveWeather(bdLocation);
                     }
                 } else {
                     mLocationClient.stop();
-                    LogUtils.d("BAIDU onReceiveLocation: baidu locate time out, locType == "
+                    Log.d(TAG, "BAIDU onReceiveLocation: baidu locate time out, locType == "
                             + bdLocation.getLocType());
 
                     if (LocationUtil.isBaiduLocateSuccess(bdLocation.getLocType())) {
                         showAndSaveWeather(bdLocation);
                     } else {
-                        LogUtils.d("BAIDU onReceiveLocation: baidu locate failed, " +
+                        Log.d(TAG, "BAIDU onReceiveLocation: baidu locate failed, " +
                                 "switch to LocationManager method");
 
                         initSystemLocate();
@@ -355,6 +366,8 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
 
             private void showAndSaveWeather(BDLocation bdLocation) {
                 MLocation location = LocationUtil.convertType(bdLocation);
+//                Log.d(TAG, "showAndSaveWeather: " + bdLocation.getLatitude() + " " + bdLocation.getLongitude());
+//                Log.d(TAG, "showAndSaveWeather: " + location.getLocationString());
                 model.saveLocation(location);
                 refreshWeather(location);
             }
@@ -367,13 +380,19 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
         LocationManager mLocationManager =
                 (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         Location location;
-        if (mLocationManager != null &&
-                mLocationManager.getProviders(true).contains(LocationManager.NETWORK_PROVIDER)) {
-            location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        Log.d(TAG, "initSystemLocate: " + (mLocationManager.getProviders(true)));
+        if (mLocationManager != null && (mLocationManager.getProviders(true).contains(LocationManager.NETWORK_PROVIDER)
+        || mLocationManager.getProviders(true).contains(LocationManager.PASSIVE_PROVIDER))) {
+            if (mLocationManager.getProviders(true).contains(LocationManager.NETWORK_PROVIDER)) {
+                location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            } else {
+                location = mLocationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+            }
             if (location != null) {
+                Log.d(TAG, "initSystemLocate: " + location.getLatitude() + " " + location.getLongitude());
                 MLocation loc = LocationUtil.convertType(location);
                 loc.setNeedGeocode(true);
-                LogUtils.d("LocationManager: locationCoordinates = " + loc.getLocationString());
+                Log.d(TAG, "LocationManager: locationCoordinates = " + loc.getLocationString());
                 refreshWeather(loc);
             } else {
                 locateFailed(true);
@@ -398,19 +417,19 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                             public void accept(BaiDuIPLocationBean baiDuIPLocationBean) throws Exception {
                                 if (baiDuIPLocationBean != null && baiDuIPLocationBean.getStatus() == 0) {
                                     MLocation location = LocationUtil.convertType(baiDuIPLocationBean);
-                                    LogUtils.d( "ip locate success: " + location.getLocationString());
+                                    Log.d(TAG, "ip locate success: " + location.getLocationString());
                                     model.saveLocation(location);
                                     view.showIpLocateMessage();
                                     refreshWeather(location);
                                 } else {
-                                    LogUtils.e("initIpLocate: baidu ip address error. " +
+                                    Log.e(TAG, "initIpLocate: baidu ip address error. " +
                                             (baiDuIPLocationBean != null ? baiDuIPLocationBean.getStatus() : ""));
                                 }
                             }
                         }, new Consumer<Throwable>() {
                             @Override
                             public void accept(Throwable throwable) throws Exception {
-                                LogUtils.e("initIpLocate: ip locate failed");
+                                Log.e(TAG, "initIpLocate: ip locate failed");
                                 locateFailed(false);
                             }
                         });
@@ -418,6 +437,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
     }
 
     private void locateFailed(boolean isPermissionOn) {
+        Log.e(TAG, "locateFailed, and permission is " + isPermissionOn);
         if (isPermissionOn) {
             view.showLocateError();
         } else {
@@ -427,10 +447,10 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
 
     private void updateWidget(NewWeather weatherView, String location) {
         if (weatherView == null || location == null) {
-            LogUtils.e( "updateWidget: null!" + weatherView + location);
+            Log.e(TAG,  "updateWidget: null!" + weatherView + location);
         } else {
             if (WidgetUtils.hasAnyWidget(context)) {
-                LogUtils.d( "updateWidget: here has widget");
+//                Log.d(TAG, "updateWidget: here has widget");
                 ServiceUtil.startWidgetSyncService(context, false, false);
                 WidgetUtils.refreshWidget(context, weatherView, location);
             }
@@ -451,7 +471,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                                     model.saveLocation(location);
                                     refreshWeather(location);
                                 } else {
-                                    LogUtils.e( "refreshChosenWeather: get coo failed " + desc);
+                                    Log.e(TAG, "refreshChosenWeather: get coo failed " + desc);
                                     view.showError("Get weather failed, try to enable \"Auto Locate\"",
                                             true);
                                 }
@@ -459,7 +479,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                         }, new Consumer<Throwable>() {
                             @Override
                             public void accept(Throwable throwable) throws Exception {
-                                LogUtils.e( "refreshChosenWeather: get coo failed" + throwable);
+                                Log.e(TAG, "refreshChosenWeather: get coo failed" + throwable);
                                 view.showNetworkError();
                             }
                         });

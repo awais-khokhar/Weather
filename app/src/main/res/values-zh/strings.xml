@@ -137,5 +137,6 @@
     <string name="provide_weather_china">提供中国的天气数据</string>
     <string name="provide_weather_outside">提供大陆以外地区的天气数据</string>
     <string name="click_to_open_link">点击以在浏览器中打开</string>
+    <string name="current_version_">当前版本：%s</string>
 
 </resources>

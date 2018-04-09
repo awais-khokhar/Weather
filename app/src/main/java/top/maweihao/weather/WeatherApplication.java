@@ -20,7 +20,7 @@ public class WeatherApplication extends LitePalApplication {
 
         Constants.timeShift = Utility.getTimeShift();
         Constants.lang = Utility.getCurrentLanguage(this);
-        Log.d("HERE", "onCreate: " + Constants.timeShift + Constants.lang);
+        Log.d("Application", "time shift and lang is " + Constants.timeShift + Constants.lang);
         LogUtils.init(this);
         LogUtils.getConfig().setLogSwitch(BuildConfig.APP_DEBUG);
     }

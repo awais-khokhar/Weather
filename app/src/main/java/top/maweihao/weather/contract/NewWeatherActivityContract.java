@@ -34,5 +34,6 @@ public interface NewWeatherActivityContract {
         void onResume();
         void onPause();
         void onStop();
+        void onDestroy();
     }
 }
