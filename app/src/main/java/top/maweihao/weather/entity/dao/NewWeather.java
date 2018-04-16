@@ -1,4 +1,4 @@
-package top.maweihao.weather.entity;
+package top.maweihao.weather.entity.dao;
 
 import android.support.annotation.NonNull;
 

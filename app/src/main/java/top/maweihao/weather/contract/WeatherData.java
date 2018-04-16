@@ -1,10 +1,10 @@
 package top.maweihao.weather.contract;
 
 import io.reactivex.Observable;
-import top.maweihao.weather.entity.HeWeather.NewHeWeatherNow;
-import top.maweihao.weather.entity.NewWeather;
-import top.maweihao.weather.entity.NewWeatherRealtime;
-import top.maweihao.weather.entity.MLocation;
+import top.maweihao.weather.entity.dao.NewHeWeatherNow;
+import top.maweihao.weather.entity.dao.NewWeather;
+import top.maweihao.weather.entity.dao.NewWeatherRealtime;
+import top.maweihao.weather.entity.dao.MLocation;
 
 /**
  * weather repository

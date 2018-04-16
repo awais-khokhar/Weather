@@ -5,13 +5,11 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -34,7 +32,6 @@ import java.util.List;
 import java.util.Locale;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import top.maweihao.weather.R;
 import top.maweihao.weather.adapter.DailyWeatherAdapter;
 import top.maweihao.weather.adapter.HourlyWeatherAdapter;
@@ -44,10 +41,9 @@ import top.maweihao.weather.android_view.dynamicweather.DynamicWeatherView;
 import top.maweihao.weather.contract.NewWeatherActivityContract;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.entity.Alert;
-import top.maweihao.weather.entity.MLocation;
-import top.maweihao.weather.entity.NewWeather;
 import top.maweihao.weather.entity.SingleWeather;
-import top.maweihao.weather.model.WeatherRepository;
+import top.maweihao.weather.entity.dao.MLocation;
+import top.maweihao.weather.entity.dao.NewWeather;
 import top.maweihao.weather.presenter.NewWeatherPresenter;
 import top.maweihao.weather.service.PushService;
 import top.maweihao.weather.util.Constants;
@@ -62,100 +58,101 @@ import static top.maweihao.weather.util.Constants.SettingCode;
 import static top.maweihao.weather.util.Utility.chooseWeatherSkycon;
 import static top.maweihao.weather.util.Utility.stringRoundDouble;
 
-public class WeatherActivity extends AppCompatActivity implements
+public class WeatherActivity extends BaseActivity implements
         View.OnClickListener, NewWeatherActivityContract.newView<NewWeatherActivityContract.newPresenter> {
 
-    private static final String TAG = WeatherActivity.class.getSimpleName();
+//    private static final String TAG = WeatherActivity.class.getSimpleName();
 
-    static final int HANDLE_POSITION = 0;
-    static final int HANDLE_TOAST = 1;
+    static final int HANDLE_POSITION       = 0;
+    static final int HANDLE_TOAST          = 1;
     static final int HANDLE_EXACT_LOCATION = 2;
 
     public static final int MINUTELY_MODE = 4;
-    public static final int HOURLY_MODE = 5;
+    public static final int HOURLY_MODE   = 5;
 
     @BindView(R.id.toolbar)
-    Toolbar toolbar;
+    Toolbar            toolbar;
     @BindView(temperature_text)
-    TextView temperatureText;
+    TextView           temperatureText;
     @BindView(skycon_text)
-    TextView skyconText;
+    TextView           skyconText;
     @BindView(R.id.rain_info_tv)
-    TextView rainInfoTv;
+    TextView           rainInfoTv;
     @BindView(R.id.locate_mode_image)
-    ImageView locateModeImage;
+    ImageView          locateModeImage;
     @BindView(R.id.location_tv)
-    TextView locateMode;
+    TextView           locateMode;
     @BindView(R.id.last_update_time)
-    TextView lastUpdateTime;
+    TextView           lastUpdateTime;
     @BindView(R.id.now_card_desc)
-    TextView todayDesc;
+    TextView           todayDesc;
     @BindView(R.id.dynamicWeatherView)
     DynamicWeatherView dynamicWeatherView;
     @BindView(R.id.aqi_image)
-    ImageView aqiImage;
+    ImageView          aqiImage;
     @BindView(R.id.uv_name)
-    TextView uvName;
+    TextView           uvName;
     @BindView(R.id.uv)
-    TextView uv_text;
+    TextView           uv_text;
     @BindView(R.id.carwash)
-    TextView carWashing_text;
+    TextView           carWashing_text;
     @BindView(R.id.humidity)
-    TextView hum_text;
+    TextView           hum_text;
     @BindView(R.id.dressing)
-    TextView dressing_text;
+    TextView           dressing_text;
     @BindView(R.id.wind_direction_tv)
-    TextView windDirectionTv;
+    TextView           windDirectionTv;
     @BindView(R.id.wind_level_tv)
-    TextView windLevelTv;
+    TextView           windLevelTv;
     @BindView(R.id.AQI_Circle)
-    SemiCircleView AQICircle;
+    SemiCircleView     AQICircle;
     @BindView(R.id.PM_Circle)
-    SemiCircleView PMCircle;
+    SemiCircleView     PMCircle;
     @BindView(R.id.stv)
-    SunTimeView sunTimeView;
+    SunTimeView        sunTimeView;
     @BindView(R.id.sunrise)
-    TextView sunrise_text;
+    TextView           sunrise_text;
     @BindView(R.id.sunset)
-    TextView sunset_text;
+    TextView           sunset_text;
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.more_days_weather)
-    ImageButton imageButton;
+    ImageButton        imageButton;
     @BindView(R.id.hourly_weather_rv)
-    RecyclerView hourlyRecyclerView;
+    RecyclerView       hourlyRecyclerView;
     @BindView(R.id.daily_weather_rv)
-    RecyclerView dailyRecyclerView;
+    RecyclerView       dailyRecyclerView;
     @BindView(R.id.weather_alert_icon)
-    ImageView alertImage;
+    ImageView          alertImage;
     @BindView(R.id.view_root)
-    CoordinatorLayout viewRoot;
+    CoordinatorLayout  viewRoot;
 
     public String countyName = null;
     public String locationDetail;
 
-    private MessageHandler handler;
+    private MessageHandler                          handler;
     private NewWeatherActivityContract.newPresenter newPresenter;
-    private PreferenceConfigContact configContact;
+    private PreferenceConfigContact                 configContact;
 
     //24h hourlyRecyclerView adapter
     private HourlyWeatherAdapter hourWeatherAdapter;
     //5day hourlyRecyclerView adapter
-    private DailyWeatherAdapter dailyWeatherAdapter;
-    private ArrayList<Alert> alertArrayList;
+    private DailyWeatherAdapter  dailyWeatherAdapter;
+    private ArrayList<Alert>     alertArrayList;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        PreferenceManager.setDefaultValues(this, R.xml.settingpreference, false);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_weather);
+    protected int setContentView() {
+        return R.layout.activity_weather;
+    }
+
+    @Override
+    protected void initView(Bundle savedInstanceState) {
         initView();
 //        doDebugThings();
         configContact = Utility.createSimpleConfig(this).create(PreferenceConfigContact.class);
 
         handler = new MessageHandler(this);
-        newPresenter = new NewWeatherPresenter(WeatherActivity.this,
-                WeatherRepository.getInstance(getApplicationContext()), configContact);
+        newPresenter = new NewWeatherPresenter(WeatherActivity.this, this);
         newPresenter.subscribe();
 
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
@@ -170,6 +167,7 @@ public class WeatherActivity extends AppCompatActivity implements
         alertImage.setOnClickListener(this);
         imageButton.setOnClickListener(this);
     }
+
 
 //    private void doDebugThings() {
 //        WeatherRepository repo = WeatherRepository.getInstance(WeatherActivity.this);
@@ -189,8 +187,6 @@ public class WeatherActivity extends AppCompatActivity implements
 //    }
 
     private void initView() {
-        ButterKnife.bind(this);
-
         LinearLayoutManager hourlyManager = new LinearLayoutManager(WeatherActivity.this);
         hourlyManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         hourlyRecyclerView.setLayoutManager(hourlyManager);

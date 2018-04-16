@@ -29,7 +29,7 @@ import top.maweihao.weather.contract.ChoosePositionActivityContract;
 import top.maweihao.weather.db.City;
 import top.maweihao.weather.db.County;
 import top.maweihao.weather.db.Province;
-import top.maweihao.weather.entity.MLocation;
+import top.maweihao.weather.entity.dao.MLocation;
 import top.maweihao.weather.presenter.ChoosePositionActivityPresenter;
 import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.LogUtils;

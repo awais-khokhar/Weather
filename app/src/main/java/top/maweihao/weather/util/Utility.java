@@ -32,9 +32,9 @@ import java.util.TimeZone;
 import github.hellocsl.simpleconfig.Config;
 import github.hellocsl.simpleconfig.SimpleConfig;
 import top.maweihao.weather.R;
-import top.maweihao.weather.entity.HeWeather.NewHeWeatherNow;
-import top.maweihao.weather.entity.NewWeather;
-import top.maweihao.weather.entity.NewWeatherRealtime;
+import top.maweihao.weather.entity.dao.NewHeWeatherNow;
+import top.maweihao.weather.entity.dao.NewWeather;
+import top.maweihao.weather.entity.dao.NewWeatherRealtime;
 import top.maweihao.weather.android_view.dynamicweather.BaseDrawer;
 
 import static top.maweihao.weather.view.WeatherActivity.HOURLY_MODE;

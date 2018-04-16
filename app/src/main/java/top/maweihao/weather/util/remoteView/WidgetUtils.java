@@ -3,8 +3,8 @@ package top.maweihao.weather.util.remoteView;
 import android.content.Context;
 import android.util.Log;
 
-import top.maweihao.weather.entity.HeWeather.NewHeWeatherNow;
-import top.maweihao.weather.entity.NewWeather;
+import top.maweihao.weather.entity.dao.NewHeWeatherNow;
+import top.maweihao.weather.entity.dao.NewWeather;
 
 /**
  * Utility class for updating all widgets

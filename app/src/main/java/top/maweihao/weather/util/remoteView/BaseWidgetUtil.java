@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.widget.RemoteViews;
 
-import top.maweihao.weather.entity.NewWeather;
+import top.maweihao.weather.entity.dao.NewWeather;
 
 /**
  * interface for utility class of widgets

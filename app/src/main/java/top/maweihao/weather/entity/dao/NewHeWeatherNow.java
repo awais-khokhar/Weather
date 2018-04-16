@@ -1,4 +1,4 @@
-package top.maweihao.weather.entity.HeWeather;
+package top.maweihao.weather.entity.dao;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;

@@ -23,7 +23,7 @@ import top.maweihao.weather.view.SettingActivity;
 import top.maweihao.weather.view.WeatherActivity;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.contract.WeatherData;
-import top.maweihao.weather.entity.NewWeather;
+import top.maweihao.weather.entity.dao.NewWeather;
 import top.maweihao.weather.model.WeatherRepository;
 import top.maweihao.weather.util.LogUtils;
 import top.maweihao.weather.util.Utility;

@@ -16,24 +16,29 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.trello.rxlifecycle2.LifecycleProvider;
+import com.trello.rxlifecycle2.android.ActivityEvent;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import top.maweihao.weather.WeatherApplication;
 import top.maweihao.weather.contract.NewWeatherActivityContract;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.contract.WeatherData;
 import top.maweihao.weather.entity.BaiDu.BaiDuChoosePositionBean;
 import top.maweihao.weather.entity.BaiDu.BaiDuCoordinateBean;
 import top.maweihao.weather.entity.BaiDu.BaiDuIPLocationBean;
-import top.maweihao.weather.entity.MLocation;
-import top.maweihao.weather.entity.NewWeather;
+import top.maweihao.weather.entity.dao.MLocation;
+import top.maweihao.weather.entity.dao.NewWeather;
+import top.maweihao.weather.model.WeatherRepository;
 import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.LocationUtil;
 import top.maweihao.weather.util.ServiceUtil;
+import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.util.remoteView.WidgetUtils;
 
 import static top.maweihao.weather.util.Utility.GPSEnabled;
@@ -42,33 +47,37 @@ import static top.maweihao.weather.util.Utility.GPSEnabled;
  * Created by maweihao on 28/10/2017.
  */
 
-public class NewWeatherPresenter implements NewWeatherActivityContract.newPresenter {
-    
+public class NewWeatherPresenter extends BasePresenter
+        implements NewWeatherActivityContract.newPresenter {
+
     private static final String TAG = NewWeatherPresenter.class.getSimpleName();
 
-    private final WeatherData model;
+    private final WeatherData                                                                 model;
     private final NewWeatherActivityContract.newView<NewWeatherActivityContract.newPresenter> view;
-    private final CompositeDisposable compositeDisposable;
-    private PreferenceConfigContact configContact;
-    private MLocation cachedLocation;
+
+    private final CompositeDisposable     compositeDisposable;
+    private       PreferenceConfigContact configContact;
+    private       MLocation               cachedLocation;
     private volatile boolean workingFlag = false;
 
-    private Context context;
-    private LocationClient mLocationClient;
+    private Context              context;
+    private LocationClient       mLocationClient;
     private LocationClientOption option;
 
-    private long lastUpdateTime;
-    private long locateTime;  //for Baidu locate
+    private long       lastUpdateTime;
+    private long       locateTime;  //for Baidu locate
     private NewWeather weather4widget;  //for widget refresh
-    private String countyName4widget; //for widget refresh
+    private String     countyName4widget; //for widget refresh
     private volatile boolean isWidgetOn = false;
 
     public NewWeatherPresenter(@NonNull NewWeatherActivityContract.newView<NewWeatherActivityContract.newPresenter> view,
-                               @NonNull WeatherData model, PreferenceConfigContact contact) {
-        this.model = model;
+                               @NonNull LifecycleProvider<ActivityEvent> provider) {
+        super(provider);
+        this.model = WeatherRepository.getInstance(WeatherApplication.getContext());
         this.view = view;
         compositeDisposable = new CompositeDisposable();
-        configContact = contact;
+//        configContact = contact;
+        configContact = Utility.createSimpleConfig(WeatherApplication.getContext()).create(PreferenceConfigContact.class);
 
         context = (Context) view;
         mLocationClient = new LocationClient(context);
@@ -114,6 +123,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
         Disposable disposable = model.getWeatherCached()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .compose(getProvider().<NewWeather>bindUntilEvent(ActivityEvent.DESTROY)) // onDestroy取消订阅
                 .subscribe(new Consumer<NewWeather>() {
                     @Override
                     public void accept(NewWeather weather) throws Exception {
@@ -128,7 +138,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                             if (interval > 5) {  //hardcode the minimum refresh interval temporary
                                 locate();
                             } else {
-                                Log.d(TAG,  "fetchData: no need to refresh, last " + interval + " ago");
+                                Log.d(TAG, "fetchData: no need to refresh, last " + interval + " ago");
                                 if (WidgetUtils.hasAnyWidget(context)) {
                                     updateWidget(weather, location.getCoarseLocation());
                                 }
@@ -226,6 +236,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
         Disposable disposable = model.getWeather(location.getLocationStringReversed())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .compose(getProvider().<NewWeather>bindUntilEvent(ActivityEvent.DESTROY)) // onDestroy取消订阅
                 .subscribe(new Consumer<NewWeather>() {
                     @Override
                     public void accept(NewWeather weather) throws Exception {
@@ -236,7 +247,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                                     updateWidget(weather, countyName4widget);
                                 }
                             } else {
-                                Log.d(TAG,  "get weather: cannot stop swipe now");
+                                Log.d(TAG, "get weather: cannot stop swipe now");
                                 workingFlag = false;
                                 if (isWidgetOn) {
                                     weather4widget = weather;
@@ -277,6 +288,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
                 HttpUtil.getAddressDetail(location.getLocationString())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
+                        .compose(getProvider().<BaiDuCoordinateBean>bindUntilEvent(ActivityEvent.DESTROY)) // onDestroy取消订阅
                         .subscribe(new Consumer<BaiDuCoordinateBean>() {
                             @Override
                             public void accept(BaiDuCoordinateBean baiDuCoordinateBean) throws Exception {
@@ -382,7 +394,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
         Location location;
         Log.d(TAG, "initSystemLocate: " + (mLocationManager.getProviders(true)));
         if (mLocationManager != null && (mLocationManager.getProviders(true).contains(LocationManager.NETWORK_PROVIDER)
-        || mLocationManager.getProviders(true).contains(LocationManager.PASSIVE_PROVIDER))) {
+                || mLocationManager.getProviders(true).contains(LocationManager.PASSIVE_PROVIDER))) {
             if (mLocationManager.getProviders(true).contains(LocationManager.NETWORK_PROVIDER)) {
                 location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             } else {
@@ -412,6 +424,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
     private void initIpLocate() {
         Disposable disposable =
                 HttpUtil.getIpLocation()
+                        .compose(getProvider().<BaiDuIPLocationBean>bindUntilEvent(ActivityEvent.DESTROY)) // onDestroy取消订阅
                         .subscribe(new Consumer<BaiDuIPLocationBean>() {
                             @Override
                             public void accept(BaiDuIPLocationBean baiDuIPLocationBean) throws Exception {
@@ -447,7 +460,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
 
     private void updateWidget(NewWeather weatherView, String location) {
         if (weatherView == null || location == null) {
-            Log.e(TAG,  "updateWidget: null!" + weatherView + location);
+            Log.e(TAG, "updateWidget: null!" + weatherView + location);
         } else {
             if (WidgetUtils.hasAnyWidget(context)) {
 //                Log.d(TAG, "updateWidget: here has widget");
@@ -461,6 +474,7 @@ public class NewWeatherPresenter implements NewWeatherActivityContract.newPresen
     public void refreshChosenWeather(final String desc) {
         Disposable disposable =
                 HttpUtil.getCoordinateByDesc(desc)
+                        .compose(getProvider().<BaiDuChoosePositionBean>bindUntilEvent(ActivityEvent.DESTROY)) // onDestroy取消订阅
                         .subscribe(new Consumer<BaiDuChoosePositionBean>() {
                             @Override
                             public void accept(BaiDuChoosePositionBean positionBean) throws Exception {

@@ -11,15 +11,15 @@ import okhttp3.Request;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import top.maweihao.weather.entity.BDLocateApi;
+import top.maweihao.weather.entity.api.BDLocateApi;
 import top.maweihao.weather.entity.BaiDu.BaiDuChoosePositionBean;
 import top.maweihao.weather.entity.BaiDu.BaiDuCoordinateBean;
 import top.maweihao.weather.entity.BaiDu.BaiDuIPLocationBean;
-import top.maweihao.weather.entity.HeWeather.HeWeatherApi;
-import top.maweihao.weather.entity.HeWeather.NewHeWeatherNow;
-import top.maweihao.weather.entity.NewWeather;
-import top.maweihao.weather.entity.NewWeatherRealtime;
-import top.maweihao.weather.entity.WeatherApi;
+import top.maweihao.weather.entity.api.HeWeatherApi;
+import top.maweihao.weather.entity.dao.NewHeWeatherNow;
+import top.maweihao.weather.entity.dao.NewWeather;
+import top.maweihao.weather.entity.dao.NewWeatherRealtime;
+import top.maweihao.weather.entity.api.WeatherApi;
 
 /**
  * Http Utility

@@ -29,7 +29,7 @@ import io.reactivex.schedulers.Schedulers;
 import top.maweihao.weather.R;
 import top.maweihao.weather.adapter.DailyWeatherAdapter;
 import top.maweihao.weather.contract.WeatherData;
-import top.maweihao.weather.entity.NewWeather;
+import top.maweihao.weather.entity.dao.NewWeather;
 import top.maweihao.weather.entity.SingleWeather;
 import top.maweihao.weather.model.WeatherRepository;
 import top.maweihao.weather.util.Utility;

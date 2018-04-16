@@ -15,8 +15,8 @@ import java.util.GregorianCalendar;
 
 import top.maweihao.weather.R;
 import top.maweihao.weather.view.WeatherActivity;
-import top.maweihao.weather.entity.HeWeather.NewHeWeatherNow;
-import top.maweihao.weather.entity.NewWeather;
+import top.maweihao.weather.entity.dao.NewHeWeatherNow;
+import top.maweihao.weather.entity.dao.NewWeather;
 import top.maweihao.weather.util.HeWeatherUtil;
 import top.maweihao.weather.util.LunarUtil;
 import top.maweihao.weather.util.Utility;

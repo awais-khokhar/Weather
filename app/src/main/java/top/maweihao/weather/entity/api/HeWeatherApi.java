@@ -1,9 +1,10 @@
-package top.maweihao.weather.entity.HeWeather;
+package top.maweihao.weather.entity.api;
 
 
 import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
+import top.maweihao.weather.entity.dao.NewHeWeatherNow;
 
 /**
  * interface for retrofit

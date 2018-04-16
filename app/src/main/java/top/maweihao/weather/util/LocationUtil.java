@@ -11,7 +11,7 @@ import org.greenrobot.greendao.annotation.NotNull;
 import top.maweihao.weather.entity.BaiDu.BaiDuChoosePositionBean;
 import top.maweihao.weather.entity.BaiDu.BaiDuCoordinateBean;
 import top.maweihao.weather.entity.BaiDu.BaiDuIPLocationBean;
-import top.maweihao.weather.entity.MLocation;
+import top.maweihao.weather.entity.dao.MLocation;
 
 /**
  * some methods related to location
