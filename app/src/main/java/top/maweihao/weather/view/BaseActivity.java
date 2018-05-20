@@ -21,6 +21,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
         bind = ButterKnife.bind(this);
 
         initView(savedInstanceState);
+        initData();
     }
 
     /**
@@ -29,6 +30,8 @@ public abstract class BaseActivity extends RxAppCompatActivity {
     protected abstract int setContentView();
 
     protected abstract void initView(Bundle savedInstanceState);
+
+    protected abstract void initData();
 
     @Override
     protected void onDestroy() {

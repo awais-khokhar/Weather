@@ -1,15 +1,10 @@
 package top.maweihao.weather.presenter;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.baidu.location.BDLocation;
@@ -34,7 +29,6 @@ import top.maweihao.weather.entity.BaiDu.BaiDuIPLocationBean;
 import top.maweihao.weather.entity.dao.MLocation;
 import top.maweihao.weather.entity.dao.NewWeather;
 import top.maweihao.weather.model.WeatherRepository;
-import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.LocationUtil;
 import top.maweihao.weather.util.ServiceUtil;
@@ -52,7 +46,7 @@ public class NewWeatherPresenter extends BasePresenter
 
     private static final String TAG = NewWeatherPresenter.class.getSimpleName();
 
-    private final WeatherData model;
+    private final WeatherData                                                                 model;
     private final NewWeatherActivityContract.NewView<NewWeatherActivityContract.NewPresenter> view;
 
     private final CompositeDisposable     compositeDisposable;
@@ -64,7 +58,6 @@ public class NewWeatherPresenter extends BasePresenter
     private LocationClient       mLocationClient;
     private LocationClientOption option;
 
-    private long       lastUpdateTime;
     private long       locateTime;  //for Baidu locate
     private NewWeather weather4widget;  //for widget refresh
     private String     countyName4widget; //for widget refresh
@@ -85,9 +78,38 @@ public class NewWeatherPresenter extends BasePresenter
 
     @Override
     public void subscribe() {
-        fetchData(false);
+        //获取缓存
+        Disposable disposable = model.getWeatherCached()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .compose(getProvider().<NewWeather>bindUntilEvent(ActivityEvent.DESTROY)) // onDestroy取消订阅
+                .subscribe(new Consumer<NewWeather>() {
+                    @Override
+                    public void accept(NewWeather weather) throws Exception {
+                        view.showWeather(weather);
+                        MLocation location = model.getLocationCached();
+                        view.showLocation(location);
 
-//        locate();
+                        long interval = (System.currentTimeMillis() - weather.getServer_time() * 1000)
+                                / (60 * 1000);
+                        if (interval > 5) {  //hardcode the minimum refresh interval temporary
+                            initNewLocate();
+                        } else {
+                            Log.d(TAG, "fetchData: no need to refresh, last " + interval + " ago");
+                            if (WidgetUtils.hasAnyWidget(context)) {
+                                updateWidget(weather, location.getCoarseLocation());
+                            }
+                        }
+
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        view.showError("waiting for locating", false);
+                        initNewLocate();
+                    }
+                });
+        compositeDisposable.add(disposable);
     }
 
     @Override
@@ -119,49 +141,13 @@ public class NewWeatherPresenter extends BasePresenter
     }
 
     @Override
-    public void fetchData(final boolean ignoreInterval) {
-        Disposable disposable = model.getWeatherCached()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .compose(getProvider().<NewWeather>bindUntilEvent(ActivityEvent.DESTROY)) // onDestroy取消订阅
-                .subscribe(new Consumer<NewWeather>() {
-                    @Override
-                    public void accept(NewWeather weather) throws Exception {
-                        view.showWeather(weather);
-                        MLocation location = model.getLocationCached();
-                        view.showLocation(location);
-                        if (ignoreInterval) {
-                            locate();
-                        } else {
-                            long interval = (System.currentTimeMillis() - weather.getServer_time() * 1000)
-                                    / (60 * 1000);
-                            if (interval > 5) {  //hardcode the minimum refresh interval temporary
-                                locate();
-                            } else {
-                                Log.d(TAG, "fetchData: no need to refresh, last " + interval + " ago");
-                                if (WidgetUtils.hasAnyWidget(context)) {
-                                    updateWidget(weather, location.getCoarseLocation());
-                                }
-                            }
-                        }
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        view.showError("waiting for locating", false);
-                        locate();
-                    }
-                });
-        compositeDisposable.add(disposable);
-    }
-
-    @Override
-    public void locate() {
+    public void initNewLocate() {
         view.setRefreshingState(true);
         if (configContact.getAutoLocate(true)) {
             Log.d(TAG, "locate: true");
-            checkPermissionAndLocate();
+            view.getLocationPermission();
         } else {
+            //不是自动定位
             MLocation location = model.getLocationCached();
             if (location != null) {
                 cachedLocation = location;
@@ -173,58 +159,8 @@ public class NewWeatherPresenter extends BasePresenter
         }
     }
 
-    @Override
-    public void refreshLocalWeather() {
-        if (cachedLocation == null) {
-            MLocation location = model.getLocationCached();
-            if (location != null) {
-                cachedLocation = location;
-                refreshWeather(cachedLocation);
-            } else {
-                view.askForChoosePosition();
-            }
-        } else {
-            refreshWeather(cachedLocation);
-        }
-    }
 
-    @Override
-    public void onPermissionDenied() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) view,
-                Manifest.permission.ACCESS_FINE_LOCATION)) {
-            checkPermissionAndLocate();
-        } else {
-            initIpLocate();
-        }
-    }
-
-    private void checkPermissionAndLocate() {
-        Log.d(TAG, "checkPermissionAndLocate: here check for permission");
-        String[] permission = {Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION};
-//        Log.d(TAG, "permission: " + (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-//                == PackageManager.PERMISSION_GRANTED));
-//        Log.d(TAG, "permission: " + (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
-//                == PackageManager.PERMISSION_GRANTED));
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            Log.i(TAG,"yes Permission");
-            initBaiduLocate();
-        } else {
-            ActivityCompat.requestPermissions((Activity) view, permission, Constants.newRequestLocationCode);
-            Log.i(TAG,"no Permission");
-        }
-    }
-
-    private boolean checkForPermission() {
-        return (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) &&
-                ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
-                        == PackageManager.PERMISSION_GRANTED;
-    }
-
-    @Override
-    public void refreshWeather(final MLocation location) {
+    private void refreshWeather(final MLocation location) {
         final boolean needGeo = location.isNeedGeocode();
         isWidgetOn = WidgetUtils.hasAnyWidget(context);
         Log.d(TAG, "refreshWeather " +
@@ -329,7 +265,8 @@ public class NewWeatherPresenter extends BasePresenter
         compositeDisposable.add(disposable);
     }
 
-    private void initBaiduLocate() {
+    @Override
+    public void initBaiduLocate() {
         if (option == null) {
             option = new LocationClientOption();
             option.setScanSpan(1000);
@@ -422,7 +359,8 @@ public class NewWeatherPresenter extends BasePresenter
         }
     }
 
-    private void initIpLocate() {
+    @Override
+    public void initIpLocate() {
         Disposable disposable =
                 HttpUtil.getIpLocation()
                         .compose(getProvider().<BaiDuIPLocationBean>bindUntilEvent(ActivityEvent.DESTROY)) // onDestroy取消订阅

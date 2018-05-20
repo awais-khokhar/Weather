@@ -17,19 +17,23 @@ public interface NewWeatherActivityContract {
         void showNetworkError();
         void showError(String error, boolean showOkButton);
         void showLocateError();
-        void showPermissionError();
+//        void showPermissionError();
         void showIpLocateMessage();
         void setRefreshingState(boolean refresh);
         void askForChoosePosition();
+        void getLocationPermission();
     }
 
     interface NewPresenter extends BasePresenter {
-        void fetchData(boolean ignoreInterval);
-        void refreshLocalWeather();
-        void onPermissionDenied();
+//        void fetchData(boolean ignoreInterval);
+//        void refreshLocalWeather();
+//        void onPermissionDenied();
         void refreshChosenWeather(String desc);
-        void locate();
-        void refreshWeather(MLocation location);
+//        void locate();
+        void initNewLocate();
+        void initBaiduLocate();
+        void initIpLocate();
+//        void refreshWeather(MLocation location);
         void onResume();
         void onPause();
         void onStop();

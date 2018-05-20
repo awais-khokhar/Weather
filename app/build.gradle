@@ -7,7 +7,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 27
 //    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "top.maweihao.weather"
@@ -52,7 +52,7 @@ android {
 }
 
 ext {
-    supportLibVersion = '26.1.0'
+    supportLibVersion = '27.1.1'
     gsonVersion = '2.8.2'
     retrofitVersion = '2.4.0'
     butterknifeVersion = '8.8.1'
@@ -99,5 +99,6 @@ dependencies {
     implementation 'com.tencent.bugly:nativecrashreport:3.3.1'
 
     implementation 'org.jetbrains.anko:anko:0.10.5'
+    implementation 'pub.devrel:easypermissions:1.2.0'
 }
 

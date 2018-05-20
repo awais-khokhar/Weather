@@ -1,7 +1,7 @@
 package top.maweihao.weather.view
 
+import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -21,6 +21,7 @@ import kotlinx.android.synthetic.main.card_refresh_time.*
 import kotlinx.android.synthetic.main.card_today.*
 import kotlinx.android.synthetic.main.card_wind_view.*
 import org.jetbrains.anko.toast
+import pub.devrel.easypermissions.EasyPermissions
 import top.maweihao.weather.R
 import top.maweihao.weather.adapter.DailyWeatherAdapter
 import top.maweihao.weather.adapter.HourlyWeatherAdapter
@@ -32,7 +33,6 @@ import top.maweihao.weather.entity.dao.MLocation
 import top.maweihao.weather.entity.dao.NewWeather
 import top.maweihao.weather.presenter.NewWeatherPresenter
 import top.maweihao.weather.service.PushService
-import top.maweihao.weather.util.Constants
 import top.maweihao.weather.util.Constants.*
 import top.maweihao.weather.util.Utility
 import top.maweihao.weather.util.Utility.*
@@ -42,7 +42,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivityContract.NewView<NewWeatherActivityContract.NewPresenter> {
+class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivityContract.NewView<NewWeatherActivityContract.NewPresenter>, EasyPermissions.PermissionCallbacks {
 
     var locationDetail: String = ""
 
@@ -56,22 +56,20 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
     private val dailyWeatherAdapter by lazy { DailyWeatherAdapter(ArrayList()) }
     private var alertArrayList: ArrayList<Alert>? = null
 
-    override fun setContentView(): Int {
-        return R.layout.activity_weather
-    }
+    override fun setContentView(): Int = R.layout.activity_weather
+
 
     override fun initView(savedInstanceState: Bundle?) {
         initView()
         doDebugThings()
 
-        newWeatherPresenter.subscribe()
-
         swipe_refresh.setColorSchemeResources(R.color.colorPrimary)
         swipe_refresh.setDistanceToTriggerSync(200)
-        swipe_refresh.setOnRefreshListener { newWeatherPresenter.locate() }
+        swipe_refresh.setOnRefreshListener { newWeatherPresenter.initNewLocate() }
 
         weather_alert_icon.setOnClickListener(this)
         weather_alert_icon.setOnClickListener(this)
+        more_days_weather.setOnClickListener(this)
     }
 
 
@@ -93,6 +91,10 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
 
         setSupportActionBar(toolbar)
         toolbar.title = resources.getString(R.string.app_name)
+    }
+
+    override fun initData() {
+        newWeatherPresenter.subscribe()
     }
 
     override fun onResume() {
@@ -132,8 +134,6 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
 
         newWeatherPresenter.onDestroy()
         newWeatherPresenter.unSubscribe()
-
-
     }
 
     override fun onClick(v: View) {
@@ -189,7 +189,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
                 val autoLocate = data?.getBooleanExtra("autoLocate", false)
                 Log.d(TAG, "onActivityResult: SettingActivity autoLocate=$autoLocate")
                 if (autoLocate != null && autoLocate) {
-                    newWeatherPresenter.locate()
+                    newWeatherPresenter.initNewLocate()
                 }
 
             } else if (resultCode == ChooseCode) {
@@ -201,7 +201,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
                 val bundle = data?.extras
                 if (bundle != null) {
                     val location = bundle.getParcelable<MLocation>("location")
-                    val desc = if (TextUtils.isEmpty(location!!.city))
+                    val desc = if (TextUtils.isEmpty(location.city))
                         location.county
                     else
                         location.city + "" + location.county
@@ -216,20 +216,36 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
                                             grantResults: IntArray) {
-        when (requestCode) {
-            Constants.newRequestLocationCode -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                newWeatherPresenter.locate()
-            } else {
-                newWeatherPresenter.onPermissionDenied()
-            }
-            else                             -> Log.e(TAG, "onRequestPermissionsResult: undefined request code$requestCode")
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        // 将结果转发到EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
     }
 
-    override fun setPresenter(presenter: NewWeatherActivityContract.NewPresenter) {
-//        this.NewPresenter = presenter
+    override fun getLocationPermission() {
+        if (EasyPermissions.hasPermissions(this, locationPermission)) {
+            newWeatherPresenter.initBaiduLocate()
+        } else {
+            EasyPermissions.requestPermissions(this, "", PERMISSION_REQUEST_CODE, locationPermission)
+        }
     }
+
+    override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
+        //获取权限失败回调
+        when (requestCode) {
+            PERMISSION_REQUEST_CODE -> {
+                newWeatherPresenter.initIpLocate()
+                Snackbar.make(view_root, R.string.permission_denied, Snackbar.LENGTH_LONG)
+                        .setAction(R.string.grant_permission) { }.show()
+            }
+        }
+    }
+
+    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
+        //获取权限成功回调
+        when (requestCode) {
+            PERMISSION_REQUEST_CODE -> newWeatherPresenter.initBaiduLocate()
+        }
+    }
+
 
     override fun showWeather(weather: NewWeather) {
         val dailyBean = weather.result.daily
@@ -290,7 +306,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
             PM_Circle.setValue(PM25.toInt())
             temperature_text.text = temperature
             AQI_Circle.setValue(aqi.toInt())
-            humidity_info.text = hum.toString().substring(0, 2) + "%"
+            humidity_info.text = "${hum.toString().substring(0, 2)}%"
             skycon_text.text = weatherString
             dynamicWeatherView.setDrawerType(Utility.chooseBgImage(skycon))
             sunrise.text = sunRise
@@ -417,12 +433,6 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
         snackBar.show()
     }
 
-    override fun showPermissionError() {
-        // TODO: 02/12/2017 deal with the not show
-        Snackbar.make(view_root, R.string.permission_denied, Snackbar.LENGTH_LONG)
-                .setAction(R.string.grant_permission) { }.show()
-    }
-
     override fun showIpLocateMessage() {
         Snackbar.make(view_root, R.string.ip_method_locate, Snackbar.LENGTH_LONG)
                 .setAction(R.string.donnot_show) {
@@ -497,12 +507,13 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
 
         private val TAG = WeatherActivity::class.java.simpleName
 
-        internal val HANDLE_POSITION = 0
-        internal val HANDLE_TOAST = 1
-        internal val HANDLE_EXACT_LOCATION = 2
+        internal const val HANDLE_TOAST = 1
+        internal const val HANDLE_EXACT_LOCATION = 2
 
-//        val MINUTELY_MODE = 4
-//        val HOURLY_MODE = 5
+
+        private const val locationPermission = Manifest.permission.ACCESS_COARSE_LOCATION
+
+        private const val PERMISSION_REQUEST_CODE = 102
     }
 
 
