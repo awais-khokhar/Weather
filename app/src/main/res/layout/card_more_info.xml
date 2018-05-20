@@ -126,7 +126,7 @@
         app:layout_constraintTop_toTopOf="@+id/carwash_image" />
 
     <TextView
-        android:id="@+id/carwash"
+        android:id="@+id/carWash"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -157,7 +157,7 @@
         app:layout_constraintTop_toTopOf="@+id/humidity_image" />
 
     <TextView
-        android:id="@+id/humidity"
+        android:id="@+id/humidity_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"

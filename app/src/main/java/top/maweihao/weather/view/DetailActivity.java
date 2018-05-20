@@ -29,12 +29,12 @@ import io.reactivex.schedulers.Schedulers;
 import top.maweihao.weather.R;
 import top.maweihao.weather.adapter.DailyWeatherAdapter;
 import top.maweihao.weather.contract.WeatherData;
-import top.maweihao.weather.entity.dao.NewWeather;
 import top.maweihao.weather.entity.SingleWeather;
+import top.maweihao.weather.entity.dao.NewWeather;
 import top.maweihao.weather.model.WeatherRepository;
 import top.maweihao.weather.util.Utility;
 
-import static top.maweihao.weather.view.WeatherActivity.HOURLY_MODE;
+import static top.maweihao.weather.util.Utility.HOURLY_MODE;
 import static top.maweihao.weather.util.Utility.stringRoundDouble;
 
 public class DetailActivity extends AppCompatActivity {
@@ -153,7 +153,7 @@ public class DetailActivity extends AppCompatActivity {
             }
 //            String time = newSdf.format(date);
             int icon = Utility.chooseWeatherIcon(skyconBeanXList.get(i).getValue(),
-                    precipitationBeanXList.get(i).getAvg(), HOURLY_MODE, false);
+                    precipitationBeanXList.get(i).getAvg(),HOURLY_MODE, false);
             String skyconDesc;
             // 在有 desc 时优先显示 desc 的内容
             if (dailyBean.getDesc() == null || TextUtils.isEmpty(dailyBean.getDesc().get(i).getValue())) {

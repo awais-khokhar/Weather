@@ -25,6 +25,8 @@ import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.widget.TallWeatherWidget;
 import top.maweihao.weather.widget.TallWeatherWidgetConfigureActivity;
 
+import static top.maweihao.weather.util.Utility.HOURLY_MODE;
+
 /**
  * Util class for TallWeatherWidget
  * Created by ma on 17-7-27.
@@ -47,8 +49,8 @@ public class TallWidgetUtils {
         int tem = Utility.intRoundDouble(hourlyBean.getTemperature().get(0).getValue());
         String skycon = hourlyBean.getSkycon().get(0).getValue();
         Double precipitation = hourlyBean.getPrecipitation().get(0).getValue();
-        String skyconString = Utility.chooseWeatherSkycon(context, skycon, precipitation, WeatherActivity.HOURLY_MODE);
-        int icon = Utility.chooseWeatherIcon(skycon, precipitation, WeatherActivity.HOURLY_MODE, false);
+        String skyconString = Utility.chooseWeatherSkycon(context, skycon, precipitation, HOURLY_MODE);
+        int icon = Utility.chooseWeatherIcon(skycon, precipitation, HOURLY_MODE, false);
 
         updateWidgetView(context, icon, countyName, skyconString, tem);
     }
@@ -73,8 +75,8 @@ public class TallWidgetUtils {
         int tem = Utility.intRoundDouble(hourlyBean.getTemperature().get(0).getValue());
         String skycon = hourlyBean.getSkycon().get(0).getValue();
         Double precipitation = hourlyBean.getPrecipitation().get(0).getValue();
-        String skyconString = Utility.chooseWeatherSkycon(context, skycon, precipitation, WeatherActivity.HOURLY_MODE);
-        int icon = Utility.chooseWeatherIcon(skycon, precipitation, WeatherActivity.HOURLY_MODE, false);
+        String skyconString = Utility.chooseWeatherSkycon(context, skycon, precipitation, HOURLY_MODE);
+        int icon = Utility.chooseWeatherIcon(skycon, precipitation, HOURLY_MODE, false);
 
         updateWidgetView(context, icon, countyName, skyconString, tem);
     }

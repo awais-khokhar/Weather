@@ -1,12 +1,18 @@
 apply plugin: 'com.android.application'
 
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+apply plugin: 'kotlin-kapt'
+
 android {
-    compileSdkVersion 27
+    compileSdkVersion 26
 //    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "top.maweihao.weather"
         minSdkVersion 21
-        targetSdkVersion 27
+        targetSdkVersion 26
         versionCode 40
         versionName "1.4.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -46,7 +52,7 @@ android {
 }
 
 ext {
-    supportLibVersion = '27.1.1'
+    supportLibVersion = '26.1.0'
     gsonVersion = '2.8.2'
     retrofitVersion = '2.4.0'
     butterknifeVersion = '8.8.1'
@@ -56,6 +62,8 @@ ext {
 
 
 dependencies {
+    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -72,7 +80,7 @@ dependencies {
     implementation "com.android.support:support-annotations:${supportLibVersion}"
 
     implementation "com.jakewharton:butterknife:${butterknifeVersion}"
-    annotationProcessor "com.jakewharton:butterknife-compiler:${butterknifeVersion}"
+    kapt "com.jakewharton:butterknife-compiler:${butterknifeVersion}"
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     implementation 'org.litepal.android:core:1.4.1'
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.38'
@@ -89,4 +97,7 @@ dependencies {
 
     implementation 'com.tencent.bugly:crashreport:2.6.6.1'
     implementation 'com.tencent.bugly:nativecrashreport:3.3.1'
+
+    implementation 'org.jetbrains.anko:anko:0.10.5'
 }
+

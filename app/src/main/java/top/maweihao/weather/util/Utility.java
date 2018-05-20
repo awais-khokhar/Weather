@@ -30,9 +30,6 @@ import top.maweihao.weather.R;
 import top.maweihao.weather.android_view.dynamicweather.BaseDrawer;
 import top.maweihao.weather.entity.dao.NewHeWeatherNow;
 
-import static top.maweihao.weather.view.WeatherActivity.HOURLY_MODE;
-import static top.maweihao.weather.view.WeatherActivity.MINUTELY_MODE;
-
 /**
  * Created by ma on 17-3-5.
  * this is a utility class
@@ -148,6 +145,8 @@ public class Utility {
      * @param mode          Mode 代表 precipitation 的精度，分为小时级和分钟级， 以确定雨量
      * @return 描述（string）
      */
+    public static final int MINUTELY_MODE = 4;
+    public static final int HOURLY_MODE = 5;
     public static String chooseWeatherSkycon(Context context, String skycon, double precipitation, int mode) {
         if (context != null) {
             switch (skycon) {

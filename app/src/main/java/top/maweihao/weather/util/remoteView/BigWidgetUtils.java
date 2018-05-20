@@ -21,6 +21,8 @@ import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.widget.BigWeatherWidget;
 import top.maweihao.weather.widget.BigWidgetConfigureActivity;
 
+import static top.maweihao.weather.util.Utility.HOURLY_MODE;
+
 /**
  * Util class for BigWeatherWidget
  * Created by ma on 17-7-27.
@@ -46,8 +48,8 @@ public class BigWidgetUtils {
         int tem = Utility.intRoundDouble(weather.getResult().getHourly().getTemperature().get(0).getValue());
         String skycon = weather.getResult().getHourly().getSkycon().get(0).getValue();
         double intensity = weather.getResult().getHourly().getPrecipitation().get(0).getValue();
-        String skyconString = Utility.chooseWeatherSkycon(context, skycon, intensity, WeatherActivity.HOURLY_MODE);
-        int icon = Utility.chooseWeatherIcon(skycon, intensity, WeatherActivity.HOURLY_MODE, false);
+        String skyconString = Utility.chooseWeatherSkycon(context, skycon, intensity, HOURLY_MODE);
+        int icon = Utility.chooseWeatherIcon(skycon, intensity, HOURLY_MODE, false);
 
         LunarUtil lunarUtilDate = new LunarUtil(new GregorianCalendar());
         bigViews.setTextViewText(R.id.big_widget_lunar, lunarUtilDate.toString());

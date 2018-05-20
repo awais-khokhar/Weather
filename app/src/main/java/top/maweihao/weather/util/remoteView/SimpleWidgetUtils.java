@@ -23,6 +23,8 @@ import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.widget.SimpleWeatherWidget;
 import top.maweihao.weather.widget.SimpleWidgetConfigureActivity;
 
+import static top.maweihao.weather.util.Utility.HOURLY_MODE;
+
 /**
  * Util class for SimpleWeatherWidget
  * Created by ma on 17-7-27.
@@ -46,8 +48,8 @@ public class SimpleWidgetUtils {
         int tem = Utility.intRoundDouble(hourlyBean.getTemperature().get(0).getValue());
         String skycon = hourlyBean.getSkycon().get(0).getValue();
         Double precipitation = hourlyBean.getPrecipitation().get(0).getValue();
-        String skyconString = Utility.chooseWeatherSkycon(context, skycon, precipitation, WeatherActivity.HOURLY_MODE);
-        int icon = Utility.chooseWeatherIcon(skycon, precipitation, WeatherActivity.HOURLY_MODE, false);
+        String skyconString = Utility.chooseWeatherSkycon(context, skycon, precipitation, HOURLY_MODE);
+        int icon = Utility.chooseWeatherIcon(skycon, precipitation, HOURLY_MODE, false);
 
         updateWidgetView(context, icon, countyName, skyconString, tem);
     }

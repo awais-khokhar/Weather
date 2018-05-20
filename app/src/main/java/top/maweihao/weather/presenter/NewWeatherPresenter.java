@@ -208,9 +208,11 @@ public class NewWeatherPresenter extends BasePresenter
 //                == PackageManager.PERMISSION_GRANTED));
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
+            Log.i(TAG,"yes Permission");
             initBaiduLocate();
         } else {
             ActivityCompat.requestPermissions((Activity) view, permission, Constants.newRequestLocationCode);
+            Log.i(TAG,"no Permission");
         }
     }
 
@@ -242,7 +244,6 @@ public class NewWeatherPresenter extends BasePresenter
                     public void accept(NewWeather weather) throws Exception {
                         if (needGeo) {
                             if (!workingFlag) {
-                                view.setRefreshingState(false);
                                 if (isWidgetOn) {
                                     updateWidget(weather, countyName4widget);
                                 }
@@ -254,7 +255,6 @@ public class NewWeatherPresenter extends BasePresenter
                                 }
                             }
                         } else {
-                            view.setRefreshingState(false);
                             updateWidget(weather, location.getCoarseLocation());
                         }
                         if (weather.getStatus().equals("ok")) {
@@ -262,6 +262,7 @@ public class NewWeatherPresenter extends BasePresenter
                         } else {
                             view.showError("api error", true);
                         }
+                        view.setRefreshingState(false);
                     }
                 }, new Consumer<Throwable>() {
                     @Override

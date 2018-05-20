@@ -9,7 +9,7 @@ import butterknife.Unbinder;
 
 public abstract class BaseActivity extends RxAppCompatActivity {
 
-    protected final String TAG = this.getClass().getSimpleName();
+//    protected final String TAG = this.getClass().getSimpleName();
 
     private Unbinder bind;
 
