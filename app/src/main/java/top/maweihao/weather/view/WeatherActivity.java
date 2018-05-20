@@ -23,6 +23,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tencent.bugly.crashreport.CrashReport;
+
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -59,9 +61,9 @@ import static top.maweihao.weather.util.Utility.chooseWeatherSkycon;
 import static top.maweihao.weather.util.Utility.stringRoundDouble;
 
 public class WeatherActivity extends BaseActivity implements
-        View.OnClickListener, NewWeatherActivityContract.newView<NewWeatherActivityContract.newPresenter> {
+        View.OnClickListener, NewWeatherActivityContract.NewView<NewWeatherActivityContract.NewPresenter> {
 
-//    private static final String TAG = WeatherActivity.class.getSimpleName();
+    private static final String TAG = WeatherActivity.class.getSimpleName();
 
     static final int HANDLE_POSITION       = 0;
     static final int HANDLE_TOAST          = 1;
@@ -131,7 +133,7 @@ public class WeatherActivity extends BaseActivity implements
     public String locationDetail;
 
     private MessageHandler                          handler;
-    private NewWeatherActivityContract.newPresenter newPresenter;
+    private NewWeatherActivityContract.NewPresenter NewPresenter;
     private PreferenceConfigContact                 configContact;
 
     //24h hourlyRecyclerView adapter
@@ -148,19 +150,19 @@ public class WeatherActivity extends BaseActivity implements
     @Override
     protected void initView(Bundle savedInstanceState) {
         initView();
-//        doDebugThings();
+        doDebugThings();
         configContact = Utility.createSimpleConfig(this).create(PreferenceConfigContact.class);
 
         handler = new MessageHandler(this);
-        newPresenter = new NewWeatherPresenter(WeatherActivity.this, this);
-        newPresenter.subscribe();
+        NewPresenter = new NewWeatherPresenter(WeatherActivity.this, this);
+        NewPresenter.subscribe();
 
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         swipeRefreshLayout.setDistanceToTriggerSync(200);
         swipeRefreshLayout.setOnRefreshListener((new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                newPresenter.locate();
+                NewPresenter.locate();
             }
         }));
 
@@ -169,22 +171,14 @@ public class WeatherActivity extends BaseActivity implements
     }
 
 
-//    private void doDebugThings() {
-//        WeatherRepository repo = WeatherRepository.getInstance(WeatherActivity.this);
-//
-//        Disposable disposable = repo.getWeatherCached()
-//                .subscribe(new Consumer<NewWeather>() {
-//                    @Override
-//                    public void accept(NewWeather weather) throws Exception {
-//                        Log.d(TAG, "accept: HERE" + weather);
-//                    }
-//                }, new Consumer<Throwable>() {
-//                    @Override
-//                    public void accept(Throwable throwable) throws Exception {
-//                        Log.d(TAG, "accept: HERE" + throwable);
-//                    }
-//                });
-//    }
+    private void doDebugThings() {
+        imageButton.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                CrashReport.testJavaCrash();
+            }
+        }, 1000 * 10);
+    }
 
     private void initView() {
         LinearLayoutManager hourlyManager = new LinearLayoutManager(WeatherActivity.this);
@@ -203,8 +197,8 @@ public class WeatherActivity extends BaseActivity implements
     protected void onResume() {
         Log.d(TAG, "onResume");
         super.onResume();
-        if (newPresenter != null) {
-            newPresenter.onResume();
+        if (NewPresenter != null) {
+            NewPresenter.onResume();
         }
         handler.postDelayed(new Runnable() {
             @Override
@@ -218,8 +212,8 @@ public class WeatherActivity extends BaseActivity implements
     protected void onPause() {
         Log.d(TAG, "onPause");
         super.onPause();
-        if (newPresenter != null) {
-            newPresenter.onPause();
+        if (NewPresenter != null) {
+            NewPresenter.onPause();
         }
         dynamicWeatherView.onPause();
     }
@@ -234,8 +228,8 @@ public class WeatherActivity extends BaseActivity implements
     protected void onStop() {
         Log.d(TAG, "onStop");
         super.onStop();
-        if (newPresenter != null) {
-            newPresenter.onStop();
+        if (NewPresenter != null) {
+            NewPresenter.onStop();
         }
     }
 
@@ -244,10 +238,10 @@ public class WeatherActivity extends BaseActivity implements
         Log.d(TAG, "onDestroy");
         super.onDestroy();
         dynamicWeatherView.onDestroy();
-        if (newPresenter != null) {
-            newPresenter.onDestroy();
-            newPresenter.unSubscribe();
-            newPresenter = null;
+        if (NewPresenter != null) {
+            NewPresenter.onDestroy();
+            NewPresenter.unSubscribe();
+            NewPresenter = null;
         }
     }
 
@@ -316,7 +310,7 @@ public class WeatherActivity extends BaseActivity implements
                     boolean autoLocate = data.getBooleanExtra("autoLocate", false);
                     Log.d(TAG, "onActivityResult: SettingActivity autoLocate=" + autoLocate);
                     if (autoLocate) {
-                        newPresenter.locate();
+                        NewPresenter.locate();
                     }
 
                 } else if (resultCode == ChooseCode) {
@@ -333,7 +327,7 @@ public class WeatherActivity extends BaseActivity implements
                         String desc = TextUtils.isEmpty(location.getCity()) ? location.getCounty()
                                 : location.getCity() + "" + location.getCounty();
                         Log.d(TAG, "onActivityResult: desc = " + desc);
-                        newPresenter.refreshChosenWeather(desc);
+                        NewPresenter.refreshChosenWeather(desc);
                     } else {
                         Log.d(TAG, "onActivityResult: cannot get parcelable location");
                     }
@@ -350,9 +344,9 @@ public class WeatherActivity extends BaseActivity implements
             case Constants.newRequestLocationCode:
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    newPresenter.locate();
+                    NewPresenter.locate();
                 } else {
-                    newPresenter.onPermissionDenied();
+                    NewPresenter.onPermissionDenied();
                 }
                 break;
             default:
@@ -362,23 +356,9 @@ public class WeatherActivity extends BaseActivity implements
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-//    /**
-//     * 定位图片的显示
-//     *
-//     * @param isLocation 是否是定位状态
-//     */
-//    private void setLocateModeImage(boolean isLocation) {
-//        locateModeImage.setVisibility(View.VISIBLE);
-//        if (isLocation) {
-//            locateModeImage.setImageResource(R.drawable.ic_location_on_black_24dp);
-//        } else {
-//            locateModeImage.setImageResource(R.drawable.ic_location_off_black_24dp);
-//        }
-//    }
-
     @Override
-    public void setPresenter(NewWeatherActivityContract.newPresenter presenter) {
-        this.newPresenter = presenter;
+    public void setPresenter(NewWeatherActivityContract.NewPresenter presenter) {
+        this.NewPresenter = presenter;
     }
 
     @Override
@@ -386,7 +366,7 @@ public class WeatherActivity extends BaseActivity implements
         NewWeather.ResultBean.DailyBean dailyBean = weather.getResult().getDaily();
         NewWeather.ResultBean.HourlyBean hourlyBean = weather.getResult().getHourly();
         NewWeather.ResultBean.MinutelyBean minutelyBean = weather.getResult().getMinutely();
-        Log.d(TAG, "showWeather: here " + dailyBean.getAqi().size());
+        Log.d(TAG, "showWeather: days: " + dailyBean.getAqi().size());
 
         showDailyWeather(dailyBean);
         showHourlyWeather(hourlyBean);
@@ -454,7 +434,7 @@ public class WeatherActivity extends BaseActivity implements
                 uv_text.setText(dailyBean.getUltraviolet().get(0).getDesc());
                 carWashing_text.setText(dailyBean.getCarWashing().get(0).getDesc());
                 dressing_text.setText(dailyBean.getDressing().get(0).getDesc());
-                Log.d(TAG, "showWeather: refresh weather succeed");
+                Log.d(TAG, "showWeather: current weather shown");
             }
         });
     }
@@ -494,14 +474,14 @@ public class WeatherActivity extends BaseActivity implements
                 skyconDesc = dailyBean.getDesc().get(i).getValue();
             }
             String temperature = Utility.stringRoundDouble(dailyBean.getTemperature().get(i).getMax())
-                    + "° / "
+                    + "°/"
                     + Utility.stringRoundDouble(dailyBean.getTemperature().get(i).getMin()) + '°';
             singleWeathers.add(new SingleWeather(time, icon, skyconDesc, temperature));
         }
         handler.post(new Runnable() {
             @Override
             public void run() {
-                refreshDailyRV(singleWeathers);
+                refreshDailyList(singleWeathers);
             }
         });
     }
@@ -524,12 +504,12 @@ public class WeatherActivity extends BaseActivity implements
         handler.post(new Runnable() {
             @Override
             public void run() {
-                refreshHourlyRV(singleWeathers);
+                refreshHourlyList(singleWeathers);
             }
         });
     }
 
-    private void refreshHourlyRV(List<SingleWeather> list) {
+    private void refreshHourlyList(List<SingleWeather> list) {
         if (hourWeatherAdapter == null) {
             hourWeatherAdapter = new HourlyWeatherAdapter(list);
             hourlyRecyclerView.setAdapter(hourWeatherAdapter);
@@ -538,7 +518,7 @@ public class WeatherActivity extends BaseActivity implements
         }
     }
 
-    private void refreshDailyRV(List<SingleWeather> list) {
+    private void refreshDailyList(List<SingleWeather> list) {
         if (dailyWeatherAdapter == null) {
             dailyWeatherAdapter = new DailyWeatherAdapter(list);
             dailyRecyclerView.setAdapter(dailyWeatherAdapter);
@@ -570,6 +550,7 @@ public class WeatherActivity extends BaseActivity implements
                 setLoc(coarseLocation, detailLocation, true);
                 break;
             default:
+                break;
         }
     }
 
@@ -580,8 +561,11 @@ public class WeatherActivity extends BaseActivity implements
             public void run() {
                 if (timeInMills == 0) {
                     lastUpdateTime.setText(Utility.getTime(WeatherActivity.this));
-                } else
-                    lastUpdateTime.setText(Utility.getTime(WeatherActivity.this, timeInMills));
+                } else {
+                    String time = getResources().getString(R.string.updated_on,
+                            Utility.getTime(WeatherActivity.this, timeInMills));
+                    lastUpdateTime.setText(time);
+                }
             }
         });
     }

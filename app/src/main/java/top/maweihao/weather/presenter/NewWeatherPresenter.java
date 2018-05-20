@@ -41,19 +41,19 @@ import top.maweihao.weather.util.ServiceUtil;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.util.remoteView.WidgetUtils;
 
-import static top.maweihao.weather.util.Utility.GPSEnabled;
+import static top.maweihao.weather.util.Utility.isGPSEnabled;
 
 /* mvp presenter for WeatherActivity
  * Created by maweihao on 28/10/2017.
  */
 
 public class NewWeatherPresenter extends BasePresenter
-        implements NewWeatherActivityContract.newPresenter {
+        implements NewWeatherActivityContract.NewPresenter {
 
     private static final String TAG = NewWeatherPresenter.class.getSimpleName();
 
-    private final WeatherData                                                                 model;
-    private final NewWeatherActivityContract.newView<NewWeatherActivityContract.newPresenter> view;
+    private final WeatherData model;
+    private final NewWeatherActivityContract.NewView<NewWeatherActivityContract.NewPresenter> view;
 
     private final CompositeDisposable     compositeDisposable;
     private       PreferenceConfigContact configContact;
@@ -70,7 +70,7 @@ public class NewWeatherPresenter extends BasePresenter
     private String     countyName4widget; //for widget refresh
     private volatile boolean isWidgetOn = false;
 
-    public NewWeatherPresenter(@NonNull NewWeatherActivityContract.newView<NewWeatherActivityContract.newPresenter> view,
+    public NewWeatherPresenter(@NonNull NewWeatherActivityContract.NewView<NewWeatherActivityContract.NewPresenter> view,
                                @NonNull LifecycleProvider<ActivityEvent> provider) {
         super(provider);
         this.model = WeatherRepository.getInstance(WeatherApplication.getContext());
@@ -345,7 +345,7 @@ public class NewWeatherPresenter extends BasePresenter
                     if (bdLocation.getLocType() != BDLocation.TypeGpsLocation) {
                         Log.d(TAG, "BAIDU onReceiveLocation: Locate type == " + bdLocation.getLocType());
                         if (LocationUtil.isBaiduLocateSuccess(bdLocation.getLocType())) {
-                            if (!GPSEnabled(context)) {
+                            if (!isGPSEnabled(context)) {
                                 Log.d(TAG, "BAIDU onReceiveLocation: system GPS is off");
                                 mLocationClient.stop();
                                 showAndSaveWeather(bdLocation);

@@ -8,22 +8,22 @@
         <Preference
             android:key="caiyun"
             android:title="@string/caiyun_weather"
-            android:summary="@string/provide_weather_china"/>
+            android:summary="@string/provide_weather_in_china"/>
 
         <Preference
             android:key="china_mete_admin"
             android:title="@string/china_mete_admin"
-            android:summary="@string/provide_weather_china" />
+            android:summary="@string/provide_weather_in_china" />
 
         <Preference
             android:key="he_weather"
             android:title="@string/he_weather"
-            android:summary="@string/provide_weather_china" />
+            android:summary="@string/provide_weather_in_china" />
 
         <Preference
             android:key="yahoo"
             android:title="@string/yahoo_weather"
-            android:summary="@string/provide_weather_outside" />
+            android:summary="@string/provide_weather_outside_china" />
 
     </PreferenceCategory>
 

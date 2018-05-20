@@ -57,16 +57,16 @@ public class BigWidgetUtils {
         bigViews.setTextViewText(R.id.big_widget_info, countyName + "\n" + skyconString + ' ' + tem + '°');
         bigViews.setTextViewText(R.id.big_widget_refresh_time, Utility.parseTime(context));
 
-        boolean lunar = BigWidgetConfigureActivity.loadLunarPref(context);
-        boolean card = BigWidgetConfigureActivity.loadCardPref(context);
+        boolean isLunarOn = BigWidgetConfigureActivity.loadLunarPref(context);
+        boolean isCardBackgroundOn = BigWidgetConfigureActivity.loadCardPref(context);
 
-        if (card) {
+        if (isCardBackgroundOn) {
             bigViews.setViewVisibility(R.id.widget_big_card, View.VISIBLE);
         } else {
             bigViews.setViewVisibility(R.id.widget_big_card, View.GONE);
         }
 
-        if (lunar) {
+        if (isLunarOn) {
             bigViews.setViewVisibility(R.id.big_widget_refresh_time, View.GONE);
             bigViews.setViewVisibility(R.id.iv_refresh, View.GONE);
             bigViews.setViewVisibility(R.id.big_widget_lunar, View.VISIBLE);

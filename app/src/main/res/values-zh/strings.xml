@@ -127,16 +127,17 @@
     <string name="days_before">天前</string>
     <string name="weather_desc_today">中雨，明天早晨7点钟后转小雨，中雨，明天早晨7点钟后转小雨。</string>
     <string name="sun_set_time">一小时二十五分钟后日落。</string>
-    <string name="haze">霾</string>
-    <string name="sleet">冻</string>
+    <string name="HAZE">霾</string>
+    <string name="SLEET">冻</string>
     <string name="caiyun_weather">彩云天气</string>
     <string name="china_mete_admin">中国气象局</string>
     <string name="he_weather">和风天气</string>
     <string name="yahoo_weather">雅虎天气</string>
     <string name="thanks_to">致谢</string>
-    <string name="provide_weather_china">提供中国的天气数据</string>
-    <string name="provide_weather_outside">提供大陆以外地区的天气数据</string>
+    <string name="provide_weather_in_china">提供中国的天气数据</string>
+    <string name="provide_weather_outside_china">提供大陆以外地区的天气数据</string>
     <string name="click_to_open_link">点击以在浏览器中打开</string>
     <string name="current_version_">当前版本：%s</string>
+    <string name="updated_on">更新于%s</string>
 
 </resources>

@@ -169,7 +169,7 @@ public class SimplePermissionUtils {
      */
     private static void checkCallingObjectSuitability(Object object) {
         if (object == null) {
-            throw new NullPointerException("Activity or Fragment should not be null");
+            throw new NullPointerException("WeatherActivity or Fragment should not be null");
         }
 
         boolean isActivity = object instanceof Activity;
@@ -178,7 +178,7 @@ public class SimplePermissionUtils {
 
         if(!(isActivity || isSupportFragment || isAppFragment)){
             throw new IllegalArgumentException(
-                    "Caller must be an Activity or a Fragment");
+                    "Caller must be an WeatherActivity or a Fragment");
         }
     }
 

@@ -1,6 +1,5 @@
 package top.maweihao.weather.util;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
@@ -10,14 +9,10 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 
-import com.google.gson.Gson;
-
-import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -32,14 +27,11 @@ import java.util.TimeZone;
 import github.hellocsl.simpleconfig.Config;
 import github.hellocsl.simpleconfig.SimpleConfig;
 import top.maweihao.weather.R;
-import top.maweihao.weather.entity.dao.NewHeWeatherNow;
-import top.maweihao.weather.entity.dao.NewWeather;
-import top.maweihao.weather.entity.dao.NewWeatherRealtime;
 import top.maweihao.weather.android_view.dynamicweather.BaseDrawer;
+import top.maweihao.weather.entity.dao.NewHeWeatherNow;
 
 import static top.maweihao.weather.view.WeatherActivity.HOURLY_MODE;
 import static top.maweihao.weather.view.WeatherActivity.MINUTELY_MODE;
-
 
 /**
  * Created by ma on 17-3-5.
@@ -69,7 +61,7 @@ public class Utility {
      */
     public static int getTimeShift() {
         TimeZone tz = TimeZone.getDefault();
-        String strTz = tz.getDisplayName(false, TimeZone.SHORT);
+//        String strTz = tz.getDisplayName(false, TimeZone.SHORT);
         int timeShift = (tz.getRawOffset() + tz.getDSTSavings()) / 1000;
         return timeShift;
 //        Log.d(TAG, "time: " + (tz.getRawOffset() + tz.getDSTSavings()) / 3600 / 1000);
@@ -193,9 +185,9 @@ public class Utility {
                 case "FOG":
                     return context.getResources().getString(R.string.FOG);
                 case "HAZE":
-                    return context.getResources().getString(R.string.haze);
+                    return context.getResources().getString(R.string.HAZE);
                 case "SLEET":
-                    return context.getResources().getString(R.string.sleet);
+                    return context.getResources().getString(R.string.SLEET);
                 default:
                     LogUtils.e("unknown weather: " + skycon);
                     return skycon;
@@ -448,54 +440,9 @@ public class Utility {
         return (i & 0xFF) + "." + ((i >> 8) & 0xFF) + "." + ((i >> 16) & 0xFF) + "." + (i >> 24 & 0xFF);
     }
 
-    /**
-     * 获取状态栏高度
-     *
-     * @param context context
-     * @return 高度值
-     */
-    @SuppressLint("PrivateApi")
-    @Deprecated
-    public static int getStatusBarHeight(@NonNull Context context) {
-        Class<?> c;
-        Object obj;
-        Field field;
-        int x;
-        try {
-            c = Class.forName("com.android.internal.R$dimen");
-            obj = c.newInstance();
-            field = c.getField("status_bar_height");
-            x = Integer.parseInt(field.get(obj).toString());
-            return context.getResources().getDimensionPixelSize(x);
-        } catch (Exception e1) {
-            LogUtils.e("get status bar height failed");
-            e1.printStackTrace();
-            return 75;
-        }
-    }
-
     public static int getStatusBarHeight(Resources r) {
         int resourceId = r.getIdentifier("status_bar_height", "dimen", "android");
         return r.getDimensionPixelSize(resourceId);
-    }
-
-    /**
-     * 获取导航栏高度
-     *
-     * @param context context
-     * @return 高度值
-     */
-    public static int getNavigationBarHeight(@NonNull Context context) {
-        int result = 0;
-        int resourceId;
-        int rid = context.getResources().getIdentifier("config_showNavigationBar",
-                "bool", "android");
-        if (rid != 0) {
-            resourceId = context.getResources().getIdentifier("navigation_bar_height",
-                    "dimen", "android");
-            return context.getResources().getDimensionPixelSize(resourceId);
-        } else
-            return 0;
     }
 
     /**
@@ -514,6 +461,11 @@ public class Utility {
         }
     }
 
+    /**
+     * 获得时间，用于桌面插件
+     * @param context context
+     * @return time string
+     */
     public static String parseTime(Context context) {
         Date date = new Date();
         boolean time12 = isTimeFormat12(context);
@@ -530,12 +482,12 @@ public class Utility {
         return simpleDateFormat.format(date);
     }
 
-    public static String ampm(String time) {
+    public static String am_pm(String time) {
         int hour = Integer.parseInt(time);
         return (hour < 12) ? (hour + "am") : ((hour - 12) + "pm");
     }
 
-    public static boolean GPSEnabled(Context context) {
+    public static boolean isGPSEnabled(Context context) {
         LocationManager alm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         return alm != null && alm.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
@@ -564,7 +516,7 @@ public class Utility {
     }
 
     // 系统时间是否为12小时制
-    public static boolean isTimeFormat12(Context context) {
+    private static boolean isTimeFormat12(Context context) {
         return !android.text.format.DateFormat.is24HourFormat(context);
     }
 
@@ -576,40 +528,6 @@ public class Utility {
     public static int getDayOfWeek() {
         Calendar calendar = Calendar.getInstance();
         return calendar.get(Calendar.DAY_OF_WEEK);
-    }
-
-    public static NewWeather packWeather(NewWeather weather) {
-        Gson gson = new Gson();
-        weather.setJsonString(gson.toJson(weather));
-        return weather;
-    }
-
-    public static NewWeather unpackWeather(NewWeather weather) {
-        Gson gson = new Gson();
-        return gson.fromJson(weather.getJsonString(), NewWeather.class);
-    }
-
-    public static NewWeatherRealtime packWeather(NewWeatherRealtime weather) {
-        Gson gson = new Gson();
-        weather.setJsonString(gson.toJson(weather));
-        return weather;
-    }
-
-    public static NewWeatherRealtime unpackWeather(NewWeatherRealtime weather) {
-        Gson gson = new Gson();
-        return gson.fromJson(weather.getJsonString(), NewWeatherRealtime.class);
-    }
-
-    public static NewHeWeatherNow packWeather(NewHeWeatherNow weather, long time) {
-        Gson gson = new Gson();
-        weather.setCurrentTimeInMills(time);
-        weather.setJsonString(gson.toJson(weather));
-        return weather;
-    }
-
-    public static NewHeWeatherNow unpackWeather(NewHeWeatherNow weather) {
-        Gson gson = new Gson();
-        return gson.fromJson(weather.getJsonString(), NewHeWeatherNow.class);
     }
 
     public static long getHeWeatherUpdateTime(NewHeWeatherNow weather) {

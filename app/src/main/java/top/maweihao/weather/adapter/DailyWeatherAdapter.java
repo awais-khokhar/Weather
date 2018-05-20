@@ -1,6 +1,11 @@
 package top.maweihao.weather.adapter;
 
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.StyleSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +24,7 @@ import top.maweihao.weather.entity.SingleWeather;
 
 public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapter.ViewHolder> {
 
+    private static final String TAG = DailyWeatherAdapter.class.getSimpleName();
     private List<SingleWeather> weatherList;
 
     public DailyWeatherAdapter(List<SingleWeather> weatherList) {
@@ -28,7 +34,7 @@ public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapte
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_per_day_list_rl, parent, false);
+                .inflate(R.layout.item_per_day_list, parent, false);
         return new ViewHolder(view);
     }
 
@@ -37,8 +43,18 @@ public class DailyWeatherAdapter extends RecyclerView.Adapter<DailyWeatherAdapte
         SingleWeather singleWeather = weatherList.get(position);
         holder.time.setText(singleWeather.getTime());
         holder.skyconImage.setImageResource(singleWeather.getSkyconId());
+        holder.skyconImage.setContentDescription(singleWeather.getSkyconDesc());
         holder.skyconDesc.setText(singleWeather.getSkyconDesc());
-        holder.temperature.setText(singleWeather.getTemperature());
+        String temperature = singleWeather.getTemperature();
+        int index = temperature.indexOf('/');
+        if (index != -1) {
+            SpannableString ss = new SpannableString(temperature);
+            ss.setSpan(new StyleSpan(Typeface.BOLD), 0, index, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            holder.temperature.setText(ss);
+        } else {
+            holder.temperature.setText(singleWeather.getTemperature());
+            Log.e(TAG, "onBindViewHolder: temperature string has no '/' " + temperature);
+        }
     }
 
     @Override

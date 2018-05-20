@@ -8,7 +8,6 @@ import android.os.Parcelable;
  * 未来 5day 天气 RecyclerView 类
  * Created by ma on 17-7-7.
  */
-
 public class SingleWeather implements Parcelable {
     private String time;
     private int skyconId;

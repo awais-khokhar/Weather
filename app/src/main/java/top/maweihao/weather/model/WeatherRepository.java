@@ -12,6 +12,7 @@ import io.reactivex.functions.Consumer;
 import top.maweihao.weather.contract.WeatherData;
 import top.maweihao.weather.entity.dao.DaoMaster;
 import top.maweihao.weather.entity.dao.DaoSession;
+import top.maweihao.weather.entity.dao.DaoUtils;
 import top.maweihao.weather.entity.dao.MLocation;
 import top.maweihao.weather.entity.dao.MLocationDao;
 import top.maweihao.weather.entity.dao.NewHeWeatherNow;
@@ -22,7 +23,6 @@ import top.maweihao.weather.entity.dao.NewWeatherRealtime;
 import top.maweihao.weather.entity.dao.NewWeatherRealtimeDao;
 import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.HttpUtil;
-import top.maweihao.weather.util.Utility;
 
 /**
  * weather data repository
@@ -65,6 +65,11 @@ public class WeatherRepository implements WeatherData {
     }
 
     @Override
+    public Context getContext() {
+        return context;
+    }
+
+    @Override
     public Observable<NewWeather> getWeather(String location) {
         return HttpUtil.getWeather(location, null, null, Constants.timeShift, Constants.lang)
                 .doOnNext(new Consumer<NewWeather>() {
@@ -94,7 +99,7 @@ public class WeatherRepository implements WeatherData {
                 List<NewWeather> weatherList = weatherDao.loadAll();
                 if (weatherList != null && weatherList.size() > 0) {
                     Collections.sort(weatherList);
-                    e.onNext(Utility.unpackWeather(weatherList.get(0)));
+                    e.onNext(DaoUtils.unpackWeather(weatherList.get(0)));
                     e.onComplete();
                 } else {
                     e.onError(new Throwable("no cached weather"));
@@ -122,7 +127,7 @@ public class WeatherRepository implements WeatherData {
                 List<NewWeatherRealtime> weatherList = weatherRealtimeDao.loadAll();
                 if (weatherList != null && weatherList.size() > 0) {
                     Collections.sort(weatherList);
-                    e.onNext(Utility.unpackWeather(weatherList.get(0)));
+                    e.onNext(DaoUtils.unpackWeather(weatherList.get(0)));
                     e.onComplete();
                 } else {
                     e.onError(new Throwable("no cached weatherNow"));
@@ -155,7 +160,7 @@ public class WeatherRepository implements WeatherData {
             public void subscribe(ObservableEmitter<NewHeWeatherNow> e) throws Exception {
                 List<NewHeWeatherNow> weatherList = heWeatherNowDao.loadAll();
                 if (weatherList != null && weatherList.size() > 0) {
-                    e.onNext(Utility.unpackWeather(weatherList.get(0)));
+                    e.onNext(DaoUtils.unpackWeather(weatherList.get(0)));
                     e.onComplete();
                 } else {
                     e.onError(new Throwable("no cached heWeatherNow"));
@@ -191,7 +196,7 @@ public class WeatherRepository implements WeatherData {
     public void saveWeather(NewWeather weather) {
         if (weather.getStatus().equals("ok")) {
             weatherDao.deleteAll();
-            weatherDao.insertOrReplace(Utility.packWeather(weather));
+            weatherDao.insertOrReplace(DaoUtils.packWeather(weather));
         }
     }
 
@@ -199,7 +204,7 @@ public class WeatherRepository implements WeatherData {
     public void saveWeather(NewWeatherRealtime weather) {
         if (weather.getStatus().equals("ok")) {
             weatherRealtimeDao.deleteAll();
-            weatherRealtimeDao.insertOrReplace(Utility.packWeather(weather));
+            weatherRealtimeDao.insertOrReplace(DaoUtils.packWeather(weather));
         }
     }
 
@@ -207,7 +212,7 @@ public class WeatherRepository implements WeatherData {
     public void saveWeather(NewHeWeatherNow weather) {
         if (weather.getHeWeather5().get(0).getStatus().equals("ok")) {
             heWeatherNowDao.deleteAll();
-            heWeatherNowDao.insertOrReplace(Utility.packWeather(weather, Utility.getHeWeatherUpdateTime(weather)));
+            heWeatherNowDao.insertOrReplace(DaoUtils.packWeather(weather, DaoUtils.getHeWeatherUpdateTime(weather)));
         }
     }
 

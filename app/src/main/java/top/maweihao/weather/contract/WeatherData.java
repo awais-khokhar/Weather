@@ -1,5 +1,7 @@
 package top.maweihao.weather.contract;
 
+import android.content.Context;
+
 import io.reactivex.Observable;
 import top.maweihao.weather.entity.dao.NewHeWeatherNow;
 import top.maweihao.weather.entity.dao.NewWeather;
@@ -12,6 +14,8 @@ import top.maweihao.weather.entity.dao.MLocation;
  */
 
 public interface WeatherData {
+
+    Context getContext();
 
     Observable<NewWeather> getWeather(String location);
 

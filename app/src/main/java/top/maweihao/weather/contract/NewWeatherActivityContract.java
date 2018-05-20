@@ -10,8 +10,7 @@ import top.maweihao.weather.entity.dao.MLocation;
 
 public interface NewWeatherActivityContract {
 
-    interface newView<N extends BasePresenter> extends BaseView<newPresenter> {
-
+    interface NewView<N extends BasePresenter> extends BaseView<NewPresenter> {
         void showWeather(NewWeather weather);
         void showLocation(MLocation location);
         void setUpdateTime(long timeInMills);
@@ -24,7 +23,7 @@ public interface NewWeatherActivityContract {
         void askForChoosePosition();
     }
 
-    interface newPresenter extends BasePresenter {
+    interface NewPresenter extends BasePresenter {
         void fetchData(boolean ignoreInterval);
         void refreshLocalWeather();
         void onPermissionDenied();

@@ -31,8 +31,8 @@ public class ServiceUtil {
                 alarmManager.cancel(pendingIntent);
                 alarmManager.set(AlarmManager.ELAPSED_REALTIME,
                         SystemClock.elapsedRealtime() + 3 * 1000, pendingIntent);
-                Log.d(TAG, "startWidgetSyncService in 5 second");
-//                Toast.makeText(context, "i started!", Toast.LENGTH_SHORT).show();
+                // 等待手机开机后联网
+                Log.d(TAG, "start WidgetSyncService in 5 seconds");
             }
         }
     }

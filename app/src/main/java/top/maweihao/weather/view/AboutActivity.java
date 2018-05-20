@@ -36,7 +36,7 @@ public class AboutActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.tmp_layout_about);
+        setContentView(R.layout.activity_about);
         ButterKnife.bind(this);
         toolbar.setTitle(R.string.about_setting);
         setSupportActionBar(toolbar);

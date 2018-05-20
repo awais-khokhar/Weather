@@ -16,7 +16,7 @@
     <string name="title_activity_settings">Settings</string>
     <string name="choose_your_position">Choose your position</string>
     <string name="permission_denied">Essential permission denied \n Positioning may be inaccurate</string>
-    <string name="access_network_failed">Network problem</string>
+    <string name="access_network_failed">Network Problem</string>
     <string name="auto_locate_disabled">Auto locate has been disabled</string>
     <string name="warmer">warmer</string>
     <string name="colder">colder</string>
@@ -75,6 +75,8 @@
     <string name="SNOW">Snow</string>
     <string name="WIND">Wind</string>
     <string name="FOG">Fog</string>
+    <string name="HAZE">Haze</string>
+    <string name="SLEET">Sleet</string>
 
     <string name="appearance_setting">Appearance</string>
     <string name="temperature">Temperature</string>
@@ -105,15 +107,15 @@
     <string name="northwest">NW</string>
     <string name="loading">Loading</string>
     <string name="just_now">just now</string>
-    <string name="minute_age">" minute ago"</string>
-    <string name="hour_ago">" hour ago"</string>
+    <string name="minute_age">" minutes ago"</string>
+    <string name="hour_ago">" hours ago"</string>
     <string name="Lunar">Lunar Date</string>
     <string name="notification_time">Notification Time</string>
     <string name="now">Now</string>
     <string name="donate">Donate</string>
     <string name="donate_info">Donate any amount to support developers  \nClick  \'OK\' to open Alipay.</string>
-    <string name="email_needed">You need to install any email app</string>
-    <string name="alipay_needed">You have to install \'Alipay\' first from App Store</string>
+    <string name="email_needed">You need to install any email app first</string>
+    <string name="alipay_needed">You have to install \'Alipay\' first</string>
     <string name="action_alert">Weather Alert</string>
     <string name="weather_15">Weather in 15 days</string>
     <string name="Today">Today</string>
@@ -125,22 +127,20 @@
     <string name="info_wechat_donate">Please cut a screenshot of the QR code and scan it in WeChat</string>
     <string name="refresh_circle">Show Refresh Button</string>
     <string name="search">search</string>
-    <string name="go_to_settings">Go to settings</string>
+    <string name="go_to_settings">Go To Settings</string>
     <string name="configure">Configure</string>
     <string name="add_widget">Add a widget</string>
-    <string name="error_happens">Some error happenes.</string>
+    <string name="error_happens">Some error happened.</string>
     <string name="ip_method_locate">Locate according to your IP address.</string>
     <string name="donnot_show">don\'t show</string>
     <string name="grant_permission">Grant</string>
-    <string name="locate_failed">Locate failed, make sure you enable the location function.</string>
+    <string name="locate_failed">Locate failed, make sure you have enabled the location function.</string>
     <string name="yesterday">yesterday</string>
     <string name="days_before">days before</string>
     <string name="appwidget_text" translatable="false">EXAMPLE</string>
-    <string name="wish_you_lucky" translatable="false">Hava a nice day!</string>
+    <string name="wish_you_lucky" translatable="false">Have a nice day!</string>
     <string name="weather_desc_today">Partly cloudy currently. It’s 15°, the high today was forecast as 18°.</string>
     <string name="sun_set_time">1hr 56min until sunset.</string>
-    <string name="haze">Haze</string>
-    <string name="sleet">Sleet</string>
 
     <string name="caiyun_weather">Colorful Clouds</string>
     <string name="china_mete_admin">China Meteorological Administration</string>
@@ -148,10 +148,12 @@
     <string name="yahoo_weather">Yahoo！</string>
 
     <string name="thanks_to">Thanks To</string>
-    <string name="provide_weather_china">Provides weather data in China</string>
-    <string name="provide_weather_outside">Provides weather data beyond China Mainland</string>
+    <string name="provide_weather_in_china">Provides weather data in China</string>
+    <string name="provide_weather_outside_china">Provides weather data beyond China Mainland</string>
 
     <string name="click_to_open_link">Click to open link in browser</string>
     <string name="current_version_">Current Version: %s</string>
+
+    <string name="updated_on">updated on %s</string>
 
 </resources>
