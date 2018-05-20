@@ -150,7 +150,7 @@ public class WeatherActivity extends BaseActivity implements
     @Override
     protected void initView(Bundle savedInstanceState) {
         initView();
-        doDebugThings();
+//        doDebugThings();
         configContact = Utility.createSimpleConfig(this).create(PreferenceConfigContact.class);
 
         handler = new MessageHandler(this);

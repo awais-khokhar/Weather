@@ -6,7 +6,7 @@ android {
     defaultConfig {
         applicationId "top.maweihao.weather"
         minSdkVersion 21
-        targetSdkVersion 27
+        targetSdkVersion 26
         versionCode 40
         versionName "1.4.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -53,7 +53,6 @@ ext {
     glideVersion = '3.8.0'
     greenDAOVersion = '3.2.2'
 }
-
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
