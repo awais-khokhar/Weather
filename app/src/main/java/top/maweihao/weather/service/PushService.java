@@ -2,6 +2,7 @@ package top.maweihao.weather.service;
 
 import android.app.AlarmManager;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -9,7 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
-import android.support.v7.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 
 import java.util.Calendar;
@@ -19,14 +20,14 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import top.maweihao.weather.R;
-import top.maweihao.weather.view.SettingActivity;
-import top.maweihao.weather.view.WeatherActivity;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.contract.WeatherData;
 import top.maweihao.weather.entity.dao.NewWeather;
 import top.maweihao.weather.model.WeatherRepository;
 import top.maweihao.weather.util.LogUtils;
 import top.maweihao.weather.util.Utility;
+import top.maweihao.weather.view.SettingActivity;
+import top.maweihao.weather.view.WeatherActivity;
 
 /**
  * 后台刷新service， 每晚提示第二天温差
@@ -143,7 +144,18 @@ public class PushService extends Service {
         Intent intent = new Intent(getApplicationContext(), WeatherActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        Notification notification = new NotificationCompat.Builder(getApplicationContext())
+        String NOTIFICATION_CHANNEL_ID = "weather";
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "weatherInfo", importance);
+//            notificationChannel.enableLights(true);
+//            notificationChannel.setLightColor(Color.RED);
+//            notificationChannel.enableVibration(true);
+//            notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            assert manager != null;
+            manager.createNotificationChannel(notificationChannel);
+        }
+        Notification notification = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
                 .setContentTitle(title)
                 .setContentText(text)
                 .setWhen(System.currentTimeMillis())

@@ -135,6 +135,22 @@
   public *;
 }
 
+#----------- rxjava rxandroid----------------
+-dontwarn sun.misc.**
+-keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
+    long producerIndex;
+    long consumerIndex;
+}
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueProducerNodeRef {
+    rx.internal.util.atomic.LinkedQueueNode producerNode;
+}
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueConsumerNodeRef {
+    rx.internal.util.atomic.LinkedQueueNode consumerNode;
+}
+-dontnote rx.internal.util.PlatformDependent
+
+#--------------------------
+
 ################gson##################
 -keep class com.google.gson.** {*;}
 -keep class com.google.**{*;}
@@ -152,7 +168,16 @@
 }
 -keep public class * implements java.io.Serializable {*;}
 
-
+-keep class org.greenrobot.greendao.**{*;}
+-keep public interface org.greenrobot.greendao.**
+-keepclassmembers class * extends org.greenrobot.greendao.AbstractDao {
+public static java.lang.String TABLENAME;
+}
+-keep class **$Properties
+-keep class net.sqlcipher.database.**{*;}
+-keep public interface net.sqlcipher.database.**
+-dontwarn net.sqlcipher.database.**
+-dontwarn org.greenrobot.greendao.**
 ### greenDAO 3
 -keepclassmembers class * extends org.greenrobot.greendao.AbstractDao {
 public static java.lang.String TABLENAME;
@@ -170,10 +195,22 @@ public static java.lang.String TABLENAME;
 }
 -keep class **$Properties
 
-#-keep class github.hellocsl.simpleconfig.**{*;}
+-keep class github.hellocsl.simpleconfig.**{*;}
+-dontwarn github.hellocsl.simpleconfig.**
+-keep class top.maweihao.weather.android_view.**{*;}
 
 -keepattributes *Annotation*
 -keep @**annotation** class * {*;}
 
 -dontwarn com.tencent.bugly.**
 -keep public class com.tencent.bugly.**{*;}
+
+#BaseRecyclerViewAdapterHelper
+-keep class com.chad.library.adapter.** {
+*;
+}
+-keep public class * extends com.chad.library.adapter.base.BaseQuickAdapter
+-keep public class * extends com.chad.library.adapter.base.BaseViewHolder
+-keepclassmembers  class **$** extends com.chad.library.adapter.base.BaseViewHolder {
+     <init>(...);
+}
