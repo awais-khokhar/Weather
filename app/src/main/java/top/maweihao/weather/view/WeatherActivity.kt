@@ -40,6 +40,7 @@ import java.lang.ref.WeakReference
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivityContract.NewView<NewWeatherActivityContract.NewPresenter>, EasyPermissions.PermissionCallbacks {
@@ -54,7 +55,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
     private val hourWeatherAdapter by lazy { HourlyWeatherAdapter(ArrayList()) }
     //5day hourlyRecyclerView adapter
     private val dailyWeatherAdapter by lazy { DailyWeatherAdapter(ArrayList()) }
-    private var alertArrayList: ArrayList<Alert>? = null
+    private val alertArrayList: ArrayList<Alert> = ArrayList()
 
     override fun setContentView(): Int = R.layout.activity_weather
 
@@ -139,7 +140,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
     override fun onClick(v: View) {
         when (v.id) {
             -1                      -> finish()
-            R.id.weather_alert_icon -> if (alertArrayList != null && alertArrayList!!.size > 0) {
+            R.id.weather_alert_icon -> if (alertArrayList.isNotEmpty()) {
                 val intent = Intent(this@WeatherActivity, AlertActivity::class.java)
                 intent.putParcelableArrayListExtra(
                         AlertActivity.KEY_ALERT_ACTIVITY_ALERT_LIST, alertArrayList)
@@ -269,22 +270,20 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
         val PM25 = hourlyBean.pm25[0].value
         val intensity = hourlyBean.precipitation[0].value
         val aqi = hourlyBean.aqi[0].value
-        val shouldShowAlert: Boolean
         // 是否显示天气预警图标
-        if (alertBean.content.size > 0) {
+        alertArrayList.clear()
+        val shouldShowAlert = if (alertBean.content.size > 0) {
             Log.d(TAG, "showCurrentWeather: alert size=" + alertBean.content.size)
-            alertArrayList = ArrayList()
             for (contentBean in alertBean.content) {
-                alertArrayList!!.add(Alert(contentBean.status,
+                alertArrayList.add(Alert(contentBean.status,
                         Integer.parseInt(contentBean.code),
                         contentBean.description, contentBean.alertId,
                         contentBean.city + contentBean.county,
                         contentBean.title))
             }
-            shouldShowAlert = true
+            true
         } else {
-            alertArrayList = null
-            shouldShowAlert = false
+            false
         }
 
         val windDirection = Utility.getWindDirection(this,
