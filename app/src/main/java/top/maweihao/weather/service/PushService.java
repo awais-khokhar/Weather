@@ -151,7 +151,6 @@ public class PushService extends Service {
 //            notificationChannel.enableLights(true);
 //            notificationChannel.setLightColor(Color.RED);
 //            notificationChannel.enableVibration(true);
-//            notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
             assert manager != null;
             manager.createNotificationChannel(notificationChannel);
         }
