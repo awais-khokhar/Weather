@@ -58,6 +58,7 @@ ext {
     butterknifeVersion = '8.8.1'
     glideVersion = '3.8.0'
     greenDAOVersion = '3.2.2'
+    anko_version = '0.10.5'
 }
 
 
@@ -98,7 +99,9 @@ dependencies {
     implementation 'com.tencent.bugly:crashreport:2.6.6.1'
     implementation 'com.tencent.bugly:nativecrashreport:3.3.1'
 
-    implementation 'org.jetbrains.anko:anko:0.10.5'
+    implementation "org.jetbrains.anko:anko:$anko_version"
+    implementation "org.jetbrains.anko:anko-commons:$anko_version"
+    implementation "org.jetbrains.anko:anko-design:$anko_version"
     implementation 'pub.devrel:easypermissions:1.2.0'
 }
 

@@ -20,6 +20,10 @@ import kotlinx.android.synthetic.main.card_now.*
 import kotlinx.android.synthetic.main.card_refresh_time.*
 import kotlinx.android.synthetic.main.card_today.*
 import kotlinx.android.synthetic.main.card_wind_view.*
+import org.jetbrains.anko.design.longSnackbar
+import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.startActivityForResult
+import org.jetbrains.anko.startService
 import org.jetbrains.anko.toast
 import pub.devrel.easypermissions.EasyPermissions
 import top.maweihao.weather.R
@@ -68,7 +72,6 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
         swipe_refresh.setDistanceToTriggerSync(200)
         swipe_refresh.setOnRefreshListener { newWeatherPresenter.initNewLocate() }
 
-        weather_alert_icon.setOnClickListener(this)
         weather_alert_icon.setOnClickListener(this)
         more_days_weather.setOnClickListener(this)
     }
@@ -139,16 +142,16 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
 
     override fun onClick(v: View) {
         when (v.id) {
-            -1                      -> finish()
+            -1 -> finish()
             R.id.weather_alert_icon -> if (alertArrayList.isNotEmpty()) {
                 val intent = Intent(this@WeatherActivity, AlertActivity::class.java)
                 intent.putParcelableArrayListExtra(
                         AlertActivity.KEY_ALERT_ACTIVITY_ALERT_LIST, alertArrayList)
                 startActivity(intent)
+//                startActivity(intentFor<AlertActivity>(AlertActivity.KEY_ALERT_ACTIVITY_ALERT_LIST to alertArrayList))
             }
-            R.id.more_days_weather  -> {
-                val intent = Intent(this@WeatherActivity, DetailActivity::class.java)
-                startActivity(intent)
+            R.id.more_days_weather -> {
+                startActivity<DetailActivity>()
             }
         }
     }
@@ -168,17 +171,14 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.change_position -> {
-                val intent = Intent(this@WeatherActivity, ChoosePositionActivity::class.java)
-                startActivityForResult(intent, ChoosePositionActivityRequestCode)
+                startActivityForResult<ChoosePositionActivity>(ChoosePositionActivityRequestCode)
             }
-            R.id.start_service   -> {
+            R.id.start_service -> {
                 // debug only
-                val startIntent = Intent(this@WeatherActivity, PushService::class.java)
-                startService(startIntent)
+                startService<PushService>()
             }
-            R.id.setting         -> {
-                val intent1 = Intent(this@WeatherActivity, SettingActivity::class.java)
-                startActivityForResult(intent1, SettingActivityRequestCode)
+            R.id.setting -> {
+                startActivityForResult<SettingActivity>(SettingActivityRequestCode)
             }
         }
         return true
@@ -186,7 +186,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
-            SettingActivityRequestCode        -> if (resultCode == SettingCode) {
+            SettingActivityRequestCode -> if (resultCode == SettingCode) {
                 val autoLocate = data?.getBooleanExtra("autoLocate", false)
                 Log.d(TAG, "onActivityResult: SettingActivity autoLocate=$autoLocate")
                 if (autoLocate != null && autoLocate) {
@@ -234,8 +234,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
         when (requestCode) {
             PERMISSION_REQUEST_CODE -> {
                 newWeatherPresenter.initIpLocate()
-                Snackbar.make(view_root, R.string.permission_denied, Snackbar.LENGTH_LONG)
-                        .setAction(R.string.grant_permission) { }.show()
+                longSnackbar(view_root, R.string.permission_denied)
             }
         }
     }
@@ -332,10 +331,10 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
                 val date = oldSDF.parse(dailyBean.skycon[i].date)
                 time = if (i != 0) {
                     newSDF.format(date) + " " +
-                    resources.getStringArray(R.array.week)[(dayOfWeek + i - 1) % 7]
+                            resources.getStringArray(R.array.week)[(dayOfWeek + i - 1) % 7]
                 } else {
                     newSDF.format(date) + " " +
-                    resources.getString(R.string.today)
+                            resources.getString(R.string.today)
                 }
             } catch (e: ParseException) {
                 e.printStackTrace()
@@ -353,8 +352,8 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
             }
             // 在有 desc 时优先显示 desc 的内容
             val temperature = (Utility.stringRoundDouble(dailyBean.temperature[i].max)
-                               + "°/"
-                               + Utility.stringRoundDouble(dailyBean.temperature[i].min) + '°'.toString())
+                    + "°/"
+                    + Utility.stringRoundDouble(dailyBean.temperature[i].min) + '°'.toString())
             singleWeathers.add(SingleWeather(time, icon, skyconDesc, temperature))
         }
         handler.post { refreshDailyList(singleWeathers) }
@@ -395,10 +394,10 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
         val detailLocation = location.fineLocation
         Log.d(TAG, "showLocation: $coarseLocation$detailLocation")
         when (location.locateType) {
-            MLocation.TYPE_CHOOSE                                                                                                 -> setLoc(coarseLocation, coarseLocation, false)
-            MLocation.TYPE_IP                                                                                                     -> setLoc(coarseLocation, Utility.getIP(this), false)
+            MLocation.TYPE_CHOOSE -> setLoc(coarseLocation, coarseLocation, false)
+            MLocation.TYPE_IP -> setLoc(coarseLocation, Utility.getIP(this), false)
             MLocation.TYPE_BAIDU_GPS, MLocation.TYPE_BAIDU_NETWORK, MLocation.TYPE_BAIDU_UNKNOWN, MLocation.TYPE_LOCATION_MANAGER -> setLoc(coarseLocation, detailLocation, true)
-            else                                                                                                                  -> {
+            else -> {
             }
         }
     }
@@ -416,8 +415,9 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
     }
 
     override fun showNetworkError() {
-        Snackbar.make(view_root, R.string.access_network_failed, Snackbar.LENGTH_LONG)
-                .setAction(R.string.go_to_settings) { startActivity(Intent().setAction(Settings.ACTION_SETTINGS)) }.show()
+        longSnackbar(view_root, R.string.access_network_failed, R.string.go_to_settings) {
+            startActivity(Intent().setAction(Settings.ACTION_SETTINGS))
+        }
     }
 
     override fun showError(error: String, showOkButton: Boolean) {
@@ -433,10 +433,9 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
     }
 
     override fun showIpLocateMessage() {
-        Snackbar.make(view_root, R.string.ip_method_locate, Snackbar.LENGTH_LONG)
-                .setAction(R.string.donnot_show) {
-                    // TODO: 02/12/2017
-                }
+        longSnackbar(view_root, R.string.ip_method_locate, R.string.donnot_show) {
+            // TODO: 02/12/2017
+        }
     }
 
     override fun showLocateError() {
@@ -453,8 +452,11 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
         //                        });
         //            }
         //        }, 2000);
-        Snackbar.make(view_root, R.string.locate_failed, Snackbar.LENGTH_LONG)
-                .setAction(R.string.go_to_settings) { startActivity(Intent().setAction(Settings.ACTION_SETTINGS)) }
+        longSnackbar(view_root, R.string.locate_failed, R.string.go_to_settings) {
+            startActivity(Intent().setAction(Settings.ACTION_SETTINGS))
+        }
+
+
     }
 
     override fun setRefreshingState(refresh: Boolean) {
@@ -492,7 +494,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
             val activity = activityWeakReference.get()
             if (activity != null) {
                 when (msg.what) {
-                    HANDLE_TOAST          -> activity.toast(msg.obj as String)
+                    HANDLE_TOAST -> activity.toast(msg.obj as String)
                     HANDLE_EXACT_LOCATION -> {
                         activity.locationDetail = msg.obj as String
                         activity.location_tv.text = msg.obj as String
@@ -503,8 +505,6 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
     }
 
     companion object {
-
-        private val TAG = WeatherActivity::class.java.simpleName
 
         internal const val HANDLE_TOAST = 1
         internal const val HANDLE_EXACT_LOCATION = 2
