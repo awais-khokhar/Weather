@@ -265,7 +265,7 @@ public class WeatherActivity extends BaseActivity implements
         }
     }
 
-    private void setRainInfo(final String now, final String today) {
+    private void setRainDescText(final String now, final String today) {
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -370,7 +370,7 @@ public class WeatherActivity extends BaseActivity implements
 
         showDailyWeather(dailyBean);
         showHourlyWeather(hourlyBean);
-        setRainInfo(minutelyBean.getDescription(), hourlyBean.getDescription());
+        setRainDescText(minutelyBean.getDescription(), hourlyBean.getDescription());
         showCurrentWeather(dailyBean, hourlyBean, weather.getResult().getAlert());
         setUpdateTime(weather.getServer_time() * 1000);
     }

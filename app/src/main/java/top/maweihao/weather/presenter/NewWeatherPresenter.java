@@ -55,19 +55,19 @@ public class NewWeatherPresenter extends BasePresenter
     private final WeatherData model;
     private final NewWeatherActivityContract.NewView<NewWeatherActivityContract.NewPresenter> view;
 
-    private final CompositeDisposable     compositeDisposable;
-    private       PreferenceConfigContact configContact;
-    private       MLocation               cachedLocation;
+    private final CompositeDisposable compositeDisposable;
+    private PreferenceConfigContact configContact;
+    private MLocation cachedLocation;
     private volatile boolean workingFlag = false;
 
-    private Context              context;
-    private LocationClient       mLocationClient;
+    private Context context;
+    private LocationClient mLocationClient;
     private LocationClientOption option;
 
-    private long       lastUpdateTime;
-    private long       locateTime;  //for Baidu locate
+    private long lastUpdateTime;
+    private long locateTime;  //for Baidu locate
     private NewWeather weather4widget;  //for widget refresh
-    private String     countyName4widget; //for widget refresh
+    private String countyName4widget; //for widget refresh
     private volatile boolean isWidgetOn = false;
 
     public NewWeatherPresenter(@NonNull NewWeatherActivityContract.NewView<NewWeatherActivityContract.NewPresenter> view,
@@ -159,7 +159,7 @@ public class NewWeatherPresenter extends BasePresenter
     public void locate() {
         view.setRefreshingState(true);
         if (configContact.getAutoLocate(true)) {
-            Log.d(TAG, "locate: true");
+//            Log.d(TAG, "locate: true");
             checkPermissionAndLocate();
         } else {
             MLocation location = model.getLocationCached();
@@ -199,13 +199,12 @@ public class NewWeatherPresenter extends BasePresenter
     }
 
     private void checkPermissionAndLocate() {
-        Log.d(TAG, "checkPermissionAndLocate: here check for permission");
-        String[] permission = {Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION};
-//        Log.d(TAG, "permission: " + (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-//                == PackageManager.PERMISSION_GRANTED));
-//        Log.d(TAG, "permission: " + (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
-//                == PackageManager.PERMISSION_GRANTED));
+        Log.d(TAG, "checkPermissionAndLocate: start checking for permissions");
+        String[] permission = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,};
+        Log.d(TAG, "permission: " + (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED));
+        Log.d(TAG, "permission: " + (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED));
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             initBaiduLocate();
@@ -451,7 +450,7 @@ public class NewWeatherPresenter extends BasePresenter
 
     private void locateFailed(boolean isPermissionOn) {
         Log.e(TAG, "locateFailed, and permission is " + isPermissionOn);
-        if (isPermissionOn) {
+        if (!isPermissionOn) {
             view.showLocateError();
         } else {
             view.showError("Locate failed", true);

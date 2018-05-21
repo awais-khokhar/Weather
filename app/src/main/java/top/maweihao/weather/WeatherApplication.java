@@ -1,6 +1,7 @@
 package top.maweihao.weather;
 
 
+import android.content.pm.ApplicationInfo;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -21,14 +22,19 @@ import top.maweihao.weather.util.Utility;
  */
 
 public class WeatherApplication extends LitePalApplication {
+
+    private static final String TAG = WeatherApplication.class.getSimpleName();
+    private static boolean isDebug;
+
     @Override
     public void onCreate() {
         super.onCreate();
+        isDebug = (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
 
         String pn = getProcessName(android.os.Process.myPid());
         if (pn == null || pn.equals(getPackageName())) {
             //tencent bugly
-            CrashReport.initCrashReport(getApplicationContext(), "2af8412ed0", true);
+            CrashReport.initCrashReport(getApplicationContext(), "2af8412ed0", isDebug);
 
             Constants.timeShift = Utility.getTimeShift();
             Constants.lang = Utility.getCurrentLanguage(this);
