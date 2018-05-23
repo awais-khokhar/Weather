@@ -8,9 +8,9 @@ import com.baidu.location.BDLocation;
 
 import org.greenrobot.greendao.annotation.NotNull;
 
+import top.maweihao.weather.entity.BaiDu.BDIPLocationBean;
 import top.maweihao.weather.entity.BaiDu.BaiDuChoosePositionBean;
 import top.maweihao.weather.entity.BaiDu.BaiDuCoordinateBean;
-import top.maweihao.weather.entity.BaiDu.BaiDuIPLocationBean;
 import top.maweihao.weather.entity.dao.MLocation;
 
 /**
@@ -62,9 +62,9 @@ public class LocationUtil {
 
     }
 
-    public static MLocation convertType(@NonNull BaiDuIPLocationBean bean) {
-        BaiDuIPLocationBean.ContentBean.AddressDetailBean address_detail =
-                bean.getContent().getAddress_detail();
+    public static MLocation convertType(@NonNull BDIPLocationBean bean) {
+        BDIPLocationBean.Content.AddressDetail address_detail =
+                bean.getContent().getAddressDetail();
         MLocation location = new MLocation(MLocation.TYPE_IP,
                 bean.getContent().getPoint().getY(), bean.getContent().getPoint().getX());
         if (!TextUtils.isEmpty(address_detail.getProvince())) {
@@ -80,7 +80,7 @@ public class LocationUtil {
     }
 
     public static MLocation convertType(@NonNull BaiDuChoosePositionBean bean, String county) {
-        BaiDuChoosePositionBean.ResultBean.LocationBean locationBean =
+        BaiDuChoosePositionBean.Result.Location locationBean =
                 bean.getResult().getLocation();
         MLocation location = new MLocation(MLocation.TYPE_CHOOSE,
                 locationBean.getLat(), locationBean.getLng());

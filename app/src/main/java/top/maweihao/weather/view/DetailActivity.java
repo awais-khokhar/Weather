@@ -23,15 +23,11 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 import top.maweihao.weather.R;
 import top.maweihao.weather.adapter.DailyWeatherAdapter;
-import top.maweihao.weather.contract.WeatherData;
 import top.maweihao.weather.entity.SingleWeather;
 import top.maweihao.weather.entity.dao.NewWeather;
-import top.maweihao.weather.model.WeatherRepository;
+import top.maweihao.weather.model.WeatherModel;
 import top.maweihao.weather.util.Utility;
 
 import static top.maweihao.weather.util.Utility.HOURLY_MODE;
@@ -41,7 +37,7 @@ public class DetailActivity extends AppCompatActivity {
 
     public static final String KEY_DETAIL_ACTIVITY_WEATHER_LIST = "DETAIL_ACTIVITY_WEATHER_LIST";
     private static final String TAG = DetailActivity.class.getSimpleName();
-    private WeatherData model;
+//    private WeatherData model;
     DailyWeatherAdapter adapter;
 
     @BindView(R.id.activity_detail_toolbar)
@@ -63,7 +59,7 @@ public class DetailActivity extends AppCompatActivity {
 
     private void initView() {
         ButterKnife.bind(this);
-        model = WeatherRepository.getInstance(getApplicationContext());
+//        model = WeatherRepository.getInstance(getApplicationContext());
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(DetailActivity.this);
@@ -86,31 +82,59 @@ public class DetailActivity extends AppCompatActivity {
         List<SingleWeather> weatherList =
                 getIntent().getParcelableArrayListExtra(KEY_DETAIL_ACTIVITY_WEATHER_LIST);
         if (weatherList == null) {
-            model.getWeatherCached()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Consumer<NewWeather>() {
+            WeatherModel.INSTANCE.getWeatherCache();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    final NewWeather weather = WeatherModel.INSTANCE.getWeatherCache();
+                    runOnUiThread(new Runnable() {
                         @Override
-                        public void accept(NewWeather weather) throws Exception {
-                            stopSwipe();
-                            List<SingleWeather> list = generateList(weather);
-                            if (list == null) {
+                        public void run() {
+                            if (weather != null){
+                                stopSwipe();
+                                List<SingleWeather> list = generateList(weather);
+                                if (list == null) {
+                                    showError();
+                                } else if (adapter == null) {
+                                    adapter = new DailyWeatherAdapter(list);
+                                    recyclerView.setAdapter(adapter);
+                                } else {
+                                    adapter.setWeatherList(list);
+                                }
+                            } else  {
+                                stopSwipe();
+                                Log.e(TAG, "fetchData: get weather cached failed" + " -- > null");
                                 showError();
-                            } else if (adapter == null) {
-                                adapter = new DailyWeatherAdapter(list);
-                                recyclerView.setAdapter(adapter);
-                            } else {
-                                adapter.setWeatherList(list);
                             }
                         }
-                    }, new Consumer<Throwable>() {
-                        @Override
-                        public void accept(Throwable throwable) throws Exception {
-                            stopSwipe();
-                            Log.e(TAG, "fetchData: get weather cached failed" + throwable);
-                            showError();
-                        }
                     });
+                }
+            }).start();
+//            model.getWeatherCached()
+//                    .subscribeOn(Schedulers.io())
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .subscribe(new Consumer<NewWeather>() {
+//                        @Override
+//                        public void accept(NewWeather weather) throws Exception {
+//                            stopSwipe();
+//                            List<SingleWeather> list = generateList(weather);
+//                            if (list == null) {
+//                                showError();
+//                            } else if (adapter == null) {
+//                                adapter = new DailyWeatherAdapter(list);
+//                                recyclerView.setAdapter(adapter);
+//                            } else {
+//                                adapter.setWeatherList(list);
+//                            }
+//                        }
+//                    }, new Consumer<Throwable>() {
+//                        @Override
+//                        public void accept(Throwable throwable) throws Exception {
+//                            stopSwipe();
+//                            Log.e(TAG, "fetchData: get weather cached failed" + throwable);
+//                            showError();
+//                        }
+//                    });
         }
     }
 

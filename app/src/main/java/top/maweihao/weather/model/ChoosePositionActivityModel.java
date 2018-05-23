@@ -3,6 +3,8 @@ package top.maweihao.weather.model;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.blankj.utilcode.util.LogUtils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,13 +17,12 @@ import java.util.List;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
-import top.maweihao.weather.view.ChoosePositionActivity;
 import top.maweihao.weather.contract.ChoosePositionActivityContract;
 import top.maweihao.weather.db.City;
 import top.maweihao.weather.db.County;
 import top.maweihao.weather.db.Province;
 import top.maweihao.weather.util.HttpUtil;
-import top.maweihao.weather.util.LogUtils;
+import top.maweihao.weather.view.ChoosePositionActivity;
 
 import static top.maweihao.weather.view.ChoosePositionActivity.LEVEL_CITY;
 import static top.maweihao.weather.view.ChoosePositionActivity.LEVEL_COUNTY;

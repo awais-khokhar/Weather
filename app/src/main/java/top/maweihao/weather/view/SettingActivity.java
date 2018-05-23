@@ -29,8 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import top.maweihao.weather.R;
 import top.maweihao.weather.contract.PreferenceConfigContact;
-import top.maweihao.weather.contract.WeatherData;
-import top.maweihao.weather.model.WeatherRepository;
+import top.maweihao.weather.model.LocationModel;
 import top.maweihao.weather.service.PushService;
 import top.maweihao.weather.util.Utility;
 
@@ -50,7 +49,6 @@ public class SettingActivity extends AppCompatActivity {
     //记录原始配置和改变后的配置，判断自动定位是否发生改变；
     private static boolean originalAutoLocate;
     private static boolean changeAutoLocate;
-    private WeatherData model;
     private static String countyName;
     private static final String alipayUrl =
             "alipayqr://platformapi/startapp?saId=10000007&qrcode=https://qr.alipay.com/a6x07374sqhbxyur624d77e";
@@ -67,8 +65,7 @@ public class SettingActivity extends AppCompatActivity {
         toolbar.setTitle(getResources().getString(R.string.setting));
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp);
         setSupportActionBar(toolbar);
-        model = WeatherRepository.getInstance(this);
-        countyName = (model.getLocationCached() == null ? "" : model.getLocationCached().getCoarseLocation());
+        countyName = (LocationModel.INSTANCE.getLocationCached() == null ? "" : LocationModel.INSTANCE.getLocationCached().getCoarseLocation());
         getFragmentManager().beginTransaction()
                 .replace(R.id.setting_frameLayout, new PrefsFragment())
                 .commit();

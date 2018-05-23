@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.LogUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
 import java.util.ArrayList;
@@ -32,7 +33,6 @@ import top.maweihao.weather.db.Province;
 import top.maweihao.weather.entity.dao.MLocation;
 import top.maweihao.weather.presenter.ChoosePositionActivityPresenter;
 import top.maweihao.weather.util.Constants;
-import top.maweihao.weather.util.LogUtils;
 import top.maweihao.weather.util.Utility;
 
 public class ChoosePositionActivity extends AppCompatActivity

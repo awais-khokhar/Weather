@@ -12,11 +12,12 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import com.blankj.utilcode.util.LogUtils;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import top.maweihao.weather.R;
-import top.maweihao.weather.util.LogUtils;
 
 /**
  * view for sun trace

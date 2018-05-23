@@ -6,26 +6,30 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MediatorLiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
+
+import com.blankj.utilcode.util.LogUtils;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
 import top.maweihao.weather.R;
 import top.maweihao.weather.contract.PreferenceConfigContact;
-import top.maweihao.weather.contract.WeatherData;
 import top.maweihao.weather.entity.dao.NewWeather;
-import top.maweihao.weather.model.WeatherRepository;
-import top.maweihao.weather.util.LogUtils;
+import top.maweihao.weather.model.LocationModel;
+import top.maweihao.weather.model.WeatherModel;
 import top.maweihao.weather.util.Utility;
+import top.maweihao.weather.util.http.DataResult;
+import top.maweihao.weather.util.http.Status;
 import top.maweihao.weather.view.SettingActivity;
 import top.maweihao.weather.view.WeatherActivity;
 
@@ -47,7 +51,16 @@ public class PushService extends Service {
 
     private PreferenceConfigContact configContact;
 
-    private WeatherData model;
+//    private WeatherData model;
+
+    private MediatorLiveData<DataResult<NewWeather>> liveData;
+
+    private MediatorLiveData<DataResult<NewWeather>> getLiveData() {
+        if (liveData == null) {
+            liveData = new MediatorLiveData<>();
+        }
+        return liveData;
+    }
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -64,11 +77,11 @@ public class PushService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        LogUtils.d(TAG, "onStartCommand: ");
+        LogUtils.d("onStartCommand: ");
         configContact = Utility.createSimpleConfig(getApplicationContext()).create(PreferenceConfigContact.class);
-        if (model == null) {
-            model = WeatherRepository.getInstance(this);
-        }
+//        if (model == null) {
+//            model = WeatherRepository.getInstance(this);
+//        }
         if (isStarSendNotification) { //标记是否发送通知
             fetchData();
         }
@@ -77,32 +90,59 @@ public class PushService extends Service {
     }
 
     private void fetchData() {
-        io.reactivex.Observable<NewWeather> observable = model.getLocalWeather();
-        if (observable == null) {
-            stopSelf();
-            return;
-        }
-        observable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<NewWeather>() {
-                    @Override
-                    public void accept(NewWeather weather) throws Exception {
-                        if (weather.getStatus().equals("ok")) {
-                            NewWeather.ResultBean.DailyBean.TemperatureBeanX temp =
-                                    weather.getResult().getDaily().getTemperature().get(0);
-                            NewWeather.ResultBean.DailyBean.TemperatureBeanX temp2 =
-                                    weather.getResult().getDaily().getTemperature().get(1);
-                            calTemDiff(Utility.intRoundDouble(temp.getMax()),
-                                    Utility.intRoundDouble(temp.getMin()),
-                                    Utility.intRoundDouble(temp2.getMax()),
-                                    Utility.intRoundDouble(temp2.getMin()));
-                            stopSelf();
-                        } else {
-                            LogUtils.e(TAG, "api error");
-                            stopSelf();
-                        }
+//        io.reactivex.Observable<NewWeather> observable = model.getLocalWeather();
+        String locationStringReversed = LocationModel.INSTANCE.getLocationCached() == null ? "" : LocationModel.INSTANCE.getLocationCached().getLocationStringReversed();
+
+        LiveData<DataResult<NewWeather>> tempWeatherData = WeatherModel.INSTANCE.getWeather(locationStringReversed, false);
+        getLiveData().addSource(tempWeatherData, new Observer<DataResult<NewWeather>>() {
+            @Override
+            public void onChanged(@Nullable DataResult<NewWeather> newWeatherDataResult) {
+                if (newWeatherDataResult != null && newWeatherDataResult.getStatus() == Status.SUCCESS) {
+                    NewWeather weather = newWeatherDataResult.getData();
+                    if (weather != null && weather.getStatus().equals("ok")) {
+                        NewWeather.ResultBean.DailyBean.TemperatureBeanX temp =
+                                weather.getResult().getDaily().getTemperature().get(0);
+                        NewWeather.ResultBean.DailyBean.TemperatureBeanX temp2 =
+                                weather.getResult().getDaily().getTemperature().get(1);
+                        calTemDiff(Utility.intRoundDouble(temp.getMax()),
+                                Utility.intRoundDouble(temp.getMin()),
+                                Utility.intRoundDouble(temp2.getMax()),
+                                Utility.intRoundDouble(temp2.getMin()));
+                        stopSelf();
+                    } else {
+                        LogUtils.e("api error");
+                        stopSelf();
                     }
-                });
+                }
+            }
+        });
+
+
+//        if (observable == null) {
+//            stopSelf();
+//            return;
+//        }
+//        observable.subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Consumer<NewWeather>() {
+//                    @Override
+//                    public void accept(NewWeather weather) throws Exception {
+//                        if (weather.getStatus().equals("ok")) {
+//                            NewWeather.ResultBean.DailyBean.TemperatureBeanX temp =
+//                                    weather.getResult().getDaily().getTemperature().get(0);
+//                            NewWeather.ResultBean.DailyBean.TemperatureBeanX temp2 =
+//                                    weather.getResult().getDaily().getTemperature().get(1);
+//                            calTemDiff(Utility.intRoundDouble(temp.getMax()),
+//                                    Utility.intRoundDouble(temp.getMin()),
+//                                    Utility.intRoundDouble(temp2.getMax()),
+//                                    Utility.intRoundDouble(temp2.getMin()));
+//                            stopSelf();
+//                        } else {
+//                            LogUtils.e("api error");
+//                            stopSelf();
+//                        }
+//                    }
+//                });
     }
 
     private void startAgain() {
@@ -115,7 +155,7 @@ public class PushService extends Service {
             GET_HOUR = "18";
             GET_MINUTE = "0";
         }
-        LogUtils.d(TAG, "startAgain: SharedPreferences == " + time);
+        LogUtils.d("startAgain: SharedPreferences == " + time);
 
         //     每天18:00启动
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
@@ -212,7 +252,7 @@ public class PushService extends Service {
 
     @Override
     public void onDestroy() {
-        LogUtils.d(TAG, "onDestroy: SyncService destroyed");
+        LogUtils.d("onDestroy: SyncService destroyed");
         super.onDestroy();
     }
 }

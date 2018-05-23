@@ -9,15 +9,12 @@ import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
 
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
-import top.maweihao.weather.contract.WeatherData;
-import top.maweihao.weather.entity.dao.NewHeWeatherNow;
+
 import top.maweihao.weather.entity.dao.NewWeather;
-import top.maweihao.weather.model.WeatherRepository;
+import top.maweihao.weather.model.LocationModel;
+import top.maweihao.weather.model.WeatherModel;
 import top.maweihao.weather.entity.dao.MLocation;
 import top.maweihao.weather.util.Constants;
-import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.util.remoteView.WidgetUtils;
 
 public class WidgetSyncService extends Service {
@@ -31,15 +28,15 @@ public class WidgetSyncService extends Service {
     public static final String from_widget = "from_widget";
     private boolean fromWidget;
 
-    public static boolean working = false;
-    private long lastRefreshTime = 0;
+    public static boolean working         = false;
+    private       long    lastRefreshTime = 0;
     private boolean hasWidget;
     private boolean isBigWidgetOn;
 
     private int interval;  //刷新成功时再次刷新的间隔
     private int failedInterval;  //刷新失败时再次刷新的间隔
 
-    private WeatherRepository weatherRepository;
+//    private WeatherRepository weatherRepository;
 //    private PreferenceConfigContact configContact;
 
     @Override
@@ -70,7 +67,7 @@ public class WidgetSyncService extends Service {
         if (forceRefresh) {
             if ((hasWidget && refreshInterval >= interval - 5) || fromWidget) {
                 startAgain(interval);
-                fetchData(weatherRepository.getLocationCached());
+                fetchData(LocationModel.INSTANCE.getLocationCached());
             } else {
                 if (isBigWidgetOn) {
                     WidgetUtils.refreshBigWidgetTime(this);
@@ -103,7 +100,7 @@ public class WidgetSyncService extends Service {
         hasWidget = WidgetUtils.hasAnyWidget(this);
         interval = 60;
         failedInterval = 20;
-        weatherRepository = WeatherRepository.getInstance(this);
+//        weatherRepository = WeatherRepository.getInstance(this);
     }
 
     private void startAgain(int interval) {
@@ -124,112 +121,123 @@ public class WidgetSyncService extends Service {
 //        Toast.makeText(this, "fetchData!", Toast.LENGTH_SHORT).show();
         int minInterval = 5;  //hardcode interval temporary
         long now = System.currentTimeMillis();
-        long cachedLastUpdateTime = weatherRepository.getLastUpdateTime();
+        long cachedLastUpdateTime = WeatherModel.INSTANCE.getLastUpdateTime();
         if (now - cachedLastUpdateTime <= minInterval * 60 * 1000) {
             lastRefreshTime = cachedLastUpdateTime;
-            weatherRepository.getWeatherCached()
-                    .subscribeOn(Schedulers.io())
-                    .subscribe(new Consumer<NewWeather>() {
-                        @Override
-                        public void accept(NewWeather weather) throws Exception {
-                            Log.d(TAG, "fetchData: use cached weather to refresh the widget");
-                            WidgetUtils.refreshWidget(WidgetSyncService.this,
-                                    weather, location.getCoarseLocation());
-                            stopSelf();
-                        }
-                    }, new Consumer<Throwable>() {
-                        @Override
-                        public void accept(Throwable throwable) throws Exception {
-                            Log.e(TAG, "fetchData: get cached weather failed " + throwable);
-                            requestWeatherAndUpdate(location, weatherRepository, failedInterval);
-                        }
-                    });
+            NewWeather weather = WeatherModel.INSTANCE.getWeatherCache();
+            if (weather == null) {
+                Log.e(TAG, "fetchData: get cached weather failed " + "-- >  null");
+//                requestWeatherAndUpdate(location, failedInterval);
+            } else {
+                Log.d(TAG, "fetchData: use cached weather to refresh the widget");
+                WidgetUtils.refreshWidget(WidgetSyncService.this,
+                        weather, location.getCoarseLocation());
+                stopSelf();
+            }
+//                    .subscribeOn(Schedulers.io())
+//                    .subscribe(new Consumer<NewWeather>() {
+//                        @Override
+//                        public void accept(NewWeather weather) throws Exception {
+//                            Log.d(TAG, "fetchData: use cached weather to refresh the widget");
+//                            WidgetUtils.refreshWidget(WidgetSyncService.this,
+//                                    weather, location.getCoarseLocation());
+//                            stopSelf();
+//                        }
+//                    }, new Consumer<Throwable>() {
+//                        @Override
+//                        public void accept(Throwable throwable) throws Exception {
+//                            Log.e(TAG, "fetchData: get cached weather failed " + throwable);
+//                            requestWeatherAndUpdate(location, weatherRepository, failedInterval);
+//                        }
+//                    });
         } else {
             if (!isBigWidgetOn) {
-                long lut = weatherRepository.getLastHeNowUpdateTime();
-                if (now - lut <= minInterval * 60 * 1000) {
-                    lastRefreshTime = lut;
-                    weatherRepository.getHeWeatherNowCached()
-                            .subscribeOn(Schedulers.io())
-                            .subscribe(new Consumer<NewHeWeatherNow>() {
-                                @Override
-                                public void accept(NewHeWeatherNow weather) throws Exception {
-                                    Log.d(TAG, "fetchData: use cached he weather to refresh the widget");
-                                    WidgetUtils.refreshWidget(WidgetSyncService.this,
-                                            weather, location.getCoarseLocation());
-                                    stopSelf();
-                                }
-                            }, new Consumer<Throwable>() {
-                                @Override
-                                public void accept(Throwable throwable) throws Exception {
-                                    Log.e(TAG, "fetchData: get cached weather failed " + throwable);
-                                    requestHeAndUpdate(location, weatherRepository, failedInterval);
-                                }
-                            });
-                } else {
-                    requestHeAndUpdate(location, weatherRepository, failedInterval);
-                }
-            } else {
-                requestWeatherAndUpdate(location, weatherRepository, failedInterval);
+//                long lut = weatherRepository.getLastHeNowUpdateTime();
+//                if (now - lut <= minInterval * 60 * 1000) {
+//                    lastRefreshTime = lut;
+//                    weatherRepository.getHeWeatherNowCached()
+//                            .subscribeOn(Schedulers.io())
+//                            .subscribe(new Consumer<NewHeWeatherNow>() {
+//                                @Override
+//                                public void accept(NewHeWeatherNow weather) throws Exception {
+//                                    Log.d(TAG, "fetchData: use cached he weather to refresh the widget");
+//                                    WidgetUtils.refreshWidget(WidgetSyncService.this,
+//                                            weather, location.getCoarseLocation());
+//                                    stopSelf();
+//                                }
+//                            }, new Consumer<Throwable>() {
+//                                @Override
+//                                public void accept(Throwable throwable) throws Exception {
+//                                    Log.e(TAG, "fetchData: get cached weather failed " + throwable);
+//                                    requestHeAndUpdate(location, weatherRepository, failedInterval);
+//                                }
+//                            });
+//                } else {
+//                    requestHeAndUpdate(location, failedInterval);
+//                }
+//            } else {
+//                requestWeatherAndUpdate(location, failedInterval);
+//            }
             }
+
         }
-
     }
 
-    private void requestWeatherAndUpdate(final MLocation location, WeatherData model, final int failedInterval) {
-        model.getWeather(location.getLocationStringReversed())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Consumer<NewWeather>() {
-                    @Override
-                    public void accept(NewWeather weather) throws Exception {
-                        if (weather.getStatus().equals("ok")) {
-                            lastRefreshTime = weather.getServer_time() * 1000;
-                            WidgetUtils.refreshWidget(WidgetSyncService.this,
-                                    weather, location.getCoarseLocation());
-                            Log.d(TAG, "fetchData: fetch weather succeed!");
-                        } else {
-                            Log.e(TAG, "fetchData: weather api error");
-                            startAgain(failedInterval);
-                        }
-                        stopSelf();
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        Log.e(TAG, "fetchData: get weather failed" + throwable);
-                        startAgain(failedInterval);
-                        stopSelf();
-                    }
-                });
-    }
+//    private void requestWeatherAndUpdate(MLocation location, int failedInterval) {
+//        model.getWeather(location.getLocationStringReversed())
+//                .subscribeOn(Schedulers.io())
+//                .subscribe(new Consumer<NewWeather>() {
+//                    @Override
+//                    public void accept(NewWeather weather) throws Exception {
+//                        if (weather.getStatus().equals("ok")) {
+//                            lastRefreshTime = weather.getServer_time() * 1000;
+//                            WidgetUtils.refreshWidget(WidgetSyncService.this,
+//                                    weather, location.getCoarseLocation());
+//                            Log.d(TAG, "fetchData: fetch weather succeed!");
+//                        } else {
+//                            Log.e(TAG, "fetchData: weather api error");
+//                            startAgain(failedInterval);
+//                        }
+//                        stopSelf();
+//                    }
+//                }, new Consumer<Throwable>() {
+//                    @Override
+//                    public void accept(Throwable throwable) throws Exception {
+//                        Log.e(TAG, "fetchData: get weather failed" + throwable);
+//                        startAgain(failedInterval);
+//                        stopSelf();
+//                    }
+//                });
+//    }
 
-    private void requestHeAndUpdate(final MLocation location, WeatherData model, final int failedInterval) {
-        Log.d(TAG, "fetchData: here" + location.getLocationStringReversed());
-        model.getHeWeatherNow(location.getLocationStringReversed())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Consumer<NewHeWeatherNow>() {
-                    @Override
-                    public void accept(NewHeWeatherNow weatherNow) throws Exception {
-                        if (weatherNow != null &&
-                                weatherNow.getHeWeather5().get(0).getStatus().equals("ok")) {
-                            lastRefreshTime = Utility.getHeWeatherUpdateTime(weatherNow);
-                            WidgetUtils.refreshWidget(WidgetSyncService.this,
-                                    weatherNow, location.getCoarseLocation());
-                            Log.d(TAG, "fetchData: fetch he weather succeed!");
-                        } else {
-                            Log.e(TAG, "fetchData: he api error");
-                            startAgain(failedInterval);
-                        }
-                        stopSelf();
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        Log.e(TAG, "fetchData: get heWeatherNow failed " + throwable);
-                        startAgain(failedInterval);
-                        stopSelf();
-                    }
-                });
-    }
+//    private void requestHeAndUpdate(final MLocation location, final int failedInterval) {
+//        Log.d(TAG, "fetchData: here" + location.getLocationStringReversed());
+//        model.getHeWeatherNow(location.getLocationStringReversed())
+//                .subscribeOn(Schedulers.io())
+//                .subscribe(new Consumer<NewHeWeatherNow>() {
+//                    @Override
+//                    public void accept(NewHeWeatherNow weatherNow) throws Exception {
+//                        if (weatherNow != null &&
+//                                weatherNow.getHeWeather5().get(0).getStatus().equals("ok")) {
+//                            lastRefreshTime = Utility.getHeWeatherUpdateTime(weatherNow);
+//                            WidgetUtils.refreshWidget(WidgetSyncService.this,
+//                                    weatherNow, location.getCoarseLocation());
+//                            Log.d(TAG, "fetchData: fetch he weather succeed!");
+//                        } else {
+//                            Log.e(TAG, "fetchData: he api error");
+//                            startAgain(failedInterval);
+//                        }
+//                        stopSelf();
+//                    }
+//                }, new Consumer<Throwable>() {
+//                    @Override
+//                    public void accept(Throwable throwable) throws Exception {
+//                        Log.e(TAG, "fetchData: get heWeatherNow failed " + throwable);
+//                        startAgain(failedInterval);
+//                        stopSelf();
+//                    }
+//                });
+//    }
+
 
 }

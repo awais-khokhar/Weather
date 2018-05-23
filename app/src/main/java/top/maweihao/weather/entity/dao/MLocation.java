@@ -27,7 +27,7 @@ public class MLocation implements Parcelable {
     @Property
     private int rawBaiduLocateCode;  //百度定位 BDLocation 原始结果码
     @Property
-    private boolean needGeocode;  //是否需要根据解析地址
+    private boolean needGeocode = false;  //是否需要根据解析地址
 
     @Property
     private float latitude;  //经度

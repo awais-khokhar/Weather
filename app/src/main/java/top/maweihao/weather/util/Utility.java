@@ -13,6 +13,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
 
+import com.blankj.utilcode.util.LogUtils;
+
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;

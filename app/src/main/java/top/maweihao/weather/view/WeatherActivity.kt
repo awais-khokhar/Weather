@@ -1,12 +1,11 @@
 package top.maweihao.weather.view
 
 import android.Manifest
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
-import android.os.Message
 import android.provider.Settings
-import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
 import android.text.TextUtils
 import android.util.Log
@@ -29,30 +28,28 @@ import pub.devrel.easypermissions.EasyPermissions
 import top.maweihao.weather.R
 import top.maweihao.weather.adapter.DailyWeatherAdapter
 import top.maweihao.weather.adapter.HourlyWeatherAdapter
-import top.maweihao.weather.contract.NewWeatherActivityContract
 import top.maweihao.weather.contract.PreferenceConfigContact
 import top.maweihao.weather.entity.Alert
 import top.maweihao.weather.entity.SingleWeather
 import top.maweihao.weather.entity.dao.MLocation
 import top.maweihao.weather.entity.dao.NewWeather
-import top.maweihao.weather.presenter.NewWeatherPresenter
 import top.maweihao.weather.service.PushService
 import top.maweihao.weather.util.Constants.*
 import top.maweihao.weather.util.Utility
 import top.maweihao.weather.util.Utility.*
-import java.lang.ref.WeakReference
+import top.maweihao.weather.util.http.DataResult
+import top.maweihao.weather.util.http.Status
+import top.maweihao.weather.viewModel.TipsType
+import top.maweihao.weather.viewModel.WeatherViewModel
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
 
-class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivityContract.NewView<NewWeatherActivityContract.NewPresenter>, EasyPermissions.PermissionCallbacks {
+class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.PermissionCallbacks {
 
-    var locationDetail: String = ""
-
-    private val handler: MessageHandler = MessageHandler(this)
-    private val newWeatherPresenter by lazy { NewWeatherPresenter(this@WeatherActivity, this) }
+    private val handler by lazy { Handler() }
     private val configContact by lazy { Utility.createSimpleConfig(this).create(PreferenceConfigContact::class.java) }
 
     //24h hourlyRecyclerView adapter
@@ -61,24 +58,25 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
     private val dailyWeatherAdapter by lazy { DailyWeatherAdapter(ArrayList()) }
     private val alertArrayList: ArrayList<Alert> = ArrayList()
 
+    private val viewModel by lazy { ViewModelProviders.of(this).get(WeatherViewModel::class.java) }
+
     override fun setContentView(): Int = R.layout.activity_weather
 
 
     override fun initView(savedInstanceState: Bundle?) {
         initView()
-        doDebugThings()
-
+//        doDebugThings()
         swipe_refresh.setColorSchemeResources(R.color.colorPrimary)
         swipe_refresh.setDistanceToTriggerSync(200)
-        swipe_refresh.setOnRefreshListener { newWeatherPresenter.initNewLocate() }
+        swipe_refresh.setOnRefreshListener {
+            viewModel.isLoadCache = false
+            getWeather()
+        }
 
         weather_alert_icon.setOnClickListener(this)
         more_days_weather.setOnClickListener(this)
-    }
 
-
-    private fun doDebugThings() {
-//        more_days_weather.postDelayed({ CrashReport.testJavaCrash() }, (1000 * 10).toLong())
+        bindingView()
     }
 
     private fun initView() {
@@ -97,25 +95,90 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
         toolbar.title = resources.getString(R.string.app_name)
     }
 
-    override fun initData() {
-        newWeatherPresenter.subscribe()
+    private fun bindingView() {
+        viewModel.weatherLiveData.observe(this, android.arch.lifecycle.Observer<DataResult<NewWeather>> {
+            it?.let {
+                toast(it.status.name)
+
+                when (it.status) {
+                    Status.SUCCESS -> {
+                        it.data?.let {
+                            if (it.status == "ok")
+                            showWeather(it)
+                            else showNormalTips("Api error")
+                        }
+                        setRefreshingState(false)
+                    }
+                    Status.ERROR   -> {
+                        it.data?.let { showNetworkError() }
+                        setRefreshingState(false)
+                    }
+                    Status.LOADING -> {
+                        setRefreshingState(true)
+                    }
+                    Status.CACHE   -> {
+                        it.data?.let { showWeather(it) }
+                        setRefreshingState(true)
+                    }
+                }
+            }
+
+
+        })
+
+        viewModel.locationResult.observe(this, android.arch.lifecycle.Observer {
+            it?.let { showLocation(it) }
+        })
+
+        viewModel.tipsData.observe(this, android.arch.lifecycle.Observer {
+            it?.let {
+                setRefreshingState(false)
+                when (it.type) {
+                    TipsType.NORMAL -> {
+                        showNormalTips(it.message)
+                    }
+                    TipsType.LOCATION_FAIL -> {
+                        if (isHasPermissions()){
+                            showNormalTips("Locate failed")
+                        }else{
+                            showLocateError()
+                        }
+                    }
+                    TipsType.CHOOSE_POSITION -> {
+                        askForChoosePosition()
+                    }
+                }
+            }
+        })
     }
+
+    override fun initData() {
+        viewModel.getWeatherCache()
+
+        viewModel.isLoadCache = true
+        getWeather()
+    }
+
+    private fun getWeather() {
+
+        if (isHasPermissions()) {
+            viewModel.getWeather(true)
+        } else {
+            EasyPermissions.requestPermissions(this, "", PERMISSION_REQUEST_CODE, locationPermission)
+        }
+    }
+
+    private fun isHasPermissions():Boolean = EasyPermissions.hasPermissions(this, locationPermission)
 
     override fun onResume() {
         Log.d(TAG, "onResume")
         super.onResume()
-
-        newWeatherPresenter.onResume()
-
         handler.postDelayed({ dynamicWeatherView.onResume() }, 150)
     }
 
     override fun onPause() {
         Log.d(TAG, "onPause")
         super.onPause()
-
-        newWeatherPresenter.onPause()
-
         dynamicWeatherView.onPause()
     }
 
@@ -127,17 +190,16 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
     override fun onStop() {
         Log.d(TAG, "onStop")
         super.onStop()
-
-        newWeatherPresenter.onStop()
     }
 
     public override fun onDestroy() {
         Log.d(TAG, "onDestroy")
         super.onDestroy()
-        dynamicWeatherView.onDestroy()
+        try {
+            dynamicWeatherView.onDestroy()
+        } catch (e: Exception){
 
-        newWeatherPresenter.onDestroy()
-        newWeatherPresenter.unSubscribe()
+        }
     }
 
     override fun onClick(v: View) {
@@ -190,7 +252,8 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
                 val autoLocate = data?.getBooleanExtra("autoLocate", false)
                 Log.d(TAG, "onActivityResult: SettingActivity autoLocate=$autoLocate")
                 if (autoLocate != null && autoLocate) {
-                    newWeatherPresenter.initNewLocate()
+//                    newWeatherPresenter.initNewLocate()
+                    viewModel.getWeather(isHasPermissions())
                 }
 
             } else if (resultCode == ChooseCode) {
@@ -207,7 +270,8 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
                     else
                         location.city + "" + location.county
                     Log.d(TAG, "onActivityResult: desc = $desc")
-                    newWeatherPresenter.refreshChosenWeather(desc)
+//                    newWeatherPresenter.refreshChosenWeather(desc)
+                    viewModel.refreshChosenWeather(desc)
                 } else {
                     Log.d(TAG, "onActivityResult: cannot get parcelable location")
                 }
@@ -221,19 +285,11 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
     }
 
-    override fun getLocationPermission() {
-        if (EasyPermissions.hasPermissions(this, locationPermission)) {
-            newWeatherPresenter.initBaiduLocate()
-        } else {
-            EasyPermissions.requestPermissions(this, "", PERMISSION_REQUEST_CODE, locationPermission)
-        }
-    }
-
     override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
         //获取权限失败回调
         when (requestCode) {
             PERMISSION_REQUEST_CODE -> {
-                newWeatherPresenter.initIpLocate()
+                viewModel.getWeather(false)
                 longSnackbar(view_root, R.string.permission_denied)
             }
         }
@@ -242,12 +298,14 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
         //获取权限成功回调
         when (requestCode) {
-            PERMISSION_REQUEST_CODE -> newWeatherPresenter.initBaiduLocate()
+            PERMISSION_REQUEST_CODE -> {
+                viewModel.getWeather(true)
+            }
         }
     }
 
 
-    override fun showWeather(weather: NewWeather) {
+    private fun showWeather(weather: NewWeather) {
         val dailyBean = weather.result.daily
         val hourlyBean = weather.result.hourly
         val minutelyBean = weather.result.minutely
@@ -385,14 +443,14 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
         dailyWeatherAdapter.setWeatherList(list)
     }
 
-    override fun showLocation(location: MLocation?) {
+    private fun showLocation(location: MLocation?) {
         if (location == null) {
             Log.e(TAG, "showLocation: location = null")
             return
         }
         val coarseLocation = location.coarseLocation
         val detailLocation = location.fineLocation
-        Log.d(TAG, "showLocation: $coarseLocation$detailLocation")
+        Log.d(TAG, "showLocation: $coarseLocation $detailLocation")
         when (location.locateType) {
             MLocation.TYPE_CHOOSE -> setLoc(coarseLocation, coarseLocation, false)
             MLocation.TYPE_IP -> setLoc(coarseLocation, Utility.getIP(this), false)
@@ -402,7 +460,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
         }
     }
 
-    override fun setUpdateTime(timeInMills: Long) {
+    private fun setUpdateTime(timeInMills: Long) {
         handler.post {
             if (timeInMills == 0L) {
                 last_update_time.text = Utility.getTime(this@WeatherActivity)
@@ -414,63 +472,37 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
         }
     }
 
-    override fun showNetworkError() {
+    private fun showNormalTips(msg: String) {
+        val str = if (msg.isEmpty()) {
+            resources.getString(R.string.error_happens)
+        } else msg
+        longSnackbar(view_root, str, resources.getString(R.string.ok)) {}
+    }
+
+    private fun showNetworkError() {
         longSnackbar(view_root, R.string.access_network_failed, R.string.go_to_settings) {
             startActivity(Intent().setAction(Settings.ACTION_SETTINGS))
         }
     }
 
-    override fun showError(error: String, showOkButton: Boolean) {
-        var errorStr = error
-        if (TextUtils.isEmpty(error)) {
-            errorStr = resources.getString(R.string.error_happens)
-        }
-        val snackBar = Snackbar.make(view_root, errorStr, Snackbar.LENGTH_LONG)
-        if (showOkButton) {
-            snackBar.setAction(R.string.ok) { }
-        }
-        snackBar.show()
-    }
-
-    override fun showIpLocateMessage() {
-        longSnackbar(view_root, R.string.ip_method_locate, R.string.donnot_show) {
-            // TODO: 02/12/2017
-        }
-    }
-
-    override fun showLocateError() {
-        setRefreshingState(false)
-        //        view_root.postDelayed(new Runnable() {
-        //            @Override
-        //            public void run() {
-        //                Snackbar.make(view_root, R.string.locate_failed, Snackbar.LENGTH_LONG)
-        //                        .setAction(R.string.go_to_settings, new View.OnClickListener() {
-        //                            @Override
-        //                            public void onClick(View v) {
-        //                                startActivity(new Intent().setAction(Settings.ACTION_SETTINGS));
-        //                            }
-        //                        });
-        //            }
-        //        }, 2000);
+    private fun showLocateError() {
         longSnackbar(view_root, R.string.locate_failed, R.string.go_to_settings) {
             startActivity(Intent().setAction(Settings.ACTION_SETTINGS))
         }
 
-
     }
 
-    override fun setRefreshingState(refresh: Boolean) {
+    private fun setRefreshingState(refresh: Boolean) {
         handler.post {
             swipe_refresh.isRefreshing = refresh
         }
     }
 
-    override fun askForChoosePosition() {
-        val intent = Intent(this@WeatherActivity, ChoosePositionActivity::class.java)
-        startActivityForResult(intent, ChoosePositionActivityRequestCode)
+    private fun askForChoosePosition() {
+        startActivityForResult<ChoosePositionActivity>(ChoosePositionActivityRequestCode)
     }
 
-    private fun setLoc(coarse: String, detail: String?, loc: Boolean) {
+    private fun setLoc(coarse: String?, detail: String?, loc: Boolean) {
         handler.post {
             locate_mode_image.visibility = View.VISIBLE
             if (loc) {
@@ -478,38 +510,17 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, NewWeatherActivity
             } else {
                 locate_mode_image.setImageResource(R.drawable.ic_location_off_black_24dp)
             }
-            if (!TextUtils.isEmpty(coarse)) {
+            if (!coarse.isNullOrEmpty()) {
                 toolbar.title = coarse
             }
-            if (!TextUtils.isEmpty(detail)) {
+            if (!detail.isNullOrEmpty()) {
                 location_tv.text = detail
             }
         }
     }
 
-    private class MessageHandler(activity: WeatherActivity) : Handler() {
-        internal var activityWeakReference: WeakReference<WeatherActivity> = WeakReference(activity)
-
-        override fun handleMessage(msg: Message) {
-            val activity = activityWeakReference.get()
-            if (activity != null) {
-                when (msg.what) {
-                    HANDLE_TOAST -> activity.toast(msg.obj as String)
-                    HANDLE_EXACT_LOCATION -> {
-                        activity.locationDetail = msg.obj as String
-                        activity.location_tv.text = msg.obj as String
-                    }
-                }
-            }
-        }
-    }
 
     companion object {
-
-        internal const val HANDLE_TOAST = 1
-        internal const val HANDLE_EXACT_LOCATION = 2
-
-
         private const val locationPermission = Manifest.permission.ACCESS_COARSE_LOCATION
 
         private const val PERMISSION_REQUEST_CODE = 102
