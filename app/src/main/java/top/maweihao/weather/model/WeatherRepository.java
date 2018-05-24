@@ -59,7 +59,11 @@ public class WeatherRepository implements WeatherData {
 
     public static WeatherRepository getInstance(Context context) {
         if (instance == null) {
-            instance = new WeatherRepository(context);
+            synchronized (WeatherRepository.class) {
+                if (instance == null) {
+                    instance = new WeatherRepository(context.getApplicationContext());
+                }
+            }
         }
         return instance;
     }

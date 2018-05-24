@@ -126,6 +126,7 @@
             android:name=".service.WidgetSyncService"
             android:enabled="true"
             android:exported="false" />
+        <service android:name=".service.SyncService" />
 
         <activity android:name=".widget.SimpleWidgetConfigureActivity">
             <intent-filter>

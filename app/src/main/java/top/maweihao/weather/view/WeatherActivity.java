@@ -237,7 +237,11 @@ public class WeatherActivity extends BaseActivity implements
     public void onDestroy() {
         Log.d(TAG, "onDestroy");
         super.onDestroy();
-        dynamicWeatherView.onDestroy();
+        try {
+            dynamicWeatherView.onDestroy();
+        } catch (NullPointerException e) {
+            Log.e(TAG, "onDestroy: " + e.getMessage());
+        }
         if (NewPresenter != null) {
             NewPresenter.onDestroy();
             NewPresenter.unSubscribe();

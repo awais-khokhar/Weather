@@ -15,6 +15,8 @@ public class Constants {
     public static final int SettingCode = 320;
     public static final int ChooseCode = 239;
     public static final int WidgetSyncServiceRequestCode = 66;
+    public static final int SYNC_SERVICE_CODE = 67;
+
     public static boolean isSetResultIntent = false;
 
 //    public static final int requestLocationCode = 3;
