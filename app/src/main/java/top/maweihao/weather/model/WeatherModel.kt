@@ -13,6 +13,8 @@ import top.maweihao.weather.util.http.NetworkBoundResource
 import top.maweihao.weather.util.remoteView.WidgetUtils
 
 
+
+
 object WeatherModel {
     private val weatherDao: NewWeatherDao
     private var heWeatherNowDao: NewHeWeatherNowDao
@@ -38,7 +40,17 @@ object WeatherModel {
             }
 
             override fun shouldFetch(data: NewWeather?): Boolean {
-                return true
+                if (data == null) return true
+                val interval = (System.currentTimeMillis() - data.server_time * 1000) / (60 * 1000)
+                return if (interval > 5) {  //hardcode the minimum refresh interval temporary
+                    true
+                } else {
+                    LogUtils.d("fetchData: no need to refresh, last $interval ago")
+                    if (WidgetUtils.hasAnyWidget(Utils.getApp())) {
+                        updateWidget(data, location)
+                    }
+                    false
+                }
             }
 
             override fun shouldLoad4Cache(): Boolean {
@@ -138,11 +150,11 @@ object WeatherModel {
 
     fun getHeWeatherNowCached(): NewHeWeatherNow? {
         val weatherList = heWeatherNowDao.loadAll()
-        if (weatherList != null && weatherList.size > 0) {
-            return DaoUtils.unpackWeather(weatherList[0])
+        return if (weatherList != null && weatherList.size > 0) {
+            DaoUtils.unpackWeather(weatherList[0])
 
         } else {
-            return null
+            null
         }
     }
 }

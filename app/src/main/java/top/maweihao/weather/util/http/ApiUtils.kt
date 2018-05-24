@@ -2,15 +2,12 @@ package top.maweihao.weather.util.http
 
 import android.arch.lifecycle.LiveData
 import android.text.TextUtils
-import io.reactivex.Observable
 import io.reactivex.annotations.NonNull
-import retrofit2.http.*
 import top.maweihao.weather.entity.BaiDu.BDIPLocationBean
 import top.maweihao.weather.entity.BaiDu.BaiDuChoosePositionBean
 import top.maweihao.weather.entity.BaiDu.BaiDuCoordinateBean
 import top.maweihao.weather.entity.dao.NewHeWeatherNow
 import top.maweihao.weather.entity.dao.NewWeather
-import top.maweihao.weather.entity.dao.NewWeatherRealtime
 import top.maweihao.weather.util.Constants
 import top.maweihao.weather.util.http.HttpUtils.baiduLocateApi
 import top.maweihao.weather.util.http.HttpUtils.heWeatherApi
@@ -62,54 +59,4 @@ object ApiUtils {
         return baiduLocateApi.getCoordinateByDesc(desc, "json",
                                                   Constants.BaiduKey, Constants.mBaiduCode)
     }
-}
-
-
-interface WeatherApi {
-
-    @GET(Constants.CaiyunWeatherKey + "/{location}/forecast.json")
-    fun getWeather(@Path("location") cityId: String,
-                   @Query("alert") alert: Boolean,
-                   @Query("dailysteps") days: Int): LiveData<ApiResponse<NewWeather>>
-
-    @GET(Constants.CaiyunWeatherKey + "/{location}/forecast.json")
-    fun getWeather(@Path("location") cityId: String,
-                   @Query("alert") alert: Boolean,
-                   @Query("dailysteps") days: Int,
-                   @Query("tzshift") shift: Int,
-                   @Query("lang") lang: String): LiveData<ApiResponse<NewWeather>>
-
-    @GET(Constants.CaiyunWeatherKey + "/{location}/forecast.json")
-    fun getWeatherNow(@Path("location") cityId: String): Observable<NewWeatherRealtime>
-}
-
-//百度定位API
-interface BDLocateApi {
-
-    @FormUrlEncoded
-    @POST("location/ip")
-    fun getIpLocation(@Field("ak") ak: String,
-                      @Field("coor") coor: String,
-                      @Field("mcode", encoded = false) mcode: String): LiveData<ApiResponse<BDIPLocationBean>>
-
-    @FormUrlEncoded
-    @POST("geocoder/v2/")
-    fun getAddressDetail(@Field("location") location: String,
-                         @Field("output") output: String,
-                         @Field("pois") pois: Int,
-                         @Field("ak") ak: String,
-                         @Field("mcode") mcode: String): LiveData<ApiResponse<BaiDuCoordinateBean>>
-
-    @FormUrlEncoded
-    @POST("geocoder/v2/")
-    fun getCoordinateByDesc(@Field("address") location: String,
-                            @Field("output") output: String,
-                            @Field("ak") ak: String,
-                            @Field("mcode") mcode: String): LiveData<ApiResponse<BaiDuChoosePositionBean>>
-}
-
-interface HeWeatherApi {
-
-    @GET("now/")
-    fun getHeWeatherNow(@Query("city") city: String, @Query("key") key: String): LiveData<ApiResponse<NewHeWeatherNow>>
 }

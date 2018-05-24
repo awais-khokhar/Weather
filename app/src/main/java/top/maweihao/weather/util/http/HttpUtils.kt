@@ -5,6 +5,9 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import top.maweihao.weather.BuildConfig
+import top.maweihao.weather.util.http.api.BDLocateApi
+import top.maweihao.weather.util.http.api.HeWeatherApi
+import top.maweihao.weather.util.http.api.WeatherApi
 import java.util.concurrent.TimeUnit
 
 

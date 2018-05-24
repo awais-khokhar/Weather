@@ -153,7 +153,6 @@ object LocationModel {
     fun initIPLocate(): LiveData<DataResult<BDIPLocationBean>> {
         return object : NetworkBoundResource<BDIPLocationBean, BDIPLocationBean>() {
             override fun saveCallResultOrConvert(item: BDIPLocationBean): BDIPLocationBean {
-                System.out.println("------------> Convert" + item.status)
                 return item
             }
 

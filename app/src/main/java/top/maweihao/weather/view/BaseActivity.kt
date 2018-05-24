@@ -25,8 +25,4 @@ abstract class BaseActivity : RxAppCompatActivity() {
 
     protected abstract fun initData()
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
 }
