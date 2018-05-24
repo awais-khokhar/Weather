@@ -3,10 +3,7 @@ package top.maweihao.weather.model
 import android.arch.lifecycle.LiveData
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.Utils
-import top.maweihao.weather.entity.dao.DaoMaster
-import top.maweihao.weather.entity.dao.DaoUtils
-import top.maweihao.weather.entity.dao.NewWeather
-import top.maweihao.weather.entity.dao.NewWeatherDao
+import top.maweihao.weather.entity.dao.*
 import top.maweihao.weather.util.Constants
 import top.maweihao.weather.util.ServiceUtil
 import top.maweihao.weather.util.http.ApiResponse
@@ -16,12 +13,9 @@ import top.maweihao.weather.util.http.NetworkBoundResource
 import top.maweihao.weather.util.remoteView.WidgetUtils
 
 
-
-
-
 object WeatherModel {
     private val weatherDao: NewWeatherDao
-//    private val heWeatherNowDao: NewHeWeatherNowDao
+    private var heWeatherNowDao: NewHeWeatherNowDao
 //    private val locationDao: MLocationDao
 
     init {
@@ -30,7 +24,7 @@ object WeatherModel {
         val daoSession = daoMaster.newSession()
         weatherDao = daoSession.newWeatherDao
 //        weatherRealtimeDao = daoSession.getNewWeatherRealtimeDao();
-//        heWeatherNowDao = daoSession.getNewHeWeatherNowDao();
+        heWeatherNowDao = daoSession.newHeWeatherNowDao;
 //        locationDao = daoSession.mLocationDao
     }
 
@@ -38,10 +32,7 @@ object WeatherModel {
     fun getWeather(location: String, isLoadCache: Boolean): LiveData<DataResult<NewWeather>> {
         return object : NetworkBoundResource<NewWeather, NewWeather>() {
             override fun saveCallResultOrConvert(item: NewWeather): NewWeather {
-                if (item.status == "ok") {
-                    weatherDao.deleteAll()
-                    weatherDao.insertOrReplace(DaoUtils.packWeather(item))
-                }
+                saveWeather(item)
 
                 return item
             }
@@ -93,6 +84,40 @@ object WeatherModel {
         }
     }
 
+
+    fun getHeWeatherNow(location: String): LiveData<DataResult<NewHeWeatherNow>> {
+        return object : NetworkBoundResource<NewHeWeatherNow, NewHeWeatherNow>() {
+            override fun saveCallResultOrConvert(item: NewHeWeatherNow): NewHeWeatherNow {
+                saveWeather(item)
+                return item
+            }
+
+            override fun shouldFetch(data: NewHeWeatherNow?): Boolean = true
+
+            override fun shouldLoad4Cache(): Boolean = false
+
+            override fun load4Cache(): NewHeWeatherNow? = null
+
+            override fun createCall(): LiveData<ApiResponse<NewHeWeatherNow>> {
+                return ApiUtils.getHeWeatherNow(location)
+            }
+        }.asLiveData()
+    }
+
+    fun saveWeather(weather: NewWeather) {
+        if (weather.status == "ok") {
+            weatherDao.deleteAll()
+            weatherDao.insertOrReplace(DaoUtils.packWeather(weather))
+        }
+    }
+
+    fun saveWeather(weather: NewHeWeatherNow) {
+        if (weather.heWeather5[0].status == "ok") {
+            heWeatherNowDao.deleteAll()
+            heWeatherNowDao.insertOrReplace(DaoUtils.packWeather(weather, DaoUtils.getHeWeatherUpdateTime(weather)))
+        }
+    }
+
     fun getLastUpdateTime(): Long {
         val weatherList = weatherDao.loadAll()
         return if (weatherList != null && weatherList.size > 0) {
@@ -102,5 +127,22 @@ object WeatherModel {
         }
     }
 
+    fun getLastHeNowUpdateTime(): Long {
+        val weatherList = heWeatherNowDao.loadAll()
+        return if (weatherList != null && weatherList.size > 0) {
+            weatherList[0].currentTimeInMills
+        } else {
+            0
+        }
+    }
 
+    fun getHeWeatherNowCached(): NewHeWeatherNow? {
+        val weatherList = heWeatherNowDao.loadAll()
+        if (weatherList != null && weatherList.size > 0) {
+            return DaoUtils.unpackWeather(weatherList[0])
+
+        } else {
+            return null
+        }
+    }
 }

@@ -8,11 +8,14 @@ import retrofit2.http.*
 import top.maweihao.weather.entity.BaiDu.BDIPLocationBean
 import top.maweihao.weather.entity.BaiDu.BaiDuChoosePositionBean
 import top.maweihao.weather.entity.BaiDu.BaiDuCoordinateBean
+import top.maweihao.weather.entity.dao.NewHeWeatherNow
 import top.maweihao.weather.entity.dao.NewWeather
 import top.maweihao.weather.entity.dao.NewWeatherRealtime
 import top.maweihao.weather.util.Constants
 import top.maweihao.weather.util.http.HttpUtils.baiduLocateApi
+import top.maweihao.weather.util.http.HttpUtils.heWeatherApi
 import top.maweihao.weather.util.http.HttpUtils.weatherApi
+
 
 object ApiUtils {
 
@@ -37,6 +40,10 @@ object ApiUtils {
         lang = if (TextUtils.isEmpty(lang)) "zh_CN" else lang
 
         return weatherApi.getWeather(location, alert, days, shift, lang)
+    }
+
+    fun getHeWeatherNow(@NonNull location: String): LiveData<ApiResponse<NewHeWeatherNow>> {
+        return heWeatherApi.getHeWeatherNow(location, Constants.HeWeatherKey)
     }
 
     fun getIpLocation(): LiveData<ApiResponse<BDIPLocationBean>> {
@@ -99,4 +106,10 @@ interface BDLocateApi {
                             @Field("output") output: String,
                             @Field("ak") ak: String,
                             @Field("mcode") mcode: String): LiveData<ApiResponse<BaiDuChoosePositionBean>>
+}
+
+interface HeWeatherApi {
+
+    @GET("now/")
+    fun getHeWeatherNow(@Query("city") city: String, @Query("key") key: String): LiveData<ApiResponse<NewHeWeatherNow>>
 }

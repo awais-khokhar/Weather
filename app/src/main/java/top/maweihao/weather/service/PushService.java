@@ -6,13 +6,15 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
@@ -37,9 +39,9 @@ import top.maweihao.weather.view.WeatherActivity;
  * 后台刷新service， 每晚提示第二天温差
  */
 
-public class PushService extends Service {
+public class PushService extends Service  implements LifecycleOwner {
 
-    private static final String TAG = PushService.class.getSimpleName();
+    private final ServiceLifecycleDispatcher mDispatcher = new ServiceLifecycleDispatcher(this);
 
     Boolean isChinese = false;
 
@@ -53,15 +55,6 @@ public class PushService extends Service {
 
 //    private WeatherData model;
 
-    private MediatorLiveData<DataResult<NewWeather>> liveData;
-
-    private MediatorLiveData<DataResult<NewWeather>> getLiveData() {
-        if (liveData == null) {
-            liveData = new MediatorLiveData<>();
-        }
-        return liveData;
-    }
-
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -69,6 +62,8 @@ public class PushService extends Service {
 
     @Override
     public void onCreate() {
+        mDispatcher.onServicePreSuperOnCreate();
+
         super.onCreate();
         LogUtils.d("onCreate: SyncService created");
         isChinese = Utility.isChinese(this);
@@ -77,6 +72,8 @@ public class PushService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        mDispatcher.onServicePreSuperOnStart();
+
         LogUtils.d("onStartCommand: ");
         configContact = Utility.createSimpleConfig(getApplicationContext()).create(PreferenceConfigContact.class);
 //        if (model == null) {
@@ -94,7 +91,7 @@ public class PushService extends Service {
         String locationStringReversed = LocationModel.INSTANCE.getLocationCached() == null ? "" : LocationModel.INSTANCE.getLocationCached().getLocationStringReversed();
 
         LiveData<DataResult<NewWeather>> tempWeatherData = WeatherModel.INSTANCE.getWeather(locationStringReversed, false);
-        getLiveData().addSource(tempWeatherData, new Observer<DataResult<NewWeather>>() {
+        tempWeatherData.observe(this, new Observer<DataResult<NewWeather>>() {
             @Override
             public void onChanged(@Nullable DataResult<NewWeather> newWeatherDataResult) {
                 if (newWeatherDataResult != null && newWeatherDataResult.getStatus() == Status.SUCCESS) {
@@ -252,7 +249,15 @@ public class PushService extends Service {
 
     @Override
     public void onDestroy() {
+        mDispatcher.onServicePreSuperOnDestroy();
+
         LogUtils.d("onDestroy: SyncService destroyed");
         super.onDestroy();
+    }
+
+    @NonNull
+    @Override
+    public Lifecycle getLifecycle() {
+        return mDispatcher.getLifecycle();
     }
 }

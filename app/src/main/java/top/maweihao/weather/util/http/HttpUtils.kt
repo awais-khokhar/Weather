@@ -19,6 +19,11 @@ object HttpUtils {
         getService(baseUrl).create<BDLocateApi>(BDLocateApi::class.java)
     }
 
+    val heWeatherApi: HeWeatherApi by lazy {
+        val baseUrl = "https://free-api.heweather.com/v5/"
+        getService(baseUrl).create<HeWeatherApi>(HeWeatherApi::class.java)
+    }
+
 
     private fun getService(baseUrl: String): Retrofit {
 
