@@ -108,7 +108,7 @@ class WeatherViewModel : ViewModel() {
         } else {
             locationResult.value = location
         }
-
+        LogUtils.d("----> tempWeatherData")
         val tempWeatherData = WeatherModel.getWeather(location.locationStringReversed, isLoadCache)
         weatherLiveData.addSource(tempWeatherData) {
             weatherLiveData.value = it

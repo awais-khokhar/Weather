@@ -22,6 +22,7 @@ import top.maweihao.weather.util.http.ApiResponse
 import top.maweihao.weather.util.http.ApiUtils
 import top.maweihao.weather.util.http.DataResult
 import top.maweihao.weather.util.http.NetworkBoundResource
+import java.util.logging.Handler
 
 object LocationModel {
 
@@ -63,9 +64,7 @@ object LocationModel {
         mLocationClient.registerLocationListener(object : BDLocationListener {
             override fun onReceiveLocation(bdLocation: BDLocation?) {
                 LogUtils.d("BAIDU: received" + (System.currentTimeMillis() - locateTime))
-                System.out.println("---------->3")
                 if (bdLocation == null) return
-                System.out.println("---------->43")
                 if (System.currentTimeMillis() - locateTime < 3 * 1000) {  //at most x second
                     if (bdLocation.locType != BDLocation.TypeGpsLocation) {
                         LogUtils.d("BAIDU onReceiveLocation: Locate type == " + bdLocation.locType)

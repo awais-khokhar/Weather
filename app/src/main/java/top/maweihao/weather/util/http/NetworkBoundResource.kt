@@ -64,11 +64,12 @@ abstract class NetworkBoundResource<ResultType, RequestType>
 //                }
 //            })
             val cacheData = load4Cache()
+            setValue(DataResult.cache(cacheData))
             if (shouldFetch(cacheData)) {
 //                setValue(DataResult.success(cacheData))
                 fetchFromNetwork()
             } else {
-                setValue(DataResult.cache(cacheData))
+//                setValue(DataResult.cache(cacheData))
 //                    result.addSource(dbSource) { newData ->
 //                        setValue(DataResult.success(newData))
 //                    }

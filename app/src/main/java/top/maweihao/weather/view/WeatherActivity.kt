@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import com.blankj.utilcode.util.LogUtils
 import kotlinx.android.synthetic.main.activity_weather.*
 import kotlinx.android.synthetic.main.card_air_condition.*
 import kotlinx.android.synthetic.main.card_more_info.*
@@ -97,6 +98,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
 
     private fun bindingView() {
         viewModel.weatherLiveData.observe(this, android.arch.lifecycle.Observer<DataResult<NewWeather>> {
+            LogUtils.d(it == null)
             it?.let {
                 toast(it.status.name)
 
@@ -182,15 +184,15 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
         dynamicWeatherView.onPause()
     }
 
-    override fun onStart() {
-        Log.d(TAG, "onStart")
-        super.onStart()
-    }
-
-    override fun onStop() {
-        Log.d(TAG, "onStop")
-        super.onStop()
-    }
+//    override fun onStart() {
+//        Log.d(TAG, "onStart")
+//        super.onStart()
+//    }
+//
+//    override fun onStop() {
+//        Log.d(TAG, "onStop")
+//        super.onStop()
+//    }
 
     public override fun onDestroy() {
         Log.d(TAG, "onDestroy")
