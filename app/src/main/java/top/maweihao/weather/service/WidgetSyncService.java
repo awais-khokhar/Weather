@@ -23,6 +23,7 @@ import top.maweihao.weather.entity.dao.NewWeather;
 import top.maweihao.weather.model.LocationModel;
 import top.maweihao.weather.model.WeatherModel;
 import top.maweihao.weather.util.Constants;
+import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.util.http.DataResult;
 import top.maweihao.weather.util.remoteView.WidgetUtils;
 
@@ -269,6 +270,38 @@ public class WidgetSyncService extends Service implements LifecycleOwner {
     }
 
     private void requestHeAndUpdate(final MLocation location, final int failedInterval) {
+
+        LiveData<DataResult<NewHeWeatherNow>> liveData = WeatherModel.INSTANCE.getHeWeatherNow(location.getLocationStringReversed());
+        liveData.observe(this, new Observer<DataResult<NewHeWeatherNow>>() {
+            @Override
+            public void onChanged(@Nullable DataResult<NewHeWeatherNow> newHeWeatherNowDataResult) {
+                if (newHeWeatherNowDataResult == null) return;
+                switch (newHeWeatherNowDataResult.getStatus()) {
+                    case SUCCESS:
+                        NewHeWeatherNow weatherNow = newHeWeatherNowDataResult.getData();
+                        if (weatherNow != null &&
+                                weatherNow.getHeWeather5().get(0).getStatus().equals("ok")) {
+                            lastRefreshTime = Utility.getHeWeatherUpdateTime(weatherNow);
+                            WidgetUtils.refreshWidget(WidgetSyncService.this,
+                                    weatherNow, location.getCoarseLocation());
+                            Log.d(TAG, "fetchData: fetch he weather succeed!");
+                        } else {
+                            Log.e(TAG, "fetchData: he api error");
+                            startAgain(failedInterval);
+                        }
+                        stopSelf();
+                        break;
+                    case ERROR:
+
+                        Log.e(TAG, "fetchData: get heWeatherNow failed " + newHeWeatherNowDataResult.getMessage());
+                        startAgain(failedInterval);
+                        stopSelf();
+                        break;
+
+                }
+
+            }
+        });
 //        Log.d(TAG, "fetchData: here" + location.getLocationStringReversed());
 //        model.getHeWeatherNow(location.getLocationStringReversed())
 //                .subscribeOn(Schedulers.io())
