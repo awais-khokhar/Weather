@@ -20,11 +20,12 @@ import top.maweihao.weather.util.Utility.stringRoundDouble
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.concurrent.thread
 
 class DetailActivity : BaseActivity() {
     //    private WeatherData model;
-    internal var adapter: DailyWeatherAdapter? = null
+    internal var adapter: DailyWeatherAdapter = DailyWeatherAdapter(ArrayList())
 
     override fun setContentView(): Int = R.layout.activity_detail
 
@@ -34,6 +35,7 @@ class DetailActivity : BaseActivity() {
         val linearLayoutManager = LinearLayoutManager(this@DetailActivity)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         detail_recycler_view.layoutManager = linearLayoutManager
+        detail_recycler_view.adapter = adapter
     }
 
     override fun initData() {
@@ -53,7 +55,7 @@ class DetailActivity : BaseActivity() {
         startSwipe()
         val weatherList = intent.getParcelableArrayListExtra<SingleWeather>(KEY_DETAIL_ACTIVITY_WEATHER_LIST)
         if (weatherList == null) {
-            WeatherModel.getWeatherCache()
+
             thread {
                 val weather = WeatherModel.getWeatherCache()
                 runOnUiThread {
@@ -62,11 +64,8 @@ class DetailActivity : BaseActivity() {
                         val list = generateList(weather)
                         if (list == null) {
                             showError()
-                        } else if (adapter == null) {
-                            adapter = DailyWeatherAdapter(list)
-                            detail_recycler_view.adapter = adapter
                         } else {
-                            adapter!!.setWeatherList(list)
+                            adapter.setNewData(list)
                         }
                     } else {
                         stopSwipe()

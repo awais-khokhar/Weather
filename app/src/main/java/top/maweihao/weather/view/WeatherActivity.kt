@@ -67,11 +67,13 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
         viewModel = ViewModelProviders.of(this).get(WeatherViewModel::class.java)
         initView()
 //        doDebugThings()
-        swipe_refresh.setColorSchemeResources(R.color.colorPrimary)
-        swipe_refresh.setDistanceToTriggerSync(200)
-        swipe_refresh.setOnRefreshListener {
-            viewModel.isLoadCache = false
-            getWeather()
+        with(swipe_refresh) {
+            setColorSchemeResources(R.color.colorPrimary)
+            setDistanceToTriggerSync(200)
+            setOnRefreshListener {
+                viewModel.isLoadCache = false
+                getWeather()
+            }
         }
 
         weather_alert_icon.setOnClickListener(this)
@@ -81,16 +83,19 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
     }
 
     private fun initView() {
-        val hourlyManager = LinearLayoutManager(this@WeatherActivity)
-        hourlyManager.orientation = LinearLayoutManager.HORIZONTAL
-        hourly_weather_rv.layoutManager = hourlyManager
+        with(hourly_weather_rv) {
+            val hourlyManager = LinearLayoutManager(this@WeatherActivity)
+            hourlyManager.orientation = LinearLayoutManager.HORIZONTAL
+            layoutManager = hourlyManager
+            adapter = hourWeatherAdapter
+        }
 
-        val dailyManager = LinearLayoutManager(this@WeatherActivity)
-        dailyManager.orientation = LinearLayoutManager.VERTICAL
-        daily_weather_rv.layoutManager = dailyManager
-
-        hourly_weather_rv.adapter = hourWeatherAdapter
-        daily_weather_rv.adapter = dailyWeatherAdapter
+        with(daily_weather_rv) {
+            val dailyManager = LinearLayoutManager(this@WeatherActivity)
+            dailyManager.orientation = LinearLayoutManager.VERTICAL
+            layoutManager = dailyManager
+            adapter = dailyWeatherAdapter
+        }
 
         setSupportActionBar(toolbar)
         toolbar.title = resources.getString(R.string.app_name)
@@ -402,7 +407,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
                                + Utility.stringRoundDouble(dailyBean.temperature[i].min) + '°'.toString())
             singleWeathers.add(SingleWeather(time, icon, skyconDesc, temperature))
         }
-        refreshDailyList(singleWeathers)
+        dailyWeatherAdapter.setNewData(singleWeathers)
     }
 
     private fun showHourlyWeather(hourlyBean: NewWeather.ResultBean.HourlyBean) {
@@ -420,15 +425,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
             singleWeathers.add(SingleWeather(time, icon, skyconDesc, temperature))
         }
         singleWeathers[0].time = resources.getString(R.string.now)
-        refreshHourlyList(singleWeathers)
-    }
-
-    private fun refreshHourlyList(list: List<SingleWeather>) {
-        hourWeatherAdapter.setWeatherList(list)
-    }
-
-    private fun refreshDailyList(list: List<SingleWeather>) {
-        dailyWeatherAdapter.setWeatherList(list)
+        hourWeatherAdapter.setNewData(singleWeathers)
     }
 
     private fun showLocation(location: MLocation?) {
@@ -449,13 +446,13 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
     }
 
     private fun setUpdateTime(timeInMills: Long) {
-            if (timeInMills == 0L) {
-                last_update_time.text = Utility.getTime(this@WeatherActivity)
-            } else {
-                val time = resources.getString(R.string.updated_on,
-                                               Utility.getTime(this@WeatherActivity, timeInMills))
-                last_update_time.text = time
-            }
+        if (timeInMills == 0L) {
+            last_update_time.text = Utility.getTime(this@WeatherActivity)
+        } else {
+            val time = resources.getString(R.string.updated_on,
+                                           Utility.getTime(this@WeatherActivity, timeInMills))
+            last_update_time.text = time
+        }
     }
 
     private fun showNormalTips(msg: String) {

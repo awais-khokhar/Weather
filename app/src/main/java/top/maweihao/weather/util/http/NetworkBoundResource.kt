@@ -6,7 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.support.annotation.MainThread
 import android.support.annotation.WorkerThread
-import kotlin.concurrent.thread
+import com.blankj.utilcode.util.ThreadUtils
 
 /**
  * 网络帮助类
@@ -51,20 +51,27 @@ abstract class NetworkBoundResource<ResultType, RequestType>
             result.removeSource(apiResponse)
             when (response) {
                 is ApiSuccessResponse -> {
+                    ThreadUtils.executeByIo(object :ThreadUtils.SimpleTask<ResultType>(){
+                        override fun onSuccess(result: ResultType) {
+                            setValue(DataResult.success(result))
+                        }
 
-                    thread {
-                        val data = saveCallResultOrConvert(processResponse(response))
-                        setValue(DataResult.success(data))
-                    }
+                        override fun doInBackground(): ResultType {
+                            return saveCallResultOrConvert(processResponse(response))
+                        }
+                    })
 
                 }
                 is ApiEmptyResponse   -> {
+                    ThreadUtils.executeByIo(object :ThreadUtils.SimpleTask<ResultType?>(){
+                        override fun onSuccess(result: ResultType?) {
+                            setValue(DataResult.cache(result))
+                        }
 
-                    thread {
-                        val data = load4Cache()
-                        setValue(DataResult.cache(data))
-                    }
-
+                        override fun doInBackground(): ResultType? {
+                            return load4Cache()
+                        }
+                    })
                 }
                 is ApiErrorResponse   -> {
                     val data = onFetchFailed()

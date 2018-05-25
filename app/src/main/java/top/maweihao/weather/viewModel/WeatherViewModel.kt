@@ -144,7 +144,7 @@ class WeatherViewModel : ViewModel() {
                         }
                     }
                     Status.ERROR   -> {
-                        tipsData.value = TipsData(TipsType.NORMAL, "Get weather failed, try to enable \"Auto Locate\"")
+                        tipsData.value = TipsData(TipsType.NORMAL, "NetWork Error : ${it.message}")
                     }
                     else           -> {
                     }
