@@ -17,6 +17,15 @@ public class Constants {
     public static final int WidgetSyncServiceRequestCode = 66;
     public static final int SYNC_SERVICE_CODE = 67;
 
+    public static final int NOTIFICATION_OPEN_WEATHER_ACTIVITY = 201;
+    public static final int NOTIFICATION_OPEN_ALARM_ACTIVITY = 202;
+
+    public static final String CHANNEL_WEATHER = "channel_weather";
+    public static final String CHANNEL_ALERT = "channel_alert";
+
+    public static final int ID_NOTIFICATION_NORMAL = 101;
+    public static final int ID_NOTIFICATION_ALERT = 102;
+
     public static boolean isSetResultIntent = false;
 
 //    public static final int requestLocationCode = 3;

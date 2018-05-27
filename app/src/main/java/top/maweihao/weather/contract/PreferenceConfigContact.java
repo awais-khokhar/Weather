@@ -32,6 +32,9 @@ public interface PreferenceConfigContact {
 
     String NOTIFICATION_TIME="notification_time";
     String NOTIFICATION="notification";
+    String NOTIFICATION_ALARM = "alarm_notifications";
+    String LAST_PUSH_TIME = "last_push_time";
+    String LAST_JOB_SCHEDULE_TIME = "last_job_schedule";
 
     @GET(key = COUNTY_NAME)
     String getCountyName();
@@ -93,6 +96,14 @@ public interface PreferenceConfigContact {
     @GET(key = NOTIFICATION)
     boolean getNotification(boolean defaultValue);
 
+    @GET(key = NOTIFICATION_ALARM)
+    boolean getAlarmNotification(boolean defaultValue);
+
+    @GET(key = LAST_PUSH_TIME)
+    long getLastPushTime(long defaultValue);
+
+    @GET(key = LAST_JOB_SCHEDULE_TIME)
+    long getLastScheduleTime(long defaultValue);
 
     @APPLY(key = COUNTY_NAME)
     void applyCountyName(String value);
@@ -153,4 +164,13 @@ public interface PreferenceConfigContact {
 
     @APPLY(key = NOTIFICATION)
     void applyNotification(boolean value);
+
+    @APPLY(key = NOTIFICATION_ALARM)
+    void applyAlarmNotification(boolean value);
+
+    @APPLY(key = LAST_PUSH_TIME)
+    void applyLastPushTime(boolean value);
+
+    @APPLY(key = LAST_JOB_SCHEDULE_TIME)
+    void applyLastJobScheduleTime(long time);
 }

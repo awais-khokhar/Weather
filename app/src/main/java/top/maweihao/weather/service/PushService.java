@@ -59,7 +59,6 @@ public class PushService extends Service {
         super.onCreate();
         LogUtils.d("onCreate: SyncService created");
         isChinese = Utility.isChinese(this);
-
     }
 
     @Override
@@ -148,9 +147,6 @@ public class PushService extends Service {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             int importance = NotificationManager.IMPORTANCE_HIGH;
             NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "weatherInfo", importance);
-//            notificationChannel.enableLights(true);
-//            notificationChannel.setLightColor(Color.RED);
-//            notificationChannel.enableVibration(true);
             assert manager != null;
             manager.createNotificationChannel(notificationChannel);
         }

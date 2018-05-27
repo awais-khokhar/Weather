@@ -48,8 +48,6 @@ public class AlertActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
-
     private void init() {
         this.alarmList = getIntent().getParcelableArrayListExtra(KEY_ALERT_ACTIVITY_ALERT_LIST);
         if (alarmList != null) {

@@ -1,11 +1,13 @@
 package top.maweihao.weather.view;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import top.maweihao.weather.R;
 
 public abstract class BaseActivity extends RxAppCompatActivity {
 
@@ -19,6 +21,7 @@ public abstract class BaseActivity extends RxAppCompatActivity {
 
         setContentView(setContentView());
         bind = ButterKnife.bind(this);
+        PreferenceManager.setDefaultValues(this, R.xml.settingpreference, false);
 
         initView(savedInstanceState);
     }

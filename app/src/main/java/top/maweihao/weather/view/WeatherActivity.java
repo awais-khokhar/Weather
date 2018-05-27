@@ -23,8 +23,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.tencent.bugly.crashreport.CrashReport;
-
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -150,7 +148,7 @@ public class WeatherActivity extends BaseActivity implements
     @Override
     protected void initView(Bundle savedInstanceState) {
         initView();
-//        doDebugThings();
+        doDebugThings();
         configContact = Utility.createSimpleConfig(this).create(PreferenceConfigContact.class);
 
         handler = new MessageHandler(this);
@@ -172,12 +170,12 @@ public class WeatherActivity extends BaseActivity implements
 
 
     private void doDebugThings() {
-        imageButton.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                CrashReport.testJavaCrash();
-            }
-        }, 1000 * 10);
+//        imageButton.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                CrashReport.testJavaCrash();
+//            }
+//        }, 1000 * 10);
     }
 
     private void initView() {
@@ -493,7 +491,6 @@ public class WeatherActivity extends BaseActivity implements
     private void showHourlyWeather(NewWeather.ResultBean.HourlyBean hourlyBean) {
         int length = hourlyBean.getSkycon().size();
         length = (length >= 24) ? 24 : length;
-//        Log.d("setHourlyWeatherChart: total " + length + " hour");
         final ArrayList<SingleWeather> singleWeathers = new ArrayList<>(length);
         for (int i = 0; i < length; i++) {
             String time = hourlyBean.getSkycon().get(i).getDatetime().substring(11, 16);

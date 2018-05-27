@@ -144,7 +144,6 @@ public class NewWeather implements Comparable<NewWeather> {
         }
     }
 
-
     public static class ResultBean {
 
         private HourlyBean hourly;

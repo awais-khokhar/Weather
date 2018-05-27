@@ -113,6 +113,18 @@ public class WeatherRepository implements WeatherData {
     }
 
     @Override
+    public NewWeather getWeatherCachedSync() {
+        List<NewWeather> weatherList = weatherDao.loadAll();
+        if (weatherList != null && weatherList.size() > 0) {
+            Collections.sort(weatherList);
+            return DaoUtils.unpackWeather(weatherList.get(0));
+        } else {
+            return null;
+        }
+    }
+
+
+    @Override
     public Observable<NewWeatherRealtime> getWeatherNow(String location) {
         return HttpUtil.getWeatherNow(location)
                 .doOnNext(new Consumer<NewWeatherRealtime>() {

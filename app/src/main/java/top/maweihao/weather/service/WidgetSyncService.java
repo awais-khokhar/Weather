@@ -40,7 +40,6 @@ public class WidgetSyncService extends Service {
     private int failedInterval;  //刷新失败时再次刷新的间隔
 
     private WeatherRepository weatherRepository;
-//    private PreferenceConfigContact configContact;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -49,7 +48,6 @@ public class WidgetSyncService extends Service {
 
     @Override
     public void onCreate() {
-//        Toast.makeText(this, "onCreate", Toast.LENGTH_SHORT).show();
         working = true;
         Log.d(TAG, "onCreate: ");
         super.onCreate();
@@ -82,12 +80,6 @@ public class WidgetSyncService extends Service {
             startAgain(interval);
             stopSelf();
         }
-//        if ((hasWidget && refreshInterval >= interval - 5) || forceRefresh) {
-//            startAgain(interval);
-//            fetchData(weatherRepository.getLocationCached());
-//        } else {
-//            startAgain(failedInterval);
-//        }
         return START_STICKY;
     }
 
@@ -107,7 +99,6 @@ public class WidgetSyncService extends Service {
     }
 
     private void startAgain(int interval) {
-//        Toast.makeText(this, "again " + interval, Toast.LENGTH_SHORT).show();
         Log.d(TAG, "startAgain: interval ==" + interval);
         Intent intent = new Intent(this, WidgetSyncService.class);
         PendingIntent pendingIntent = PendingIntent.getService(this,
@@ -121,8 +112,7 @@ public class WidgetSyncService extends Service {
     }
 
     private void fetchData(final MLocation location) {
-//        Toast.makeText(this, "fetchData!", Toast.LENGTH_SHORT).show();
-        int minInterval = 5;  //hardcode interval temporary
+        int minInterval = 5;
         long now = System.currentTimeMillis();
         long cachedLastUpdateTime = weatherRepository.getLastUpdateTime();
         if (now - cachedLastUpdateTime <= minInterval * 60 * 1000) {

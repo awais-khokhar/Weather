@@ -75,7 +75,7 @@
             android:name="top.maweihao.weather.view.AboutActivity$AboutPrefFragment"
             android:id="@+id/about_frameLayout"
             android:layout_width="match_parent"
-            android:layout_height="800dp" />
+            android:layout_height="600dp" />
         </LinearLayout>
 
     </ScrollView>

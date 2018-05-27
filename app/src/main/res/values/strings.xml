@@ -78,10 +78,14 @@
     <string name="HAZE">Haze</string>
     <string name="SLEET">Sleet</string>
 
+    <string name="LIGHT_SNOW">Light Snow</string>
+    <string name="MODERATE_SNOW">Moderate Snow</string>
+    <string name="HEAVY_SNOW">Heavy Snow</string>
+
     <string name="appearance_setting">Appearance</string>
     <string name="temperature">Temperature</string>
-    <string name="notification_setting">Notification(Beta)</string>
-    <string name="notification_summary">get weather-related message everyday</string>
+    <string name="notification_setting">Notification</string>
+    <string name="notification_summary">Get weather-related message everyday</string>
     <string name="location_setting">Location</string>
     <string name="about_setting">About</string>
 
@@ -136,7 +140,7 @@
     <string name="grant_permission">Grant</string>
     <string name="locate_failed">Locate failed, make sure you have enabled the location function.</string>
     <string name="yesterday">yesterday</string>
-    <string name="days_before">days before</string>
+    <string name="days_before">%d days before</string>
     <string name="appwidget_text" translatable="false">EXAMPLE</string>
     <string name="wish_you_lucky" translatable="false">Have a nice day!</string>
     <string name="weather_desc_today">Partly cloudy currently. It’s 15°, the high today was forecast as 18°.</string>
@@ -155,5 +159,17 @@
     <string name="current_version_">Current Version: %s</string>
 
     <string name="updated_on">updated on %s</string>
+    <string name="alarm_notifications">Alarm Notifications</string>
+
+    <string name="notification_warmer">%1$d° warmer in %2$s</string>
+    <string name="notification_colder">%1$d° colder in %2$s</string>
+
+
+    <string name="weather_desc">%1$s in %2$s tomorrow, up to %3$d° and down to %4$d°</string>
+    <string name="dont_forget_your_raincoat">don\'t forget your raincoat. </string>
+    <string name="air_not_good">and the air is not good</string>
+
+    <string name="comma">, </string>
+    <string name="period">. </string>
 
 </resources>

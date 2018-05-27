@@ -24,7 +24,7 @@ import top.maweihao.weather.util.Utility;
 public class WeatherApplication extends LitePalApplication {
 
     private static final String TAG = WeatherApplication.class.getSimpleName();
-    private static boolean isDebug;
+    public static boolean isDebug;
 
     @Override
     public void onCreate() {
@@ -34,7 +34,7 @@ public class WeatherApplication extends LitePalApplication {
         String pn = getProcessName(android.os.Process.myPid());
         if (pn == null || pn.equals(getPackageName())) {
             //tencent bugly
-            CrashReport.initCrashReport(getApplicationContext(), "2af8412ed0", isDebug);
+            CrashReport.initCrashReport(getApplicationContext(), "2af8412ed0", isDebug, getStrategy());
 
             Constants.timeShift = Utility.getTimeShift();
             Constants.lang = Utility.getCurrentLanguage(this);
@@ -65,5 +65,11 @@ public class WeatherApplication extends LitePalApplication {
             }
         }
         return null;
+    }
+
+    private CrashReport.UserStrategy getStrategy() {
+        CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(getApplicationContext());
+        // TODO: 2018/5/27  
+        return strategy;
     }
 }
