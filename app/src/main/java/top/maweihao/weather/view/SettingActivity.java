@@ -1,7 +1,6 @@
 package top.maweihao.weather.view;
 
 import android.app.ActivityOptions;
-import android.app.TimePickerDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.SwitchPreference;
 import android.support.annotation.Nullable;
@@ -21,12 +19,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.TimePicker;
 import android.widget.Toast;
-
-import java.text.DecimalFormat;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,7 +27,7 @@ import top.maweihao.weather.R;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.contract.WeatherData;
 import top.maweihao.weather.model.WeatherRepository;
-import top.maweihao.weather.service.PushService;
+import top.maweihao.weather.service.SyncService;
 import top.maweihao.weather.util.Utility;
 
 import static top.maweihao.weather.util.Constants.ChooseCode;
@@ -144,19 +137,6 @@ public class SettingActivity extends AppCompatActivity {
 
             alarmNotification = ((SwitchPreference) findPreference("setting_alarm"));
 
-            notificationTime = findPreference("notification_time");
-            notificationTime.setOnPreferenceClickListener(new NotificationTimePreferenceClickListener());
-
-            // 隐藏通知时间
-            PreferenceCategory category = ((PreferenceCategory) findPreference("notification_group"));
-            category.removePreference(notificationTime);
-
-            if (notification.isChecked()) {
-                notificationTime.setEnabled(true);
-                notificationTime.setSummary(configContact.getNotificationTime("18 : 00"));
-            } else
-                notificationTime.setEnabled(false);
-
             if (autoUpdateSP.isChecked()) {
                 Log.d(TAG, "initViews: autoUpdate is checked");
                 choosePositionPreference.setEnabled(false);
@@ -199,24 +179,31 @@ public class SettingActivity extends AppCompatActivity {
                         }
                         return true;
                     case "notification":
-                        Intent startIntent = new Intent(getActivity(), PushService.class);
+//                        Intent startIntent = new Intent(getActivity(), PushService.class);
                         if (stringValue.equals("true")) {
                             notificationTime.setEnabled(true);
-                            notificationTime.setSummary(configContact.getNotificationTime("18 : 00"));
-                            PushService.isStarSendNotification = false;
-                            getActivity().startService(startIntent);
+//                            notificationTime.setSummary(configContact.getNotificationTime("18 : 00"));
+//                            PushService.isStarSendNotification = false;
+                            SyncService.scheduleSyncService(getActivity().getApplicationContext(), false);
+//                            getActivity().startService(startIntent);
                             Log.d(TAG, "onPreferenceChange: start SyncService");
                         } else {
                             notificationTime.setEnabled(false);
-                            getActivity().stopService(startIntent);
+                            SyncService.stopSyncService(getActivity().getApplicationContext());
+//                            getActivity().stopService(startIntent);
                             Log.d(TAG, "onPreferenceChange: stop SyncService");
                         }
                         return true;
-                    case "notification_time":
-                        Log.d(TAG, "onPreferenceChange: notification_time");
-                        notificationTime.setSummary(preference.getKey());
-                        return true;
                     case "setting_alarm":
+                        if (stringValue.equals("true")) {
+                            alarmNotification.setEnabled(true);
+                            SyncService.scheduleSyncService(getActivity().getApplicationContext(), false);
+                            Log.d(TAG, "onPreferenceChange: start SyncService");
+                        } else {
+                            alarmNotification.setEnabled(false);
+                            SyncService.stopSyncService(getActivity().getApplicationContext());
+                            Log.d(TAG, "onPreferenceChange: stop SyncService");
+                        }
                         return true;
                     default:
                         return false;
@@ -320,28 +307,5 @@ public class SettingActivity extends AppCompatActivity {
             }
         }
 
-        private class NotificationTimePreferenceClickListener implements Preference.OnPreferenceClickListener {
-            @Override
-            public boolean onPreferenceClick(final Preference preference) {
-                Calendar calendar = new GregorianCalendar();
-                TimePickerDialog timeDialog = new TimePickerDialog(getActivity(),
-                        new TimePickerDialog.OnTimeSetListener() {
-                            //从这个方法中取得获得的时间
-                            @Override
-                            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                                DecimalFormat df = new DecimalFormat("00");
-                                String formatHour = df.format(hourOfDay);
-                                String formatMinute = df.format(minute);
-                                preference.setSummary(formatHour + ": " + formatMinute);
-                                configContact.applyNotificationTime(formatHour + TIME_SPLIT + formatMinute);
-                                PushService.isStarSendNotification = false;
-                                Intent startIntent = new Intent(getActivity(), PushService.class);
-                                getActivity().startService(startIntent);
-                            }
-                        }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true);
-                timeDialog.show();
-                return false;
-            }
-        }
     }
 }

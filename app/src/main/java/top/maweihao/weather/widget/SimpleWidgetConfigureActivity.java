@@ -21,8 +21,8 @@ import java.util.GregorianCalendar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import top.maweihao.weather.R;
+import top.maweihao.weather.service.SyncService;
 import top.maweihao.weather.util.LunarUtil;
-import top.maweihao.weather.util.ServiceUtil;
 
 public class SimpleWidgetConfigureActivity extends Activity implements View.OnClickListener{
 
@@ -115,7 +115,8 @@ public class SimpleWidgetConfigureActivity extends Activity implements View.OnCl
                 Intent resultValue = new Intent();
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                 setResult(RESULT_OK, resultValue);
-                ServiceUtil.startWidgetSyncService(SimpleWidgetConfigureActivity.this, true, true);
+//                ServiceUtil.startWidgetSyncService(SimpleWidgetConfigureActivity.this, true, true);
+                SyncService.scheduleSyncService(getApplicationContext(), true);
                 finish();
                 break;
             default:

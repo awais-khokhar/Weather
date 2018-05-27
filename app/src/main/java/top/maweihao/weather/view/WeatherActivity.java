@@ -45,7 +45,7 @@ import top.maweihao.weather.entity.SingleWeather;
 import top.maweihao.weather.entity.dao.MLocation;
 import top.maweihao.weather.entity.dao.NewWeather;
 import top.maweihao.weather.presenter.NewWeatherPresenter;
-import top.maweihao.weather.service.PushService;
+import top.maweihao.weather.service.SyncService;
 import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.Utility;
 
@@ -292,8 +292,7 @@ public class WeatherActivity extends BaseActivity implements
                 break;
             case R.id.start_service:
                 // debug only
-                Intent startIntent = new Intent(WeatherActivity.this, PushService.class);
-                startService(startIntent);
+                SyncService.scheduleSyncService(getApplicationContext(), false);
                 break;
             case R.id.setting:
                 Intent intent1 = new Intent(WeatherActivity.this, SettingActivity.class);

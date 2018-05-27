@@ -53,8 +53,8 @@ public class SyncService extends JobService {
     private static final long INTERVAL_DEBUG = 1000 * 60 * 60; // 测试用，每隔1小时刷新
     private static final long INTERVAL_ALERT = 1000 * 60 * 60 * 6; // 只检查预警，6小时一次即可
     private static final long INTERVAL_PUSH = 1000 * 60 * 60 * 4;  //开启了天气通知，4小时一次
-    private static final long INTERVAL_WIDGET_NORMAL = 1000 * 60 * 60 * 3;  // 有桌面插件，3小时一次
-    private static final long INTERVAL_WIDGET_PRECISE = 1000 * 60 * 60 * 2;  // 桌面插件有BigWidget, 2小时
+    private static final long INTERVAL_WIDGET_NORMAL = 1000 * 60 * 60 * 4;  // 有桌面插件，4小时一次
+    private static final long INTERVAL_WIDGET_PRECISE = 1000 * 60 * 60 * 4;  // 桌面插件有BigWidget, 3小时
 
     // 通知类别
 //    private static final int TYPE_WEATHER = 0;
@@ -79,7 +79,8 @@ public class SyncService extends JobService {
         Log.d(TAG, "onStartJob: ");
         long now = System.currentTimeMillis();
         long interval = now - configContact.getLastScheduleTime(0);
-        if (interval <= 1000 * 3) {
+        configContact.applyLastJobScheduleTime(now);
+        if (interval <= 1000 * 5) {
             return false;
         }
         //距离上次不足5分钟时，只使用本地缓存刷新插件
@@ -87,16 +88,14 @@ public class SyncService extends JobService {
             updateWidget(null, null);
             return false;
         }
-        configContact.applyLastJobScheduleTime(now);
         location = mRepository.getLocationCached();
         if (location == null) {
-            Log.e(TAG, "onStartJob: NO CACHED LOCATION!");
+            Log.e(TAG, "HERE onStartJob: NO CACHED LOCATION!");
             return false;
         }
         // 夜里无需检查天气
         if (isSyncTime(now)) {
-            // 只有通知的情况
-            if (!hasWidget) {
+            if (!hasWidget) {  // 只有通知的情况
                 if (isAlertNotificationOn) {
                     return refreshData(location, params);
                 } else if (!hasPushedToday && isNotificationOn && isPushTime(now)){
@@ -118,7 +117,7 @@ public class SyncService extends JobService {
      */
     private boolean refreshData(final MLocation location, final JobParameters parameters) {
         long now = System.currentTimeMillis();
-        long lastCacheTime = configContact.getLastSyncTime(0);
+        long lastCacheTime = mRepository.getLastUpdateTime();
         if (now - lastCacheTime <= 5 * 60 * 1000) {
             afterGettingData(mRepository.getWeatherCachedSync(), location);
             return false;
@@ -129,7 +128,9 @@ public class SyncService extends JobService {
                 .subscribe(new Consumer<NewWeather>() {
                     @Override
                     public void accept(NewWeather weather) throws Exception {
-                        afterGettingData(weather, location);
+                        if (weather.getStatus().equals("ok")) {
+                            afterGettingData(weather, location);
+                        }
                         jobFinished(parameters, false);
                     }
                 }, new Consumer<Throwable>() {
@@ -145,7 +146,7 @@ public class SyncService extends JobService {
     private void afterGettingData(NewWeather weather, MLocation location) {
         updateWidget(weather, location);
         if (isNotificationOn && isPushTime(System.currentTimeMillis())) {
-
+            analysisWeather(getApplicationContext(), weather);
         }
     }
 
@@ -190,37 +191,57 @@ public class SyncService extends JobService {
     public static int scheduleSyncService(Context context, boolean forceSyncWidget) {
         JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         assert scheduler != null;
+        if (!forceSyncWidget && scheduler.getAllPendingJobs().size() > 0) {
+            Log.d(TAG, "scheduleSyncService: No Need To Run Again");
+            return 10;
+        }
         JobInfo.Builder builder = new JobInfo.Builder(Constants.SYNC_SERVICE_CODE,
                 new ComponentName(context.getPackageName(), SyncService.class.getName()));
-//        long interval = getSuggestedInterval(context);
-        long interval = INTERVAL_DEBUG;
+        long interval = getSuggestedInterval(context);
+//        long interval = INTERVAL_DEBUG;
         if (interval == 0) {
             Log.d(TAG, "No need to run in background");
             scheduler.cancel(Constants.SYNC_SERVICE_CODE);
             return -1;
         }
-        builder.setPeriodic(interval);  //1 hour
+        builder.setPeriodic(interval);
         builder.setPersisted(true);
         builder.setRequiresDeviceIdle(false);
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
         return scheduler.schedule(builder.build());
     }
 
+    public static void stopSyncService(Context context) {
+        if (WidgetUtils.hasAnyWidget(context)) {
+            return;
+        }
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        if (preferences.getBoolean(PreferenceConfigContact.NOTIFICATION, false)
+                || preferences.getBoolean(PreferenceConfigContact.NOTIFICATION_ALARM, false)) {
+            return;
+        }
+        JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        assert scheduler != null;
+        scheduler.cancel(Constants.SYNC_SERVICE_CODE);
+    }
+
     private static long getSuggestedInterval(Context context) {
+        long interval = 0;
         if (WidgetUtils.hasBigWidget(context)) {
-            return INTERVAL_WIDGET_PRECISE;
+            interval = INTERVAL_WIDGET_PRECISE;
         }
         if (WidgetUtils.hasAnyWidget(context)) {
-            return INTERVAL_WIDGET_NORMAL;
+            interval = INTERVAL_WIDGET_NORMAL;
         }
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         if (preferences.getBoolean(PreferenceConfigContact.NOTIFICATION, false)) {
-            return INTERVAL_PUSH;
+            interval = INTERVAL_PUSH;
         }
         if (preferences.getBoolean(PreferenceConfigContact.NOTIFICATION_ALARM, false)) {
-            return INTERVAL_ALERT;
+            interval = INTERVAL_ALERT;
         }
-        return 0;
+        Log.d(TAG, "getSuggestedInterval: " + interval);
+        return interval;
     }
 
     private void analysisWeather(Context context, NewWeather weather) {
@@ -238,23 +259,42 @@ public class SyncService extends JobService {
                     alerts.remove(alert);
                     sent.add(alert);
                 }
-                if (shouldSend) {
-                    alerts.addAll(sent);
-                    NotificationUtil.sendAlarmNotification(context, alerts);
-                }
+            }
+            if (shouldSend) {
+                alerts.addAll(sent);
+                NotificationUtil.sendAlarmNotification(context, alerts);
             }
         }
-        // 通知优先级：中雨大雨, 中雪大雪 > 温差 >
-        NewWeather.ResultBean.DailyBean tomorrow = weather.getResult().getDaily();
-        int tomMax = Utility.intRoundDouble(tomorrow.getTemperature().get(1).getMax());
-        int tomMin = Utility.intRoundDouble(tomorrow.getTemperature().get(1).getMin());
-        String skycon = Utility.chooseWeatherSkycon(context, tomorrow.getSkycon().get(1).getValue(),
-                tomorrow.getPrecipitation().get(1).getAvg(), WeatherActivity.HOURLY_MODE);
-
-        int diff = calTemperatureDiff(weather);
-        if (Math.abs(diff) >= 3) {
-            sendTemperatureDifference(context, diff);
+        if (hasPushedToday) {
+            return;
         }
+        hasPushedToday = true;
+        configContact.applyLastPushTime(System.currentTimeMillis());
+        NewWeather.ResultBean.DailyBean daily = weather.getResult().getDaily();
+        int tomMax = Utility.intRoundDouble(daily.getTemperature().get(1).getMax());
+        int tomMin = Utility.intRoundDouble(daily.getTemperature().get(1).getMin());
+
+        String skycon = Utility.chooseWeatherSkycon(context, daily.getSkycon().get(1).getValue(),
+                daily.getPrecipitation().get(1).getAvg(), WeatherActivity.HOURLY_MODE);
+
+        double windSpeed = daily.getWind().get(1).getMax().getSpeed();
+        int aqi = (int) daily.getAqi().get(1).getAvg();
+        String windLevel = Utility.getWindLevel(this, windSpeed);
+        int diff = calTemperatureDiff(weather);
+        boolean hasRainOrSnow = WeatherUtil.hasRainOrSnow(context.getResources(), skycon);
+        String desc = getWeatherDesc(context, location.getCoarseLocation(), tomMin, tomMax,
+                skycon, windSpeed > 6.0 ? windLevel : null, aqi, hasRainOrSnow);
+        String title = null;
+        if (Math.abs(diff) >= 3) {
+            title = getTemperatureDifferenceString(context, diff);
+        } else if (hasRainOrSnow) {
+            title = context.getResources().getString(R.string.dont_forget_your_raincoat_tomorrow);
+        } else if (windSpeed > 7.0) {
+            title = context.getResources().getString(R.string.big_wind_tomorrow);
+        } else {
+            title = null;
+        }
+        NotificationUtil.sendWeatherNotification(context, title, desc);
     }
 
     private int calTemperatureDiff(NewWeather weather) {
@@ -271,6 +311,7 @@ public class SyncService extends JobService {
         if (maxDiff * minDiff >= 0) {  // 最高温和最低温都同时变高/低，直接选变化大的那个数值
             return Math.abs(maxDiff) >= Math.abs(minDiff) ? maxDiff : minDiff;
         } else {
+            //否则按均温计算，相差超过5度才记录
             int todayAve = Utility.intRoundDouble(today.getAvg());
             int tomAve = Utility.intRoundDouble(tomorrow.getAvg());
             int diff = tomAve - todayAve;
@@ -300,17 +341,12 @@ public class SyncService extends JobService {
     }
 
     // 示例："5° warmer in Wednesday"  "周三将升温 5°"
-    private void sendTemperatureDifference(Context context, int diff) {
+    private String getTemperatureDifferenceString(Context context, int diff) {
         Calendar calendar = new GregorianCalendar();
         int nextDay = calendar.get(Calendar.DAY_OF_WEEK) + 1;
         String dayOfWeek = getResources().getStringArray(R.array.weekend)[nextDay % 7];
         int res = diff > 0 ? R.string.notification_warmer : R.string.notification_colder;
-        String title = getResources().getString(res, diff, dayOfWeek);
-        NotificationUtil.sendWeatherNotification(context, title, null);
-    }
-
-    private void sendWeatherChangeNotification(Context context, int code) {
-
+        return getResources().getString(res, diff, dayOfWeek);
     }
 
 }

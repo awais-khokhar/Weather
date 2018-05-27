@@ -34,10 +34,10 @@ import top.maweihao.weather.entity.BaiDu.BaiDuIPLocationBean;
 import top.maweihao.weather.entity.dao.MLocation;
 import top.maweihao.weather.entity.dao.NewWeather;
 import top.maweihao.weather.model.WeatherRepository;
+import top.maweihao.weather.service.SyncService;
 import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.HttpUtil;
 import top.maweihao.weather.util.LocationUtil;
-import top.maweihao.weather.util.ServiceUtil;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.util.remoteView.WidgetUtils;
 
@@ -85,7 +85,7 @@ public class NewWeatherPresenter extends BasePresenter
 
     @Override
     public void subscribe() {
-        fetchData(false);
+        fetchCachedData(false);
 
 //        locate();
     }
@@ -119,7 +119,7 @@ public class NewWeatherPresenter extends BasePresenter
     }
 
     @Override
-    public void fetchData(final boolean ignoreInterval) {
+    public void fetchCachedData(final boolean ignoreInterval) {
         Disposable disposable = model.getWeatherCached()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -138,7 +138,7 @@ public class NewWeatherPresenter extends BasePresenter
                             if (interval > 5) {  //hardcode the minimum refresh interval temporary
                                 locate();
                             } else {
-                                Log.d(TAG, "fetchData: no need to refresh, last " + interval + " ago");
+                                Log.d(TAG, "fetchCachedData: no need to refresh, last " + interval + " ago");
                                 if (WidgetUtils.hasAnyWidget(context)) {
                                     updateWidget(weather, location.getCoarseLocation());
                                 }
@@ -269,7 +269,7 @@ public class NewWeatherPresenter extends BasePresenter
                             if (!workingFlag) {
                                 view.setRefreshingState(false);
                             } else {
-                                Log.d(TAG, "get weather: cannot stop swipe now");
+//                                Log.d(TAG, "get weather: cannot stop swipe now");
                                 workingFlag = false;
                             }
                         } else {
@@ -463,8 +463,9 @@ public class NewWeatherPresenter extends BasePresenter
         } else {
             if (WidgetUtils.hasAnyWidget(context)) {
 //                Log.d(TAG, "updateWidget: here has widget");
-                ServiceUtil.startWidgetSyncService(context, false, false);
+//                ServiceUtil.startWidgetSyncService(context, false, false);
                 WidgetUtils.refreshWidget(context, weatherView, location);
+                SyncService.scheduleSyncService(context.getApplicationContext(), false);
             }
         }
     }

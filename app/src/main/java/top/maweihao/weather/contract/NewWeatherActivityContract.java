@@ -24,7 +24,7 @@ public interface NewWeatherActivityContract {
     }
 
     interface NewPresenter extends BasePresenter {
-        void fetchData(boolean ignoreInterval);
+        void fetchCachedData(boolean ignoreInterval);
         void refreshLocalWeather();
         void onPermissionDenied();
         void refreshChosenWeather(String desc);

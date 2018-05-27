@@ -172,4 +172,7 @@
     <string name="comma">, </string>
     <string name="period">. </string>
 
+    <string name="dont_forget_your_raincoat_tomorrow">Don\'t forget your raincoat tomorrow. </string>
+    <string name="big_wind_tomorrow">Big wind tomorrow</string>
+
 </resources>

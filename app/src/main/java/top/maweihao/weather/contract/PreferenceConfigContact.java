@@ -32,7 +32,7 @@ public interface PreferenceConfigContact {
 
     String NOTIFICATION_TIME="notification_time";
     String NOTIFICATION="notification";
-    String NOTIFICATION_ALARM = "alarm_notifications";
+    String NOTIFICATION_ALARM = "setting_alarm";
     String LAST_PUSH_TIME = "last_push_time";
     String LAST_JOB_SCHEDULE_TIME = "last_job_schedule";
 
@@ -169,7 +169,7 @@ public interface PreferenceConfigContact {
     void applyAlarmNotification(boolean value);
 
     @APPLY(key = LAST_PUSH_TIME)
-    void applyLastPushTime(boolean value);
+    void applyLastPushTime(long value);
 
     @APPLY(key = LAST_JOB_SCHEDULE_TIME)
     void applyLastJobScheduleTime(long time);

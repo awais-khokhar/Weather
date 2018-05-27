@@ -19,7 +19,6 @@ import top.maweihao.weather.entity.dao.MLocation;
 import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.util.remoteView.WidgetUtils;
-
 public class WidgetSyncService extends Service {
 
     private static final String TAG = WidgetSyncService.class.getSimpleName();
@@ -56,7 +55,14 @@ public class WidgetSyncService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand: ");
+        Log.d(TAG, "HERE onStartCommand: ");
+
+        if (intent != null && intent.getExtras() != null && intent.getExtras().getBoolean(WidgetSyncService.from_widget)) {
+            Log.d(TAG, "onStartCommand: start job service");
+            SyncService.scheduleSyncService(this.getApplicationContext(), true);
+            stopSelf();
+            return START_NOT_STICKY;
+        }
         isBigWidgetOn = WidgetUtils.hasBigWidget(this);
         if (intent != null) {
             String name = intent.getStringExtra(county_name);
@@ -122,7 +128,7 @@ public class WidgetSyncService extends Service {
                     .subscribe(new Consumer<NewWeather>() {
                         @Override
                         public void accept(NewWeather weather) throws Exception {
-                            Log.d(TAG, "fetchData: use cached weather to refresh the widget");
+                            Log.d(TAG, "fetchCachedData: use cached weather to refresh the widget");
                             WidgetUtils.refreshWidget(WidgetSyncService.this,
                                     weather, location.getCoarseLocation());
                             stopSelf();
@@ -130,7 +136,7 @@ public class WidgetSyncService extends Service {
                     }, new Consumer<Throwable>() {
                         @Override
                         public void accept(Throwable throwable) throws Exception {
-                            Log.e(TAG, "fetchData: get cached weather failed " + throwable);
+                            Log.e(TAG, "fetchCachedData: get cached weather failed " + throwable);
                             requestWeatherAndUpdate(location, weatherRepository, failedInterval);
                         }
                     });
@@ -144,7 +150,7 @@ public class WidgetSyncService extends Service {
                             .subscribe(new Consumer<NewHeWeatherNow>() {
                                 @Override
                                 public void accept(NewHeWeatherNow weather) throws Exception {
-                                    Log.d(TAG, "fetchData: use cached he weather to refresh the widget");
+                                    Log.d(TAG, "fetchCachedData: use cached he weather to refresh the widget");
                                     WidgetUtils.refreshWidget(WidgetSyncService.this,
                                             weather, location.getCoarseLocation());
                                     stopSelf();
@@ -152,7 +158,7 @@ public class WidgetSyncService extends Service {
                             }, new Consumer<Throwable>() {
                                 @Override
                                 public void accept(Throwable throwable) throws Exception {
-                                    Log.e(TAG, "fetchData: get cached weather failed " + throwable);
+                                    Log.e(TAG, "fetchCachedData: get cached weather failed " + throwable);
                                     requestHeAndUpdate(location, weatherRepository, failedInterval);
                                 }
                             });
@@ -176,9 +182,9 @@ public class WidgetSyncService extends Service {
                             lastRefreshTime = weather.getServer_time() * 1000;
                             WidgetUtils.refreshWidget(WidgetSyncService.this,
                                     weather, location.getCoarseLocation());
-                            Log.d(TAG, "fetchData: fetch weather succeed!");
+                            Log.d(TAG, "fetchCachedData: fetch weather succeed!");
                         } else {
-                            Log.e(TAG, "fetchData: weather api error");
+                            Log.e(TAG, "fetchCachedData: weather api error");
                             startAgain(failedInterval);
                         }
                         stopSelf();
@@ -186,7 +192,7 @@ public class WidgetSyncService extends Service {
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-                        Log.e(TAG, "fetchData: get weather failed" + throwable);
+                        Log.e(TAG, "fetchCachedData: get weather failed" + throwable);
                         startAgain(failedInterval);
                         stopSelf();
                     }
@@ -194,7 +200,7 @@ public class WidgetSyncService extends Service {
     }
 
     private void requestHeAndUpdate(final MLocation location, WeatherData model, final int failedInterval) {
-        Log.d(TAG, "fetchData: here" + location.getLocationStringReversed());
+        Log.d(TAG, "fetchCachedData: here" + location.getLocationStringReversed());
         model.getHeWeatherNow(location.getLocationStringReversed())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Consumer<NewHeWeatherNow>() {
@@ -205,9 +211,9 @@ public class WidgetSyncService extends Service {
                             lastRefreshTime = Utility.getHeWeatherUpdateTime(weatherNow);
                             WidgetUtils.refreshWidget(WidgetSyncService.this,
                                     weatherNow, location.getCoarseLocation());
-                            Log.d(TAG, "fetchData: fetch he weather succeed!");
+                            Log.d(TAG, "fetchCachedData: fetch he weather succeed!");
                         } else {
-                            Log.e(TAG, "fetchData: he api error");
+                            Log.e(TAG, "fetchCachedData: he api error");
                             startAgain(failedInterval);
                         }
                         stopSelf();
@@ -215,7 +221,7 @@ public class WidgetSyncService extends Service {
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-                        Log.e(TAG, "fetchData: get heWeatherNow failed " + throwable);
+                        Log.e(TAG, "fetchCachedData: get heWeatherNow failed " + throwable);
                         startAgain(failedInterval);
                         stopSelf();
                     }

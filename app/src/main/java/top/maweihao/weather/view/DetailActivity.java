@@ -107,7 +107,7 @@ public class DetailActivity extends AppCompatActivity {
                         @Override
                         public void accept(Throwable throwable) throws Exception {
                             stopSwipe();
-                            Log.e(TAG, "fetchData: get weather cached failed" + throwable);
+                            Log.e(TAG, "fetchCachedData: get weather cached failed" + throwable);
                             showError();
                         }
                     });

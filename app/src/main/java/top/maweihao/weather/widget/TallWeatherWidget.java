@@ -4,9 +4,8 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 
-import top.maweihao.weather.util.ServiceUtil;
+import top.maweihao.weather.service.SyncService;
 import top.maweihao.weather.util.remoteView.TallWidgetUtils;
-import top.maweihao.weather.util.remoteView.WidgetUtils;
 
 /**
  * Implementation of App Widget functionality.
@@ -19,7 +18,8 @@ public class TallWeatherWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         TallWidgetUtils.setIntent(context, null);
-        ServiceUtil.startWidgetSyncService(context, true, false);
+//        ServiceUtil.startWidgetSyncService(context, true, false);
+        SyncService.scheduleSyncService(context, true);
     }
 
     @Override
@@ -34,9 +34,7 @@ public class TallWeatherWidget extends AppWidgetProvider {
     @Override
     public void onDisabled(Context context) {
         TallWeatherWidgetConfigureActivity.deleteAllPref(context);
-        if (WidgetUtils.hasAnyWidget(context)) {
-            ServiceUtil.stopWidgetSyncService(context);
-        }
+        SyncService.stopSyncService(context);
     }
 }
 

@@ -151,4 +151,7 @@
     <string name="comma">，</string>
     <string name="period">。</string>
 
+    <string name="dont_forget_your_raincoat_tomorrow">明天别忘了带伞</string>
+    <string name="big_wind_tomorrow">明天有大风</string>
+
 </resources>

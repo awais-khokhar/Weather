@@ -46,11 +46,6 @@
             android:title="@string/alarm_notifications"
             android:summary=""/>
 
-        <Preference
-            android:enabled="false"
-            android:key="notification_time"
-            android:persistent="true"
-            android:title="@string/notification_time" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/about_setting">

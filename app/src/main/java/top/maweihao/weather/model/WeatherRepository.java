@@ -1,6 +1,7 @@
 package top.maweihao.weather.model;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +33,7 @@ import top.maweihao.weather.util.HttpUtil;
 public class WeatherRepository implements WeatherData {
 
     private static WeatherRepository instance;
+    private static final String TAG = WeatherRepository.class.getSimpleName();
 
     DaoSession daoSession;
 
@@ -189,7 +191,9 @@ public class WeatherRepository implements WeatherData {
     public long getLastUpdateTime() {
         List<NewWeather> weatherList = weatherDao.loadAll();
         if (weatherList != null && weatherList.size() > 0) {
-            return weatherList.get(0).getServer_time() * 1000;
+            long time =  weatherList.get(0).getServer_time() * 1000;
+            Log.d(TAG, "getLastUpdateTime: " + time);
+            return time;
         } else {
             return 0;
         }

@@ -58,11 +58,6 @@
             android:enabled="true"
             android:process=":remote" />
 
-        <service
-            android:name=".service.PushService"
-            android:enabled="true"
-            android:exported="false" />
-
         <receiver
             android:name=".receiver.BootCompleteReceiver"
             android:enabled="true"
@@ -126,7 +121,9 @@
             android:name=".service.WidgetSyncService"
             android:enabled="true"
             android:exported="false" />
-        <service android:name=".service.SyncService" />
+        <service
+            android:name=".service.SyncService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <activity android:name=".widget.SimpleWidgetConfigureActivity">
             <intent-filter>
