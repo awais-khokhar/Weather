@@ -9,7 +9,7 @@ import top.maweihao.weather.util.remoteView.TallWidgetUtils;
 
 /**
  * Implementation of App Widget functionality.
- * App Widget Configuration implemented in {@link TallWeatherWidgetConfigureActivity TallWeatherWidgetConfigureActivity}
+ * App Widget Configuration implemented in {@link TallWidgetConfigureActivity TallWidgetConfigureActivity}
  */
 public class TallWeatherWidget extends AppWidgetProvider {
 
@@ -33,7 +33,7 @@ public class TallWeatherWidget extends AppWidgetProvider {
 
     @Override
     public void onDisabled(Context context) {
-        TallWeatherWidgetConfigureActivity.deleteAllPref(context);
+        TallWidgetConfigureActivity.deleteAllPref(context);
         SyncService.stopSyncService(context);
     }
 }

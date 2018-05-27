@@ -14,7 +14,7 @@ import top.maweihao.weather.R;
 /**
  * The configuration screen for the {@link MagicWeatherWidget MagicWeatherWidget} AppWidget.
  */
-public class MagicWeatherWidgetConfigureActivity extends Activity {
+public class MagicWidgetConfigureActivity extends Activity {
 
     private static final String PREFS_NAME = "top.maweihao.weather.widget.MagicWeatherWidget";
     private static final String PREF_PREFIX_KEY = "appwidget_";
@@ -22,7 +22,7 @@ public class MagicWeatherWidgetConfigureActivity extends Activity {
     EditText mAppWidgetText;
     View.OnClickListener mOnClickListener = new View.OnClickListener() {
         public void onClick(View v) {
-            final Context context = MagicWeatherWidgetConfigureActivity.this;
+            final Context context = MagicWidgetConfigureActivity.this;
 
             // When the button is clicked, store the string locally
             String widgetText = mAppWidgetText.getText().toString();
@@ -40,7 +40,7 @@ public class MagicWeatherWidgetConfigureActivity extends Activity {
         }
     };
 
-    public MagicWeatherWidgetConfigureActivity() {
+    public MagicWidgetConfigureActivity() {
         super();
     }
 
@@ -95,7 +95,7 @@ public class MagicWeatherWidgetConfigureActivity extends Activity {
             return;
         }
 
-        mAppWidgetText.setText(loadTitlePref(MagicWeatherWidgetConfigureActivity.this, mAppWidgetId));
+        mAppWidgetText.setText(loadTitlePref(MagicWidgetConfigureActivity.this, mAppWidgetId));
     }
 }
 

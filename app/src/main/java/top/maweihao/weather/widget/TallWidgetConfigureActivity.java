@@ -11,14 +11,14 @@ import android.widget.ImageView;
 import android.widget.Switch;
 
 import top.maweihao.weather.R;
-import top.maweihao.weather.service.SyncService;
+import top.maweihao.weather.service.WidgetService;
 
 import static top.maweihao.weather.R.id.tall_widget_preview;
 
 /**
  * The configuration screen for the {@link TallWeatherWidget TallWeatherWidget} AppWidget.
  */
-public class TallWeatherWidgetConfigureActivity extends Activity {
+public class TallWidgetConfigureActivity extends Activity {
 
     private static final String PREFS_NAME = "top.maweihao.weather.TallWeatherWidget";
     private static final String PREF_LUNAR_PREFIX_KEY = "appwidget_lunar";
@@ -30,15 +30,15 @@ public class TallWeatherWidgetConfigureActivity extends Activity {
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     View.OnClickListener mOnClickListener = new View.OnClickListener() {
         public void onClick(View v) {
-            final Context context = TallWeatherWidgetConfigureActivity.this.getApplicationContext();
+            final Context context = TallWidgetConfigureActivity.this.getApplicationContext();
 
             switch (v.getId()) {
                 case R.id.add_button:
                     Intent resultValue = new Intent();
                     resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                     setResult(RESULT_OK, resultValue);
-//                    ServiceUtil.startWidgetSyncService(context, true, true);
-                    SyncService.scheduleSyncService(context, true);
+//                    SyncService.scheduleSyncService(context, true);
+                    WidgetService.refreshWidgets(getApplicationContext(), true, true, true);
                     finish();
                     break;
                 case R.id.tall_lunar_switch:
@@ -60,7 +60,7 @@ public class TallWeatherWidgetConfigureActivity extends Activity {
         }
     };
 
-    public TallWeatherWidgetConfigureActivity() {
+    public TallWidgetConfigureActivity() {
         super();
     }
 

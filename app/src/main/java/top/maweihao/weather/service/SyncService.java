@@ -12,11 +12,14 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
@@ -77,20 +80,22 @@ public class SyncService extends JobService {
     @Override
     public boolean onStartJob(JobParameters params) {
         Log.d(TAG, "onStartJob: ");
+        writeLog();
+
         long now = System.currentTimeMillis();
         long interval = now - configContact.getLastScheduleTime(0);
         configContact.applyLastJobScheduleTime(now);
-        if (interval <= 1000 * 5) {
-            return false;
-        }
-        //距离上次不足5分钟时，只使用本地缓存刷新插件
-        if (interval <= 5 * 60 * 1000) {
-            updateWidget(null, null);
+        if (interval <= 1000) {
             return false;
         }
         location = mRepository.getLocationCached();
         if (location == null) {
             Log.e(TAG, "HERE onStartJob: NO CACHED LOCATION!");
+            return false;
+        }
+        //距离上次不足5分钟时，只使用本地缓存刷新插件
+        if (interval <= 5 * 60 * 1000) {
+            updateWidget(null, location);
             return false;
         }
         // 夜里无需检查天气
@@ -109,6 +114,25 @@ public class SyncService extends JobService {
         return false;
     }
 
+    private void writeLog() {
+        File file = new File(getApplicationContext().getFilesDir().getAbsolutePath()
+                + File.separator + "weather_job_scheduler.log");
+        FileWriter writer = null;
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            Date date = new Date();
+            String s = "JobScheduler startJob: " + date.toString() + '\n';
+            writer = new FileWriter(file, true);
+            writer.write(s);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            Utility.closeIO(writer);
+        }
+    }
+
     /**
      * 刷新天气
      * @param location
@@ -116,15 +140,15 @@ public class SyncService extends JobService {
      * @return true: 任务未完成  false: 任务已完成
      */
     private boolean refreshData(final MLocation location, final JobParameters parameters) {
-        long now = System.currentTimeMillis();
-        long lastCacheTime = mRepository.getLastUpdateTime();
-        if (now - lastCacheTime <= 5 * 60 * 1000) {
-            afterGettingData(mRepository.getWeatherCachedSync(), location);
-            return false;
-        }
-        Disposable disposable = mRepository.getWeather(location.getLocationStringReversed())
+//        long now = System.currentTimeMillis();
+//        long lastCacheTime = mRepository.getLastUpdateTime();
+//        if (now - lastCacheTime <= 5 * 60 * 1000) {
+//            afterGettingData(mRepository.getWeatherCachedSync(), location);
+//            return false;
+//        }
+        Disposable disposable = mRepository.getLocalWeatherAllowCached()
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
                 .subscribe(new Consumer<NewWeather>() {
                     @Override
                     public void accept(NewWeather weather) throws Exception {
@@ -208,6 +232,7 @@ public class SyncService extends JobService {
         builder.setPersisted(true);
         builder.setRequiresDeviceIdle(false);
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
+//        builder.setTransientExtras(null);
         return scheduler.schedule(builder.build());
     }
 

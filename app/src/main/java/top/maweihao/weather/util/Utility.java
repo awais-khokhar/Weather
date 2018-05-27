@@ -557,12 +557,12 @@ public class Utility {
         }
     }
 
-    public static void close(Closeable closeable) {
+    public static void closeIO(Closeable closeable) {
         if (closeable != null) {
             try {
                 closeable.close();
             } catch (IOException e) {
-                Log.e(TAG, "close IO error");
+                Log.e(TAG, "close error");
                 e.printStackTrace();
             }
         }

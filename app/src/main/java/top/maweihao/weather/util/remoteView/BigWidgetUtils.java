@@ -13,11 +13,11 @@ import android.widget.RemoteViews;
 import java.util.GregorianCalendar;
 
 import top.maweihao.weather.R;
-import top.maweihao.weather.view.WeatherActivity;
 import top.maweihao.weather.entity.dao.NewWeather;
-import top.maweihao.weather.service.WidgetSyncService;
+import top.maweihao.weather.service.WidgetService;
 import top.maweihao.weather.util.LunarUtil;
 import top.maweihao.weather.util.Utility;
+import top.maweihao.weather.view.WeatherActivity;
 import top.maweihao.weather.widget.BigWeatherWidget;
 import top.maweihao.weather.widget.BigWidgetConfigureActivity;
 
@@ -105,8 +105,12 @@ public class BigWidgetUtils {
         mClockIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent clockPendingIntent = PendingIntent.getActivity(context, CLOCK_PENDING_INTENT_CODE,
                 mClockIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        Intent intent = new Intent(context, WidgetSyncService.class);
-        intent.putExtra(WidgetSyncService.from_widget, true);
+//        Intent intent = new Intent(context, WidgetSyncService.class);
+//        intent.putExtra(WidgetSyncService.from_widget, true);
+        Intent intent = new Intent(context, WidgetService.class);
+        intent.putExtra(WidgetService.DELAY, false);
+        intent.putExtra(WidgetService.CACHE, true);
+        intent.putExtra(WidgetService.START_SERVICE, true);
         PendingIntent refreshPendingIntent = PendingIntent.getService(context, TALL_WIDGET_REFRESH_CODE,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT);
 

@@ -21,6 +21,8 @@ public interface WeatherData {
 
     Observable<NewWeather> getWeatherCached();
 
+    Observable<NewWeather> getLocalWeatherAllowCached();
+
     NewWeather getWeatherCachedSync();
 
     Observable<NewWeather> getLocalWeather();

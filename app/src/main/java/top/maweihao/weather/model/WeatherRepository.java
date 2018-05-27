@@ -34,6 +34,7 @@ public class WeatherRepository implements WeatherData {
 
     private static WeatherRepository instance;
     private static final String TAG = WeatherRepository.class.getSimpleName();
+    private volatile long lastUpdateTime = 0;
 
     DaoSession daoSession;
 
@@ -82,6 +83,7 @@ public class WeatherRepository implements WeatherData {
                     @Override
                     public void accept(NewWeather weather) throws Exception {
                         if (weather.getStatus().equals("ok")) {
+                            lastUpdateTime = System.currentTimeMillis();
                             saveWeather(weather);
                         }
                     }
@@ -112,6 +114,24 @@ public class WeatherRepository implements WeatherData {
                 }
             }
         });
+    }
+
+    @Override
+    public Observable<NewWeather> getLocalWeatherAllowCached() {
+        if (lastUpdateTime == 0) {
+            lastUpdateTime = getLastUpdateTime();
+        }
+        if (System.currentTimeMillis() - lastUpdateTime <= 5 * 1000 * 60) {
+            return Observable.create(new ObservableOnSubscribe<NewWeather>() {
+                @Override
+                public void subscribe(ObservableEmitter<NewWeather> emitter) throws Exception {
+                    emitter.onNext(getWeatherCachedSync());
+                    emitter.onComplete();
+                }
+            });
+        } else {
+            return getLocalWeather();
+        }
     }
 
     @Override

@@ -15,7 +15,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_LOGS" />
 
-
     <!-- <uses-permission android:name="android.permission.READ_PHONE_STATE" /> -->
     <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> -->
     <!-- <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" /> -->
@@ -94,7 +93,7 @@
                 android:resource="@xml/tall_weather_widget_info" />
         </receiver>
 
-        <activity android:name=".widget.TallWeatherWidgetConfigureActivity">
+        <activity android:name=".widget.TallWidgetConfigureActivity">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
@@ -118,10 +117,6 @@
         </activity>
 
         <service
-            android:name=".service.WidgetSyncService"
-            android:enabled="true"
-            android:exported="false" />
-        <service
             android:name=".service.SyncService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
@@ -131,21 +126,26 @@
             </intent-filter>
         </activity>
 
-        <!--<receiver android:name=".widget.MagicWeatherWidget">-->
-        <!--<intent-filter>-->
-        <!--<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />-->
-        <!--</intent-filter>-->
+        <!-- <receiver android:name=".widget.MagicWeatherWidget"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.appwidget.action.APPWIDGET_UPDATE" /> -->
+        <!-- </intent-filter> -->
 
-        <!--<meta-data-->
-        <!--android:name="android.appwidget.provider"-->
-        <!--android:resource="@xml/magic_weather_widget_info" />-->
-        <!--</receiver>-->
 
-        <activity android:name=".widget.MagicWeatherWidgetConfigureActivity">
+        <!-- <meta-data -->
+        <!-- android:name="android.appwidget.provider" -->
+        <!-- android:resource="@xml/magic_weather_widget_info" /> -->
+        <!-- </receiver> -->
+
+        <activity android:name=".widget.MagicWidgetConfigureActivity">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".service.WidgetService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

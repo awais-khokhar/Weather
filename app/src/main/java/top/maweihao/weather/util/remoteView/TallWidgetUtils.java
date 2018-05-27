@@ -23,7 +23,7 @@ import top.maweihao.weather.util.HeWeatherUtil;
 import top.maweihao.weather.util.LunarUtil;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.widget.TallWeatherWidget;
-import top.maweihao.weather.widget.TallWeatherWidgetConfigureActivity;
+import top.maweihao.weather.widget.TallWidgetConfigureActivity;
 
 /**
  * Util class for TallWeatherWidget
@@ -84,8 +84,8 @@ public class TallWidgetUtils {
         tallViews.setImageViewResource(R.id.tall_widget_skycon, icon);
         tallViews.setTextViewText(R.id.tall_widget_info, countyName + " | " + skyconString + ' ' + tem + '°');
 
-        Boolean lunar = TallWeatherWidgetConfigureActivity.loadLunarPref(context);
-        Boolean card = TallWeatherWidgetConfigureActivity.loadCardPref(context);
+        Boolean lunar = TallWidgetConfigureActivity.loadLunarPref(context);
+        Boolean card = TallWidgetConfigureActivity.loadCardPref(context);
         if (lunar) {
             LunarUtil lunarUtilDate = new LunarUtil(new GregorianCalendar());
             tallViews.setViewVisibility(R.id.tall_widget_lunar, View.VISIBLE);
