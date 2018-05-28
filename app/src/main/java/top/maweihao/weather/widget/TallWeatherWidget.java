@@ -19,7 +19,7 @@ public class TallWeatherWidget extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         TallWidgetUtils.setIntent(context, null);
 //        ServiceUtil.startWidgetSyncService(context, true, false);
-        SyncService.scheduleSyncService(context, true);
+        SyncService.scheduleSyncService(context, true, false);
     }
 
     @Override

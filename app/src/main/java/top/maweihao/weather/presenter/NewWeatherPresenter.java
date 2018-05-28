@@ -465,7 +465,7 @@ public class NewWeatherPresenter extends BasePresenter
 //                Log.d(TAG, "updateWidget: here has widget");
 //                ServiceUtil.startWidgetSyncService(context, false, false);
                 WidgetUtils.refreshWidget(context, weatherView, location);
-                SyncService.scheduleSyncService(context.getApplicationContext(), false);
+                SyncService.scheduleSyncService(context.getApplicationContext(), false, false);
             }
         }
     }
@@ -481,10 +481,12 @@ public class NewWeatherPresenter extends BasePresenter
                                 if (positionBean != null && positionBean.getStatus() == 0 &&
                                         0 != positionBean.getResult().getLocation().getLat() &&
                                         0 != positionBean.getResult().getLocation().getLng()) {
+                                    Log.d(TAG, "accept: success");
                                     MLocation location = LocationUtil.convertType(positionBean, desc);
                                     model.saveLocation(location);
                                     refreshWeather(location);
                                 } else {
+                                    Log.d(TAG, "accept: " + positionBean.getStatus());
                                     Log.e(TAG, "refreshChosenWeather: get coo failed " + desc);
                                     view.showError("Get weather failed, try to enable \"Auto Locate\"",
                                             true);

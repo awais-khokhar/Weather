@@ -292,7 +292,7 @@ public class WeatherActivity extends BaseActivity implements
                 break;
             case R.id.start_service:
                 // debug only
-                SyncService.scheduleSyncService(getApplicationContext(), false);
+                SyncService.scheduleSyncService(getApplicationContext(), false, true);
                 break;
             case R.id.setting:
                 Intent intent1 = new Intent(WeatherActivity.this, SettingActivity.class);

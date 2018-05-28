@@ -27,6 +27,9 @@ public class NotificationUtil {
             Log.e(TAG, "sendWeatherNotification: NotificationManager = null");
             return;
         }
+        NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle();
+        style.bigText(content);
+        style.setBigContentTitle(title);
         Intent intent = new Intent(context, WeatherActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context,
@@ -39,6 +42,7 @@ public class NotificationUtil {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, Constants.CHANNEL_WEATHER);
         Notification notification = builder.setContentTitle(title)
                 .setContentText(content)
+                .setStyle(style)
                 .setSmallIcon(R.drawable.ic_cloud_queue_black_24dp)
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher))
                 .setContentIntent(pendingIntent)
@@ -64,14 +68,19 @@ public class NotificationUtil {
             manager.createNotificationChannel(channel);
         }
         Alert alert = alerts.get(0);
+        NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle();
+        style.bigText(alert.content);
+        style.setBigContentTitle(alert.subtitle);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, Constants.CHANNEL_ALERT);
         Notification notification = builder.setContentTitle(alert.subtitle)
                 .setContentText(alert.content)
                 .setSmallIcon(alert.iconId)
+                .setStyle(style)
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher))
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .build();
         manager.notify(Constants.ID_NOTIFICATION_ALERT, notification);
     }
+
 }

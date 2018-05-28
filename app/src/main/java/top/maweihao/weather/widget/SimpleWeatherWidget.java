@@ -16,7 +16,7 @@ public class SimpleWeatherWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         SimpleWidgetUtils.setIntent(context, null);
-        SyncService.scheduleSyncService(context, true);
+        SyncService.scheduleSyncService(context, true, false);
     }
 
     @Override

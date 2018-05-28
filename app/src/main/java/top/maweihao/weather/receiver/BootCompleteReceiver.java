@@ -19,7 +19,7 @@ public class BootCompleteReceiver extends BroadcastReceiver {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if (prefs.getBoolean(PreferenceConfigContact.NOTIFICATION, false)
                 || prefs.getBoolean(PreferenceConfigContact.NOTIFICATION_ALARM, false)) {
-            SyncService.scheduleSyncService(context.getApplicationContext(), false);
+            SyncService.scheduleSyncService(context.getApplicationContext(), false, false);
         }
     }
 }

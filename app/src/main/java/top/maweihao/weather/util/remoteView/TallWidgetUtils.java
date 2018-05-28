@@ -36,7 +36,7 @@ public class TallWidgetUtils {
     private static final int WEATHER_PENDING_INTENT_CODE = 122;
     private static final int CLOCK_PENDING_INTENT_CODE = 222;
 
-    static boolean isEnable(Context context) {
+    public static boolean isEnable(Context context) {
         int[] widgetIds = AppWidgetManager.getInstance(context)
                 .getAppWidgetIds(new ComponentName(context, TallWeatherWidget.class));
         return widgetIds != null && widgetIds.length > 0;

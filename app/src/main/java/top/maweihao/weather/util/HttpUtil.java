@@ -8,18 +8,19 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import top.maweihao.weather.entity.api.BDLocateApi;
 import top.maweihao.weather.entity.BaiDu.BaiDuChoosePositionBean;
 import top.maweihao.weather.entity.BaiDu.BaiDuCoordinateBean;
 import top.maweihao.weather.entity.BaiDu.BaiDuIPLocationBean;
+import top.maweihao.weather.entity.api.BDLocateApi;
 import top.maweihao.weather.entity.api.HeWeatherApi;
+import top.maweihao.weather.entity.api.WeatherApi;
 import top.maweihao.weather.entity.dao.NewHeWeatherNow;
 import top.maweihao.weather.entity.dao.NewWeather;
 import top.maweihao.weather.entity.dao.NewWeatherRealtime;
-import top.maweihao.weather.entity.api.WeatherApi;
 
 /**
  * Http Utility
@@ -63,8 +64,18 @@ public class HttpUtil {
     }
 
     private static Retrofit getService(String baseUrl) {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+        OkHttpClient client = new OkHttpClient.Builder()
+//                .cache(cache)
+                .addInterceptor(interceptor)
+//                .connectTimeout(mTimeOut, TimeUnit.SECONDS)
+//                .readTimeout(mTimeOut, TimeUnit.SECONDS)
+//                .writeTimeout(mTimeOut, TimeUnit.SECONDS)
+                .build();
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)
+//                .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
@@ -112,7 +123,7 @@ public class HttpUtil {
 
     public static Observable<BaiDuChoosePositionBean> getCoordinateByDesc(String desc) {
         return getBDLocateApi().getCoordinateByDesc(desc, "json",
-                Constants.BaiduKey, Constants.mBaiduCode)
+                Constants.BaiduKey_Web)
                 .subscribeOn(Schedulers.io());
     }
 }

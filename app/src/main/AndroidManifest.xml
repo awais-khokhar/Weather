@@ -30,6 +30,22 @@
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="RUUaavVwpwqYdz8QGHLXSFBfwhs2ba6j" />
 
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_cloud_queue_black_24dp" />
+        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@android:color/black" />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/weather_notifications"/>
+
+        <meta-data android:name="firebase_messaging_auto_init_enabled"
+            android:value="false" />
+
         <activity
             android:name=".view.WeatherActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -145,7 +161,17 @@
 
         <service
             android:name=".service.WidgetService"
-            android:exported="false"></service>
+            android:exported="false" />
+        <service android:name=".service.FCMService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".service.FCMInstanceIdService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

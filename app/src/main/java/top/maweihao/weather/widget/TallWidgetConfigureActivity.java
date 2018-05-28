@@ -1,6 +1,5 @@
 package top.maweihao.weather.widget;
 
-import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
@@ -12,53 +11,21 @@ import android.widget.Switch;
 
 import top.maweihao.weather.R;
 import top.maweihao.weather.service.WidgetService;
+import top.maweihao.weather.util.remoteView.BigWidgetUtils;
+import top.maweihao.weather.util.remoteView.SimpleWidgetUtils;
 
 import static top.maweihao.weather.R.id.tall_widget_preview;
 
 /**
  * The configuration screen for the {@link TallWeatherWidget TallWeatherWidget} AppWidget.
  */
-public class TallWidgetConfigureActivity extends Activity {
+public class TallWidgetConfigureActivity extends BaseWidgetConfigureActivity {
 
     private static final String PREFS_NAME = "top.maweihao.weather.TallWeatherWidget";
     private static final String PREF_LUNAR_PREFIX_KEY = "appwidget_lunar";
     private static final String PREF_CARD_PREFIX_KEY = "appwidget_card";
 
     public static final String TAG = "TWConfigureActivity";
-
-
-    int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
-    View.OnClickListener mOnClickListener = new View.OnClickListener() {
-        public void onClick(View v) {
-            final Context context = TallWidgetConfigureActivity.this.getApplicationContext();
-
-            switch (v.getId()) {
-                case R.id.add_button:
-                    Intent resultValue = new Intent();
-                    resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-                    setResult(RESULT_OK, resultValue);
-//                    SyncService.scheduleSyncService(context, true);
-                    WidgetService.refreshWidgets(getApplicationContext(), true, true, true);
-                    finish();
-                    break;
-                case R.id.tall_lunar_switch:
-                    if (((Switch)v).isChecked()) {
-                        ((ImageView)findViewById(tall_widget_preview)).setImageResource(R.drawable.tall_widget_lunar_on);
-                        saveLunarPref(context, true);
-                    } else {
-                        ((ImageView)findViewById(tall_widget_preview)).setImageResource(R.drawable.tall_widget_lunar_off);
-                        saveLunarPref(context, false);
-                    }
-                    break;
-                case R.id.tall_card_switch:
-                    if (((Switch) v).isChecked()) {
-                        saveCardPref(context, true);
-                    } else {
-                        saveCardPref(context, false);
-                    }
-            }
-        }
-    };
 
     public TallWidgetConfigureActivity() {
         super();
@@ -67,25 +34,6 @@ public class TallWidgetConfigureActivity extends Activity {
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-
-        setResult(RESULT_CANCELED);
-
-        setContentView(R.layout.widget_configure_tall);
-        findViewById(R.id.tall_lunar_switch).setOnClickListener(mOnClickListener);
-        findViewById(R.id.add_button).setOnClickListener(mOnClickListener);
-        findViewById(R.id.tall_card_switch).setOnClickListener(mOnClickListener);
-
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
-        if (extras != null) {
-            mAppWidgetId = extras.getInt(
-                    AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-        }
-
-        // If this activity was started with an intent without an app widget ID, finish with an error.
-        if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
-            finish();
-        }
     }
 
     // Write the prefix to the SharedPreferences object for this widget
@@ -118,6 +66,52 @@ public class TallWidgetConfigureActivity extends Activity {
         prefs.remove(PREF_LUNAR_PREFIX_KEY);
         prefs.remove(PREF_CARD_PREFIX_KEY);
         prefs.apply();
+    }
+
+    @Override
+    public void onClick(View v) {
+        final Context context = TallWidgetConfigureActivity.this.getApplicationContext();
+
+        switch (v.getId()) {
+            case R.id.add_button:
+                Intent resultValue = new Intent();
+                resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+                setResult(RESULT_OK, resultValue);
+//                    SyncService.scheduleSyncService(context, true);
+                boolean configChanged = BigWidgetUtils.isEnable(TallWidgetConfigureActivity.this)
+                        || SimpleWidgetUtils.isEnable(TallWidgetConfigureActivity.this);
+                WidgetService.refreshWidgets(getApplicationContext(), true,
+                        true, true, !configChanged, false);
+                finish();
+                break;
+            case R.id.tall_lunar_switch:
+                if (((Switch)v).isChecked()) {
+                    ((ImageView)findViewById(tall_widget_preview)).setImageResource(R.drawable.tall_widget_lunar_on);
+                    saveLunarPref(context, true);
+                } else {
+                    ((ImageView)findViewById(tall_widget_preview)).setImageResource(R.drawable.tall_widget_lunar_off);
+                    saveLunarPref(context, false);
+                }
+                break;
+            case R.id.tall_card_switch:
+                if (((Switch) v).isChecked()) {
+                    saveCardPref(context, true);
+                } else {
+                    saveCardPref(context, false);
+                }
+        }
+    }
+
+    @Override
+    protected void initView() {
+        findViewById(R.id.tall_lunar_switch).setOnClickListener(this);
+        findViewById(R.id.add_button).setOnClickListener(this);
+        findViewById(R.id.tall_card_switch).setOnClickListener(this);
+    }
+
+    @Override
+    protected int layoutId() {
+        return R.layout.widget_configure_tall;
     }
 }
 

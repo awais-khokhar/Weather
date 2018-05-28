@@ -32,4 +32,9 @@ public interface BDLocateApi {
                                                             @Query("output") String output,
                                                             @Query("ak") String ak,
                                                             @Query("mcode") String mcode);
+
+    @GET("geocoder/v2/")
+    Observable<BaiDuChoosePositionBean> getCoordinateByDesc(@Query("address") String location,
+                                                            @Query("output") String output,
+                                                            @Query("ak") String ak);
 }

@@ -8,6 +8,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -15,10 +16,12 @@ import android.util.Log;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -30,6 +33,7 @@ import top.maweihao.weather.entity.Alert;
 import top.maweihao.weather.entity.dao.MLocation;
 import top.maweihao.weather.entity.dao.NewWeather;
 import top.maweihao.weather.model.WeatherRepository;
+import top.maweihao.weather.util.CaiyunAnalyst;
 import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.NotificationUtil;
 import top.maweihao.weather.util.PrefsUtil;
@@ -57,7 +61,7 @@ public class SyncService extends JobService {
     private static final long INTERVAL_ALERT = 1000 * 60 * 60 * 6; // 只检查预警，6小时一次即可
     private static final long INTERVAL_PUSH = 1000 * 60 * 60 * 4;  //开启了天气通知，4小时一次
     private static final long INTERVAL_WIDGET_NORMAL = 1000 * 60 * 60 * 4;  // 有桌面插件，4小时一次
-    private static final long INTERVAL_WIDGET_PRECISE = 1000 * 60 * 60 * 4;  // 桌面插件有BigWidget, 3小时
+    private static final long INTERVAL_WIDGET_PRECISE = 1000 * 60 * 60 * 3;  // 桌面插件有BigWidget, 3小时
 
     // 通知类别
 //    private static final int TYPE_WEATHER = 0;
@@ -140,12 +144,6 @@ public class SyncService extends JobService {
      * @return true: 任务未完成  false: 任务已完成
      */
     private boolean refreshData(final MLocation location, final JobParameters parameters) {
-//        long now = System.currentTimeMillis();
-//        long lastCacheTime = mRepository.getLastUpdateTime();
-//        if (now - lastCacheTime <= 5 * 60 * 1000) {
-//            afterGettingData(mRepository.getWeatherCachedSync(), location);
-//            return false;
-//        }
         Disposable disposable = mRepository.getLocalWeatherAllowCached()
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
@@ -212,10 +210,10 @@ public class SyncService extends JobService {
         super.onDestroy();
     }
 
-    public static int scheduleSyncService(Context context, boolean forceSyncWidget) {
+    public static int scheduleSyncService(Context context, boolean forceSyncWidget, boolean configChanged) {
         JobScheduler scheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         assert scheduler != null;
-        if (!forceSyncWidget && scheduler.getAllPendingJobs().size() > 0) {
+        if (!configChanged && !forceSyncWidget && scheduler.getAllPendingJobs().size() > 0) {
             Log.d(TAG, "scheduleSyncService: No Need To Run Again");
             return 10;
         }
@@ -228,11 +226,14 @@ public class SyncService extends JobService {
             scheduler.cancel(Constants.SYNC_SERVICE_CODE);
             return -1;
         }
-        builder.setPeriodic(interval);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            builder.setPeriodic(interval, 1000 * 60 * 30);
+        } else {
+            builder.setPeriodic(interval);
+        }
         builder.setPersisted(true);
         builder.setRequiresDeviceIdle(false);
         builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
-//        builder.setTransientExtras(null);
         return scheduler.schedule(builder.build());
     }
 
@@ -295,6 +296,7 @@ public class SyncService extends JobService {
         }
         hasPushedToday = true;
         configContact.applyLastPushTime(System.currentTimeMillis());
+        String tomorrowWeek = CaiyunAnalyst.getWeekTomorrow();
         NewWeather.ResultBean.DailyBean daily = weather.getResult().getDaily();
         int tomMax = Utility.intRoundDouble(daily.getTemperature().get(1).getMax());
         int tomMin = Utility.intRoundDouble(daily.getTemperature().get(1).getMin());
@@ -308,14 +310,14 @@ public class SyncService extends JobService {
         int diff = calTemperatureDiff(weather);
         boolean hasRainOrSnow = WeatherUtil.hasRainOrSnow(context.getResources(), skycon);
         String desc = getWeatherDesc(context, location.getCoarseLocation(), tomMin, tomMax,
-                skycon, windSpeed > 6.0 ? windLevel : null, aqi, hasRainOrSnow);
-        String title = null;
-        if (Math.abs(diff) >= 3) {
+                skycon, windSpeed > 49.68 ? windLevel : null, aqi, hasRainOrSnow);  //6级以上的风
+        String title;
+        if (Math.abs(diff) >= 4) {
             title = getTemperatureDifferenceString(context, diff);
         } else if (hasRainOrSnow) {
-            title = context.getResources().getString(R.string.dont_forget_your_raincoat_tomorrow);
-        } else if (windSpeed > 7.0) {
-            title = context.getResources().getString(R.string.big_wind_tomorrow);
+            title = context.getResources().getString(R.string.dont_forget_your_raincoat_on, tomorrowWeek);
+        } else if (windSpeed >= 61.56) {  //7级以上的风
+            title = context.getResources().getString(R.string.big_wind_on, tomorrowWeek);
         } else {
             title = null;
         }
@@ -367,9 +369,8 @@ public class SyncService extends JobService {
 
     // 示例："5° warmer in Wednesday"  "周三将升温 5°"
     private String getTemperatureDifferenceString(Context context, int diff) {
-        Calendar calendar = new GregorianCalendar();
-        int nextDay = calendar.get(Calendar.DAY_OF_WEEK) + 1;
-        String dayOfWeek = getResources().getStringArray(R.array.weekend)[nextDay % 7];
+        SimpleDateFormat format = new SimpleDateFormat("EEEE", Locale.getDefault());
+        String dayOfWeek = format.format(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000));
         int res = diff > 0 ? R.string.notification_warmer : R.string.notification_colder;
         return getResources().getString(res, diff, dayOfWeek);
     }

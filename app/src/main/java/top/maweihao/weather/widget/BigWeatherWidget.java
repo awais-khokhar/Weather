@@ -17,7 +17,7 @@ public class BigWeatherWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         BigWidgetUtils.setIntent(context, null);
-        SyncService.scheduleSyncService(context, true);
+        SyncService.scheduleSyncService(context, true, false);
     }
 
     @Override

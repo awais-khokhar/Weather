@@ -181,14 +181,14 @@ public class SettingActivity extends AppCompatActivity {
                     case "notification":
 //                        Intent startIntent = new Intent(getActivity(), PushService.class);
                         if (stringValue.equals("true")) {
-                            notificationTime.setEnabled(true);
+//                            notificationTime.setEnabled(true);
 //                            notificationTime.setSummary(configContact.getNotificationTime("18 : 00"));
 //                            PushService.isStarSendNotification = false;
-                            SyncService.scheduleSyncService(getActivity().getApplicationContext(), false);
+                            SyncService.scheduleSyncService(getActivity().getApplicationContext(), false, true);
 //                            getActivity().startService(startIntent);
                             Log.d(TAG, "onPreferenceChange: start SyncService");
                         } else {
-                            notificationTime.setEnabled(false);
+//                            notificationTime.setEnabled(false);
                             SyncService.stopSyncService(getActivity().getApplicationContext());
 //                            getActivity().stopService(startIntent);
                             Log.d(TAG, "onPreferenceChange: stop SyncService");
@@ -196,11 +196,11 @@ public class SettingActivity extends AppCompatActivity {
                         return true;
                     case "setting_alarm":
                         if (stringValue.equals("true")) {
-                            alarmNotification.setEnabled(true);
-                            SyncService.scheduleSyncService(getActivity().getApplicationContext(), false);
+//                            alarmNotification.setEnabled(true);
+                            SyncService.scheduleSyncService(getActivity().getApplicationContext(), false, true);
                             Log.d(TAG, "onPreferenceChange: start SyncService");
                         } else {
-                            alarmNotification.setEnabled(false);
+//                            alarmNotification.setEnabled(false);
                             SyncService.stopSyncService(getActivity().getApplicationContext());
                             Log.d(TAG, "onPreferenceChange: stop SyncService");
                         }
