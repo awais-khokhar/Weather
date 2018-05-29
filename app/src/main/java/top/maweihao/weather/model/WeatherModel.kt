@@ -26,11 +26,16 @@ object WeatherModel {
         val daoSession = daoMaster.newSession()
         weatherDao = daoSession.newWeatherDao
 //        weatherRealtimeDao = daoSession.getNewWeatherRealtimeDao();
-        heWeatherNowDao = daoSession.newHeWeatherNowDao;
+        heWeatherNowDao = daoSession.newHeWeatherNowDao
 //        locationDao = daoSession.mLocationDao
     }
 
-
+    /**
+     * 获取天气数据
+     * @param location String
+     * @param isLoadCache Boolean
+     * @return LiveData<DataResult<NewWeather>>
+     */
     fun getWeather(location: String, isLoadCache: Boolean): LiveData<DataResult<NewWeather>> {
         return object : NetworkBoundResource<NewWeather, NewWeather>() {
             override fun saveCallResultOrConvert(item: NewWeather): NewWeather {
@@ -40,6 +45,7 @@ object WeatherModel {
             }
 
             override fun shouldFetch(data: NewWeather?): Boolean {
+                //判断是否需要网络加载数据。超时5分钟则网络加载
                 if (data == null) return true
                 val interval = (System.currentTimeMillis() - data.server_time * 1000) / (60 * 1000)
                 return if (interval > 5) {  //hardcode the minimum refresh interval temporary
@@ -73,7 +79,7 @@ object WeatherModel {
         if (weatherList != null && weatherList.size > 0) {
             weatherList.sort()
 
-            System.out.println("-------------------> weatherCache not null")
+            LogUtils.d("-------------------> weatherCache not null")
             return DaoUtils.unpackWeather(weatherList[0])
         }
         return null

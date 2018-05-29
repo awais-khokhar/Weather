@@ -23,7 +23,10 @@ class WeatherViewModel : ViewModel() {
 
     var isLoadCache: Boolean = false
 
-    val weatherLiveData by lazy { MediatorLiveData<DataResult<NewWeather>>() }
+    val weatherLiveData by lazy {
+        LogUtils.d("weatherLiveData null")
+        MediatorLiveData<DataResult<NewWeather>>()
+    }
 
     val locationResult by lazy { MediatorLiveData<MLocation>() }
 
@@ -109,11 +112,11 @@ class WeatherViewModel : ViewModel() {
         } else {
             locationResult.value = location
         }
-        LogUtils.d("----> tempWeatherData")
+
         val tempWeatherData = WeatherModel.getWeather(location.locationStringReversed, isLoadCache)
         weatherLiveData.addSource(tempWeatherData) {
+            LogUtils.d("weatherLiveData")
             weatherLiveData.value = it
-
             it?.let {
                 if (it.status != Status.CACHE) {
                     weather4widget = it.data
@@ -128,7 +131,6 @@ class WeatherViewModel : ViewModel() {
                 }
             }
         }
-
     }
 
 
@@ -156,6 +158,7 @@ class WeatherViewModel : ViewModel() {
             }
         }
     }
+
 }
 
 enum class TipsType {

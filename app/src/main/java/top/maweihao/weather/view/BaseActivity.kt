@@ -1,13 +1,13 @@
 package top.maweihao.weather.view
 
 import android.os.Bundle
-import com.trello.rxlifecycle2.components.support.RxAppCompatActivity
+import android.support.v7.app.AppCompatActivity
 
-abstract class BaseActivity : RxAppCompatActivity() {
+abstract class BaseActivity : AppCompatActivity() {
 
     protected val TAG = this.javaClass.simpleName
 
-    public override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(setContentView())

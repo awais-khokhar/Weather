@@ -6,6 +6,9 @@ import android.arch.lifecycle.LifecycleRegistry;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 
+/**
+ * 用于LiveData绑定生命周期的工具类
+ */
 public class ServiceLifecycleDispatcher {
     private final LifecycleRegistry mRegistry;
     private final Handler           mHandler;

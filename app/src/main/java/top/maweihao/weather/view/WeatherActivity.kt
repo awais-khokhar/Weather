@@ -102,7 +102,6 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
 
     private fun bindingView() {
         viewModel.weatherLiveData.observe(this, android.arch.lifecycle.Observer<DataResult<NewWeather>> {
-            LogUtils.d(it == null)
             it?.let {
                 debugToast(it.status.name)
 
@@ -159,8 +158,8 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
     }
 
     override fun initData() {
+//        viewModel.getWeatherCache()
         viewModel.getWeatherCache()
-
         viewModel.isLoadCache = true
         getWeather()
     }
@@ -187,15 +186,14 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
         dynamicWeatherView.onPause()
     }
 
-
-    public override fun onDestroy() {
+    override fun onDestroy() {
         Log.d(TAG, "onDestroy")
-        super.onDestroy()
         try {
             dynamicWeatherView.onDestroy()
         } catch (e: Exception) {
             LogUtils.e(e)
         }
+        super.onDestroy()
     }
 
     override fun onClick(v: View) {

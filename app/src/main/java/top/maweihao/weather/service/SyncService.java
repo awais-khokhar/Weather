@@ -93,6 +93,7 @@ public class SyncService extends JobService implements LifecycleOwner {
 
     @Override
     public boolean onStartJob(JobParameters params) {
+        //绑定生命周期方法
         mDispatcher.onServicePreSuperOnStart();
         Log.d(TAG, "onStartJob: ");
         writeLog();

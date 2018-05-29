@@ -2,10 +2,10 @@ package top.maweihao.weather.util.http
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
-import android.os.Handler
-import android.os.Looper
+import android.arch.lifecycle.MutableLiveData
 import android.support.annotation.MainThread
 import android.support.annotation.WorkerThread
+import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ThreadUtils
 
 /**
@@ -22,7 +22,12 @@ abstract class NetworkBoundResource<ResultType, RequestType>
     init {
         if (this.shouldLoad4Cache()) {
             val cacheData = this.load4Cache()
-            setValue(DataResult.cache(cacheData))
+
+            val c = MutableLiveData<ResultType>()
+            result.addSource(c) {
+                setValue(DataResult.cache(it))
+            }
+            c.value = cacheData
             if (this.shouldFetch(cacheData)) {
                 fetchFromNetwork()
             }
@@ -35,9 +40,10 @@ abstract class NetworkBoundResource<ResultType, RequestType>
     @MainThread
     private fun setValue(newValue: DataResult<ResultType>) {
         if (result.value != newValue) {
-            Handler(Looper.getMainLooper()).post {
-                result.value = newValue
-            }
+//            Handler(Looper.getMainLooper()).post {
+                result.postValue(newValue)
+            LogUtils.d("cache ok")
+//            }
         }
     }
 
