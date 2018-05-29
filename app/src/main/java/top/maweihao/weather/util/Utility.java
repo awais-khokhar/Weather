@@ -15,6 +15,8 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.blankj.utilcode.util.LogUtils;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -23,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -543,5 +546,26 @@ public class Utility {
         }
     }
 
+    public static void closeIO(Closeable closeable) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (IOException e) {
+                Log.e(TAG, "close error");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static boolean isToday(long timeInMills) {
+        Calendar now = new GregorianCalendar();
+        int year = now.get(Calendar.YEAR);
+        int month = now.get(Calendar.MONTH);
+        int day = now.get(Calendar.DAY_OF_MONTH);
+        now.setTimeInMillis(timeInMills);
+        return now.get(Calendar.DAY_OF_MONTH) == day
+                && now.get(Calendar.MONTH) == month
+                && now.get(Calendar.YEAR) == year;
+    }
 }
 

@@ -25,10 +25,11 @@
     <string name="SNOW">雪</string>
     <string name="WIND">多风</string>
     <string name="FOG">雾</string>
+
     <string name="appearance_setting">外观</string>
     <string name="temperature">气温</string>
     <string name="notification_setting">通知</string>
-    <string name="notification_summary">您将收到天气相关信息</string>
+    <string name="notification_summary">每晚您将收到天气变化通知</string>
     <string name="location_setting">地区</string>
     <string name="about_setting">关于</string>
     <string name="auto_locate">自动定位</string>
@@ -45,11 +46,6 @@
     <string-array name="temperature">
         <item>摄氏度</item>
         <item>华氏度</item>
-    </string-array>
-
-    <string-array name="temperature_value">
-        <item>celsius</item>
-        <item>fahrenheit</item>
     </string-array>
 
     <string name="feedback">问题反馈</string>
@@ -77,7 +73,7 @@
 
     <string name="warmer">升温</string>
     <string name="colder">降温</string>
-    <string name="weather_notifications">天气通知(Beta)</string>
+    <string name="weather_notifications">天气变动通知</string>
     <string name="select_disabled">当前为自动定位</string>
     <string name="pm25">首要污染物</string>
     <string name="uv">紫外线</string>
@@ -114,21 +110,21 @@
     <string name="ok">确定</string>
     <string name="choose_donate_method">选择捐赠方式</string>
     <string name="donate_with_wechat">通过微信支付捐赠</string>
-    <string name="info_wechat_donate">请将当前页面截图，并在微信中选择扫描。（该方式我已深思熟虑）</string>
+    <string name="info_wechat_donate">请将当前页面截图，并在微信中选择扫描。</string>
     <string name="refresh_circle">刷新按钮</string>
     <string name="search">搜索</string>
     <string name="go_to_settings">打开系统设置</string>
     <string name="error_happens">发生了一些错误</string>
-    <string name="ip_method_locate">根据您的 ip 地址定位，精度会受限。</string>
+    <string name="ip_method_locate">根据您的 ip 地址进行定位，精度可能会受限。</string>
     <string name="donnot_show">不再显示</string>
     <string name="grant_permission">手动授权</string>
     <string name="locate_failed">定位失败，请打开系统位置。</string>
     <string name="yesterday">昨天</string>
-    <string name="days_before">天前</string>
+    <string name="days_before">%d天前</string>
     <string name="weather_desc_today">中雨，明天早晨7点钟后转小雨，中雨，明天早晨7点钟后转小雨。</string>
     <string name="sun_set_time">一小时二十五分钟后日落。</string>
     <string name="HAZE">霾</string>
-    <string name="SLEET">冻</string>
+    <string name="SLEET">冻雨</string>
     <string name="caiyun_weather">彩云天气</string>
     <string name="china_mete_admin">中国气象局</string>
     <string name="he_weather">和风天气</string>
@@ -138,6 +134,26 @@
     <string name="provide_weather_outside_china">提供大陆以外地区的天气数据</string>
     <string name="click_to_open_link">点击以在浏览器中打开</string>
     <string name="current_version_">当前版本：%s</string>
-    <string name="updated_on">更新于%s</string>
+    <string name="updated_on">于%s更新</string>
+    <string name="alarm_notifications">天气预警</string>
+
+    <string name="LIGHT_SNOW">小雪</string>
+    <string name="MODERATE_SNOW">中雪</string>
+    <string name="HEAVY_SNOW">大雪</string>
+
+    <string name="notification_warmer">%2$s将升温 %1$d°</string>
+    <string name="notification_colder">%2$s将升温 %1$d°</string>
+
+    <string name="weather_desc">明天的%2$s天气%1$s，最高温%3$d°，最低温%4$d°</string>
+    <string name="dont_forget_your_raincoat">别忘了带伞</string>
+    <string name="air_not_good">空气不太好</string>
+
+    <string name="comma">，</string>
+    <string name="period">。</string>
+
+    <string name="dont_forget_your_raincoat_on">%s别忘了带伞</string>
+    <string name="big_wind_on">%s有大风</string>
+
+    <string name="refreshing">开始刷新…</string>
 
 </resources>

@@ -13,6 +13,7 @@ import top.maweihao.weather.entity.dao.MLocation
 import top.maweihao.weather.entity.dao.NewWeather
 import top.maweihao.weather.model.LocationModel
 import top.maweihao.weather.model.WeatherModel
+import top.maweihao.weather.service.SyncService
 import top.maweihao.weather.util.LocationUtil
 import top.maweihao.weather.util.Utility
 import top.maweihao.weather.util.http.DataResult
@@ -120,6 +121,8 @@ class WeatherViewModel : ViewModel() {
                         workingFlag = false
                     } else {
                         WeatherModel.updateWidget(weather4widget, countyName4widget)
+                        SyncService.scheduleSyncService(Utils.getApp().applicationContext, false, false)
+
                     }
 
                 }

@@ -29,7 +29,8 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/notification_setting">
+    <PreferenceCategory android:title="@string/notification_setting"
+        android:key="notification_group">
 
         <SwitchPreference
             android:defaultValue="false"
@@ -37,17 +38,20 @@
             android:persistent="true"
             android:summary="@string/notification_summary"
             android:title="@string/weather_notifications" />
-        <Preference
-            android:key="notification_time"
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="setting_alarm"
             android:persistent="true"
-            android:title="@string/notification_time" />
+            android:title="@string/alarm_notifications"
+            android:summary=""/>
+
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/about_setting">
         <Preference
             android:key="about"
             android:title="@string/about_setting">
-
         </Preference>
 
         <Preference

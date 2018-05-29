@@ -9,7 +9,7 @@ import top.maweihao.weather.R;
 
 /**
  * Implementation of App Widget functionality.
- * App Widget Configuration implemented in {@link MagicWeatherWidgetConfigureActivity MagicWeatherWidgetConfigureActivity}
+ * App Widget Configuration implemented in {@link MagicWidgetConfigureActivity MagicWidgetConfigureActivity}
  */
 public class MagicWeatherWidget extends AppWidgetProvider {
 
@@ -42,7 +42,7 @@ public class MagicWeatherWidget extends AppWidgetProvider {
     public void onDeleted(Context context, int[] appWidgetIds) {
         // When the user deletes the widget, delete the preference associated with it.
         for (int appWidgetId : appWidgetIds) {
-            MagicWeatherWidgetConfigureActivity.deleteTitlePref(context, appWidgetId);
+            MagicWidgetConfigureActivity.deleteTitlePref(context, appWidgetId);
         }
     }
 

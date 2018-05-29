@@ -23,9 +23,7 @@ import top.maweihao.weather.util.HeWeatherUtil;
 import top.maweihao.weather.util.LunarUtil;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.widget.TallWeatherWidget;
-import top.maweihao.weather.widget.TallWeatherWidgetConfigureActivity;
-
-import static top.maweihao.weather.util.Utility.HOURLY_MODE;
+import top.maweihao.weather.widget.TallWidgetConfigureActivity;
 
 /**
  * Util class for TallWeatherWidget
@@ -38,7 +36,7 @@ public class TallWidgetUtils {
     private static final int WEATHER_PENDING_INTENT_CODE = 122;
     private static final int CLOCK_PENDING_INTENT_CODE = 222;
 
-    static boolean isEnable(Context context) {
+    public static boolean isEnable(Context context) {
         int[] widgetIds = AppWidgetManager.getInstance(context)
                 .getAppWidgetIds(new ComponentName(context, TallWeatherWidget.class));
         return widgetIds != null && widgetIds.length > 0;
@@ -49,8 +47,8 @@ public class TallWidgetUtils {
         int tem = Utility.intRoundDouble(hourlyBean.getTemperature().get(0).getValue());
         String skycon = hourlyBean.getSkycon().get(0).getValue();
         Double precipitation = hourlyBean.getPrecipitation().get(0).getValue();
-        String skyconString = Utility.chooseWeatherSkycon(context, skycon, precipitation, HOURLY_MODE);
-        int icon = Utility.chooseWeatherIcon(skycon, precipitation, HOURLY_MODE, false);
+        String skyconString = Utility.chooseWeatherSkycon(context, skycon, precipitation, Utility.HOURLY_MODE);
+        int icon = Utility.chooseWeatherIcon(skycon, precipitation, Utility.HOURLY_MODE, false);
 
         updateWidgetView(context, icon, countyName, skyconString, tem);
     }
@@ -75,8 +73,8 @@ public class TallWidgetUtils {
         int tem = Utility.intRoundDouble(hourlyBean.getTemperature().get(0).getValue());
         String skycon = hourlyBean.getSkycon().get(0).getValue();
         Double precipitation = hourlyBean.getPrecipitation().get(0).getValue();
-        String skyconString = Utility.chooseWeatherSkycon(context, skycon, precipitation, HOURLY_MODE);
-        int icon = Utility.chooseWeatherIcon(skycon, precipitation, HOURLY_MODE, false);
+        String skyconString = Utility.chooseWeatherSkycon(context, skycon, precipitation, Utility.HOURLY_MODE);
+        int icon = Utility.chooseWeatherIcon(skycon, precipitation, Utility.HOURLY_MODE, false);
 
         updateWidgetView(context, icon, countyName, skyconString, tem);
     }
@@ -86,8 +84,8 @@ public class TallWidgetUtils {
         tallViews.setImageViewResource(R.id.tall_widget_skycon, icon);
         tallViews.setTextViewText(R.id.tall_widget_info, countyName + " | " + skyconString + ' ' + tem + '°');
 
-        Boolean lunar = TallWeatherWidgetConfigureActivity.loadLunarPref(context);
-        Boolean card = TallWeatherWidgetConfigureActivity.loadCardPref(context);
+        Boolean lunar = TallWidgetConfigureActivity.loadLunarPref(context);
+        Boolean card = TallWidgetConfigureActivity.loadCardPref(context);
         if (lunar) {
             LunarUtil lunarUtilDate = new LunarUtil(new GregorianCalendar());
             tallViews.setViewVisibility(R.id.tall_widget_lunar, View.VISIBLE);

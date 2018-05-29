@@ -4,9 +4,8 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 
-import top.maweihao.weather.util.ServiceUtil;
+import top.maweihao.weather.service.SyncService;
 import top.maweihao.weather.util.remoteView.BigWidgetUtils;
-import top.maweihao.weather.util.remoteView.WidgetUtils;
 
 /**
  * Implementation of BigWeatherWidget functionality.
@@ -18,7 +17,7 @@ public class BigWeatherWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         BigWidgetUtils.setIntent(context, null);
-        ServiceUtil.startWidgetSyncService(context, true, false);
+        SyncService.scheduleSyncService(context, true, false);
     }
 
     @Override
@@ -30,9 +29,7 @@ public class BigWeatherWidget extends AppWidgetProvider {
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
         BigWidgetConfigureActivity.deleteAllPref(context);
-        if (WidgetUtils.hasAnyWidget(context)) {
-            ServiceUtil.stopWidgetSyncService(context);
-        }
+        SyncService.stopSyncService(context);
     }
 }
 

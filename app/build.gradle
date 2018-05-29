@@ -6,6 +6,8 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'kotlin-kapt'
 
+apply plugin: 'com.google.gms.google-services'
+
 android {
     compileSdkVersion 27
 //    buildToolsVersion '26.0.2'
@@ -108,5 +110,7 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"
     implementation 'pub.devrel:easypermissions:1.2.0'
     implementation 'com.blankj:utilcode:1.16.1'
+
+    implementation 'com.google.firebase:firebase-messaging:17.0.0'
 }
 

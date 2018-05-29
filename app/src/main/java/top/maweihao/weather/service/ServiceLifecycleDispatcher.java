@@ -36,6 +36,10 @@ public class ServiceLifecycleDispatcher {
         postDispatchRunnable(Lifecycle.Event.ON_START);
     }
 
+    public void onServicePreSuperOnStop() {
+        postDispatchRunnable(Lifecycle.Event.ON_STOP);
+    }
+
     public void onServicePreSuperOnDestroy() {
         postDispatchRunnable(Lifecycle.Event.ON_STOP);
         postDispatchRunnable(Lifecycle.Event.ON_DESTROY);

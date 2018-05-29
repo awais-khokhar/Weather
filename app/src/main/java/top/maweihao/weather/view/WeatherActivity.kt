@@ -23,7 +23,6 @@ import kotlinx.android.synthetic.main.card_wind_view.*
 import org.jetbrains.anko.design.longSnackbar
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.startActivityForResult
-import org.jetbrains.anko.startService
 import pub.devrel.easypermissions.EasyPermissions
 import top.maweihao.weather.R
 import top.maweihao.weather.adapter.DailyWeatherAdapter
@@ -33,7 +32,7 @@ import top.maweihao.weather.entity.Alert
 import top.maweihao.weather.entity.SingleWeather
 import top.maweihao.weather.entity.dao.MLocation
 import top.maweihao.weather.entity.dao.NewWeather
-import top.maweihao.weather.service.PushService
+import top.maweihao.weather.service.SyncService
 import top.maweihao.weather.util.Constants.*
 import top.maweihao.weather.util.Utility
 import top.maweihao.weather.util.Utility.*
@@ -232,7 +231,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
             }
             R.id.start_service   -> {
                 // debug only
-                startService<PushService>()
+                SyncService.scheduleSyncService(this,true,true)
             }
             R.id.setting         -> {
                 startActivityForResult<SettingActivity>(SettingActivityRequestCode)

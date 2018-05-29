@@ -1,6 +1,5 @@
 package top.maweihao.weather.widget;
 
-import android.app.Activity;
 import android.app.WallpaperManager;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
@@ -22,16 +21,18 @@ import java.util.GregorianCalendar;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import top.maweihao.weather.R;
+import top.maweihao.weather.service.WidgetService;
 import top.maweihao.weather.util.LunarUtil;
-import top.maweihao.weather.util.ServiceUtil;
 import top.maweihao.weather.util.Utility;
+import top.maweihao.weather.util.remoteView.SimpleWidgetUtils;
+import top.maweihao.weather.util.remoteView.TallWidgetUtils;
 
 /**
  * The configuration screen for the {@link BigWeatherWidget BigWeatherWidget} AppWidget.
  * Created by maweihao on 31/10/2017.
  */
 
-public class BigWidgetConfigureActivity extends Activity implements View.OnClickListener {
+public class BigWidgetConfigureActivity extends BaseWidgetConfigureActivity {
 
     private static final String PREFS_NAME = "top.maweihao.weather.BigWeatherWidget";
     private static final String PREF_LUNAR_PREFIX_KEY = "appwidget_big_lunar";
@@ -68,18 +69,9 @@ public class BigWidgetConfigureActivity extends Activity implements View.OnClick
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.widget_configure_big);
-        setResult(RESULT_CANCELED);
-        Intent intent = getIntent();
-        Bundle extras = intent.getExtras();
-        if (extras != null) {
-            mAppWidgetId = extras.getInt(
-                    AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-        }
-        initView();
     }
 
-    private void initView() {
+    protected void initView() {
         final View widgetView = LayoutInflater.from(this).inflate(R.layout.widget_big_weather, null);
         ((ViewGroup) findViewById(R.id.frameLayout)).addView(widgetView);
         ButterKnife.bind(this);
@@ -119,6 +111,11 @@ public class BigWidgetConfigureActivity extends Activity implements View.OnClick
         doneButton.setOnClickListener(this);
     }
 
+    @Override
+    protected int layoutId() {
+        return R.layout.widget_configure_big;
+    }
+
     private void initWidgetView() {
         LunarUtil lunarUtilDate = new LunarUtil(new GregorianCalendar());
         widgetCard.setVisibility(View.GONE);
@@ -142,7 +139,10 @@ public class BigWidgetConfigureActivity extends Activity implements View.OnClick
                 Intent resultValue = new Intent();
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
                 setResult(RESULT_OK, resultValue);
-                ServiceUtil.startWidgetSyncService(BigWidgetConfigureActivity.this, true, true);
+                boolean configChanged = TallWidgetUtils.isEnable(this) || SimpleWidgetUtils.isEnable(this);
+                WidgetService.refreshWidgets(getApplicationContext(), true, true,
+                        true, !configChanged, false);
+//                SyncService.scheduleSyncService(BigWidgetConfigureActivity.this.getApplicationContext(), true);
                 finish();
                 break;
             default:

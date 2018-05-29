@@ -58,11 +58,6 @@
             android:enabled="true"
             android:process=":remote" />
 
-        <service
-            android:name=".service.PushService"
-            android:enabled="true"
-            android:exported="false" />
-
         <receiver
             android:name=".receiver.BootCompleteReceiver"
             android:enabled="true"
@@ -99,7 +94,7 @@
                 android:resource="@xml/tall_weather_widget_info" />
         </receiver>
 
-        <activity android:name=".widget.TallWeatherWidgetConfigureActivity">
+        <activity android:name=".widget.TallWidgetConfigureActivity">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
@@ -143,11 +138,30 @@
         <!--android:resource="@xml/magic_weather_widget_info" />-->
         <!--</receiver>-->
 
-        <activity android:name=".widget.MagicWeatherWidgetConfigureActivity">
+        <activity android:name=".widget.MagicWidgetConfigureActivity">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".service.SyncService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+
+        <service
+            android:name=".service.WidgetService"
+            android:exported="false" />
+        <service android:name=".service.FCMService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".service.FCMInstanceIdService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
