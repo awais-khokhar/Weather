@@ -91,5 +91,6 @@ dependencies {
     implementation 'com.tencent.bugly:crashreport:2.6.6.1'
     implementation 'com.tencent.bugly:nativecrashreport:3.3.1'
     implementation 'com.google.firebase:firebase-messaging:17.0.0'
+//    implementation 'com.google.firebase:firebase-ads:15.0.1'
     apply plugin: 'com.google.gms.google-services'
 }

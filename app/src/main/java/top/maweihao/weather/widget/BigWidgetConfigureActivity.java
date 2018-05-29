@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,7 @@ import top.maweihao.weather.util.remoteView.TallWidgetUtils;
 
 public class BigWidgetConfigureActivity extends BaseWidgetConfigureActivity {
 
+    private static final String TAG = "BigWidgetActivity";
     private static final String PREFS_NAME = "top.maweihao.weather.BigWeatherWidget";
     private static final String PREF_LUNAR_PREFIX_KEY = "appwidget_big_lunar";
     private static final String PREF_CARD_PREFIX_KEY = "appwidget__big_card";

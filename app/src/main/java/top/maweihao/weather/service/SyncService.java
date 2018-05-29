@@ -70,6 +70,7 @@ public class SyncService extends JobService {
     @Override
     public void onCreate() {
         super.onCreate();
+        writeLog();
         configContact = Utility.createSimpleConfig(getApplicationContext()).create(PreferenceConfigContact.class);
         hasWidget = WidgetUtils.hasAnyWidget(this);
         mRepository = WeatherRepository.getInstance(this);
@@ -84,7 +85,6 @@ public class SyncService extends JobService {
     @Override
     public boolean onStartJob(JobParameters params) {
         Log.d(TAG, "onStartJob: ");
-        writeLog();
 
         long now = System.currentTimeMillis();
         long interval = now - configContact.getLastScheduleTime(0);

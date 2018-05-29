@@ -1,7 +1,6 @@
 package top.maweihao.weather.model;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.util.Collections;
 import java.util.List;
@@ -212,7 +211,7 @@ public class WeatherRepository implements WeatherData {
         List<NewWeather> weatherList = weatherDao.loadAll();
         if (weatherList != null && weatherList.size() > 0) {
             long time =  weatherList.get(0).getServer_time() * 1000;
-            Log.d(TAG, "getLastUpdateTime: " + time);
+//            Log.d(TAG, "getLastUpdateTime: " + time);
             return time;
         } else {
             return 0;

@@ -25,6 +25,7 @@ public class Constants {
 
     public static final int ID_NOTIFICATION_NORMAL = 101;
     public static final int ID_NOTIFICATION_ALERT = 102;
+    public static final int ID_NOTIFICATION_FOREGROUND = 103;
 
     public static boolean isSetResultIntent = false;
 
@@ -39,6 +40,8 @@ public class Constants {
             "B6:F3:EA:31:1E:7F:BB:C5:D2:6C:5A:A7:CA:D8:4F:DF:79:46:C9:C2;top.maweihao.weather";
 
     public static final String BaiduKey_Web = "eTTiuvV4YisaBbLwvj4p8drl7BGfl1eo";
+
+    public static final String AD_MOB_ID = "ca-app-pub-5459680778700983~4403433357";
 
     public static String lang = "zh_CN";
     public static int timeShift = 28800;

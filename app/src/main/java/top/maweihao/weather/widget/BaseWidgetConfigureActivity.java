@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
 import android.view.View;
 
 public abstract class BaseWidgetConfigureActivity extends Activity implements View.OnClickListener{
@@ -13,8 +11,8 @@ public abstract class BaseWidgetConfigureActivity extends Activity implements Vi
     protected int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    protected void onCreate(Bundle icicle) {
+        super.onCreate(icicle);
         setContentView(layoutId());
         setResult(RESULT_CANCELED);
         Intent intent = getIntent();

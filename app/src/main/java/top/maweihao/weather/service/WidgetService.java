@@ -3,8 +3,12 @@ package top.maweihao.weather.service;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
+import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -16,6 +20,7 @@ import top.maweihao.weather.contract.WeatherData;
 import top.maweihao.weather.entity.dao.MLocation;
 import top.maweihao.weather.entity.dao.NewWeather;
 import top.maweihao.weather.model.WeatherRepository;
+import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.remoteView.WidgetUtils;
 
 public class WidgetService extends IntentService {
@@ -36,6 +41,9 @@ public class WidgetService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//            pushForeground();
+        }
         mRepository = WeatherRepository.getInstance(this.getApplicationContext());
         compositeDisposable = new CompositeDisposable();
     }
@@ -49,6 +57,11 @@ public class WidgetService extends IntentService {
         intent.putExtra(CONFIG_CHANGED, configChanged);
         intent.putExtra(SHOW_TOAST, showToast);
         context.startService(intent);
+    }
+
+    @Override
+    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
@@ -74,18 +87,13 @@ public class WidgetService extends IntentService {
             }
             SyncService.scheduleSyncService(getApplicationContext(), false, configChanged);
             if (delay) {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                SystemClock.sleep(2000);
             }
             Disposable disposable = mRepository.getLocalWeatherAllowCached()
                     .subscribe(new Consumer<NewWeather>() {
                         @Override
                         public void accept(NewWeather weather) throws Exception {
                             if (weather != null && weather.getStatus().equals("ok")) {
-                                Log.d(TAG, "accept: ok");
                                 WidgetUtils.refreshWidget(getApplicationContext(), weather, location.getCoarseLocation());
                             }
                         }
@@ -101,8 +109,21 @@ public class WidgetService extends IntentService {
 
     @Override
     public void onDestroy() {
+        Log.d(TAG, "onDestroy: ");
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            stopForeground(true);
+        }
         mRepository = null;
         compositeDisposable.dispose();
         super.onDestroy();
+    }
+
+    private void pushForeground() {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                .setContentTitle(getResources().getString(R.string.refreshing_weather))
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(R.drawable.ic_refresh_black_24dp)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
+        startForeground(Constants.ID_NOTIFICATION_FOREGROUND, builder.build());
     }
 }

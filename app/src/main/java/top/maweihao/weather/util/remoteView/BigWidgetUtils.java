@@ -113,8 +113,15 @@ public class BigWidgetUtils {
         intent.putExtra(WidgetService.CACHE, true);
         intent.putExtra(WidgetService.START_SERVICE, true);
 
-        PendingIntent refreshPendingIntent = PendingIntent.getService(context, TALL_WIDGET_REFRESH_CODE,
-                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent refreshPendingIntent;
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            refreshPendingIntent = PendingIntent.getForegroundService(context, TALL_WIDGET_REFRESH_CODE,
+                    intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        } else {
+            refreshPendingIntent = PendingIntent.getService(context, TALL_WIDGET_REFRESH_CODE,
+                    intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
 
         bigViews.setOnClickPendingIntent(R.id.big_widget_clock, clockPendingIntent);
         bigViews.setOnClickPendingIntent(R.id.big_widget_skycon, weatherPendingIntent);
