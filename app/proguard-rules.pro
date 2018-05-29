@@ -199,6 +199,8 @@ public static java.lang.String TABLENAME;
 -dontwarn github.hellocsl.simpleconfig.**
 -keep class top.maweihao.weather.android_view.**{*;}
 
+-keep class top.maweihao.weather.db.**{*;}
+
 -keepattributes *Annotation*
 -keep @**annotation** class * {*;}
 
