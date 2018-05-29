@@ -14,7 +14,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.transition.Slide;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import butterknife.BindView;
@@ -35,14 +38,25 @@ public class AboutActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().setEnterTransition(new Slide(Gravity.RIGHT));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
         ButterKnife.bind(this);
         toolbar.setTitle(R.string.about_setting);
+        toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp);
         setSupportActionBar(toolbar);
-//        getActionBar().setDisplayHomeAsUpEnabled(true);
         initView();
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void initView() {
@@ -80,7 +94,6 @@ public class AboutActivity extends AppCompatActivity {
             findPreference("JakeWharton_butterknife").setOnPreferenceClickListener(this);
             findPreference("google_gson").setOnPreferenceClickListener(this);
             findPreference("netflix_rxjava").setOnPreferenceClickListener(this);
-
         }
 
         @Override
