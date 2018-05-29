@@ -13,15 +13,13 @@ import android.widget.RemoteViews;
 import java.util.GregorianCalendar;
 
 import top.maweihao.weather.R;
-import top.maweihao.weather.view.WeatherActivity;
 import top.maweihao.weather.entity.dao.NewWeather;
-import top.maweihao.weather.service.WidgetSyncService;
+import top.maweihao.weather.service.WidgetService;
 import top.maweihao.weather.util.LunarUtil;
 import top.maweihao.weather.util.Utility;
+import top.maweihao.weather.view.WeatherActivity;
 import top.maweihao.weather.widget.BigWeatherWidget;
 import top.maweihao.weather.widget.BigWidgetConfigureActivity;
-
-import static top.maweihao.weather.util.Utility.HOURLY_MODE;
 
 /**
  * Util class for BigWeatherWidget
@@ -48,8 +46,8 @@ public class BigWidgetUtils {
         int tem = Utility.intRoundDouble(weather.getResult().getHourly().getTemperature().get(0).getValue());
         String skycon = weather.getResult().getHourly().getSkycon().get(0).getValue();
         double intensity = weather.getResult().getHourly().getPrecipitation().get(0).getValue();
-        String skyconString = Utility.chooseWeatherSkycon(context, skycon, intensity, HOURLY_MODE);
-        int icon = Utility.chooseWeatherIcon(skycon, intensity, HOURLY_MODE, false);
+        String skyconString = Utility.chooseWeatherSkycon(context, skycon, intensity, Utility.HOURLY_MODE);
+        int icon = Utility.chooseWeatherIcon(skycon, intensity, Utility.HOURLY_MODE, false);
 
         LunarUtil lunarUtilDate = new LunarUtil(new GregorianCalendar());
         bigViews.setTextViewText(R.id.big_widget_lunar, lunarUtilDate.toString());
@@ -107,14 +105,27 @@ public class BigWidgetUtils {
         mClockIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent clockPendingIntent = PendingIntent.getActivity(context, CLOCK_PENDING_INTENT_CODE,
                 mClockIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        Intent intent = new Intent(context, WidgetSyncService.class);
-        intent.putExtra(WidgetSyncService.from_widget, true);
-        PendingIntent refreshPendingIntent = PendingIntent.getService(context, TALL_WIDGET_REFRESH_CODE,
-                intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        Intent intent = new Intent(context, WidgetSyncService.class);
+//        intent.putExtra(WidgetSyncService.from_widget, true);
+
+        Intent intent = new Intent(context, WidgetService.class);
+        intent.putExtra(WidgetService.DELAY, false);
+        intent.putExtra(WidgetService.CACHE, true);
+        intent.putExtra(WidgetService.START_SERVICE, true);
+
+        PendingIntent refreshPendingIntent;
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            refreshPendingIntent = PendingIntent.getForegroundService(context, TALL_WIDGET_REFRESH_CODE,
+                    intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        } else {
+            refreshPendingIntent = PendingIntent.getService(context, TALL_WIDGET_REFRESH_CODE,
+                    intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
 
         bigViews.setOnClickPendingIntent(R.id.big_widget_clock, clockPendingIntent);
         bigViews.setOnClickPendingIntent(R.id.big_widget_skycon, weatherPendingIntent);
-        bigViews.setOnClickPendingIntent(R.id.big_weather_refresh, refreshPendingIntent);
+        bigViews.setOnClickPendingIntent(R.id.iv_refresh, refreshPendingIntent);
 
         if (refresh) {
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);

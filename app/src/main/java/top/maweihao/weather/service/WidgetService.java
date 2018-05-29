@@ -7,10 +7,13 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -19,6 +22,7 @@ import top.maweihao.weather.entity.dao.MLocation;
 import top.maweihao.weather.entity.dao.NewWeather;
 import top.maweihao.weather.model.LocationModel;
 import top.maweihao.weather.model.WeatherModel;
+import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.http.DataResult;
 import top.maweihao.weather.util.http.Status;
 import top.maweihao.weather.util.remoteView.WidgetUtils;
@@ -44,8 +48,18 @@ public class WidgetService extends IntentService  implements LifecycleOwner {
     public void onCreate() {
         super.onCreate();
         mDispatcher.onServicePreSuperOnCreate();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            pushForeground();
+        }
 //        compositeDisposable = new CompositeDisposable();
     }
+
+    @Override
+    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+        mDispatcher.onServicePreSuperOnStart();
+        return super.onStartCommand(intent, flags, startId);
+    }
+
 
     public static void refreshWidgets(Context context, boolean delay, boolean allowFromCache,
                                       boolean startService, boolean configChanged, boolean showToast) {
@@ -81,11 +95,7 @@ public class WidgetService extends IntentService  implements LifecycleOwner {
             }
             SyncService.scheduleSyncService(getApplicationContext(), false, configChanged);
             if (delay) {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                SystemClock.sleep(2000);
             }
 
             LiveData<DataResult<NewWeather>> tempWeatherData = WeatherModel.INSTANCE.getWeather(location.getLocationStringReversed(), true);
@@ -117,9 +127,22 @@ public class WidgetService extends IntentService  implements LifecycleOwner {
         }
     }
 
+    private void pushForeground() {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+                .setContentTitle(getResources().getString(R.string.refreshing_weather))
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(R.drawable.ic_refresh_black_24dp)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
+        startForeground(Constants.ID_NOTIFICATION_FOREGROUND, builder.build());
+    }
+
     @Override
     public void onDestroy() {
         mDispatcher.onServicePreSuperOnDestroy();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            stopForeground(true);
+        }
+
         super.onDestroy();
     }
 

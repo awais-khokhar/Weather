@@ -155,5 +155,6 @@
     <string name="big_wind_on">%s有大风</string>
 
     <string name="refreshing">开始刷新…</string>
+    <string name="refreshing_weather">正在获取天气</string>
 
 </resources>
