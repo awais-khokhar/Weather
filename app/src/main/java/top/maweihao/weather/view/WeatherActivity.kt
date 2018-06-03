@@ -36,10 +36,7 @@ import top.maweihao.weather.service.SyncService
 import top.maweihao.weather.util.Constants.*
 import top.maweihao.weather.util.Utility
 import top.maweihao.weather.util.Utility.*
-import top.maweihao.weather.util.debugToast
-import top.maweihao.weather.util.http.DataResult
-import top.maweihao.weather.util.http.Status
-import top.maweihao.weather.viewModel.TipsType
+import top.maweihao.weather.viewModel.StatusInfo
 import top.maweihao.weather.viewModel.WeatherViewModel
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -101,59 +98,40 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
     }
 
     private fun bindingView() {
-        viewModel.weatherLiveData.observe(this, android.arch.lifecycle.Observer<DataResult<NewWeather>> {
-            it?.let {
-                debugToast(it.status.name)
-
-                when (it.status) {
-                    Status.SUCCESS -> {
-                        it.data?.let {
-                            if (it.status == "ok")
-                                showWeather(it)
-                            else showNormalTips("Api error")
-                        }
-                        swipe_refresh.isRefreshing = false
-                    }
-                    Status.ERROR   -> {
-                        it.data?.let { showNetworkError() }
-                        swipe_refresh.isRefreshing = false
-                    }
-                    Status.LOADING -> {
-                        swipe_refresh.isRefreshing = true
-                    }
-                    Status.CACHE   -> {
-                        it.data?.let { showWeather(it) }
-                        swipe_refresh.isRefreshing = false
-                    }
-                }
-            }
-
-
+        viewModel.weatherLiveData.observe(this, android.arch.lifecycle.Observer {
+            it?.let { showWeather(it) }
         })
 
         viewModel.locationResult.observe(this, android.arch.lifecycle.Observer {
             it?.let { showLocation(it) }
         })
 
-        viewModel.tipsData.observe(this, android.arch.lifecycle.Observer {
+        viewModel.statusInfoData.observe(this, android.arch.lifecycle.Observer {
             it?.let {
                 swipe_refresh.isRefreshing = false
                 when (it.type) {
-                    TipsType.NORMAL          -> {
+                    StatusInfo.NORMAL          -> {
                         showNormalTips(it.message)
                     }
-                    TipsType.LOCATION_FAIL   -> {
+                    StatusInfo.LOCATION_FAIL   -> {
                         if (isHasPermissions()) {
                             showNormalTips("Locate failed")
                         } else {
                             showLocateError()
                         }
                     }
-                    TipsType.CHOOSE_POSITION -> {
+                    StatusInfo.CHOOSE_POSITION -> {
                         askForChoosePosition()
+                    }
+                    StatusInfo.NET_ERR         -> {
+                        showNetworkError()
                     }
                 }
             }
+        })
+
+        viewModel.refreshViewData.observe(this,android.arch.lifecycle.Observer {
+            it?.let { swipe_refresh.isRefreshing = it }
         })
     }
 

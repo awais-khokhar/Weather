@@ -3,15 +3,9 @@ package top.maweihao.weather.service;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.SystemClock;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -24,14 +18,12 @@ import top.maweihao.weather.model.LocationModel;
 import top.maweihao.weather.model.WeatherModel;
 import top.maweihao.weather.util.Constants;
 import top.maweihao.weather.util.Utility;
-import top.maweihao.weather.util.http.DataResult;
+import top.maweihao.weather.util.http.NetworkSubscriber;
 import top.maweihao.weather.util.remoteView.WidgetUtils;
 
-public class WidgetSyncService extends Service implements LifecycleOwner {
+public class WidgetSyncService extends Service {
 
     private static final String TAG = WidgetSyncService.class.getSimpleName();
-
-    private final ServiceLifecycleDispatcher mDispatcher = new ServiceLifecycleDispatcher(this);
 
     public static final String force_refresh = "FORCE_REFRESH";
     private boolean forceRefresh;
@@ -53,13 +45,11 @@ public class WidgetSyncService extends Service implements LifecycleOwner {
 
     @Override
     public IBinder onBind(Intent intent) {
-        mDispatcher.onServicePreSuperOnBind();
         throw null;
     }
 
     @Override
     public void onCreate() {
-        mDispatcher.onServicePreSuperOnCreate();
 //        Toast.makeText(this, "onCreate", Toast.LENGTH_SHORT).show();
         working = true;
         Log.d(TAG, "onCreate: ");
@@ -70,7 +60,6 @@ public class WidgetSyncService extends Service implements LifecycleOwner {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        mDispatcher.onServicePreSuperOnStart();
         Log.d(TAG, "onStartCommand: ");
         isBigWidgetOn = WidgetUtils.hasBigWidget(this);
         if (intent != null) {
@@ -106,7 +95,6 @@ public class WidgetSyncService extends Service implements LifecycleOwner {
 
     @Override
     public void onDestroy() {
-        mDispatcher.onServicePreSuperOnDestroy();
         super.onDestroy();
         working = false;
     }
@@ -136,8 +124,8 @@ public class WidgetSyncService extends Service implements LifecycleOwner {
 
     private void fetchData(final MLocation location) {
 //        Toast.makeText(this, "fetchData!", Toast.LENGTH_SHORT).show();
-        int  minInterval          = 5;  //hardcode interval temporary
-        long now                  = System.currentTimeMillis();
+        int minInterval = 5;  //hardcode interval temporary
+        long now = System.currentTimeMillis();
         long cachedLastUpdateTime = WeatherModel.INSTANCE.getLastUpdateTime();
         if (now - cachedLastUpdateTime <= minInterval * 60 * 1000) {
             lastRefreshTime = cachedLastUpdateTime;
@@ -214,34 +202,27 @@ public class WidgetSyncService extends Service implements LifecycleOwner {
     }
 
     private void requestWeatherAndUpdate(final MLocation location, final int failedInterval) {
-        LiveData<DataResult<NewWeather>> data = WeatherModel.INSTANCE.getWeather(location.getLocationStringReversed(), false);
-        data.observe(this, new Observer<DataResult<NewWeather>>() {
-            @Override
-            public void onChanged(@Nullable DataResult<NewWeather> newWeatherDataResult) {
-                if (newWeatherDataResult != null) {
-                    switch (newWeatherDataResult.getStatus()) {
-                        case SUCCESS:
-                            NewWeather weather = newWeatherDataResult.getData();
-                            if (weather != null && weather.getStatus().equals("ok")) {
-                                lastRefreshTime = weather.getServer_time() * 1000;
-                                WidgetUtils.refreshWidget(WidgetSyncService.this,
-                                        weather, location.getCoarseLocation());
-                                LogUtils.d("fetchData: fetch weather succeed!");
-                            } else {
-                                LogUtils.e("fetchData: weather api error");
-                                startAgain(failedInterval);
-                            }
-                            break;
-                        case ERROR:
-                            LogUtils.e("fetchData: get weather failed" + newWeatherDataResult.getMessage());
+        WeatherModel.INSTANCE.getWeather(location.getLocationStringReversed(), true)
+                .subscribe(new NetworkSubscriber<NewWeather>() {
+                    @Override
+                    public void onSuccess(NewWeather data, boolean isDbCache) {
+                        if (data != null && data.getStatus().equals("ok")) {
+                            lastRefreshTime = data.getServer_time() * 1000;
+                            WidgetUtils.refreshWidget(WidgetSyncService.this, data, location.getCoarseLocation());
+                            LogUtils.d("fetchData: fetch weather succeed!");
+                        } else {
+                            LogUtils.e("fetchData: weather api error");
                             startAgain(failedInterval);
-                            stopSelf();
-                            break;
-
+                        }
                     }
-                }
-            }
-        });
+
+                    @Override
+                    public void onNetError(@org.jetbrains.annotations.Nullable String msg) {
+                        LogUtils.e("fetchData: get weather failed  " + msg);
+                        startAgain(failedInterval);
+                        stopSelf();
+                    }
+                });
 
 //        model.getWeather(location.getLocationStringReversed())
 //                .subscribeOn(Schedulers.io())
@@ -270,15 +251,10 @@ public class WidgetSyncService extends Service implements LifecycleOwner {
     }
 
     private void requestHeAndUpdate(final MLocation location, final int failedInterval) {
-
-        LiveData<DataResult<NewHeWeatherNow>> liveData = WeatherModel.INSTANCE.getHeWeatherNow(location.getLocationStringReversed());
-        liveData.observe(this, new Observer<DataResult<NewHeWeatherNow>>() {
-            @Override
-            public void onChanged(@Nullable DataResult<NewHeWeatherNow> newHeWeatherNowDataResult) {
-                if (newHeWeatherNowDataResult == null) return;
-                switch (newHeWeatherNowDataResult.getStatus()) {
-                    case SUCCESS:
-                        NewHeWeatherNow weatherNow = newHeWeatherNowDataResult.getData();
+        WeatherModel.INSTANCE.getHeWeatherNow(location.getLocationStringReversed())
+                .subscribe(new NetworkSubscriber<NewHeWeatherNow>() {
+                    @Override
+                    public void onSuccess(NewHeWeatherNow weatherNow, boolean isDbCache) {
                         if (weatherNow != null &&
                                 weatherNow.getHeWeather5().get(0).getStatus().equals("ok")) {
                             lastRefreshTime = Utility.getHeWeatherUpdateTime(weatherNow);
@@ -290,18 +266,16 @@ public class WidgetSyncService extends Service implements LifecycleOwner {
                             startAgain(failedInterval);
                         }
                         stopSelf();
-                        break;
-                    case ERROR:
+                    }
 
-                        Log.e(TAG, "fetchData: get heWeatherNow failed " + newHeWeatherNowDataResult.getMessage());
+                    @Override
+                    public void onNetError(@org.jetbrains.annotations.Nullable String msg) {
+                        Log.e(TAG, "fetchData: get heWeatherNow failed  " + msg);
                         startAgain(failedInterval);
                         stopSelf();
-                        break;
+                    }
+                });
 
-                }
-
-            }
-        });
 //        Log.d(TAG, "fetchData: here" + location.getLocationStringReversed());
 //        model.getHeWeatherNow(location.getLocationStringReversed())
 //                .subscribeOn(Schedulers.io())
@@ -330,10 +304,4 @@ public class WidgetSyncService extends Service implements LifecycleOwner {
 //                });
     }
 
-
-    @NonNull
-    @Override
-    public Lifecycle getLifecycle() {
-        return mDispatcher.getLifecycle();
-    }
 }

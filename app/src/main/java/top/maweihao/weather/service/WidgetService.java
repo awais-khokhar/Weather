@@ -1,17 +1,12 @@
 package top.maweihao.weather.service;
 
 import android.app.IntentService;
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -23,15 +18,12 @@ import top.maweihao.weather.entity.dao.NewWeather;
 import top.maweihao.weather.model.LocationModel;
 import top.maweihao.weather.model.WeatherModel;
 import top.maweihao.weather.util.Constants;
-import top.maweihao.weather.util.http.DataResult;
-import top.maweihao.weather.util.http.Status;
+import top.maweihao.weather.util.http.NetworkSubscriber;
 import top.maweihao.weather.util.remoteView.WidgetUtils;
 
-public class WidgetService extends IntentService  implements LifecycleOwner {
+public class WidgetService extends IntentService {
 
     private static final String TAG = WidgetService.class.getSimpleName();
-
-    private final ServiceLifecycleDispatcher mDispatcher = new ServiceLifecycleDispatcher(this);
 
 //    private CompositeDisposable compositeDisposable;
     public static final String DELAY = "delay";
@@ -47,7 +39,6 @@ public class WidgetService extends IntentService  implements LifecycleOwner {
     @Override
     public void onCreate() {
         super.onCreate();
-        mDispatcher.onServicePreSuperOnCreate();
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             pushForeground();
         }
@@ -56,7 +47,6 @@ public class WidgetService extends IntentService  implements LifecycleOwner {
 
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        mDispatcher.onServicePreSuperOnStart();
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -98,18 +88,19 @@ public class WidgetService extends IntentService  implements LifecycleOwner {
                 SystemClock.sleep(2000);
             }
 
-            LiveData<DataResult<NewWeather>> tempWeatherData = WeatherModel.INSTANCE.getWeather(location.getLocationStringReversed(), true);
-            tempWeatherData.observe(this, new Observer<DataResult<NewWeather>>() {
-                @Override
-                public void onChanged(@Nullable DataResult<NewWeather> newWeatherDataResult) {
-                    if (newWeatherDataResult != null && (newWeatherDataResult.getStatus() == Status.SUCCESS || newWeatherDataResult.getStatus() == Status.CACHE)) {
-                        Log.d(TAG, "accept: ok");
-                        WidgetUtils.refreshWidget(getApplicationContext(), newWeatherDataResult.getData(), location.getCoarseLocation());
+            WeatherModel.INSTANCE.getWeather(location.getLocationStringReversed(), true)
+                    .subscribe(new NetworkSubscriber<NewWeather>() {
+                        @Override
+                        public void onSuccess(NewWeather data, boolean isDbCache) {
+                            if (data != null && data.getStatus().equals("ok")) {
+                                WidgetUtils.refreshWidget(getApplicationContext(), data, location.getCoarseLocation());
+                            }
+                        }
 
-                    }
-                }
-            });
-
+                        @Override
+                        public void onNetError(@org.jetbrains.annotations.Nullable String msg) {
+                        }
+                    });
 //            Disposable disposable = mRepository.getLocalWeatherAllowCached()
 //                    .subscribe(new Consumer<NewWeather>() {
 //                        @Override
@@ -138,7 +129,6 @@ public class WidgetService extends IntentService  implements LifecycleOwner {
 
     @Override
     public void onDestroy() {
-        mDispatcher.onServicePreSuperOnDestroy();
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             stopForeground(true);
         }
@@ -146,9 +136,4 @@ public class WidgetService extends IntentService  implements LifecycleOwner {
         super.onDestroy();
     }
 
-    @NonNull
-    @Override
-    public Lifecycle getLifecycle() {
-        return mDispatcher.getLifecycle();
-    }
 }

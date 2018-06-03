@@ -3,6 +3,7 @@ package top.maweihao.weather.util.http
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import top.maweihao.weather.BuildConfig
 import top.maweihao.weather.util.http.api.BDLocateApi
@@ -53,8 +54,8 @@ object HttpUtils {
                 .baseUrl(baseUrl)
                 .client(client.build())
                 .addConverterFactory(GsonConverterFactory.create())
-//            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addCallAdapterFactory(LiveDataCallAdapterFactory())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+//                .addCallAdapterFactory(LiveDataCallAdapterFactory())
                 .build()
     }
 }

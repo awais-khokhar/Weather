@@ -4,17 +4,12 @@ import android.app.job.JobInfo;
 import android.app.job.JobParameters;
 import android.app.job.JobScheduler;
 import android.app.job.JobService;
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -41,17 +36,14 @@ import top.maweihao.weather.util.NotificationUtil;
 import top.maweihao.weather.util.PrefsUtil;
 import top.maweihao.weather.util.Utility;
 import top.maweihao.weather.util.WeatherUtil;
-import top.maweihao.weather.util.http.DataResult;
-import top.maweihao.weather.util.http.Status;
+import top.maweihao.weather.util.http.NetworkSubscriber;
 import top.maweihao.weather.util.remoteView.WidgetUtils;
 
 import static top.maweihao.weather.util.Utility.HOURLY_MODE;
 
-public class SyncService extends JobService implements LifecycleOwner {
+public class SyncService extends JobService {
 
     private static final String TAG = SyncService.class.getSimpleName();
-
-    private final ServiceLifecycleDispatcher mDispatcher = new ServiceLifecycleDispatcher(this);
 
 //    private WeatherRepository mRepository;
 
@@ -78,7 +70,6 @@ public class SyncService extends JobService implements LifecycleOwner {
     @Override
     public void onCreate() {
         super.onCreate();
-        mDispatcher.onServicePreSuperOnCreate();
 
         configContact = Utility.createSimpleConfig(getApplicationContext()).create(PreferenceConfigContact.class);
         hasWidget = WidgetUtils.hasAnyWidget(this);
@@ -93,8 +84,6 @@ public class SyncService extends JobService implements LifecycleOwner {
 
     @Override
     public boolean onStartJob(JobParameters params) {
-        //绑定生命周期方法
-        mDispatcher.onServicePreSuperOnStart();
         Log.d(TAG, "onStartJob: ");
         writeLog();
 
@@ -157,19 +146,21 @@ public class SyncService extends JobService implements LifecycleOwner {
      * @return true: 任务未完成  false: 任务已完成
      */
     private boolean refreshData(final MLocation location, final JobParameters parameters) {
-        LiveData<DataResult<NewWeather>> tempWeatherData = WeatherModel.INSTANCE.getWeather(location.getLocationStringReversed(), true);
-        tempWeatherData.observe(this, new Observer<DataResult<NewWeather>>() {
-            @Override
-            public void onChanged(@Nullable DataResult<NewWeather> newWeatherDataResult) {
-                if (newWeatherDataResult != null && (newWeatherDataResult.getStatus() == Status.SUCCESS || newWeatherDataResult.getStatus() == Status.CACHE)) {
-                    NewWeather weather = newWeatherDataResult.getData();
-                    if (weather != null && weather.getStatus().equals("ok")) {
-                        afterGettingData(weather, location);
+        WeatherModel.INSTANCE.getWeather(location.getLocationStringReversed(), true)
+                .subscribe(new NetworkSubscriber<NewWeather>() {
+                    @Override
+                    public void onSuccess(NewWeather data, boolean isDbCache) {
+                        if (data != null && data.getStatus().equals("ok")) {
+                            afterGettingData(data, location);
+                        }
+                        jobFinished(parameters, false);
                     }
-                    jobFinished(parameters, false);
-                }
-            }
-        });
+
+                    @Override
+                    public void onNetError(@org.jetbrains.annotations.Nullable String msg) {
+                        jobFinished(parameters, false);
+                    }
+                });
 
 //        Disposable disposable = mRepository.getLocalWeatherAllowCached()
 //                .subscribeOn(Schedulers.io())
@@ -228,13 +219,11 @@ public class SyncService extends JobService implements LifecycleOwner {
 
     @Override
     public boolean onStopJob(JobParameters params) {
-        mDispatcher.onServicePreSuperOnStop();
         return false;
     }
 
     @Override
     public void onDestroy() {
-        mDispatcher.onServicePreSuperOnDestroy();
         super.onDestroy();
     }
 
@@ -403,10 +392,4 @@ public class SyncService extends JobService implements LifecycleOwner {
         return getResources().getString(res, diff, dayOfWeek);
     }
 
-
-    @NonNull
-    @Override
-    public Lifecycle getLifecycle() {
-        return mDispatcher.getLifecycle();
-    }
 }

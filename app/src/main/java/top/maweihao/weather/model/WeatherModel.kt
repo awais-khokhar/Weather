@@ -1,12 +1,11 @@
 package top.maweihao.weather.model
 
-import android.arch.lifecycle.LiveData
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.Utils
+import io.reactivex.Flowable
 import top.maweihao.weather.entity.dao.*
 import top.maweihao.weather.util.Constants
 import top.maweihao.weather.util.ServiceUtil
-import top.maweihao.weather.util.http.ApiResponse
 import top.maweihao.weather.util.http.ApiUtils
 import top.maweihao.weather.util.http.DataResult
 import top.maweihao.weather.util.http.NetworkBoundResource
@@ -36,7 +35,7 @@ object WeatherModel {
      * @param isLoadCache Boolean
      * @return LiveData<DataResult<NewWeather>>
      */
-    fun getWeather(location: String, isLoadCache: Boolean): LiveData<DataResult<NewWeather>> {
+    fun getWeather(location: String, isLoadCache: Boolean): Flowable<DataResult<NewWeather>> {
         return object : NetworkBoundResource<NewWeather, NewWeather>() {
             override fun saveCallResultOrConvert(item: NewWeather): NewWeather {
                 saveWeather(item)
@@ -67,10 +66,10 @@ object WeatherModel {
                 return getWeatherCache()
             }
 
-            override fun createCall(): LiveData<ApiResponse<NewWeather>> {
+            override fun createCall(): Flowable<NewWeather> {
                 return ApiUtils.getWeather(location, null, null, Constants.timeShift, Constants.lang)
             }
-        }.asLiveData()
+        }.asFlowable()
 
     }
 
@@ -78,7 +77,6 @@ object WeatherModel {
         val weatherList = weatherDao.loadAll()
         if (weatherList != null && weatherList.size > 0) {
             weatherList.sort()
-
             LogUtils.d("-------------------> weatherCache not null")
             return DaoUtils.unpackWeather(weatherList[0])
         }
@@ -103,7 +101,7 @@ object WeatherModel {
     }
 
 
-    fun getHeWeatherNow(location: String): LiveData<DataResult<NewHeWeatherNow>> {
+    fun getHeWeatherNow(location: String): Flowable<DataResult<NewHeWeatherNow>> {
         return object : NetworkBoundResource<NewHeWeatherNow, NewHeWeatherNow>() {
             override fun saveCallResultOrConvert(item: NewHeWeatherNow): NewHeWeatherNow {
                 saveWeather(item)
@@ -116,10 +114,10 @@ object WeatherModel {
 
             override fun load4Cache(): NewHeWeatherNow? = null
 
-            override fun createCall(): LiveData<ApiResponse<NewHeWeatherNow>> {
+            override fun createCall(): Flowable<NewHeWeatherNow> {
                 return ApiUtils.getHeWeatherNow(location)
             }
-        }.asLiveData()
+        }.asFlowable()
     }
 
     fun saveWeather(weather: NewWeather) {

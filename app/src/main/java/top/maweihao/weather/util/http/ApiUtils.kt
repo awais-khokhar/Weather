@@ -1,7 +1,7 @@
 package top.maweihao.weather.util.http
 
-import android.arch.lifecycle.LiveData
 import android.text.TextUtils
+import io.reactivex.Flowable
 import io.reactivex.annotations.NonNull
 import top.maweihao.weather.entity.BaiDu.BDIPLocationBean
 import top.maweihao.weather.entity.BaiDu.BaiDuChoosePositionBean
@@ -26,7 +26,7 @@ object ApiUtils {
      * @return Observable
      */
     fun getWeather(@NonNull location: String, alert: Boolean?,
-                   days: Int?, shift: Int?, lang: String): LiveData<ApiResponse<NewWeather>> {
+                   days: Int?, shift: Int?, lang: String): Flowable<NewWeather> {
         var alert = alert
         var days = days
         var shift = shift
@@ -39,15 +39,15 @@ object ApiUtils {
         return weatherApi.getWeather(location, alert, days, shift, lang)
     }
 
-    fun getHeWeatherNow(@NonNull location: String): LiveData<ApiResponse<NewHeWeatherNow>> {
+    fun getHeWeatherNow(@NonNull location: String): Flowable<NewHeWeatherNow> {
         return heWeatherApi.getHeWeatherNow(location, Constants.HeWeatherKey)
     }
 
-    fun getIpLocation(): LiveData<ApiResponse<BDIPLocationBean>> {
+    fun getIpLocation(): Flowable<BDIPLocationBean> {
         return baiduLocateApi.getIpLocation(Constants.BaiduKey, "gcj02", Constants.mBaiduCode)
     }
 
-    fun getAddressDetail(location: String): LiveData<ApiResponse<BaiDuCoordinateBean>> {
+    fun getAddressDetail(location: String): Flowable<BaiDuCoordinateBean> {
         return baiduLocateApi.getAddressDetail(location,
                                                "json",
                                                0,
@@ -55,7 +55,7 @@ object ApiUtils {
                                                Constants.mBaiduCode)
     }
 
-    fun getCoordinateByDesc(desc: String): LiveData<ApiResponse<BaiDuChoosePositionBean>> {
+    fun getCoordinateByDesc(desc: String): Flowable<BaiDuChoosePositionBean> {
         return baiduLocateApi.getCoordinateByDesc(desc, "json",
                                                   Constants.BaiduKey, Constants.mBaiduCode)
     }

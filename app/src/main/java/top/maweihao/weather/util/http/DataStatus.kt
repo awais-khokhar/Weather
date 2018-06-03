@@ -1,13 +1,12 @@
 package top.maweihao.weather.util.http
 
-enum class Status {
+enum class DataStatus {
     SUCCESS,
     CACHE,
-    ERROR,
     LOADING;
 
     /**
-     * Returns `true` if the [Status] is loading else `false`.
+     * Returns `true` if the [DataStatus] is loading else `false`.
      */
     fun isLoading() = this == LOADING
 }
