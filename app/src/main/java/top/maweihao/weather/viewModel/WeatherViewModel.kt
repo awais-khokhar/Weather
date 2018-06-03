@@ -1,6 +1,5 @@
 package top.maweihao.weather.viewModel
 
-import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.blankj.utilcode.util.LogUtils
@@ -24,7 +23,7 @@ class WeatherViewModel : ViewModel() {
 
     val weatherLiveData by lazy { MutableLiveData<NewWeather>() }
 
-    val locationResult by lazy { MediatorLiveData<MLocation>() }
+    val locationResult by lazy { MutableLiveData<MLocation>() }
 
     val statusInfoData by lazy { MutableLiveData<StatusInfoData>() }
 
@@ -41,8 +40,7 @@ class WeatherViewModel : ViewModel() {
 
 
     fun getWeatherCache() {
-//        weatherLiveData.value = DataResult.cache(WeatherModel.getWeatherCache())
-//        weatherLiveData.value = WeatherModel.getWeatherCache()
+        weatherLiveData.value = WeatherModel.getWeatherCache()
     }
 
     fun getWeather(isHavePermission: Boolean) {
@@ -57,7 +55,7 @@ class WeatherViewModel : ViewModel() {
 
                             override fun onStart() {
                                 super.onStart()
-                                refreshViewData.value = true
+                                refreshViewData.postValue(true)
                             }
 
                             override fun onNext(t: MLocation?) {
@@ -66,8 +64,7 @@ class WeatherViewModel : ViewModel() {
 
                             override fun onError(t: Throwable?) {
                                 //定位失败
-                                statusInfoData.value = StatusInfoData(StatusInfo.LOCATION_FAIL, t?.message
-                                                                                                ?: "")
+                                statusInfoData.postValue(StatusInfoData(StatusInfo.LOCATION_FAIL, t?.message ?: ""))
                             }
                         })
 
@@ -111,7 +108,8 @@ class WeatherViewModel : ViewModel() {
             LocationModel.geocodeLocation(location)
                     .subscribe(object : NetworkSubscriber<MLocation>() {
                         override fun onSuccess(data: MLocation, isDbCache: Boolean) {
-                            locationResult.value = data
+//                            locationResult.value = data
+                            locationResult.postValue(data)
                             countyName4widget = data.coarseLocation
                             if (workingFlag) {
                                 workingFlag = false
@@ -125,18 +123,20 @@ class WeatherViewModel : ViewModel() {
                         }
                     })
         } else {
-            locationResult.value = location
+//            locationResult.value = location
+            locationResult.postValue(location)
         }
 
         LogUtils.d("getWeather")
         WeatherModel.getWeather(location.locationStringReversed, isLoadCache)
                 .subscribe(object : NetworkSubscriber<NewWeather>() {
                     override fun onSuccess(data: NewWeather, isDbCache: Boolean) {
-                        weatherLiveData.value = data
+//                        weatherLiveData.value = data
+                        weatherLiveData.postValue(data)
 
                         LogUtils.d("set Value")
 
-                        refreshViewData.value = false
+                        refreshViewData.postValue(false)
 
                         weather4widget = data
                         if (workingFlag) {
@@ -159,8 +159,10 @@ class WeatherViewModel : ViewModel() {
 
                     override fun onComplete() {
                         LogUtils.d("set onComplete")
-
+                        refreshViewData.value = false
                     }
+
+
                 })
     }
 

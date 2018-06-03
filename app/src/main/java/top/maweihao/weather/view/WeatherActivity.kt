@@ -99,8 +99,9 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
     }
 
     private fun bindingView() {
-        viewModel.weatherLiveData.observe(this, android.arch.lifecycle.Observer {
-            debugToast("weather data")
+        viewModel.weatherLiveData.observeForever(android.arch.lifecycle.Observer {
+            debugToast("weather data  ${it == null}")
+
             it?.let { showWeather(it) }
         })
 
@@ -132,7 +133,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
             }
         })
 
-        viewModel.refreshViewData.observe(this,android.arch.lifecycle.Observer {
+        viewModel.refreshViewData.observe(this, android.arch.lifecycle.Observer {
             it?.let { swipe_refresh.isRefreshing = it }
         })
     }
@@ -168,6 +169,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy")
+        viewModel.weatherLiveData.removeObservers(this)
         try {
             dynamicWeatherView.onDestroy()
         } catch (e: Exception) {
@@ -209,7 +211,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
             }
             R.id.start_service   -> {
                 // debug only
-                SyncService.scheduleSyncService(this,true,true)
+                SyncService.scheduleSyncService(this, true, true)
             }
             R.id.setting         -> {
                 startActivityForResult<SettingActivity>(SettingActivityRequestCode)
