@@ -36,6 +36,7 @@ import top.maweihao.weather.service.SyncService
 import top.maweihao.weather.util.Constants.*
 import top.maweihao.weather.util.Utility
 import top.maweihao.weather.util.Utility.*
+import top.maweihao.weather.util.debugToast
 import top.maweihao.weather.viewModel.StatusInfo
 import top.maweihao.weather.viewModel.WeatherViewModel
 import java.text.ParseException
@@ -99,6 +100,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
 
     private fun bindingView() {
         viewModel.weatherLiveData.observe(this, android.arch.lifecycle.Observer {
+            debugToast("weather data")
             it?.let { showWeather(it) }
         })
 

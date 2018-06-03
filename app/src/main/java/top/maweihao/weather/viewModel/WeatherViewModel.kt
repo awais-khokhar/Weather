@@ -42,7 +42,7 @@ class WeatherViewModel : ViewModel() {
 
     fun getWeatherCache() {
 //        weatherLiveData.value = DataResult.cache(WeatherModel.getWeatherCache())
-        weatherLiveData.value = WeatherModel.getWeatherCache()
+//        weatherLiveData.value = WeatherModel.getWeatherCache()
     }
 
     fun getWeather(isHavePermission: Boolean) {
@@ -75,7 +75,7 @@ class WeatherViewModel : ViewModel() {
                 //ip定位
                 LogUtils.d("start initIPLocate")
                 LocationModel.initIPLocate()
-                        .subscribe(object :NetworkSubscriber<BDIPLocationBean>(){
+                        .subscribe(object : NetworkSubscriber<BDIPLocationBean>() {
                             override fun onSuccess(data: BDIPLocationBean, isDbCache: Boolean) {
                                 if (data.status == 0) {
                                     val location = LocationUtil.convertType(data)
@@ -105,6 +105,7 @@ class WeatherViewModel : ViewModel() {
     }
 
     private fun refreshWeather(location: MLocation) {
+
         if (location.isNeedGeocode) {
             workingFlag = true
             LocationModel.geocodeLocation(location)
@@ -127,10 +128,15 @@ class WeatherViewModel : ViewModel() {
             locationResult.value = location
         }
 
+        LogUtils.d("getWeather")
         WeatherModel.getWeather(location.locationStringReversed, isLoadCache)
                 .subscribe(object : NetworkSubscriber<NewWeather>() {
                     override fun onSuccess(data: NewWeather, isDbCache: Boolean) {
                         weatherLiveData.value = data
+
+                        LogUtils.d("set Value")
+
+                        refreshViewData.value = false
 
                         weather4widget = data
                         if (workingFlag) {
@@ -152,7 +158,8 @@ class WeatherViewModel : ViewModel() {
                     }
 
                     override fun onComplete() {
-                        refreshViewData.value = false
+                        LogUtils.d("set onComplete")
+
                     }
                 })
     }

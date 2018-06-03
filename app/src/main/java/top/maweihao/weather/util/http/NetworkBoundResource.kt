@@ -1,10 +1,8 @@
 package top.maweihao.weather.util.http
 
-import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MediatorLiveData
 import android.support.annotation.MainThread
 import android.support.annotation.WorkerThread
-import com.blankj.utilcode.util.LogUtils
 import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.internal.operators.flowable.FlowableCreate
@@ -13,9 +11,8 @@ import org.reactivestreams.Subscription
 
 /**
  * 网络帮助类
- * @param ResultType
- * @param RequestType
- * @property result MediatorLiveData<DataResult<ResultType>>
+ * @param ResultType 需要返回的数据类型
+ * @param RequestType 网络请求回来的数据类型
  */
 abstract class NetworkBoundResource<ResultType, RequestType> {
 
@@ -40,38 +37,9 @@ abstract class NetworkBoundResource<ResultType, RequestType> {
             }
         }
     }
-//    init {
-//
-//
-//        if (this.shouldLoad4Cache()) {
-//            val cacheData = this.load4Cache()
-//
-//            val c = MutableLiveData<ResultType>()
-//            result.addSource(c) {
-//                setValue(DataResult.cache(it))
-//            }
-//            c.value = cacheData
-//            if (this.shouldFetch(cacheData)) {
-//                fetchFromNetwork()
-//            }
-//
-//        } else {
-//            fetchFromNetwork()
-//        }
-//    }
-
-    @MainThread
-    private fun setValue(newValue: DataResult<ResultType>) {
-        if (result.value != newValue) {
-//            Handler(Looper.getMainLooper()).post {
-            result.postValue(newValue)
-            LogUtils.d("cache ok")
-//            }
-        }
-    }
 
     private fun fetchFromNetwork(emitter: FlowableEmitter<DataResult<ResultType>>) {
-//        setValue(DataResult.loading())
+        emitter.onNext(DataResult.loading())
 
         val flowable = createCall()
 
@@ -96,41 +64,6 @@ abstract class NetworkBoundResource<ResultType, RequestType> {
                        t?.let { emitter.onError(it) }
                     }
                 })
-
-//        System.out.println("-------------------> fetchFromNetwork")
-//        result.addSource(apiResponse) { response ->
-//            result.removeSource(apiResponse)
-//            when (response) {
-//                is ApiSuccessResponse -> {
-//                    ThreadUtils.executeByIo(object : ThreadUtils.SimpleTask<ResultType>() {
-//                        override fun onSuccess(result: ResultType) {
-//                            setValue(DataResult.success(result))
-//                        }
-//
-//                        override fun doInBackground(): ResultType {
-//                            return saveCallResultOrConvert(processResponse(response))
-//                        }
-//                    })
-//
-//                }
-//                is ApiEmptyResponse   -> {
-//                    ThreadUtils.executeByIo(object : ThreadUtils.SimpleTask<ResultType?>() {
-//                        override fun onSuccess(result: ResultType?) {
-//                            setValue(DataResult.cache(result))
-//                        }
-//
-//                        override fun doInBackground(): ResultType? {
-//                            return load4Cache()
-//                        }
-//                    })
-//                }
-//                is ApiErrorResponse   -> {
-//                    val data = onFetchFailed()
-//                    setValue(DataResult.error(response.errorMessage, data))
-//
-//                }
-//            }
-//        }
     }
 
 
@@ -140,8 +73,6 @@ abstract class NetworkBoundResource<ResultType, RequestType> {
     }
 
     protected open fun onFetchFailed(): ResultType? = null
-
-    fun asLiveData() = result as LiveData<DataResult<ResultType>>
 
     @WorkerThread
     protected open fun processResponse(response: ApiSuccessResponse<RequestType>) = response.body

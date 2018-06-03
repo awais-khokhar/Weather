@@ -68,7 +68,6 @@
                 android:resource="@xml/shortcuts" />
         </activity>
         <activity android:name=".view.ChoosePositionActivity" />
-        <activity android:name=".view.MainActivity" />
 
         <service
             android:name="com.baidu.location.f"

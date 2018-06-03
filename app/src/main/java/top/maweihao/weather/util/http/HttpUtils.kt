@@ -37,7 +37,6 @@ object HttpUtils {
                 .retryOnConnectionFailure(true)
 
 
-
         val logInterceptor = HttpLoggingInterceptor()
         if (BuildConfig.DEBUG) {
             //显示日志
@@ -54,7 +53,7 @@ object HttpUtils {
                 .baseUrl(baseUrl)
                 .client(client.build())
                 .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
 //                .addCallAdapterFactory(LiveDataCallAdapterFactory())
                 .build()
     }
