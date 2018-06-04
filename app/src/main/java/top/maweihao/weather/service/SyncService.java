@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import top.maweihao.weather.BuildConfig;
 import top.maweihao.weather.R;
 import top.maweihao.weather.contract.PreferenceConfigContact;
 import top.maweihao.weather.entity.Alert;
@@ -85,7 +86,10 @@ public class SyncService extends JobService {
     @Override
     public boolean onStartJob(JobParameters params) {
         Log.d(TAG, "onStartJob: ");
-        writeLog();
+        if (BuildConfig.APP_DEBUG) {
+            writeLog();
+        }
+
 
         long now = System.currentTimeMillis();
         long interval = now - configContact.getLastScheduleTime(0);

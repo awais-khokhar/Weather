@@ -60,7 +60,7 @@
                 style="@style/content_text"
                 android:layout_width="match_parent"
                 android:layout_centerVertical="true"
-                android:layout_toLeftOf="@id/big_widget_skycon"
+                android:layout_toLeftOf="@+id/big_widget_skycon"
                 android:gravity="right"
                 android:maxLines="2"
                 android:paddingEnd="16dp"
@@ -80,7 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_toEndOf="@id/big_widget_skycon"
+                android:layout_toEndOf="@+id/big_widget_skycon"
                 android:orientation="vertical"
                 android:paddingEnd="16dp"
                 android:paddingStart="16dp">
@@ -95,12 +95,12 @@
                         android:layout_height="wrap_content"
                         android:format12Hour="MM/dd EE"
                         android:format24Hour="MM/dd EE"
-                        android:textSize="16sp"
                         android:shadowColor="@color/colorTextDark"
                         android:shadowDx="1.0"
                         android:shadowDy="1.0"
                         android:shadowRadius="1.0"
-                        android:textColor="@color/colorTextLight" />
+                        android:textColor="@color/colorTextLight"
+                        android:textSize="16sp" />
 
                 </LinearLayout>
 
@@ -118,17 +118,17 @@
                         android:shadowDx="1.0"
                         android:shadowDy="1.0"
                         android:shadowRadius="1.0"
+                        android:text="@string/na"
                         android:textColor="@color/colorTextLight"
                         android:textSize="14sp"
-                        tools:text="十月廿一"
-                        android:text="@string/na"
-                        android:visibility="visible" />
+                        android:visibility="visible"
+                        tools:text="十月廿一" />
 
                     <TextView
                         android:id="@+id/big_widget_refresh_time"
-                        android:layout_marginStart="8dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
                         android:gravity="left"
                         android:maxLines="1"
                         android:shadowColor="@color/colorTextDark"
@@ -145,9 +145,9 @@
 
                     <ImageView
                         android:id="@+id/iv_refresh"
-                        android:layout_marginStart="8dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
                         android:src="@drawable/ic_refresh_gray_24dp"
                         android:visibility="gone" />
 
@@ -172,11 +172,11 @@
                 android:shadowDx="1.0"
                 android:shadowDy="1.0"
                 android:shadowRadius="1.0"
+                android:text="@string/wish_you_lucky"
                 android:textColor="@color/colorTextLight"
                 android:textColorLink="@color/colorTextDark2nd"
                 android:textSize="14sp"
                 tools:ignore="RtlHardcoded"
-                android:text="@string/wish_you_lucky"
                 tools:text="未来两小时不会下雨，放心出门吧" />
 
         </RelativeLayout>

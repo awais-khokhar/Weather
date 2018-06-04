@@ -47,7 +47,7 @@
         <item>Fahrenheit degree</item>
     </string-array>
 
-    <string-array name="temperature_value">
+    <string-array name="temperature_value" translatable="false">
         <item>celsius</item>
         <item>fahrenheit</item>
     </string-array>

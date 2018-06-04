@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class LunarUtil {
     private int year;
@@ -20,7 +21,7 @@ public class LunarUtil {
                     "冬至"};
 
     private static SimpleDateFormat chineseDateFormat = new SimpleDateFormat(
-            " yyyy年MM月dd日 ");
+            " yyyy年MM月dd日 ", Locale.CHINA);
     private final static long[] lunarInfo = new long[]
             {0x04bd8, 0x04ae0, 0x0a570, 0x054d5, 0x0d260, 0x0d950, 0x16554, 0x056a0,
                     0x09ad0, 0x055d2, 0x04ae0, 0x0a5b6, 0x0a4d0, 0x0d250, 0x1d255,

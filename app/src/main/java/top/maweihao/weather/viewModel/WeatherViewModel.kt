@@ -64,7 +64,8 @@ class WeatherViewModel : ViewModel() {
 
                             override fun onError(t: Throwable?) {
                                 //定位失败
-                                statusInfoData.postValue(StatusInfoData(StatusInfo.LOCATION_FAIL, t?.message ?: ""))
+                                statusInfoData.postValue(StatusInfoData(StatusInfo.LOCATION_FAIL, t?.message
+                                        ?: ""))
                             }
                         })
 
@@ -162,10 +163,8 @@ class WeatherViewModel : ViewModel() {
                         refreshViewData.value = false
                     }
 
-
                 })
     }
-
 
     fun refreshChosenWeather(desc: String) {
         LocationModel.getCoordinateByDesc(desc)
@@ -183,7 +182,6 @@ class WeatherViewModel : ViewModel() {
                     }
                 })
     }
-
 }
 
 enum class StatusInfo {

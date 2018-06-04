@@ -1,20 +1,20 @@
 package top.maweihao.weather.model
 
+import android.util.Log
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.Utils
 import io.reactivex.Flowable
 import top.maweihao.weather.entity.dao.*
+import top.maweihao.weather.service.SyncService
 import top.maweihao.weather.util.Constants
-import top.maweihao.weather.util.ServiceUtil
 import top.maweihao.weather.util.http.ApiUtils
 import top.maweihao.weather.util.http.DataResult
 import top.maweihao.weather.util.http.NetworkBoundResource
 import top.maweihao.weather.util.remoteView.WidgetUtils
 
 
-
-
 object WeatherModel {
+    private const val TAG = "WeatherModel"
     private val weatherDao: NewWeatherDao
     private var heWeatherNowDao: NewHeWeatherNowDao
 //    private val locationDao: MLocationDao
@@ -89,17 +89,18 @@ object WeatherModel {
      * @param location String?
      */
     fun updateWidget(weatherView: NewWeather?, location: String?) {
+
         if (weatherView == null || location == null) {
-            LogUtils.e("updateWidget: null!$weatherView $location")
+            Log.e(TAG, "updateWidget: null!$weatherView$location");
         } else {
             if (WidgetUtils.hasAnyWidget(Utils.getApp())) {
-                //                Log.d(TAG, "updateWidget: here has widget");
-                ServiceUtil.startWidgetSyncService(Utils.getApp(), false, false)
-                WidgetUtils.refreshWidget(Utils.getApp(), weatherView, location)
+//                Log.d(TAG, "updateWidget: here has widget");
+//                ServiceUtil.startWidgetSyncService(context, false, false);
+                WidgetUtils.refreshWidget(Utils.getApp(), weatherView, location);
+                SyncService.scheduleSyncService(Utils.getApp(), false, false);
             }
         }
     }
-
 
     fun getHeWeatherNow(location: String): Flowable<DataResult<NewHeWeatherNow>> {
         return object : NetworkBoundResource<NewHeWeatherNow, NewHeWeatherNow>() {

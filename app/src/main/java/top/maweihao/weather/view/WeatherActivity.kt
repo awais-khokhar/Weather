@@ -113,10 +113,10 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
             it?.let {
                 swipe_refresh.isRefreshing = false
                 when (it.type) {
-                    StatusInfo.NORMAL          -> {
+                    StatusInfo.NORMAL -> {
                         showNormalTips(it.message)
                     }
-                    StatusInfo.LOCATION_FAIL   -> {
+                    StatusInfo.LOCATION_FAIL -> {
                         if (isHasPermissions()) {
                             showNormalTips("Locate failed")
                         } else {
@@ -126,7 +126,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
                     StatusInfo.CHOOSE_POSITION -> {
                         askForChoosePosition()
                     }
-                    StatusInfo.NET_ERR         -> {
+                    StatusInfo.NET_ERR -> {
                         showNetworkError()
                     }
                 }
@@ -180,7 +180,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
 
     override fun onClick(v: View) {
         when (v.id) {
-            -1                      -> finish()
+            -1 -> finish()
             R.id.weather_alert_icon -> if (alertArrayList.isNotEmpty()) {
                 val intent = Intent(this@WeatherActivity, AlertActivity::class.java)
                 intent.putParcelableArrayListExtra(
@@ -188,7 +188,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
                 startActivity(intent)
 //                startActivity(intentFor<AlertActivity>(AlertActivity.KEY_ALERT_ACTIVITY_ALERT_LIST to alertArrayList))
             }
-            R.id.more_days_weather  -> {
+            R.id.more_days_weather -> {
                 startActivity<DetailActivity>()
             }
         }
@@ -209,11 +209,11 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
             R.id.change_position -> {
                 startActivityForResult<ChoosePositionActivity>(ChoosePositionActivityRequestCode)
             }
-            R.id.start_service   -> {
+            R.id.start_service -> {
                 // debug only
                 SyncService.scheduleSyncService(this, true, true)
             }
-            R.id.setting         -> {
+            R.id.setting -> {
                 startActivityForResult<SettingActivity>(SettingActivityRequestCode)
             }
         }
@@ -222,7 +222,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
-            SettingActivityRequestCode        -> {
+            SettingActivityRequestCode -> {
                 if (resultCode == SettingCode) {
                     val autoLocate = data?.getBooleanExtra("autoLocate", false)
                     Log.d(TAG, "onActivityResult: SettingActivity autoLocate=$autoLocate")
@@ -280,7 +280,6 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
         }
     }
 
-
     private fun showWeather(weather: NewWeather) {
         val dailyBean = weather.result.daily
         val hourlyBean = weather.result.hourly
@@ -309,10 +308,10 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
             Log.d(TAG, "showCurrentWeather: alert size=" + alertBean.content.size)
             alertBean.content.forEach {
                 alertArrayList.add(Alert(it.status,
-                                         Integer.parseInt(it.code),
-                                         it.description, it.alertId,
-                                         it.city + it.county,
-                                         it.title))
+                        Integer.parseInt(it.code),
+                        it.description, it.alertId,
+                        it.city + it.county,
+                        it.title))
             }
             true
         } else {
@@ -320,7 +319,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
         }
 
         val windDirection = Utility.getWindDirection(this,
-                                                     hourlyBean.wind[0].direction)
+                hourlyBean.wind[0].direction)
         val windLevel = Utility.getWindLevel(this, hourlyBean.wind[0].speed)
         val sunRise = dailyBean.astro[0].sunrise.time
         val sunSet = dailyBean.astro[0].sunset.time
@@ -372,18 +371,18 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
             }
 
             val icon = Utility.chooseWeatherIcon(dailyBean.skycon[i].value,
-                                                 dailyBean.precipitation[i].avg, HOURLY_MODE, false)
+                    dailyBean.precipitation[i].avg, HOURLY_MODE, false)
             val skyconDesc: String = if (dailyBean.desc == null || TextUtils.isEmpty(dailyBean.desc[i].value)) {
                 Utility.chooseWeatherSkycon(this,
-                                            dailyBean.skycon[i].value,
-                                            dailyBean.precipitation[i].avg, HOURLY_MODE)
+                        dailyBean.skycon[i].value,
+                        dailyBean.precipitation[i].avg, HOURLY_MODE)
             } else {
                 dailyBean.desc[i].value
             }
             // 在有 desc 时优先显示 desc 的内容
             val temperature = (Utility.stringRoundDouble(dailyBean.temperature[i].max)
-                               + "°/"
-                               + Utility.stringRoundDouble(dailyBean.temperature[i].min) + '°'.toString())
+                    + "°/"
+                    + Utility.stringRoundDouble(dailyBean.temperature[i].min) + '°'.toString())
             singleWeathers.add(SingleWeather(time, icon, skyconDesc, temperature))
         }
         dailyWeatherAdapter.setNewData(singleWeathers)
@@ -397,9 +396,9 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
         for (i in 0 until length) {
             val time = hourlyBean.skycon[i].datetime.substring(11, 16)
             val icon = Utility.chooseWeatherIcon(hourlyBean.skycon[i].value,
-                                                 hourlyBean.precipitation[i].value, HOURLY_MODE, true)
+                    hourlyBean.precipitation[i].value, HOURLY_MODE, true)
             val skyconDesc = Utility.chooseWeatherSkycon(this, hourlyBean.skycon[i].value,
-                                                         hourlyBean.precipitation[i].value, HOURLY_MODE)
+                    hourlyBean.precipitation[i].value, HOURLY_MODE)
             val temperature = stringRoundDouble(hourlyBean.temperature[i].value) + '°'
             singleWeathers.add(SingleWeather(time, icon, skyconDesc, temperature))
         }
@@ -416,10 +415,10 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
         val detailLocation = location.fineLocation
         LogUtils.d("showLocation: $coarseLocation $detailLocation")
         when (location.locateType) {
-            MLocation.TYPE_CHOOSE                                                                                                 -> setLoc(coarseLocation, coarseLocation, false)
-            MLocation.TYPE_IP                                                                                                     -> setLoc(coarseLocation, Utility.getIP(this), false)
+            MLocation.TYPE_CHOOSE -> setLoc(coarseLocation, coarseLocation, false)
+            MLocation.TYPE_IP -> setLoc(coarseLocation, Utility.getIP(this), false)
             MLocation.TYPE_BAIDU_GPS, MLocation.TYPE_BAIDU_NETWORK, MLocation.TYPE_BAIDU_UNKNOWN, MLocation.TYPE_LOCATION_MANAGER -> setLoc(coarseLocation, detailLocation, true)
-            else                                                                                                                  -> {
+            else -> {
             }
         }
     }
@@ -429,7 +428,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
             last_update_time.text = Utility.getTime(this@WeatherActivity)
         } else {
             val time = resources.getString(R.string.updated_on,
-                                           Utility.getTime(this@WeatherActivity, timeInMills))
+                    Utility.getTime(this@WeatherActivity, timeInMills))
             last_update_time.text = time
         }
     }

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="250dp"
+    tools:background="#2984bc">
+
+    <TextView
+        android:id='@+id/temperature_text'
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:letterSpacing="0.5"
+        android:textColor="@color/main_text_color"
+        android:textSize="58sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="23" />
+
+    <TextView
+        android:id="@+id/skycon_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/main_text_color"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/temperature_text"
+        app:layout_constraintEnd_toEndOf="@+id/temperature_text"
+        app:layout_constraintStart_toStartOf="@+id/temperature_text"
+        tools:text="晴" />
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:textColor="@color/main_text_color"
+        android:textSize="26sp"
+        app:layout_constraintBottom_toTopOf="@+id/skycon_text"
+        app:layout_constraintEnd_toEndOf="@+id/skycon_text"
+        app:layout_constraintStart_toStartOf="@+id/skycon_text"
+        tools:text="栖霞区" />
+
+    <TextView
+        android:id="@+id/textView15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/main_text_color"
+        app:layout_constraintEnd_toEndOf="@+id/temperature_text"
+        app:layout_constraintStart_toStartOf="@+id/temperature_text"
+        app:layout_constraintTop_toBottomOf="@+id/temperature_text"
+        tools:text="AQI: 24 优" />
+
+    <TextView
+        android:id="@+id/textView18"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center_horizontal|bottom"
+        android:maxLines="2"
+        android:textAlignment="center"
+        android:textColor="@color/main_text_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView15"
+        tools:text="这里不会有雨，不过您西边25公里正下着中雨呢" />
+</android.support.constraint.ConstraintLayout>

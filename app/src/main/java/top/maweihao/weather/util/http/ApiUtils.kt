@@ -49,14 +49,14 @@ object ApiUtils {
 
     fun getAddressDetail(location: String): Flowable<BaiDuCoordinateBean> {
         return baiduLocateApi.getAddressDetail(location,
-                                               "json",
-                                               0,
-                                               Constants.BaiduKey,
-                                               Constants.mBaiduCode)
+                "json",
+                0,
+                Constants.BaiduKey,
+                Constants.mBaiduCode)
     }
 
     fun getCoordinateByDesc(desc: String): Flowable<BaiDuChoosePositionBean> {
         return baiduLocateApi.getCoordinateByDesc(desc, "json",
-                                                  Constants.BaiduKey, Constants.mBaiduCode)
+                Constants.BaiduKey, Constants.mBaiduCode)
     }
 }

@@ -13,4 +13,7 @@
 
     <color name="tool_bar_color">#fff</color>
     <color name="split_line">#e7e7e7</color>
+
+    <color name="main_text_color">#FFFFFF</color>
+
 </resources>

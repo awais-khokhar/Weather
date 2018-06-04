@@ -101,20 +101,6 @@ public class WidgetService extends IntentService {
                         public void onNetError(@org.jetbrains.annotations.Nullable String msg) {
                         }
                     });
-//            Disposable disposable = mRepository.getLocalWeatherAllowCached()
-//                    .subscribe(new Consumer<NewWeather>() {
-//                        @Override
-//                        public void accept(NewWeather weather) throws Exception {
-//                            if (weather != null && weather.getStatus().equals("ok")) {
-//                            }
-//                        }
-//                    }, new Consumer<Throwable>() {
-//                        @Override
-//                        public void accept(Throwable throwable) throws Exception {
-//                            Log.d(TAG, "accept: ");
-//                        }
-//                    });
-//            compositeDisposable.add(disposable);
         }
     }
 
@@ -132,7 +118,6 @@ public class WidgetService extends IntentService {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             stopForeground(true);
         }
-
         super.onDestroy();
     }
 

@@ -64,8 +64,6 @@ public class BigWidgetConfigureActivity extends BaseWidgetConfigureActivity {
     FloatingActionButton doneButton;
 //    private Switch refreshSwitch;
 
-    int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

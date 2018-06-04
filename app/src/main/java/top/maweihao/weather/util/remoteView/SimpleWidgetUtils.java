@@ -8,18 +8,19 @@ import android.content.Intent;
 import android.provider.AlarmClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 
 import java.util.GregorianCalendar;
 
 import top.maweihao.weather.R;
-import top.maweihao.weather.view.WeatherActivity;
 import top.maweihao.weather.entity.dao.NewHeWeatherNow;
 import top.maweihao.weather.entity.dao.NewWeather;
 import top.maweihao.weather.util.HeWeatherUtil;
 import top.maweihao.weather.util.LunarUtil;
 import top.maweihao.weather.util.Utility;
+import top.maweihao.weather.view.WeatherActivity;
 import top.maweihao.weather.widget.SimpleWeatherWidget;
 import top.maweihao.weather.widget.SimpleWidgetConfigureActivity;
 
@@ -44,7 +45,13 @@ public class SimpleWidgetUtils {
 
     public static void refreshWidgetView(Context context, @NonNull NewWeather weather, String countyName) {
 
-        NewWeather.ResultBean.HourlyBean hourlyBean = weather.getResult().getHourly();
+        NewWeather.ResultBean.HourlyBean hourlyBean;
+        try {
+            hourlyBean = weather.getResult().getHourly();
+        } catch (NullPointerException e) {
+            Log.e(TAG, "refreshWidgetView: " + e.getMessage());
+            return;
+        }
         int tem = Utility.intRoundDouble(hourlyBean.getTemperature().get(0).getValue());
         String skycon = hourlyBean.getSkycon().get(0).getValue();
         Double precipitation = hourlyBean.getPrecipitation().get(0).getValue();

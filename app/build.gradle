@@ -64,9 +64,8 @@ ext {
     lifecycle_version = "1.1.1"
 }
 
-
 dependencies {
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -113,4 +112,3 @@ dependencies {
 
     implementation 'com.google.firebase:firebase-messaging:17.0.0'
 }
-

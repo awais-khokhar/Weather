@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.provider.AlarmClock;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -41,6 +42,10 @@ public class BigWidgetUtils {
 
     public static void refreshWidgetView(Context context, NewWeather weather, String countyName) {
         RemoteViews bigViews = new RemoteViews(context.getPackageName(), R.layout.widget_big_weather);
+        if (weather == null || weather.getResult() == null) {
+            Log.e(TAG, "refreshWidgetView: null");
+            return;
+        }
 
         String description = weather.getResult().getMinutely().getDescription();
         int tem = Utility.intRoundDouble(weather.getResult().getHourly().getTemperature().get(0).getValue());
@@ -105,8 +110,6 @@ public class BigWidgetUtils {
         mClockIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent clockPendingIntent = PendingIntent.getActivity(context, CLOCK_PENDING_INTENT_CODE,
                 mClockIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-//        Intent intent = new Intent(context, WidgetSyncService.class);
-//        intent.putExtra(WidgetSyncService.from_widget, true);
 
         Intent intent = new Intent(context, WidgetService.class);
         intent.putExtra(WidgetService.DELAY, false);

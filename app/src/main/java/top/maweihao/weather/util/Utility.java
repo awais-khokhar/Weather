@@ -8,7 +8,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.inputmethod.InputMethodManager;
@@ -63,10 +62,8 @@ public class Utility {
      */
     public static int getTimeShift() {
         TimeZone tz = TimeZone.getDefault();
-//        String strTz = tz.getDisplayName(false, TimeZone.SHORT);
         int timeShift = (tz.getRawOffset() + tz.getDSTSavings()) / 1000;
         return timeShift;
-//        Log.d(TAG, "time: " + (tz.getRawOffset() + tz.getDSTSavings()) / 3600 / 1000);
     }
 
     /**
@@ -183,7 +180,22 @@ public class Utility {
                                 return context.getResources().getString(R.string.HEAVY_RAIN);
                     }
                 case "SNOW":
-                    return context.getResources().getString(R.string.SNOW);
+                    switch (mode) {
+                        case MINUTELY_MODE:
+                            if (precipitation <= 0.25)
+                                return context.getResources().getString(R.string.LIGHT_SNOW);
+                            else if (precipitation <= 0.35)
+                                return context.getResources().getString(R.string.MODERATE_SNOW);
+                            else
+                                return context.getResources().getString(R.string.HEAVY_SNOW);
+                        case HOURLY_MODE:
+                            if (precipitation <= 0.9)
+                                return context.getResources().getString(R.string.LIGHT_SNOW);
+                            else if (precipitation <= 2.87)
+                                return context.getResources().getString(R.string.MODERATE_SNOW);
+                            else
+                                return context.getResources().getString(R.string.HEAVY_SNOW);
+                    }
                 case "WIND":
                     return context.getResources().getString(R.string.WIND);
                 case "FOG":
@@ -240,7 +252,22 @@ public class Utility {
                             return simpleIcon ? R.mipmap.simple_heavy_rain : R.mipmap.weather_showers_day;
                 }
             case "SNOW":
-                return simpleIcon ? R.mipmap.simple_snow : R.mipmap.weather_snow;
+                switch (mode) {
+                    case MINUTELY_MODE:
+                        if (precipitation <= 0.25)
+                            return simpleIcon ? R.mipmap.simple_snow : R.mipmap.weather_snow;
+                        else if (precipitation <= 0.35)
+                            return simpleIcon ? R.mipmap.simple_snow : R.mipmap.weather_snow;
+                        else
+                            return simpleIcon ? R.mipmap.simple_snow_storm : R.mipmap.weather_big_snow;
+                    case HOURLY_MODE:
+                        if (precipitation <= 0.9)
+                            return simpleIcon ? R.mipmap.simple_snow : R.mipmap.weather_snow;
+                        else if (precipitation <= 2.87)
+                            return simpleIcon ? R.mipmap.simple_snow : R.mipmap.weather_snow;
+                        else
+                            return simpleIcon ? R.mipmap.simple_snow_storm : R.mipmap.weather_big_snow;
+                }
             case "WIND":
                 return simpleIcon ? R.mipmap.simple_wind : R.mipmap.weather_wind;
             case "FOG":
@@ -262,11 +289,8 @@ public class Utility {
      * @return isChinese?
      */
     public static boolean isChinese(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return context.getResources().getConfiguration().getLocales().get(0).getDisplayLanguage().equals("中文");
-        } else {
-            return context.getResources().getConfiguration().locale.getDisplayLanguage().equals("zh-CN");
-        }
+        String lan = getCurrentLanguage(context);
+        return lan.startsWith("zh");
     }
 
     /**
@@ -361,43 +385,35 @@ public class Utility {
      * @param mills 时间
      */
     public static String getTime(Context context, long mills) {
-//        long nowTime = System.currentTimeMillis();
-//        long interval = nowTime - mills;
-//        if (interval < 60 * 1000) {
-//            return context.getResources().getString(R.string.just_now);
-//        } else if (interval < 60 * 60 * 1000) {
-//            return (interval / 1000 / 60) + context.getResources().getString(R.string.minute_age);
-//        } else {
-//            return (interval / 1000 / 60 / 60) + context.getResources().getString(R.string.hour_ago);
-//        }
-        Calendar today = Calendar.getInstance();
+        Calendar now = Calendar.getInstance();
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(mills);
-        if (today.get(Calendar.DAY_OF_MONTH) == cal.get(Calendar.DAY_OF_MONTH) &&
-                today.get(Calendar.MONTH) == cal.get(Calendar.MONTH)) {
+        if (now.get(Calendar.DAY_OF_MONTH) == cal.get(Calendar.DAY_OF_MONTH) &&
+                now.get(Calendar.MONTH) == cal.get(Calendar.MONTH)) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm", Locale.CHINA);
             Date date = new Date();
             date.setTime(mills);
             return simpleDateFormat.format(date);
         } else {
-            today.set(Calendar.HOUR, 0);
-            today.set(Calendar.MINUTE, 0);
-            today.set(Calendar.SECOND, 0);
+            now.set(Calendar.HOUR, 0);
+            now.set(Calendar.MINUTE, 0);
+            now.set(Calendar.SECOND, 0);
             cal.set(Calendar.HOUR, 0);
             cal.set(Calendar.MINUTE, 0);
             cal.set(Calendar.SECOND, 0);
-            int intervalDay = Long.valueOf(today.getTimeInMillis() - cal.getTimeInMillis()
+            int intervalDay = Long.valueOf((now.getTimeInMillis() - cal.getTimeInMillis())
                     / (24 * 60 * 60 * 1000)).intValue();
-            if (intervalDay == -1) {
+            if (intervalDay == 1) {
                 return context.getResources().getString(R.string.yesterday);
             } else {
-                return (-1 * intervalDay) + " " + context.getResources().getString(R.string.days_before);
+                return context.getResources().getString(R.string.days_before, intervalDay);
+//                return (-1 * intervalDay) + " " + context.getResources().getString(R.string.days_before);
             }
         }
     }
 
     /**
-     * 直接返回 now
+     * 直接返回 'now'
      */
     public static String getTime(Context context) {
         return context.getResources().getString(R.string.just_now);
@@ -476,7 +492,6 @@ public class Utility {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(time12 ? "hh:mm" : "HH:mm", Locale.CHINA);
         return simpleDateFormat.format(date);
     }
-
 
     // used in BigWeatherWidget
     public static String parseTime(int minute) {
@@ -567,5 +582,5 @@ public class Utility {
                 && now.get(Calendar.MONTH) == month
                 && now.get(Calendar.YEAR) == year;
     }
-}
 
+}
