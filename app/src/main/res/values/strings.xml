@@ -121,7 +121,7 @@
     <string name="email_needed">You need to install any email app first</string>
     <string name="alipay_needed">You have to install \'Alipay\' first</string>
     <string name="action_alert">Weather Alert</string>
-    <string name="weather_15">Weather in 15 days</string>
+    <string name="weather_15">Weather in 15 myDays</string>
     <string name="Today">Today</string>
     <string name="dark_background">Dark Background</string>
     <string name="cancel">Cancel</string>
@@ -140,7 +140,7 @@
     <string name="grant_permission">Grant</string>
     <string name="locate_failed">Locate failed, make sure you have enabled the location function.</string>
     <string name="yesterday">yesterday</string>
-    <string name="days_before">%d days before</string>
+    <string name="days_before">%d myDays before</string>
     <string name="appwidget_text" translatable="false">EXAMPLE</string>
     <string name="wish_you_lucky" translatable="false">Have a nice day!</string>
     <string name="weather_desc_today">Partly cloudy currently. It’s 15°, the high today was forecast as 18°.</string>

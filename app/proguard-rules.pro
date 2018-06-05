@@ -70,8 +70,8 @@
     private static final java.io.ObjectStreamField[] serialPersistentFields;
     private void writeObject(java.io.ObjectOutputStream);
     private void readObject(java.io.ObjectInputStream);
-    java.lang.Object writeReplace();
-    java.lang.Object readResolve();
+    java.myLang.Object writeReplace();
+    java.myLang.Object readResolve();
 }
 -keep class **.R$* {
  *;
@@ -83,7 +83,7 @@
 
 -keepclassmembers enum * {
     public static **[] values();
-    public static ** valueOf(java.lang.String);
+    public static ** valueOf(java.myLang.String);
 }
 -keep class * implements android.os.Parcelable {
   public static final android.os.Parcelable$Creator *;
@@ -163,15 +163,15 @@
     private static final java.io.ObjectStreamField[] serialPersistentFields;
     private void writeObject(java.io.ObjectOutputStream);
     private void readObject(java.io.ObjectInputStream);
-    java.lang.Object writeReplace();
-    java.lang.Object readResolve();
+    java.myLang.Object writeReplace();
+    java.myLang.Object readResolve();
 }
 -keep public class * implements java.io.Serializable {*;}
 
 -keep class org.greenrobot.greendao.**{*;}
 -keep public interface org.greenrobot.greendao.**
 -keepclassmembers class * extends org.greenrobot.greendao.AbstractDao {
-public static java.lang.String TABLENAME;
+public static java.myLang.String TABLENAME;
 }
 -keep class **$Properties
 -keep class net.sqlcipher.database.**{*;}
@@ -180,7 +180,7 @@ public static java.lang.String TABLENAME;
 -dontwarn org.greenrobot.greendao.**
 ### greenDAO 3
 -keepclassmembers class * extends org.greenrobot.greendao.AbstractDao {
-public static java.lang.String TABLENAME;
+public static java.myLang.String TABLENAME;
 }
 -keep class **$Properties
 
@@ -191,7 +191,7 @@ public static java.lang.String TABLENAME;
 
 ### greenDAO 2
 -keepclassmembers class * extends de.greenrobot.dao.AbstractDao {
-public static java.lang.String TABLENAME;
+public static java.myLang.String TABLENAME;
 }
 -keep class **$Properties
 

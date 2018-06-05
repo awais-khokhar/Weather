@@ -27,16 +27,16 @@ object ApiUtils {
      */
     fun getWeather(@NonNull location: String, alert: Boolean?,
                    days: Int?, shift: Int?, lang: String): Flowable<NewWeather> {
-        var alert = alert
-        var days = days
-        var shift = shift
-        var lang = lang
-        alert = alert == null || alert
-        days = if (days == null) 15 else days
-        shift = if (shift == null) 28800 else shift
-        lang = if (TextUtils.isEmpty(lang)) "zh_CN" else lang
+        var myAlert = alert
+        var myDays = days
+        var myShift = shift
+        var myLang = lang
+        myAlert = myAlert == null || myAlert
+        myDays = if (myDays == null) 15 else myDays
+        myShift = if (myShift == null) 28800 else myShift
+        myLang = if (TextUtils.isEmpty(myLang)) "zh_CN" else myLang
 
-        return weatherApi.getWeather(location, alert, days, shift, lang)
+        return weatherApi.getWeather(location, myAlert, myDays, myShift, myLang)
     }
 
     fun getHeWeatherNow(@NonNull location: String): Flowable<NewHeWeatherNow> {
