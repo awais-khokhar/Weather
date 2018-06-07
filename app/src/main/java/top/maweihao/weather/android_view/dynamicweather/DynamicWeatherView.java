@@ -7,9 +7,12 @@ import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.animation.AnimationUtils;
+
+import java.lang.ref.WeakReference;
 
 import top.maweihao.weather.android_view.dynamicweather.BaseDrawer.Type;
 
@@ -21,7 +24,7 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
 
     public DynamicWeatherView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
+        init();
     }
 
     private BaseDrawer preDrawer, curDrawer;
@@ -31,9 +34,9 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
     int curType = Type.UNKNOWN_D;
     private int mWidth, mHeight;
 
-    private void init(Context context) {
+    private void init() {
         curDrawerAlpha = 0f;
-        mDrawThread = new DrawThread();
+        mDrawThread = new DrawThread(this);
         final SurfaceHolder surfaceHolder = getHolder();
         surfaceHolder.addCallback(this);
         surfaceHolder.setFormat(PixelFormat.RGBA_8888);
@@ -154,7 +157,7 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-//        Log.i(TAG, "surfaceDestroyed");
+        Log.i("DynamicWeatherView", "surfaceDestroyed");
         // We need to tell the drawing thread to stop, and block until
         // it has done so.
         mDrawThread.mSurface = holder;
@@ -163,13 +166,22 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
 
 
         holder.removeCallback(this);
+
+        curDrawer = null;
+        preDrawer = null;
+
     }
 
-    private class DrawThread extends Thread {
+    private static class DrawThread extends Thread {
         // These are protected by the Thread's lock.
         SurfaceHolder mSurface;
         boolean mRunning;
         boolean mQuit;
+        private WeakReference<DynamicWeatherView> viewWeakReference;
+
+        DrawThread(DynamicWeatherView view){
+            this.viewWeakReference = new WeakReference<>(view);
+        }
 
         @Override
         public void run() {
@@ -199,7 +211,7 @@ public class DynamicWeatherView extends SurfaceView implements SurfaceHolder.Cal
                             canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
                             // Update graphics.
 
-                            drawSurface(canvas);
+                            viewWeakReference.get().drawSurface(canvas);
                             //logger.addSplit("drawSurface");
                             // All done!
                             mSurface.unlockCanvasAndPost(canvas);

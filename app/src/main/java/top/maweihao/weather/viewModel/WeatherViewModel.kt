@@ -40,7 +40,9 @@ class WeatherViewModel : ViewModel() {
 
 
     fun getWeatherCache() {
-        weatherLiveData.value = WeatherModel.getWeatherCache()
+//        weatherLiveData.value = WeatherModel.getWeatherCache()
+        val location = LocationModel.getLocationCached()
+        location?.let { refreshWeather(it) }
     }
 
     fun getWeather(isHavePermission: Boolean) {

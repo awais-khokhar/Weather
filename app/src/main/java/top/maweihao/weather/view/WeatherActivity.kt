@@ -48,7 +48,7 @@ import kotlin.collections.ArrayList
 class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.PermissionCallbacks {
 
     private val handler by lazy { Handler() }
-    private val configContact by lazy { Utility.createSimpleConfig(this).create(PreferenceConfigContact::class.java) }
+    private val configContact by lazy { Utility.createSimpleConfig(applicationContext).create(PreferenceConfigContact::class.java) }
 
     //24h hourlyRecyclerView adapter
     private val hourWeatherAdapter by lazy { HourlyWeatherAdapter(ArrayList()) }
@@ -99,7 +99,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
     }
 
     private fun bindingView() {
-        viewModel.weatherLiveData.observeForever(android.arch.lifecycle.Observer {
+        viewModel.weatherLiveData.observe(this,android.arch.lifecycle.Observer {
             debugToast("weather data  ${it == null}")
 
             it?.let { showWeather(it) }
@@ -169,7 +169,6 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy")
-        viewModel.weatherLiveData.removeObservers(this)
         try {
             dynamicWeatherView.onDestroy()
         } catch (e: Exception) {
@@ -211,7 +210,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
             }
             R.id.start_service -> {
                 // debug only
-                SyncService.scheduleSyncService(this, true, true)
+                SyncService.scheduleSyncService(applicationContext, true, true)
             }
             R.id.setting -> {
                 startActivityForResult<SettingActivity>(SettingActivityRequestCode)
@@ -318,9 +317,9 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
             false
         }
 
-        val windDirection = Utility.getWindDirection(this,
+        val windDirection = Utility.getWindDirection(applicationContext,
                 hourlyBean.wind[0].direction)
-        val windLevel = Utility.getWindLevel(this, hourlyBean.wind[0].speed)
+        val windLevel = Utility.getWindLevel(applicationContext, hourlyBean.wind[0].speed)
         val sunRise = dailyBean.astro[0].sunrise.time
         val sunSet = dailyBean.astro[0].sunset.time
         val hum = humidity * 100
@@ -373,7 +372,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
             val icon = Utility.chooseWeatherIcon(dailyBean.skycon[i].value,
                     dailyBean.precipitation[i].avg, HOURLY_MODE, false)
             val skyconDesc: String = if (dailyBean.desc == null || TextUtils.isEmpty(dailyBean.desc[i].value)) {
-                Utility.chooseWeatherSkycon(this,
+                Utility.chooseWeatherSkycon(applicationContext,
                         dailyBean.skycon[i].value,
                         dailyBean.precipitation[i].avg, HOURLY_MODE)
             } else {
@@ -397,7 +396,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
             val time = hourlyBean.skycon[i].datetime.substring(11, 16)
             val icon = Utility.chooseWeatherIcon(hourlyBean.skycon[i].value,
                     hourlyBean.precipitation[i].value, HOURLY_MODE, true)
-            val skyconDesc = Utility.chooseWeatherSkycon(this, hourlyBean.skycon[i].value,
+            val skyconDesc = Utility.chooseWeatherSkycon(applicationContext, hourlyBean.skycon[i].value,
                     hourlyBean.precipitation[i].value, HOURLY_MODE)
             val temperature = stringRoundDouble(hourlyBean.temperature[i].value) + '°'
             singleWeathers.add(SingleWeather(time, icon, skyconDesc, temperature))
@@ -416,7 +415,7 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
         LogUtils.d("showLocation: $coarseLocation $detailLocation")
         when (location.locateType) {
             MLocation.TYPE_CHOOSE -> setLoc(coarseLocation, coarseLocation, false)
-            MLocation.TYPE_IP -> setLoc(coarseLocation, Utility.getIP(this), false)
+            MLocation.TYPE_IP -> setLoc(coarseLocation, Utility.getIP(applicationContext), false)
             MLocation.TYPE_BAIDU_GPS, MLocation.TYPE_BAIDU_NETWORK, MLocation.TYPE_BAIDU_UNKNOWN, MLocation.TYPE_LOCATION_MANAGER -> setLoc(coarseLocation, detailLocation, true)
             else -> {
             }
@@ -425,10 +424,10 @@ class WeatherActivity : BaseActivity(), View.OnClickListener, EasyPermissions.Pe
 
     private fun setUpdateTime(timeInMills: Long) {
         if (timeInMills == 0L) {
-            last_update_time.text = Utility.getTime(this@WeatherActivity)
+            last_update_time.text = Utility.getTime(applicationContext)
         } else {
             val time = resources.getString(R.string.updated_on,
-                    Utility.getTime(this@WeatherActivity, timeInMills))
+                    Utility.getTime(applicationContext, timeInMills))
             last_update_time.text = time
         }
     }
